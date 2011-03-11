@@ -65,7 +65,6 @@
 
 -(void) dealloc
 {
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[super dealloc];
 }
 
@@ -105,19 +104,7 @@
 	if ([content mercatorToTileProjection] == nil || [content  
 													  mercatorToScreenProjection] == nil)
 		return;
-	
-	// delay display of new images until expensive operations are  
-	//allowed
-	[[NSNotificationCenter defaultCenter] removeObserver:self  
-													name:RMResumeExpensiveOperations object:nil];
-	if ([RMMapContents performExpensiveOperations] == NO)
-	{
-        [[NSNotificationCenter defaultCenter] addObserver:self  
-												 selector:@selector(updateLoadedImages)  
-													 name:RMResumeExpensiveOperations object:nil];
-        return;
-	}
-	
+
 	if ([self screenIsLoaded])
 		return;
 	

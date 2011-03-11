@@ -48,6 +48,4 @@
 -(void) setCapacity: (NSUInteger) theCapacity;
 -(void) setMinimalPurge: (NSUInteger) thePurgeMinimum;
 
--(void) purgeTilesFromBefore: (NSDate*) date;
-
 @end

@@ -107,12 +107,10 @@
 	self = [super init];
 	if (self != nil) {
 		// open the db
-		NSString* fullPath = [[NSBundle mainBundle] pathForResource:path ofType:nil];
-		NSLog(@"Trying to Open db map source %@", fullPath);
-		db = [[FMDatabase alloc] initWithPath:fullPath];
-		if ([db open]) {
+		db = [[FMDatabase alloc] initWithPath:path];
+		if ([db openWithFlags:SQLITE_OPEN_READONLY]) {
 			RMLog(@"Opening db map source %@", path);
-			
+
 			// get the tile side length
 			tileSideLength = [self getPreferenceAsInt:kTileSideLengthKey];
 			
@@ -124,12 +122,12 @@
 			topLeft.latitude = [self getPreferenceAsFloat:kCoverageTopLeftLatitudeKey];
 			topLeft.longitude = [self getPreferenceAsFloat:kCoverageTopLeftLongitudeKey];
 			bottomRight.latitude = [self getPreferenceAsFloat:kCoverageBottomRightLatitudeKey];
-			bottomRight.longitude = [self getPreferenceAsFloat:kCoverageBottomRightLatitudeKey];
+			bottomRight.longitude = [self getPreferenceAsFloat:kCoverageBottomRightLongitudeKey];
 			center.latitude = [self getPreferenceAsFloat:kCoverageCenterLatitudeKey];
 			center.longitude = [self getPreferenceAsFloat:kCoverageCenterLongitudeKey];
 			
 			RMLog(@"Tile size: %d pixel", tileSideLength);
-			RMLog(@"Supported zoom range: %d - %d", minZoom, maxZoom);
+			RMLog(@"Supported zoom range: %.0f - %.0f", minZoom, maxZoom);
 			RMLog(@"Coverage area: (%2.6f,%2.6f) x (%2.6f,%2.6f)", 
 				  topLeft.latitude, 
 				  topLeft.longitude,
@@ -180,19 +178,14 @@
 	return maxZoom;
 }
 
--(void) setMinZoom:(NSUInteger)aMinZoom
+-(void) setMinZoom:(NSUInteger) aMinZoom
 {
-	[tileProjection setMinZoom:aMinZoom];
+    minZoom = aMinZoom;
 }
 
--(void) setMaxZoom:(NSUInteger)aMaxZoom
+-(void) setMaxZoom:(NSUInteger) aMaxZoom
 {
-	[tileProjection setMaxZoom:aMaxZoom];
-}
-
--(RMSphericalTrapezium) latitudeLongitudeBoundingBox;
-{
-	return kDefaultLatLonBoundingBox;
+    maxZoom = aMaxZoom;
 }
 
 -(NSString*) tileURL: (RMTile) tile {
@@ -218,6 +211,21 @@
 
 -(RMProjection*) projection {
 	return [RMProjection googleProjection];
+}
+
+-(RMSphericalTrapezium) latitudeLongitudeBoundingBox
+{
+    CLLocationCoordinate2D southwest, northeast;
+    southwest.latitude = bottomRight.latitude;
+    southwest.longitude = topLeft.longitude;
+    northeast.latitude = topLeft.latitude;
+    northeast.longitude = bottomRight.longitude;
+    
+    RMSphericalTrapezium bbox;
+    bbox.southwest = southwest;
+    bbox.northeast = northeast;
+    
+    return bbox;
 }
 
 -(void) didReceiveMemoryWarning {

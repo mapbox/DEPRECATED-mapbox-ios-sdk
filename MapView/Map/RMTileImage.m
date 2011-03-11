@@ -180,15 +180,14 @@
 		
 		[customActions setObject:[NSNull null] forKey:@"position"];
 		[customActions setObject:[NSNull null] forKey:@"bounds"];
-		[customActions setObject:[NSNull null] forKey:kCAOnOrderOut];
-        [customActions setObject:[NSNull null] forKey:kCAOnOrderIn];
-
-		CATransition *fadein = [[CATransition alloc] init];
-		fadein.duration = 0.3;
-		fadein.type = kCATransitionReveal;
-		[customActions setObject:fadein forKey:@"contents"];
-		[fadein release];
-
+		[customActions setObject:[NSNull null] forKey:kCAOnOrderOut];		
+        [customActions setObject:[NSNull null] forKey:kCAOnOrderIn]; 
+        
+		CATransition *reveal = [[CATransition alloc] init];
+		reveal.duration = 0.3;
+		reveal.type = kCATransitionFade;
+        [customActions setObject:reveal forKey:@"contents"];
+		[reveal release];
 		
 		layer.actions=customActions;
 		

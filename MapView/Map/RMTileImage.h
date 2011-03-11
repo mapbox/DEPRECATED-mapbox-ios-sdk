@@ -40,7 +40,6 @@ typedef NSImage UIImage;
 #import "FMDatabase.h"
 
 @class RMTileImage;
-@class NSData;
 
 @interface RMTileImage : NSObject {
 	// I know this is a bit nasty.

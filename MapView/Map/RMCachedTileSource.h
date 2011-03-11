@@ -38,6 +38,8 @@
 	RMTileCache *cache;
 }
 
+@property (nonatomic, readonly) RMTileCache *cache;
+
 - (id) initWithSource: (id<RMTileSource>) source;
 - (void) didReceiveMemoryWarning;
 

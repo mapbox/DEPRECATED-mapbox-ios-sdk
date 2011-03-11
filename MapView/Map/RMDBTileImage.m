@@ -42,14 +42,16 @@
 	if (self != nil) {
 		// get the unique key for the tile
 		NSNumber* key = [NSNumber numberWithLongLong:RMTileKey(_tile)];
-		RMLog(@"fetching tile %@ (y:%d, x:%d)@%d", key, _tile.y, _tile.x, _tile.zoom);
+//		RMLog(@"fetching tile %@ (y:%d, x:%d)@%d", key, _tile.y, _tile.x, _tile.zoom);
 		
 		// fetch the image from the db
 		FMResultSet* rs = [db executeQuery:@"select image from tiles where tilekey = ?", key];
 		FMDBErrorCheck(db);
 		if ([rs next]) {
 			[self updateImageUsingImage:[[[UIImage alloc] initWithData:[rs dataForColumn:@"image"]] autorelease]];
-		}
+		} else {
+            [self updateImageUsingImage:[UIImage imageNamed:@"nodata.png"]];
+        }
 		[rs close];
 	}
 	return self;

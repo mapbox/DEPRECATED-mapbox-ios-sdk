@@ -30,16 +30,18 @@
 #import "RMTileCache.h"
 #import "RMTileImage.h"
 
+@interface RMTileCacheDAO ()
+- (NSUInteger)countTiles;
+@end
 
 @implementation RMTileCacheDAO
 
 -(void)configureDBForFirstUse
 {
+    [db executeQuery:@"PRAGMA synchronous=OFF"];
+    [db executeQuery:@"PRAGMA journal_mode=OFF"];
 	[db executeUpdate:@"CREATE TABLE IF NOT EXISTS ZCACHE (ztileHash INTEGER PRIMARY KEY, zlastUsed DOUBLE, zdata BLOB)"];
     [db executeUpdate:@"CREATE INDEX IF NOT EXISTS zlastUsedIndex ON ZCACHE(zLastUsed)"];
-    // adding more than once does not seem to break anything
-    [db executeUpdate:@"ALTER TABLE ZCACHE ADD COLUMN zInserted DOUBLE"];
-    [db executeUpdate:@"CREATE INDEX IF NOT EXISTS zInsertedIndex ON ZCACHE(zInserted)"];
 }
 
 -(id) initWithDatabase: (NSString*)path
@@ -47,8 +49,12 @@
 	if (![super init])
 		return nil;
 
+    writeQueue = [NSOperationQueue new];
+    [writeQueue setMaxConcurrentOperationCount:1];
+    writeQueueLock = [NSRecursiveLock new];
+
 	RMLog(@"Opening database at %@", path);
-	
+
 	db = [[FMDatabase alloc] initWithPath:path];
 	if (![db open])
 	{
@@ -57,129 +63,136 @@
 	}
 	
 	[db setCrashOnErrors:TRUE];
-        [db setShouldCacheStatements:TRUE];
+    [db setShouldCacheStatements:TRUE];
 	
 	[self configureDBForFirstUse];
 	
+    tileCount = [self countTiles];
+    
 	return self;
 }
 
 - (void)dealloc
 {
-	LogMethod();
-	[db release];
-	[super dealloc];
+    LogMethod();
+    [writeQueueLock lock];
+    [writeQueue release]; writeQueue = nil;
+    [writeQueueLock unlock];
+    [writeQueueLock release]; writeQueueLock = nil;
+    [db close]; [db release]; db = nil;
+    [super dealloc];
 }
 
-
--(NSUInteger) count
+- (NSUInteger)count
 {
-	FMResultSet *results = [db executeQuery:@"SELECT COUNT(ztileHash) FROM ZCACHE"];
+    return tileCount;
+}
+
+- (NSUInteger)countTiles
+{
+    [writeQueueLock lock];
 	
 	NSUInteger count = 0;
-	
+    FMResultSet *results = [db executeQuery:@"SELECT COUNT(ztileHash) FROM ZCACHE"];
 	if ([results next])
 		count = [results intForColumnIndex:0];
 	else
-	{
-		RMLog(@"Unable to count columns");
-	}
-	
+		RMLog(@"Unable to count columns");	
 	[results close];
+
+    [writeQueueLock unlock];
 	
 	return count;
 }
 
--(NSData*) dataForTile: (uint64_t) tileHash
+-(NSData *)dataForTile:(uint64_t)tileHash
 {
+    [writeQueueLock lock];
+
 	FMResultSet *results = [db executeQuery:@"SELECT zdata FROM ZCACHE WHERE ztilehash = ?", [NSNumber numberWithUnsignedLongLong:tileHash]];
 	
-	if ([db hadError])
-	{
+	if ([db hadError]) {
 		RMLog(@"DB error while fetching tile data: %@", [db lastErrorMessage]);
 		return nil;
 	}
-	
-	NSData *data = nil;
-	
+
+	NSData *data = nil;	
 	if ([results next])
-	{
 		data = [results dataForColumnIndex:0];
-	}
 	
 	[results close];
 	
+    [writeQueueLock unlock];
+
 	return data;
 }
 
 -(void) purgeTiles: (NSUInteger) count;
 {
-	RMLog(@"purging %u old tiles from db cache", count);
+    RMLog(@"purging %u old tiles from db cache", count);
 	
-	// does not work: "DELETE FROM ZCACHE ORDER BY zlastUsed LIMIT"
+    [writeQueueLock lock];
+    BOOL result = [db executeUpdate: @"DELETE FROM ZCACHE WHERE ztileHash IN (SELECT ztileHash FROM ZCACHE ORDER BY zlastUsed LIMIT ? )", [NSNumber numberWithUnsignedInt: count]];
+    [db executeQuery:@"VACUUM"];
+    tileCount = [self countTiles];
+    [writeQueueLock unlock];
 
-	BOOL result = [db executeUpdate: @"DELETE FROM ZCACHE WHERE ztileHash IN (SELECT ztileHash FROM ZCACHE ORDER BY zlastUsed LIMIT ? )", 
-				   [NSNumber numberWithUnsignedInt: count]];
-	if (result == NO) {
-		RMLog(@"Error purging cache");
-	}
-	
-}
-
--(void) purgeTilesFromBefore: (NSDate*) date;
-{
-    NSUInteger count = 0;
-    FMResultSet *results = [db executeQuery:@"SELECT COUNT(ztileHash) FROM ZCACHE WHERE zInserted < ?", date];
-	if ([results next]) {
-        count = [results intForColumnIndex:0];
-        RMLog(@"Will purge %i tile(s) from before %@", count, date);
-    }
-	[results close];
-    
-    if (count == 0) {
-        return;
-    }
-    
-	BOOL result = [db executeUpdate: @"DELETE FROM ZCACHE WHERE zInserted < ?", 
-				   date];
-	if (result == NO) {
-		RMLog(@"Error purging cache");
-	}
+    if (result == NO) {
+        RMLog(@"Error purging cache");
+    }        
 }
 
 -(void) removeAllCachedImages 
 {
-	BOOL result = [db executeUpdate: @"DELETE FROM ZCACHE"];
-	if (result == NO) {
-		RMLog(@"Error purging all cache");
-	}	
+    [writeQueue addOperationWithBlock:^{
+        [writeQueueLock lock];
+        BOOL result = [db executeUpdate: @"DELETE FROM ZCACHE"];
+        [db executeQuery:@"VACUUM"];
+        [writeQueueLock unlock];
+
+        if (result == NO) {
+            RMLog(@"Error purging all cache");
+        }
+        
+        tileCount = [self countTiles];
+    }];
 }
 
 -(void) touchTile: (uint64_t) tileHash withDate: (NSDate*) date
 {
-	BOOL result = [db executeUpdate: @"UPDATE ZCACHE SET zlastUsed = ? WHERE ztileHash = ? ", 
-				   date, [NSNumber numberWithUnsignedInt: tileHash]];
-	
-	if (result == NO) {
-		RMLog(@"Error touching tile");
-	}
+    [writeQueue addOperationWithBlock:^{
+        [writeQueueLock lock];
+        BOOL result = [db executeUpdate: @"UPDATE ZCACHE SET zlastUsed = ? WHERE ztileHash = ? ", date, [NSNumber numberWithUnsignedInt: tileHash]];
+        [writeQueueLock unlock];
+
+        if (result == NO) {
+            RMLog(@"Error touching tile");
+        }
+    }];
 }
 
 -(void) addData: (NSData*) data LastUsed: (NSDate*)date ForTile: (uint64_t) tileHash
 {
-	// Fixme
-//	RMLog(@"addData\t%d", tileHash);
-	BOOL result = [db executeUpdate:@"INSERT OR REPLACE INTO ZCACHE (ztileHash, zlastUsed, zInserted, zdata) VALUES (?, ?, ?, ?)", 
-		[NSNumber numberWithUnsignedLongLong:tileHash], date, [NSDate date], data];
-	if (result == NO)
-	{
-		RMLog(@"Error occured adding data");
-	}
+    [writeQueue addOperationWithBlock:^{
+//        RMLog(@"addData\t%d", tileHash);
+        
+        [writeQueueLock lock];
+        BOOL result = [db executeUpdate:@"INSERT OR IGNORE INTO ZCACHE (ztileHash, zlastUsed, zdata) VALUES (?, ?, ?)", 
+                       [NSNumber numberWithUnsignedLongLong:tileHash], date, data];
+        [writeQueueLock unlock];
+
+        if (result == NO)
+        {
+            RMLog(@"Error occured adding data");
+        } else
+            tileCount++;
+    }];
 }
 
 -(void)didReceiveMemoryWarning
 {
-	[db clearCachedStatements];
+    RMLog(@"Low memory in the tilecache");
+    [writeQueue cancelAllOperations];
 }
 
 @end

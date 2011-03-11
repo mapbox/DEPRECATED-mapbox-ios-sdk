@@ -125,21 +125,24 @@ typedef struct {
 	id<RMMapViewDelegate> delegate;
 	BOOL enableDragging;
 	BOOL enableZoom;
-        BOOL enableRotate;
+    BOOL enableRotate;
 	RMGestureDetails lastGesture;
 	float decelerationFactor;
 	BOOL deceleration;
-        CGFloat rotation;
+    CGFloat rotation;
 	
 @private
    	BOOL _delegateHasBeforeMapMove;
 	BOOL _delegateHasAfterMapMove;
+    BOOL _delegateHasAfterMapMoveDeceleration;
 	BOOL _delegateHasBeforeMapZoomByFactor;
 	BOOL _delegateHasAfterMapZoomByFactor;
 	BOOL _delegateHasBeforeMapRotate;
 	BOOL _delegateHasAfterMapRotate;
 	BOOL _delegateHasDoubleTapOnMap;
+	BOOL _delegateHasDoubleTapTwoFingersOnMap;
 	BOOL _delegateHasSingleTapOnMap;
+    BOOL _delegateHasLongSingleTapOnMap;
 	BOOL _delegateHasTapOnMarker;
 	BOOL _delegateHasTapOnLabelForMarker;
 	BOOL _delegateHasAfterMapTouch;
@@ -150,6 +153,8 @@ typedef struct {
 	NSTimer *_decelerationTimer;
 	CGSize _decelerationDelta;
 	
+    CGPoint _longPressPosition;
+    
 	BOOL _constrainMovement;
 	RMProjectedPoint NEconstraint, SWconstraint;
 	
@@ -175,8 +180,6 @@ typedef struct {
 
 @property (readonly) CGFloat rotation;
 
-- (id)initWithFrame:(CGRect)frame WithLocation:(CLLocationCoordinate2D)latlong;
-
 /// recenter the map on #latlong, expressed as CLLocationCoordinate2D (latitude/longitude)
 - (void)moveToLatLong: (CLLocationCoordinate2D)latlong;
 /// recenter the map on #aPoint, expressed in projected meters
@@ -192,6 +195,5 @@ typedef struct {
 - (void)didReceiveMemoryWarning;
 
 - (void)setRotation:(CGFloat)angle;
-
 
 @end

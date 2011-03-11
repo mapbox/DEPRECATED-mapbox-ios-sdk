@@ -37,6 +37,7 @@
 
 - (void) beforeMapMove: (RMMapView*) map;
 - (void) afterMapMove: (RMMapView*) map ;
+- (void) afterMapMoveDeceleration: (RMMapView*) map;
 
 - (void) beforeMapZoom: (RMMapView*) map byFactor: (float) zoomFactor near:(CGPoint) center;
 - (void) afterMapZoom: (RMMapView*) map byFactor: (float) zoomFactor near:(CGPoint) center;
@@ -45,7 +46,9 @@
 - (void) afterMapRotate: (RMMapView*) map toAngle: (CGFloat) angle;
 
 - (void) doubleTapOnMap: (RMMapView*) map At: (CGPoint) point;
+- (void) doubleTapTwoFingersOnMap: (RMMapView*) map At: (CGPoint) point;
 - (void) singleTapOnMap: (RMMapView*) map At: (CGPoint) point;
+- (void) longSingleTapOnMap: (RMMapView*) map At: (CGPoint) point;
 
 - (void) tapOnMarker: (RMMarker*) marker onMap: (RMMapView*) map;
 - (void) tapOnLabelForMarker: (RMMarker*) marker onMap: (RMMapView*) map;
