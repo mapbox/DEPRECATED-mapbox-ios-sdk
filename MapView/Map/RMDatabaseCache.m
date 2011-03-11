@@ -70,6 +70,10 @@
 	
 	self.databasePath = path;
 	dao = [[RMTileCacheDAO alloc] initWithDatabase:path];
+    if (!dao) {
+        [[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
+        dao = [[RMTileCacheDAO alloc] initWithDatabase:path];
+    }
 
 	if (dao == nil)
 		return nil;
@@ -79,7 +83,7 @@
 
 -(id) initWithTileSource: (id<RMTileSource>) source usingCacheDir: (BOOL) useCacheDir
 {
-	return [self initWithDatabase:[RMDatabaseCache dbPathForTileSource:source usingCacheDir: useCacheDir]];
+	return [self initWithDatabase:[RMDatabaseCache dbPathForTileSource:source usingCacheDir:useCacheDir]];
 }
 
 -(void) dealloc
@@ -119,14 +123,11 @@
 	/// \bug magic string literals
 	RMTileImage *image = (RMTileImage*)[notification object];
 	
-	@synchronized (self) {
-
-		if (capacity != 0) {
-			NSUInteger tilesInDb = [dao count];
-			if (capacity <= tilesInDb) {
-				[dao purgeTiles: MAX(minimalPurge, 1+tilesInDb-capacity)];
-			}
-		}
+    if (capacity != 0) {
+        NSUInteger tilesInDb = [dao count];
+        if (capacity <= tilesInDb) {
+            [dao purgeTiles: MAX(minimalPurge, 1+tilesInDb-capacity)];
+        }
 	
 		[dao addData:data LastUsed:[image lastUsedTime] ForTile:RMTileKey([image tile])];
 	}
@@ -145,45 +146,27 @@
 
 	NSData *data = nil;
 	
-	@synchronized (self) {
+    data = [dao dataForTile:RMTileKey(tile)];
+    if (data == nil)
+        return nil;
 	
-		data = [dao dataForTile:RMTileKey(tile)];
-		if (data == nil)
-			return nil;
-	
-		if (capacity != 0 && purgeStrategy == RMCachePurgeStrategyLRU) {
-			[dao touchTile: RMTileKey(tile) withDate: [NSDate date]];
-		}
-		
-	}
+    if (capacity != 0 && purgeStrategy == RMCachePurgeStrategyLRU) {
+        [dao touchTile: RMTileKey(tile) withDate: [NSDate date]];
+    }
 	
 	RMTileImage *image = [RMTileImage imageForTile:tile withData:data];
 //	RMLog(@"DB cache hit for tile %d %d %d", tile.x, tile.y, tile.zoom);
 	return image;
 }
 
--(void) purgeTilesFromBefore: (NSDate*) date
-{
-    @synchronized(self)
-    {
-        [dao purgeTilesFromBefore:date];
-    }
-}
-
 -(void)didReceiveMemoryWarning
 {
-        @synchronized(self) 
-        {
-		[dao didReceiveMemoryWarning];
-        }
+    [dao didReceiveMemoryWarning];
 }
 
 -(void) removeAllCachedImages 
 {
-        @synchronized(self) 
-        {
-		[dao removeAllCachedImages];
-        }
+    [dao removeAllCachedImages];
 }
 
 @end

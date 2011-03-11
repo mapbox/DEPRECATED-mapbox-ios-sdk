@@ -147,11 +147,11 @@
 {
 	//	RMLog(@"addTile: %d %d", tile.x, tile.y);
 	
-	RMTileImage *dummyTile = [RMTileImage dummyTile:tile];
-	RMTileImage *tileImage = [images member:dummyTile];
-	
+    RMTileImage *dummyTile = [RMTileImage dummyTile:tile];
+    RMTileImage *tileImage = [images member:dummyTile];
+
 	if (tileImage != nil)
-	{
+	{        
 		[tileImage setScreenLocation:screenLocation];
 		[images addObject:dummyTile];
 	}
@@ -214,7 +214,10 @@
 				[self addTile:normalisedTile At:screenLocation];
 			}
 		}
-
+        
+        // Performance issue!
+        break;
+        
 		// adjust rect for next zoom level down until we're at minimum
 		if (--rect.origin.tile.zoom <= minimumZoom)
 			break;

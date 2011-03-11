@@ -171,7 +171,7 @@
     return NO;
 }
 
-- (void) compainAboutInUse {
+- (void) complainAboutInUse {
     NSLog(@"The FMDatabase %@ is currently in use.", self);
     
     if (crashOnErrors) {
@@ -196,7 +196,7 @@
 - (sqlite_int64) lastInsertRowId {
     
     if (inUse) {
-        [self compainAboutInUse];
+        [self complainAboutInUse];
         return NO;
     }
     [self setInUse:YES];
@@ -216,7 +216,7 @@
     
     // FIXME - someday check the return codes on these binds.
     else if ([obj isKindOfClass:[NSData class]]) {
-        sqlite3_bind_blob(pStmt, idx, [obj bytes], (int)[obj length], SQLITE_STATIC);
+        sqlite3_bind_blob(pStmt, idx, [obj bytes], (int)[(NSData *)obj length], SQLITE_STATIC);
     }
     else if ([obj isKindOfClass:[NSDate class]]) {
         sqlite3_bind_double(pStmt, idx, [obj timeIntervalSince1970]);
@@ -253,7 +253,7 @@
 - (id) executeQuery:(NSString *)sql withArgumentsInArray:(NSArray*)arrayArgs orVAList:(va_list)args {
     
     if (inUse) {
-        [self compainAboutInUse];
+        [self complainAboutInUse];
         return nil;
     }
     
@@ -387,7 +387,7 @@
 - (BOOL) executeUpdate:(NSString*)sql withArgumentsInArray:(NSArray*)arrayArgs orVAList:(va_list)args {
     
     if (inUse) {
-        [self compainAboutInUse];
+        [self complainAboutInUse];
         return NO;
     }
     

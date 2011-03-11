@@ -30,6 +30,8 @@
 
 @implementation RMCachedTileSource
 
+@synthesize cache;
+
 - (id) initWithSource: (id<RMTileSource>) _source
 {
 	if ([_source isKindOfClass:[RMCachedTileSource class]])

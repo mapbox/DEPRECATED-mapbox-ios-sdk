@@ -31,7 +31,12 @@
 
 /// the interface between RMDatabaseCache and FMDB
 @interface RMTileCacheDAO : NSObject {
-	FMDatabase* db;	
+	FMDatabase* db;
+    
+    NSUInteger tileCount;
+    
+    NSOperationQueue *writeQueue;
+    NSRecursiveLock *writeQueueLock;
 }
 
 -(id) initWithDatabase: (NSString*)path;
@@ -41,7 +46,6 @@
 -(void) touchTile: (uint64_t) tileHash withDate: (NSDate*) date;
 -(void) addData: (NSData*) data LastUsed: (NSDate*)date ForTile: (uint64_t) tileHash;
 -(void) purgeTiles: (NSUInteger) count;
--(void) purgeTilesFromBefore: (NSDate*) date;
 -(void) removeAllCachedImages;
 -(void)didReceiveMemoryWarning;
 

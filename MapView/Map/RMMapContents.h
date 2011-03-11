@@ -116,6 +116,7 @@ enum {
 	float maxZoom;
 
     float screenScale;
+    RMProjectedRect tileSourceProjectedBounds;
 
 	id<RMTilesUpdateDelegate> tilesUpdateDelegate;
 }
@@ -129,7 +130,8 @@ enum {
 /// zoom level is clamped to range (minZoom, maxZoom)
 @property (readwrite) float zoom;
 
-@property (nonatomic, readwrite) float minZoom, maxZoom;
+@property (nonatomic, readwrite) float minZoom;
+@property (nonatomic, readwrite) float maxZoom;
 
 @property (nonatomic, assign) float screenScale;
 
@@ -182,6 +184,8 @@ enum {
 - (void)handleMemoryWarningNotification:(NSNotification *)notification;
 - (void)didReceiveMemoryWarning;
 
+- (BOOL) tileSourceBoundsContainProjectedPoint:(RMProjectedPoint) point;
+
 - (void)moveToLatLong: (CLLocationCoordinate2D)latlong;
 - (void)moveToProjectedPoint: (RMProjectedPoint)aPoint;
 
@@ -223,6 +227,7 @@ enum {
 - (RMSphericalTrapezium) latitudeLongitudeBoundingBoxForScreen;
 /// returns the smallest bounding box containing a rectangular region of the screen
 - (RMSphericalTrapezium) latitudeLongitudeBoundingBoxFor:(CGRect) rect;
+- (BOOL) projectedBounds:(RMProjectedRect)bounds containsPoint:(RMProjectedPoint)point;
 
 - (void)setRotation:(float)angle;
 

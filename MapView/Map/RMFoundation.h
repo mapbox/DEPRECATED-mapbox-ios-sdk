@@ -25,6 +25,9 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+#ifndef _FOUNDATION_H_
+#define _FOUNDATION_H_
+
 /*! \struct RMProjectedPoint 
  \brief coordinates, in projected meters, paralleling CGPoint */
 typedef struct {
@@ -52,3 +55,4 @@ RMProjectedRect  RMTranslateProjectedRectBy (RMProjectedRect rect,   RMProjected
 RMProjectedPoint  RMMakeProjectedPoint (double easting, double northing);
 RMProjectedRect  RMMakeProjectedRect (double easting, double northing, double width, double height);
 
+#endif
