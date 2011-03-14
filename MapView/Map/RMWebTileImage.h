@@ -26,13 +26,14 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import <Foundation/Foundation.h>
+
 #import "RMTileImage.h"
 
 static const NSUInteger kWebTileRetries = 30;
 
 extern NSString *RMWebTileImageErrorDomain;
-
 extern NSString *RMWebTileImageHTTPResponseCodeKey;
+
 enum {
     RMWebTileImageErrorUnexpectedHTTPResponse,
     RMWebTileImageErrorZeroLengthResponse,
@@ -41,9 +42,7 @@ enum {
 
 extern NSString *RMWebTileImageNotificationErrorKey;
 
-
-
-/// RMTileImage subclass: a tile image loaded from a URL.
+// RMTileImage subclass: a tile image loaded from a URL.
 @interface RMWebTileImage : RMTileImage {
     NSUInteger retries;
     NSError *lastError;
@@ -54,8 +53,8 @@ extern NSString *RMWebTileImageNotificationErrorKey;
 	NSMutableData *data;
 }
 
-- (id) initWithTile: (RMTile)tile FromURL:(NSString*)url;
-- (void) requestTile;
-- (void) startLoading:(NSTimer *)timer;
+- (id)initWithTile:(RMTile)tile fromURL:(NSString*)url;
+- (void)requestTile;
+- (void)startLoading:(NSTimer *)timer;
 
 @end

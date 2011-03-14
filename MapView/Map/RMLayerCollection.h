@@ -50,23 +50,18 @@
 	CGAffineTransform rotationTransform;
 }
 
-- (id)initForContents: (RMMapContents *)contents;
+- (id)initForContents:(RMMapContents *)contents;
 
-//- (void)insertSublayer:(RMMapLayer*) layer below:(RMMapLayer*)sibling;
-//- (void)insertSublayer:(RMMapLayer*) layer above:(RMMapLayer*)sibling;
-//- (void)removeSublayer:(RMMapLayer*) layer;
-
-- (void)moveToProjectedPoint: (RMProjectedPoint)aPoint;
-- (void)moveBy: (CGSize) delta;
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center;
+- (void)moveToProjectedPoint:(RMProjectedPoint)aPoint;
+- (void)moveBy:(CGSize)delta;
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center;
 - (void)removeSublayer:(CALayer *)layer;
 - (void)removeSublayers:(NSArray *)layers;
+
 /// (guess) recompute the screen coordinates for the sublayers (map markers, paths) 
 /// \deprecated name will change after 0.5
-- (void) correctPositionOfAllSublayers;
-- (BOOL) hasSubLayer:(CALayer *)layer;
-- (void) setRotationOfAllSublayers:(float) angle;
-//-(void) drawRect: (CGRect)rect;
-//-(CALayer*) layer;
+- (void)correctPositionOfAllSublayers;
+- (BOOL)hasSubLayer:(CALayer *)layer;
+- (void)setRotationOfAllSublayers:(float)angle;
 
 @end

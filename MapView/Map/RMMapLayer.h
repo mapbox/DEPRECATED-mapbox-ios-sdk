@@ -28,16 +28,17 @@
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
 
+#import "RMFoundation.h"
+
 @interface RMMapLayer : CAScrollLayer
 {
 }
 
-- (void)moveBy: (CGSize) delta;
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center;
+- (void)moveBy:(CGSize)delta;
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center;
 
 @end
 
-#import "RMFoundation.h"
 @protocol RMMovingMapLayer
 
 @property (assign, nonatomic) RMProjectedPoint projectedLocation;

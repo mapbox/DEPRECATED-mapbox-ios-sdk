@@ -29,43 +29,40 @@
 #import <CoreLocation/CoreLocation.h>
 
 #import "RMFoundation.h"
-#import "RMLatLong.h"
 
 /// Objective-C wrapper for PROJ4 map projection definitions.
 @interface RMProjection : NSObject
 {
 	/// This is actually a PROJ4 projPJ, but it is typed as void* so the proj_api doesn't have to be included
-	void*		internalProjection;
+	void *internalProjection;
 	
 	/// the size of the earth, in projected units (meters, most often)
 	RMProjectedRect	planetBounds;
 	
 	/// hardcoded to YES in #initWithString:InBounds:
-	BOOL		projectionWrapsHorizontally;
+	BOOL projectionWrapsHorizontally;
 }
 
-@property (readonly) void* internalProjection;
+@property (readonly) void *internalProjection;
 @property (readonly) RMProjectedRect planetBounds;
 @property (readwrite) BOOL projectionWrapsHorizontally;
 
 /// If #projectionWrapsHorizontally, returns #aPoint with its easting adjusted modulo Earth's diameter to be within projection's planetBounds. if !#projectionWrapsHorizontally, returns #aPoint unchanged.
-- (RMProjectedPoint) wrapPointHorizontally: (RMProjectedPoint) aPoint;
+- (RMProjectedPoint)wrapPointHorizontally:(RMProjectedPoint)aPoint;
 
 /// applies #wrapPointHorizontally to aPoint, and then clamps northing (Y coordinate) to projection's planetBounds
-- (RMProjectedPoint) constrainPointToBounds: (RMProjectedPoint) aPoint;
+- (RMProjectedPoint)constrainPointToBounds:(RMProjectedPoint)aPoint;
 
-+ (RMProjection *) googleProjection;
-+ (RMProjection *) EPSGLatLong;
-+ (RMProjection *) OSGB;
++ (RMProjection *)googleProjection;
++ (RMProjection *)EPSGLatLong;
 
 /// anybody know what the InBounds: parameter means?
-- (id) initWithString: (NSString*)params InBounds: (RMProjectedRect) projBounds;
+- (id)initWithString:(NSString *)params inBounds:(RMProjectedRect)projBounds;
 
 /// inverse project meters, return latitude/longitude
-/// \deprecated rename pending after 0.5
-- (RMLatLong)pointToLatLong:(RMProjectedPoint)aPoint;
+- (CLLocationCoordinate2D)pointToCoordinate:(RMProjectedPoint)aPoint;
+
 /// forward project latitude/longitude, return meters
-/// \deprecated rename pending after 0.5
-- (RMProjectedPoint)latLongToPoint:(RMLatLong)aLatLong;
+- (RMProjectedPoint)coordinateToPoint:(CLLocationCoordinate2D)aLatLong;
 
 @end

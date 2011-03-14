@@ -41,11 +41,11 @@
 
 #define kDefaultLineWidth 2
 
-- (id) initWithContents: (RMMapContents*)aContents
+- (id)initWithContents:(RMMapContents *)aContents
 {
-	if (![super init])
+	if (!(self = [super init]))
 		return nil;
-	
+
 	contents = aContents;
 
 	path = CGPathCreateMutable();
@@ -56,42 +56,41 @@
 	lineJoin = kCGLineJoinMiter;
 	lineColor = [UIColor blackColor];
 	fillColor = [UIColor redColor];
-	
+
 	self.masksToBounds = YES;
 	
 	scaleLineWidth = NO;
 	enableDragging = YES;
 	enableRotation = YES;
 	isFirstPoint = YES;
-	
-    if ( [self respondsToSelector:@selector(setContentsScale:)] )
+
+    if ([self respondsToSelector:@selector(setContentsScale:)])
     {
         [(id)self setValue:[[UIScreen mainScreen] valueForKey:@"scale"] forKey:@"contentsScale"];
     }
-	
+
 	return self;
 }
 
-- (id) initForMap: (RMMapView*)map
+- (id)initForMap:(RMMapView *)map
 {
 	return [self initWithContents:[map contents]];
 }
 
--(void) dealloc
+- (void)dealloc
 {
 	CGPathRelease(path);
     [self setLineColor:nil];
     [self setFillColor:nil];
-	
 	[super dealloc];
 }
 
-- (id<CAAction>)actionForKey:(NSString *)key
+- (id <CAAction>)actionForKey:(NSString *)key
 {
 	return nil;
 }
 
-- (void) recalculateGeometry
+- (void)recalculateGeometry
 {
 	RMMercatorToScreenProjection *projection = [contents mercatorToScreenProjection];
 	float scale = [projection metersPerPixel];
@@ -100,24 +99,23 @@
 	CGRect pixelBounds, screenBounds;
 	float offset;
 	const float outset = 100.0f; // provides a buffer off screen edges for when path is scaled or moved
-	
+
 	// The bounds are actually in mercators...
 	/// \bug if "bounds are actually in mercators", shouldn't be using a CGRect
 	scaledLineWidth = lineWidth;
-	if(!scaleLineWidth) {
+	if (!scaleLineWidth) {
 		renderedScale = [contents metersPerPixel];
 		scaledLineWidth *= renderedScale;
 	}
-	
+
 	CGRect boundsInMercators = CGPathGetBoundingBox(path);
 	boundsInMercators = CGRectInset(boundsInMercators, -scaledLineWidth, -scaledLineWidth);
-	pixelBounds = CGRectInset(boundsInMercators, -scaledLineWidth, -scaledLineWidth);
-	
+	pixelBounds = CGRectInset(boundsInMercators, -scaledLineWidth, -scaledLineWidth);	
 	pixelBounds = RMScaleCGRectAboutPoint(pixelBounds, 1.0f / scale, CGPointZero);
 	
 	// Clip bound rect to screen bounds.
 	// If bounds are not clipped, they won't display when you zoom in too much.
-	myPosition = [projection projectXYPoint: projectedLocation];
+	myPosition = [projection projectProjectedPoint:projectedLocation];
 	screenBounds = [contents screenBounds];
 	
 	// Clip top
@@ -142,32 +140,31 @@
 	if(offset > 0.0f) {
 		pixelBounds.size.width -= offset;
 	}
-	
+
 	[super setPosition:myPosition];
 	self.bounds = pixelBounds;
 	//RMLog(@"x:%f y:%f screen bounds: %f %f %f %f", myPosition.x, myPosition.y,  screenBounds.origin.x, screenBounds.origin.y, screenBounds.size.width, screenBounds.size.height);
 	//RMLog(@"new bounds: %f %f %f %f", self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
-	
+
 	self.anchorPoint = CGPointMake(-pixelBounds.origin.x / pixelBounds.size.width,-pixelBounds.origin.y / pixelBounds.size.height);
 	[self setNeedsDisplay];
 }
 
-- (void) addPointToXY: (RMProjectedPoint) point withDrawing: (BOOL)isDrawing
+- (void)addPointToXY:(RMProjectedPoint)point withDrawing:(BOOL)isDrawing
 {
 	//	RMLog(@"addLineToXY %f %f", point.x, point.y);
 
-
-	if(isFirstPoint)
+	if (isFirstPoint)
 	{
 		isFirstPoint = FALSE;
 		projectedLocation = point;
 
-		self.position = [[contents mercatorToScreenProjection] projectXYPoint: projectedLocation];
-		//		RMLog(@"screen position set to %f %f", self.position.x, self.position.y);
+		self.position = [[contents mercatorToScreenProjection] projectProjectedPoint: projectedLocation];
+		// RMLog(@"screen position set to %f %f", self.position.x, self.position.y);
 		CGPathMoveToPoint(path, NULL, 0.0f, 0.0f);
 	}
 	else
-	{
+    {
 		point.easting = point.easting - projectedLocation.easting;
 		point.northing = point.northing - projectedLocation.northing;
 
@@ -180,44 +177,41 @@
 
 		[self recalculateGeometry];
 	}
+
 	[self setNeedsDisplay];
 }
 
-- (void) moveToXY: (RMProjectedPoint) point
+- (void)moveToXY:(RMProjectedPoint)point
 {
-	[self addPointToXY: point withDrawing: FALSE];
+	[self addPointToXY:point withDrawing:FALSE];
 }
 
-- (void) moveToScreenPoint: (CGPoint) point
+- (void)moveToScreenPoint:(CGPoint)point
 {
-	RMProjectedPoint mercator = [[contents mercatorToScreenProjection] projectScreenPointToXY: point];
-	
-	[self moveToXY: mercator];
-}
-
-- (void) moveToLatLong: (RMLatLong) point
-{
-	RMProjectedPoint mercator = [[contents projection] latLongToPoint:point];
-	
+	RMProjectedPoint mercator = [[contents mercatorToScreenProjection] projectScreenPointToProjectedPoint:point];
 	[self moveToXY:mercator];
 }
 
-- (void) addLineToXY: (RMProjectedPoint) point
+- (void)moveToLatLong:(CLLocationCoordinate2D)point
 {
-	[self addPointToXY: point withDrawing: TRUE];
+	RMProjectedPoint mercator = [[contents projection] coordinateToPoint:point];
+	[self moveToXY:mercator];
 }
 
-- (void) addLineToScreenPoint: (CGPoint) point
+- (void)addLineToXY:(RMProjectedPoint)point
 {
-	RMProjectedPoint mercator = [[contents mercatorToScreenProjection] projectScreenPointToXY: point];
-	
-	[self addLineToXY: mercator];
+	[self addPointToXY:point withDrawing:TRUE];
 }
 
-- (void) addLineToLatLong: (RMLatLong) point
+- (void)addLineToScreenPoint:(CGPoint)point
 {
-	RMProjectedPoint mercator = [[contents projection] latLongToPoint:point];
-	
+	RMProjectedPoint mercator = [[contents mercatorToScreenProjection] projectScreenPointToProjectedPoint:point];
+	[self addLineToXY:mercator];
+}
+
+- (void)addLineToLatLong:(CLLocationCoordinate2D)point
+{
+	RMProjectedPoint mercator = [[contents projection] coordinateToPoint:point];
 	[self addLineToXY:mercator];
 }
 
@@ -228,7 +222,7 @@
 	float scale = 1.0f / [contents metersPerPixel];
 	
 	float scaledLineWidth = lineWidth;
-	if(!scaleLineWidth) {
+	if (!scaleLineWidth) {
 		scaledLineWidth *= renderedScale;
 	}
 	//NSLog(@"line width = %f, content scale = %f", scaledLineWidth, renderedScale);
@@ -243,55 +237,55 @@
 	CGContextSetLineJoin(theContext, lineJoin);	
 	CGContextSetStrokeColorWithColor(theContext, [lineColor CGColor]);
 	CGContextSetFillColorWithColor(theContext, [fillColor CGColor]);
-	
+
 	// according to Apple's documentation, DrawPath closes the path if it's a filled style, so a call to ClosePath isn't necessary
 	CGContextDrawPath(theContext, drawingMode);
 }
 
-- (void) closePath
+- (void)closePath
 {
 	CGPathCloseSubpath(path);
 }
 
-- (float) lineWidth
+- (float)lineWidth
 {
 	return lineWidth;
 }
 
-- (void) setLineWidth: (float) newLineWidth
+- (void)setLineWidth:(float)newLineWidth
 {
 	lineWidth = newLineWidth;
 	[self recalculateGeometry];
 }
 
-- (CGPathDrawingMode) drawingMode
+- (CGPathDrawingMode)drawingMode
 {
 	return drawingMode;
 }
 
-- (void) setDrawingMode: (CGPathDrawingMode) newDrawingMode
+- (void)setDrawingMode:(CGPathDrawingMode)newDrawingMode
 {
 	drawingMode = newDrawingMode;
 	[self setNeedsDisplay];
 }
 
-- (CGLineCap) lineCap
+- (CGLineCap)lineCap
 {
 	return lineCap;
 }
 
-- (void) setLineCap: (CGLineCap) newLineCap
+- (void)setLineCap:(CGLineCap)newLineCap
 {
 	lineCap = newLineCap;
 	[self setNeedsDisplay];
 }
 
-- (CGLineJoin) lineJoin
+- (CGLineJoin)lineJoin
 {
 	return lineJoin;
 }
 
-- (void) setLineJoin: (CGLineJoin) newLineJoin
+- (void)setLineJoin:(CGLineJoin)newLineJoin
 {
 	lineJoin = newLineJoin;
 	[self setNeedsDisplay];
@@ -301,6 +295,7 @@
 {
     return lineColor; 
 }
+
 - (void)setLineColor:(UIColor *)aLineColor
 {
     if (lineColor != aLineColor) {
@@ -314,6 +309,7 @@
 {
     return fillColor; 
 }
+
 - (void)setFillColor:(UIColor *)aFillColor
 {
     if (fillColor != aFillColor) {
@@ -323,8 +319,9 @@
     }
 }
 
-- (void)moveBy: (CGSize) delta {
-	if(enableDragging){
+- (void)moveBy:(CGSize)delta
+{
+	if (enableDragging) {
 		[super moveBy:delta];
 	}
 }

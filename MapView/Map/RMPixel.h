@@ -25,8 +25,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef _MATHUTILS_H_
-#define _MATHUTILS_H_
+#ifndef _RMPIXEL_H_
+#define _RMPIXEL_H_
 
 // Pixel coordinates are stored using apple-standard CGRects.
 

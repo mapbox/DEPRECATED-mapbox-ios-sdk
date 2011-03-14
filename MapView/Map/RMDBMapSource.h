@@ -25,43 +25,42 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-
 #import "RMTileSource.h"
 #import "RMProjection.h"
 #import "FMDatabase.h"
 
-@interface RMDBMapSource : NSObject<RMTileSource> {
+@interface RMDBMapSource : NSObject <RMTileSource> {
 	// tile database
 	FMDatabase* db;
-	
+
 	// projection
 	RMFractalTileProjection *tileProjection;
-	
+
 	// supported zoom levels
 	float minZoom;
 	float maxZoom;
 	int tileSideLength;
-	
+
 	// coverage area
 	CLLocationCoordinate2D topLeft;
 	CLLocationCoordinate2D bottomRight;
 	CLLocationCoordinate2D center;
 }
 
--(id)initWithPath:(NSString*)path;
+- (id)initWithPath:(NSString *)path;
 
--(int)tileSideLength;
+- (int)tileSideLength;
 
--(float) minZoom;
--(float) maxZoom;
+- (float)minZoom;
+- (float)maxZoom;
 
--(NSString *)shortName;
--(NSString *)longDescription;
--(NSString *)shortAttribution;
--(NSString *)longAttribution;
+- (NSString *)shortName;
+- (NSString *)longDescription;
+- (NSString *)shortAttribution;
+- (NSString *)longAttribution;
 
-- (CLLocationCoordinate2D) topLeftOfCoverage;
-- (CLLocationCoordinate2D) bottomRightOfCoverage;
-- (CLLocationCoordinate2D) centerOfCoverage;
+- (CLLocationCoordinate2D)topLeftOfCoverage;
+- (CLLocationCoordinate2D)bottomRightOfCoverage;
+- (CLLocationCoordinate2D)centerOfCoverage;
 
 @end

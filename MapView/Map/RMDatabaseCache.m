@@ -34,16 +34,16 @@
 
 @synthesize databasePath;
 
-+ (NSString*)dbPathForTileSource: (id<RMTileSource>) source usingCacheDir: (BOOL) useCacheDir
++ (NSString*)dbPathForTileSource:(id <RMTileSource>)source usingCacheDir:(BOOL)useCacheDir
 {
 	NSArray *paths;
-	
+
 	if (useCacheDir) {
 		paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
 	} else {
 		paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 	}
-	
+
 	if ([paths count] > 0) // Should only be one...
 	{
 		NSString *cachePath = [paths objectAtIndex:0];
@@ -55,19 +55,17 @@
 			[[NSFileManager defaultManager] createDirectoryAtPath:cachePath withIntermediateDirectories:NO attributes:nil error:nil];
 		}
 		
-		/// \bug magic string literals
 		NSString *filename = [NSString stringWithFormat:@"Map%@.sqlite", [source uniqueTilecacheKey]];
 		return [cachePath stringByAppendingPathComponent:filename];
 	}
 	return nil;
 }
 
--(id) initWithDatabase: (NSString*)path
+- (id)initWithDatabase:(NSString *)path
 {
-	if (![super init])
+	if (!(self = [super init]))
 		return nil;
-	
-	
+
 	self.databasePath = path;
 	dao = [[RMTileCacheDAO alloc] initWithDatabase:path];
     if (!dao) {
@@ -77,79 +75,73 @@
 
 	if (dao == nil)
 		return nil;
-	
+
 	return self;	
 }
 
--(id) initWithTileSource: (id<RMTileSource>) source usingCacheDir: (BOOL) useCacheDir
+- (id)initWithTileSource:(id <RMTileSource>)source usingCacheDir:(BOOL)useCacheDir
 {
 	return [self initWithDatabase:[RMDatabaseCache dbPathForTileSource:source usingCacheDir:useCacheDir]];
 }
 
--(void) dealloc
+- (void) dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[databasePath release];
 	[dao release];
-	
 	[super dealloc];
 }
 
--(void) setPurgeStrategy: (RMCachePurgeStrategy) theStrategy
+- (void)setPurgeStrategy:(RMCachePurgeStrategy)theStrategy
 {
 	purgeStrategy = theStrategy;
 }
 
--(void) setCapacity: (NSUInteger) theCapacity
+- (void)setCapacity:(NSUInteger)theCapacity
 {
 	capacity = theCapacity;
 }
 
--(void) setMinimalPurge: (NSUInteger) theMinimalPurge
+- (void)setMinimalPurge:(NSUInteger)theMinimalPurge
 {
 	minimalPurge = theMinimalPurge;
 }
 
--(void)addTile: (RMTile)tile WithImage: (RMTileImage*)image
+- (void)addTile:(RMTile)tile withImage:(RMTileImage *)image
 {
 	// The tile probably hasn't loaded any data yet... we must be patient.
-	
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addImageData:) name:RMMapImageLoadedNotification object:image];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addImageData:) name:RMMapImageLoadedNotification object:image];
 }
 
--(void) addImageData: (NSNotification *)notification
+- (void)addImageData:(NSNotification *)notification
 {
 	NSData *data = [[notification userInfo] objectForKey:@"data"];
-	/// \bug magic string literals
 	RMTileImage *image = (RMTileImage*)[notification object];
-	
+
     if (capacity != 0) {
         NSUInteger tilesInDb = [dao count];
         if (capacity <= tilesInDb) {
             [dao purgeTiles: MAX(minimalPurge, 1+tilesInDb-capacity)];
         }
 	
-		[dao addData:data LastUsed:[image lastUsedTime] ForTile:RMTileKey([image tile])];
+		[dao addData:data lastUsed:[image lastUsedTime] forTile:RMTileKey([image tile])];
 	}
-	
+
 	[[NSNotificationCenter defaultCenter] removeObserver:self
 													name:RMMapImageLoadedNotification
 												  object:image];
-	
-	
-//	RMLog(@"%d items in DB", [dao count]);
+
+    //	RMLog(@"%d items in DB", [dao count]);
 }
 
--(RMTileImage*) cachedImage:(RMTile)tile
+- (RMTileImage *)cachedImage:(RMTile)tile
 {
 //	RMLog(@"Looking for cached image in DB");
 
-	NSData *data = nil;
-	
-    data = [dao dataForTile:RMTileKey(tile)];
+	NSData *data = [dao dataForTile:RMTileKey(tile)];
     if (data == nil)
         return nil;
-	
+
     if (capacity != 0 && purgeStrategy == RMCachePurgeStrategyLRU) {
         [dao touchTile: RMTileKey(tile) withDate: [NSDate date]];
     }
@@ -159,12 +151,12 @@
 	return image;
 }
 
--(void)didReceiveMemoryWarning
+- (void)didReceiveMemoryWarning
 {
     [dao didReceiveMemoryWarning];
 }
 
--(void) removeAllCachedImages 
+- (void)removeAllCachedImages 
 {
     [dao removeAllCachedImages];
 }

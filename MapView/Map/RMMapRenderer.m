@@ -34,7 +34,7 @@
 // Designated initialiser
 - (id) initWithContent: (RMMapContents *)_contents
 {
-	if (![super init])
+	if (!(self = [super init]))
 		return nil;
 
 	content = _contents;
@@ -44,7 +44,7 @@
 	return self;
 }
 
--(void) dealloc
+- (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[super dealloc];
@@ -57,14 +57,15 @@
 }
 
 /// \bug calls a no-op
--(void)mapImageLoaded: (NSNotification*)notification
+- (void)mapImageLoaded:(NSNotification *)notification
 {
 	[self setNeedsDisplay];
 }
 
 /// \bug no-op
 - (void)drawRect:(CGRect)rect
-{ }
+{
+}
 
 /// \bug no-op
 - (void)setFrame:(CGRect)frame
@@ -73,11 +74,9 @@
 
 
 /// \bug no-op
-- (CALayer*) layer
+- (CALayer *)layer
 {
 	return nil;
 }
-
-
 
 @end

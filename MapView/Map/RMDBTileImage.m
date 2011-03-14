@@ -30,30 +30,30 @@
 // See RMDBMapSource.m for a full documentation on the database schema.
 //    
 
-
 #import "RMDBTileImage.h"
 
-#define FMDBErrorCheck(db)		{ if ([db hadError]) { NSLog(@"DB error %d on line %d: %@", [db lastErrorCode], __LINE__, [db lastErrorMessage]); } }
+#define FMDBErrorCheck(db) { if ([db hadError]) { NSLog(@"DB error %d on line %d: %@", [db lastErrorCode], __LINE__, [db lastErrorMessage]); } }
 
 @implementation RMDBTileImage
 
-- (id)initWithTile:(RMTile)_tile fromDB:(FMDatabase*)db {
-	self = [super initWithTile:_tile];
-	if (self != nil) {
-		// get the unique key for the tile
-		NSNumber* key = [NSNumber numberWithLongLong:RMTileKey(_tile)];
-//		RMLog(@"fetching tile %@ (y:%d, x:%d)@%d", key, _tile.y, _tile.x, _tile.zoom);
-		
-		// fetch the image from the db
-		FMResultSet* rs = [db executeQuery:@"select image from tiles where tilekey = ?", key];
-		FMDBErrorCheck(db);
-		if ([rs next]) {
-			[self updateImageUsingImage:[[[UIImage alloc] initWithData:[rs dataForColumn:@"image"]] autorelease]];
-		} else {
-            [self updateImageUsingImage:[UIImage imageNamed:@"nodata.png"]];
-        }
-		[rs close];
-	}
+- (id)initWithTile:(RMTile)_tile fromDB:(FMDatabase *)db
+{
+	if (!(self = [super initWithTile:_tile]))
+        return nil;
+    
+    // get the unique key for the tile
+    NSNumber *key = [NSNumber numberWithLongLong:RMTileKey(_tile)];
+
+    // fetch the image from the db
+    FMResultSet *result = [db executeQuery:@"select image from tiles where tilekey = ?", key];
+    FMDBErrorCheck(db);
+    if ([result next]) {
+        [self updateImageUsingImage:[[[UIImage alloc] initWithData:[result dataForColumn:@"image"]] autorelease]];
+    } else {
+        [self updateImageUsingImage:[UIImage imageNamed:@"nodata.png"]];
+    }
+    [result close];
+
 	return self;
 }
 

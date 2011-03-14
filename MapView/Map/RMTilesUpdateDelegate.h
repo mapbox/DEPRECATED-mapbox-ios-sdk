@@ -5,14 +5,12 @@
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-
-#import "RMLatLong.h"
+#import "RMGlobalConstants.h"
 
 @protocol RMTilesUpdateDelegate 
 
 @required
 
-- (void) regionUpdate: (RMSphericalTrapezium) region;
+- (void)regionUpdate:(RMSphericalTrapezium)region;
 
 @end

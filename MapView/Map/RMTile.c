@@ -26,27 +26,29 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "RMTile.h"
+
 #import <math.h>
 #import <stdio.h>
 
 uint64_t RMTileHash(RMTile tile)
 {
 	uint64_t accumulator = 0;
-	
-	for (int i = 0; i < tile.zoom; i++) {
+
+	for (int i = 0; i < tile.zoom; i++)
+    {
 		accumulator |= ((uint64_t)tile.x & (1LL<<i)) << i;
 		accumulator |= ((uint64_t)tile.y & (1LL<<i)) << (i+1);
 	}
 	accumulator |= 1LL<<(tile.zoom * 2);
-	
+
 	return accumulator;
 }
 
 uint64_t RMTileKey(RMTile tile)
 {
-        uint64_t zoom = (uint64_t) tile.zoom & 0xFFLL; // 8bits, 256 levels
-        uint64_t x = (uint64_t) tile.x & 0xFFFFFFFLL;  // 28 bits
-        uint64_t y = (uint64_t) tile.y & 0xFFFFFFFLL;  // 28 bits
+    uint64_t zoom = (uint64_t) tile.zoom & 0xFFLL; // 8bits, 256 levels
+    uint64_t x = (uint64_t) tile.x & 0xFFFFFFFLL;  // 28 bits
+    uint64_t y = (uint64_t) tile.y & 0xFFFFFFFLL;  // 28 bits
 
 	uint64_t key = (zoom << 56) | (x << 28) | (y << 0);
 
@@ -64,7 +66,7 @@ RMTile RMTileDummy()
 
 char RMTileIsDummy(RMTile tile)
 {
-	return tile.x == -1 && tile.y == -1 && tile.zoom == -1;
+	return tile.x == (uint32_t)-1 && tile.y == (uint32_t)-1 && tile.zoom == (short)-1;
 }
 
 char RMTilesEqual(RMTile one, RMTile two)
@@ -78,23 +80,5 @@ RMTileRect RMTileRectRound(RMTileRect rect)
 	rect.size.width = ceilf(rect.size.width + rect.origin.offset.x);
 	rect.size.height = ceilf(rect.size.height + rect.origin.offset.y);
 	rect.origin.offset = CGPointZero;
-	
 	return rect;
 }
-
-/*
-// Calculate and return the intersection of two rectangles
-TileRect TileRectIntersection(TileRect one, TileRect two)
-{
-	TileRect intersection;
-//	NSCAssert (one.origin.tile.zoom != two.origin.tile.zoom, @"Intersecting tiles do not have matching zoom");
-	intersection.origin.tile.x = maxi(one.origin.tile.x, two.origin.tile.x);
-	intersection.origin.tile.y = maxi(one.origin.tile.y, two.origin.tile.y);
-	
-	
-	
-	return intersection;
-}
-
-// Calculate and return the union of two rectangles
-TileRect TileRectUnion(TileRect one, TileRect two);*/

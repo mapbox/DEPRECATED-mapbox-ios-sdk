@@ -31,15 +31,16 @@
 
 @implementation RMLayerCollection
 
-- (id)initForContents: (RMMapContents *)_contents
+- (id)initForContents:(RMMapContents *)_contents
 {
-	if (![super init])
+	if (!(self = [super init]))
 		return nil;
 
 	sublayers = [[NSMutableArray alloc] init];
 	mapContents = _contents;
 	self.masksToBounds = YES;
 	rotationTransform = CGAffineTransformIdentity;
+
 	return self;
 }
 
@@ -51,44 +52,43 @@
 	[super dealloc];
 }
 
-
-- (void)correctScreenPosition: (CALayer *)layer
+- (void)correctScreenPosition:(CALayer *)layer
 {
 	if ([layer conformsToProtocol:@protocol(RMMovingMapLayer)])
 	{
 		// Kinda ugly.
-		CALayer<RMMovingMapLayer>* layer_with_proto = (CALayer<RMMovingMapLayer>*)layer;
-		if(layer_with_proto.enableDragging){
+		CALayer <RMMovingMapLayer> *layer_with_proto = (CALayer <RMMovingMapLayer> *)layer;
+		if (layer_with_proto.enableDragging) {
 			RMProjectedPoint location = [layer_with_proto projectedLocation];
-			layer_with_proto.position = [[mapContents mercatorToScreenProjection] projectXYPoint:location];
+			layer_with_proto.position = [[mapContents mercatorToScreenProjection] projectProjectedPoint:location];
 		}
-		if(!layer_with_proto.enableRotation){
+		if (!layer_with_proto.enableRotation) {
 			[layer_with_proto setAffineTransform:rotationTransform];
 		}
 	}
 }
 
-
-- (void)setSublayers: (NSArray*)array
+- (void)setSublayers:(NSArray *)array
 {
 	for (CALayer *layer in array)
 	{
 		[self correctScreenPosition:layer];
 	}
-@synchronized(sublayers) {	
-	[sublayers removeAllObjects];
-	[sublayers addObjectsFromArray:array];
-	[super setSublayers:array];
-}
+    
+    @synchronized(sublayers) {	
+        [sublayers removeAllObjects];
+        [sublayers addObjectsFromArray:array];
+        [super setSublayers:array];
+    }
 }
 
 - (void)addSublayer:(CALayer *)layer
 {
-@synchronized(sublayers) {
-	[self correctScreenPosition:layer];
-	[sublayers addObject:layer];
-	[super addSublayer:layer];
-}
+    @synchronized(sublayers) {
+        [self correctScreenPosition:layer];
+        [sublayers addObject:layer];
+        [super addSublayer:layer];
+    }
 }
 
 - (void)removeSublayer:(CALayer *)layer
@@ -112,48 +112,42 @@
 
 - (void)insertSublayer:(CALayer *)layer above:(CALayer *)siblingLayer
 {
-@synchronized(sublayers) {
-	[self correctScreenPosition:layer];
-	NSUInteger index = [sublayers indexOfObject:siblingLayer];
-	[sublayers insertObject:layer atIndex:index + 1];
-	[super insertSublayer:layer above:siblingLayer];
-}
+    @synchronized(sublayers) {
+        [self correctScreenPosition:layer];
+        NSUInteger index = [sublayers indexOfObject:siblingLayer];
+        [sublayers insertObject:layer atIndex:index + 1];
+        [super insertSublayer:layer above:siblingLayer];
+    }
 }
 
 - (void)insertSublayer:(CALayer *)layer below:(CALayer *)siblingLayer
 {
-@synchronized(sublayers) {
-	[self correctScreenPosition:layer];
-	NSUInteger index = [sublayers indexOfObject:siblingLayer];
-	[sublayers insertObject:layer atIndex:index];
-	[super insertSublayer:layer below:siblingLayer];
-}
+    @synchronized(sublayers) {
+        [self correctScreenPosition:layer];
+        NSUInteger index = [sublayers indexOfObject:siblingLayer];
+        [sublayers insertObject:layer atIndex:index];
+        [super insertSublayer:layer below:siblingLayer];
+    }
 }
 
 - (void)insertSublayer:(CALayer *)layer atIndex:(unsigned)index
 {
-@synchronized(sublayers) {
-	[self correctScreenPosition:layer];
-	[sublayers insertObject:layer atIndex:index];
-
-	/// \bug TODO: Fix this.
-	[super addSublayer:layer];	
+    @synchronized(sublayers) {
+        [self correctScreenPosition:layer];
+        [sublayers insertObject:layer atIndex:index];
+        
+        /// \bug TODO: Fix this.
+        [super addSublayer:layer];	
+    }
 }
-}
 
-/*
-- (void)insertSublayer:(RMMapLayer*) layer below:(RMMapLayer*)sibling;
-- (void)insertSublayer:(RMMapLayer*) layer above:(RMMapLayer*)sibling;
-- (void)removeSublayer:(RMMapLayer*) layer;
- */
-
-- (void)moveToProjectedPoint: (RMProjectedPoint)aPoint
+- (void)moveToProjectedPoint:(RMProjectedPoint)aPoint
 {
 	/// \bug TODO: Test this. Does it work?
 	[self correctPositionOfAllSublayers];
 }
 
-- (void)moveBy: (CGSize) delta
+- (void)moveBy:(CGSize)delta
 {
 	@synchronized(sublayers) {
 		for (id layer in sublayers)
@@ -166,40 +160,41 @@
 	}
 }
 
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center
 {
-@synchronized(sublayers) {
-	for (id layer in sublayers)
-	{
-		if ([layer respondsToSelector:@selector(zoomByFactor:near:)])
-			[layer zoomByFactor:zoomFactor near:center];
-	}
-}
+    @synchronized(sublayers) {
+        for (id layer in sublayers)
+        {
+            if ([layer respondsToSelector:@selector(zoomByFactor:near:)])
+                [layer zoomByFactor:zoomFactor near:center];
+        }
+    }
 }
 
-- (void) correctPositionOfAllSublayers
+- (void)correctPositionOfAllSublayers
 {
-@synchronized(sublayers) {
-	for (id layer in sublayers)
-	{
-		[self correctScreenPosition:layer];
-	}
-}
+    @synchronized(sublayers) {
+        for (id layer in sublayers)
+        {
+            [self correctScreenPosition:layer];
+        }
+    }
 }
 
-- (BOOL) hasSubLayer:(CALayer *)layer
+- (BOOL)hasSubLayer:(CALayer *)layer
 {
 	return [sublayers containsObject:layer];
 }
 
-- (void) setRotationOfAllSublayers:(float) angle
+- (void)setRotationOfAllSublayers:(float)angle
 {
 	rotationTransform = CGAffineTransformMakeRotation(angle); // store rotation transform for subsequent layers
+
 	@synchronized(sublayers) {
 		for (id layer in sublayers)
 		{
-			CALayer<RMMovingMapLayer>* layer_with_proto = (CALayer<RMMovingMapLayer>*)layer;
-			if(!layer_with_proto.enableRotation){
+			CALayer <RMMovingMapLayer> *layer_with_proto = (CALayer <RMMovingMapLayer> *)layer;
+			if (!layer_with_proto.enableRotation) {
 				[layer_with_proto setAffineTransform:rotationTransform];
 			}
 		}

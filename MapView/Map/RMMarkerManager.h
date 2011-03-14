@@ -34,31 +34,29 @@
 
 @interface RMMarkerManager : NSObject {
 	RMMapContents *contents;
-        CGAffineTransform rotationTransform;
+    CGAffineTransform rotationTransform;
 }
 
-@property (assign, readwrite)  RMMapContents *contents;
+@property (assign, readwrite) RMMapContents *contents;
 
 - (id)initWithContents:(RMMapContents *)mapContents;
 
-- (void) addMarker: (RMMarker*)marker AtLatLong:(CLLocationCoordinate2D)point;
-- (void) removeMarkers;
-- (void) hideAllMarkers;
-- (void) unhideAllMarkers;
+- (void)addMarker:(RMMarker *)marker atLatLong:(CLLocationCoordinate2D)point;
+- (void)removeMarkers;
+- (void)hideAllMarkers;
+- (void)unhideAllMarkers;
 
 - (NSArray *)markers;
-- (void) removeMarker:(RMMarker *)marker;
-- (void) removeMarkers:(NSArray *)markers;
-- (CGPoint) screenCoordinatesForMarker: (RMMarker *)marker;
-- (CLLocationCoordinate2D) latitudeLongitudeForMarker: (RMMarker *) marker;
-- (NSArray *) markersWithinScreenBounds;
-- (BOOL) isMarkerWithinScreenBounds:(RMMarker*)marker;
-- (BOOL) isMarker:(RMMarker*)marker withinBounds:(CGRect)rect;
-- (BOOL) managingMarker:(RMMarker*)marker;
-- (void) moveMarker:(RMMarker *)marker AtLatLon:(RMLatLong)point;
-- (void) moveMarker:(RMMarker *)marker AtXY:(CGPoint)point;
+- (void)removeMarker:(RMMarker *)marker;
+- (void)removeMarkers:(NSArray *)markers;
+- (CGPoint)screenCoordinatesForMarker:(RMMarker *)marker;
+- (CLLocationCoordinate2D)latitudeLongitudeForMarker:(RMMarker *)marker;
+- (NSArray *)markersWithinScreenBounds;
+- (BOOL)isMarkerWithinScreenBounds:(RMMarker *)marker;
+- (BOOL)isMarker:(RMMarker*)marker withinBounds:(CGRect)rect;
+- (BOOL)managingMarker:(RMMarker *)marker;
+- (void)moveMarker:(RMMarker *)marker atLatLon:(CLLocationCoordinate2D)point;
+- (void)moveMarker:(RMMarker *)marker atXY:(CGPoint)point;
 - (void)setRotation:(float)angle;
-
-
 
 @end

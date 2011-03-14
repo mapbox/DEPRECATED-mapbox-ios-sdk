@@ -32,7 +32,7 @@
 @class RMTileCache;
 
 /// Simple wrapper around a tilesource which checks the image cache first.
-@interface RMCachedTileSource : NSObject<RMTileSource>
+@interface RMCachedTileSource : NSObject <RMTileSource>
 {
 	id <RMTileSource> tileSource;
 	RMTileCache *cache;
@@ -40,21 +40,20 @@
 
 @property (nonatomic, readonly) RMTileCache *cache;
 
-- (id) initWithSource: (id<RMTileSource>) source;
-- (void) didReceiveMemoryWarning;
+- (id)initWithSource:(id <RMTileSource>)source;
+- (void)didReceiveMemoryWarning;
 
-/// Bleah ugly name.
-+ (RMCachedTileSource*) cachedTileSourceWithSource: (id<RMTileSource>) source;
++ (RMCachedTileSource *)cachedTileSourceWithSource:(id <RMTileSource>)source;
 
-- (id<RMTileSource>) underlyingTileSource;
+- (id <RMTileSource>)underlyingTileSource;
 
--(NSString *) tileURL: (RMTile) tile;
--(NSString *) tileFile: (RMTile) tile;
--(NSString *) tilePath;
+- (NSString *)tileURL:(RMTile)tile;
+- (NSString *)tileFile:(RMTile)tile;
+- (NSString *)tilePath;
 
--(NSString *)shortName;
--(NSString *)longDescription;
--(NSString *)shortAttribution;
--(NSString *)longAttribution;
+- (NSString *)shortName;
+- (NSString *)longDescription;
+- (NSString *)shortAttribution;
+- (NSString *)longAttribution;
 
 @end

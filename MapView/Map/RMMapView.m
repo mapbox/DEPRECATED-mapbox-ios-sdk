@@ -89,10 +89,12 @@
 - (id)initWithFrame:(CGRect)frame
 {
 	LogMethod();
-	if (self = [super initWithFrame:frame]) {
-        contents = nil;
-		[self performInitialSetup];
-	}
+	if (!(self = [super initWithFrame:frame]))
+        return nil;
+
+    contents = nil;
+    [self performInitialSetup];
+
 	return self;
 }
 
@@ -218,8 +220,8 @@
 	//store projections
 	RMProjection *proj=self.contents.projection;
 	
-	NEconstraint = [proj latLongToPoint:ne];
-	SWconstraint = [proj latLongToPoint:sw];
+	NEconstraint = [proj coordinateToPoint:ne];
+	SWconstraint = [proj coordinateToPoint:sw];
 	
 	_constrainMovement=YES;
 }
@@ -234,7 +236,7 @@
 		
 		//calculate new bounds after move
 		RMProjectedRect pBounds=[mtsp projectedBounds];
-		RMProjectedSize XYDelta = [mtsp projectScreenSizeToXY:delta];
+		RMProjectedSize XYDelta = [mtsp projectScreenSizeToProjectedSize:delta];
         CGSize sizeRatio = CGSizeMake(((delta.width == 0) ? 0 : XYDelta.width / delta.width),
 									  ((delta.height == 0) ? 0 : XYDelta.height / delta.height));
 		RMProjectedRect newBounds=pBounds;
@@ -437,21 +439,10 @@
 	return gesture;
 }
 
-- (void)resumeExpensiveOperations
-{
-	[RMMapContents setPerformExpensiveOperations:YES];
-}
-
-- (void)delayedResumeExpensiveOperations
-{
-	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resumeExpensiveOperations) object:nil];
-	[self performSelector:@selector(resumeExpensiveOperations) withObject:nil afterDelay:0.4];	
-}
-
 - (void)handleLongPress
 {
     if (_delegateHasLongSingleTapOnMap)
-        [delegate longSingleTapOnMap:self At:_longPressPosition];
+        [delegate longSingleTapOnMap:self at:_longPressPosition];
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
@@ -466,12 +457,7 @@
 			return;
 		}
 	}
-		
-	if (lastGesture.numTouches == 0)
-	{
-		[RMMapContents setPerformExpensiveOperations:NO];
-	}
-	
+
 	//	RMLog(@"touchesBegan %d", [[event allTouches] count]);
 	lastGesture = [self gestureDetails:[event allTouches]];
 
@@ -491,8 +477,6 @@
             [self performSelector:@selector(handleLongPress) withObject:nil afterDelay:0.5];
         }
     }
-    
-	[self delayedResumeExpensiveOperations];
 }
 
 /// \bug touchesCancelled should clean up, not pass event to markers
@@ -543,9 +527,9 @@
         BOOL twoFingerTap = [touches count] >= 2;
 		if (_delegateHasDoubleTapOnMap) {
             if (twoFingerTap) {
-                if (_delegateHasDoubleTapTwoFingersOnMap) [delegate doubleTapTwoFingersOnMap: self At: lastGesture.center];
+                if (_delegateHasDoubleTapTwoFingersOnMap) [delegate doubleTapTwoFingersOnMap:self at:lastGesture.center];
             } else {
-                if (_delegateHasDoubleTapOnMap) [delegate doubleTapOnMap: self At: lastGesture.center];
+                if (_delegateHasDoubleTapOnMap) [delegate doubleTapOnMap: self at:lastGesture.center];
             }
 		} else {
 			// Default behaviour matches built in maps.app
@@ -569,13 +553,7 @@
             decelerating = YES;
 		}
 	}
-	
-	// If there are no more fingers on the screen, resume any slow operations.
-	if (lastGesture.numTouches == 0 && !decelerating)
-	{
-        [self delayedResumeExpensiveOperations];
-	}
-    
+
 	if (touch.tapCount == 1) 
 	{
 		if(lastGesture.numTouches == 0)
@@ -600,7 +578,7 @@
                                                 [delegate tapOnLabelForMarker:(RMMarker*)[superlayer superlayer] onMap:self];
                                         } 
 				} else if (_delegateHasSingleTapOnMap) {
-					[delegate singleTapOnMap: self At: [touch locationInView:self]];
+					[delegate singleTapOnMap:self at:[touch locationInView:self]];
 				}
 			}
 		}
@@ -686,8 +664,6 @@
 	}
 	
 	lastGesture = newGesture;
-	
-	[self delayedResumeExpensiveOperations];
 }
 
 #pragma mark Deceleration
@@ -708,9 +684,6 @@
 - (void)incrementDeceleration:(NSTimer *)timer {
 	if (ABS(_decelerationDelta.width) < kMinDecelerationDelta && ABS(_decelerationDelta.height) < kMinDecelerationDelta) {
 		[self stopDeceleration];
-
-        // Resume any slow operations after deceleration completes
-        [self delayedResumeExpensiveOperations];
         
 		return;
 	}

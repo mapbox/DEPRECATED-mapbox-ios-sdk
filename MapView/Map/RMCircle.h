@@ -27,41 +27,39 @@
 
 #import <Foundation/Foundation.h>
 #import "RMFoundation.h"
-#import "RMLatLong.h"
 #import "RMMapLayer.h"
 
 @class RMMapContents;
 
-
 @interface RMCircle : RMMapLayer <RMMovingMapLayer> {
 @private
-	RMMapContents* mapContents;
-	CAShapeLayer* shapeLayer;
+	RMMapContents *mapContents;
+	CAShapeLayer *shapeLayer;
 	
-	RMLatLong latLong;
+	CLLocationCoordinate2D latLong;
 	RMProjectedPoint projectedLocation;
 	BOOL enableDragging;
 	BOOL enableRotation;
 	
-	UIColor* lineColor;
-	UIColor* fillColor;
+	UIColor *lineColor;
+	UIColor *fillColor;
 	CGFloat radiusInMeters;
 	CGFloat lineWidthInPixels;
 	BOOL scaleLineWidth;
-	
+
 	CGMutablePathRef circlePath;
 }
 
-@property (nonatomic, retain) CAShapeLayer* shapeLayer;
+@property (nonatomic, retain) CAShapeLayer *shapeLayer;
 @property (nonatomic, assign) RMProjectedPoint projectedLocation;
 @property (assign) BOOL enableDragging;
 @property (assign) BOOL enableRotation;
-@property (nonatomic, retain) UIColor* lineColor;
-@property (nonatomic, retain) UIColor* fillColor;
+@property (nonatomic, retain) UIColor *lineColor;
+@property (nonatomic, retain) UIColor *fillColor;
 @property (nonatomic, assign) CGFloat radiusInMeters;
 @property (nonatomic, assign) CGFloat lineWidthInPixels;
 
-- (id)initWithContents:(RMMapContents*)aContents radiusInMeters:(CGFloat)newRadiusInMeters latLong:(RMLatLong)newLatLong;
-- (void)moveToLatLong:(RMLatLong)newLatLong;
+- (id)initWithContents:(RMMapContents *)aContents radiusInMeters:(CGFloat)newRadiusInMeters latLong:(CLLocationCoordinate2D)newLatLong;
+- (void)moveToLatLong:(CLLocationCoordinate2D)newLatLong;
 
 @end

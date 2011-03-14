@@ -26,47 +26,50 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import <Foundation/Foundation.h>
+
 #import "RMTile.h"
-#import "RMLatLong.h"
 #import "RMFoundation.h"
+#import "RMGlobalConstants.h"
 
 @class RMTileImage;
 @class RMFractalTileProjection;
 @class RMTileLoader;
 @class RMTiledLayerController;
 @class RMTileCache;
-@protocol RMMercatorToTileProjection;
 @class RMProjection;
+
+@protocol RMMercatorToTileProjection;
 
 @protocol RMTileSource <NSObject>
 
--(RMTileImage *) tileImage: (RMTile) tile;
--(NSString *) tileURL: (RMTile) tile;
--(NSString *) tileFile: (RMTile) tile;
--(NSString *) tilePath;
--(id<RMMercatorToTileProjection>) mercatorToTileProjection;
--(RMProjection*) projection;
+- (RMTileImage *)tileImage:(RMTile)tile;
+- (NSString *)tileURL:(RMTile)tile;
+- (NSString *)tileFile:(RMTile)tile;
+- (NSString *)tilePath;
 
--(float) minZoom;
--(float) maxZoom;
+- (id <RMMercatorToTileProjection>)mercatorToTileProjection;
+- (RMProjection *)projection;
 
--(void) setMinZoom:(NSUInteger) aMinZoom;
--(void) setMaxZoom:(NSUInteger) aMaxZoom;
+- (float)minZoom;
+- (float)maxZoom;
 
--(RMSphericalTrapezium) latitudeLongitudeBoundingBox;
+- (void)setMinZoom:(NSUInteger)aMinZoom;
+- (void)setMaxZoom:(NSUInteger)aMaxZoom;
 
--(void) didReceiveMemoryWarning;
+- (RMSphericalTrapezium)latitudeLongitudeBoundingBox;
 
--(NSString *)uniqueTilecacheKey;
+- (NSString *)uniqueTilecacheKey;
 
--(NSString *)shortName;
--(NSString *)longDescription;
--(NSString *)shortAttribution;
--(NSString *)longAttribution;
+- (NSString *)shortName;
+- (NSString *)longDescription;
+- (NSString *)shortAttribution;
+- (NSString *)longAttribution;
 
 /*! \brief clear all images from the in-memory and on-disk image caches
  \bug This method belongs on RMCachedTileSource, not on RMTileSource, because an RMTileSource doesn't have a cache.
  */
 -(void)removeAllCachedImages;
+
+- (void)didReceiveMemoryWarning;
 
 @end

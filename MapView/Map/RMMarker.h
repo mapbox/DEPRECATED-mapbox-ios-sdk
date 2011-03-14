@@ -63,30 +63,27 @@
 + (UIFont *)defaultFont;
 
 /// returns RMMarker initialized with #image, and the default anchor point (0.5, 0.5)
-- (id) initWithUIImage: (UIImage*) image;
+- (id)initWithUIImage:(UIImage*) image;
 /// \brief returns RMMarker initialized with provided image and anchorPoint. 
 /// #anchorPoint x and y range from 0 to 1, normalized to the width and height of image, 
 /// referenced to upper left corner, y increasing top to bottom. To put the image's upper right corner on the marker's 
 /// #projectedLocation, use an anchor point of (1.0, 0.0);
-- (id) initWithUIImage: (UIImage*) image anchorPoint: (CGPoint) anchorPoint;
+- (id)initWithUIImage:(UIImage *)image anchorPoint:(CGPoint)anchorPoint;
 
 /// changes the labelView to a UILabel with supplied #text and default marker font, using existing text foreground/background color.
-- (void) changeLabelUsingText: (NSString*)text;
+- (void)changeLabelUsingText:(NSString *)text;
 /// changes the labelView to a UILabel with supplied #text and default marker font, positioning the text some weird way i don't understand yet. Uses existing text color/background color.
-- (void) changeLabelUsingText: (NSString*)text position:(CGPoint)position;
+- (void)changeLabelUsingText:(NSString *)text position:(CGPoint)position;
 /// changes the labelView to a UILabel with supplied #text and default marker font, changing this marker's text foreground/background colors for this and future text strings.
-- (void) changeLabelUsingText: (NSString*)text font:(UIFont*)font foregroundColor:(UIColor*)textColor backgroundColor:(UIColor*)backgroundColor;
+- (void)changeLabelUsingText:(NSString *)text font:(UIFont *)font foregroundColor:(UIColor *)textColor backgroundColor:(UIColor *)backgroundColor;
 /// changes the labelView to a UILabel with supplied #text and default marker font, changing this marker's text foreground/background colors for this and future text strings; modifies position as in #changeLabelUsingText:position.
-- (void) changeLabelUsingText: (NSString*)text position:(CGPoint)position font:(UIFont*)font foregroundColor:(UIColor*)textColor backgroundColor:(UIColor*)backgroundColor;
+- (void)changeLabelUsingText:(NSString *)text position:(CGPoint)position font:(UIFont *)font foregroundColor:(UIColor *)textColor backgroundColor:(UIColor *)backgroundColor;
 
-- (void) toggleLabel;
-- (void) showLabel;
-- (void) hideLabel;
+- (void)toggleLabel;
+- (void)showLabel;
+- (void)hideLabel;
 
-- (void) replaceUIImage:(UIImage*)image;
-- (void) replaceUIImage:(UIImage*)image anchorPoint:(CGPoint)anchorPoint;
-
-
-- (void) dealloc;
+- (void)replaceUIImage:(UIImage *)image;
+- (void)replaceUIImage:(UIImage *)image anchorPoint:(CGPoint)anchorPoint;
 
 @end

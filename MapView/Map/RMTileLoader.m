@@ -24,6 +24,7 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
+
 #import "RMGlobalConstants.h"
 #import "RMTileLoader.h"
 
@@ -40,69 +41,69 @@
 
 @synthesize loadedBounds, loadedZoom;
 
--(id) init
+- (id)init
 {
-	if (![self initWithContent: nil])
+	if (![self initWithContent:nil])
 		return nil;
-	
+
 	return self;
 }
 
--(id) initWithContent: (RMMapContents *)_contents
+- (id)initWithContent:(RMMapContents *)_contents
 {
-	if (![super init])
+	if (!(self = [super init]))
 		return nil;
-	
+
 	content = _contents;
-	
+
 	[self clearLoadedBounds];
 	loadedTiles.origin.tile = RMTileDummy();
-	
+
 	suppressLoading = NO;
-	
+
 	return self;
 }
 
--(void) dealloc
+- (void)dealloc
 {
 	[super dealloc];
 }
 
--(void) clearLoadedBounds
+- (void)clearLoadedBounds
 {
 	loadedBounds = CGRectZero;
 }
 
--(BOOL) screenIsLoaded
+- (BOOL)screenIsLoaded
 {
 	//	RMTileRect targetRect = [content tileBounds];
 	BOOL contained = CGRectContainsRect(loadedBounds, [content screenBounds]);
-	
-	int targetZoom = (int)([[content mercatorToTileProjection] calculateNormalisedZoomFromScale:[content scaledMetersPerPixel]]);
-	if((targetZoom > content.maxZoom) || (targetZoom < content.minZoom))
-          RMLog(@"target zoom %d is outside of RMMapContents limits %f to %f",
-			  targetZoom, content.minZoom, content.maxZoom);
+
+	NSUInteger targetZoom = (NSUInteger)([[content mercatorToTileProjection] calculateNormalisedZoomFromScale:[content scaledMetersPerPixel]]);
+	if ((targetZoom > content.maxZoom) || (targetZoom < content.minZoom))
+    {
+          RMLog(@"target zoom %d is outside of RMMapContents limits %f to %f", targetZoom, content.minZoom, content.maxZoom);
+    }
+    
 	if (contained == NO)
 	{
-		//		RMLog(@"reassembling because its not contained");
+        // RMLog(@"reassembling because its not contained");
 	}
 	
 	if (targetZoom != loadedZoom)
 	{
-		//		RMLog(@"reassembling because target zoom = %f, loaded zoom = %d", targetZoom, loadedZoom);
+		// RMLog(@"reassembling because target zoom = %f, loaded zoom = %d", targetZoom, loadedZoom);
 	}
-	
+
 	return contained && targetZoom == loadedZoom;
 }
 
-
--(void) updateLoadedImages
+- (void)updateLoadedImages
 {
 	if (suppressLoading)
 		return;
-	
-	if ([content mercatorToTileProjection] == nil || [content  
-													  mercatorToScreenProjection] == nil)
+
+	if ([content mercatorToTileProjection] == nil || [content mercatorToScreenProjection] == nil)
 		return;
 
 	if ([self screenIsLoaded])
@@ -111,62 +112,27 @@
 	//RMLog(@"updateLoadedImages initial count = %d", [[content imagesOnScreen] count]);
 	
 	RMTileRect newTileRect = [content tileBounds];
-	
+
 	RMTileImageSet *images = [content imagesOnScreen];
 	images.zoom = newTileRect.origin.tile.zoom;
-	CGRect newLoadedBounds = [images addTiles:newTileRect ToDisplayIn:
-							  [content screenBounds]];
+	CGRect newLoadedBounds = [images addTiles:newTileRect toDisplayIn:[content screenBounds]];
 	//RMLog(@"updateLoadedImages added count = %d", [images count]);
-	
 	
 	if (!RMTileIsDummy(loadedTiles.origin.tile))
 	{
 		[images removeTilesOutsideOf:newTileRect];
 	}
-	
+
 	//RMLog(@"updateLoadedImages final count = %d", [images count]);
-	
+
 	loadedBounds = newLoadedBounds;
 	loadedZoom = newTileRect.origin.tile.zoom;
 	loadedTiles = newTileRect;
-	
+
 	[content tilesUpdatedRegion:newLoadedBounds];
-	
 } 
 
-/*
- -(void) updateLoadedImages
- {
- if (suppressLoading)
- return;
- 
- if ([content mercatorToTileProjection] == nil || [content mercatorToScreenProjection] == nil)
- return;
- 
- if ([self screenIsLoaded])
- return;
- 
- RMLog(@"assemble count = %d", [[content imagesOnScreen] count]);
- 
- RMTileRect newTileRect = [content tileBounds];
- 
- RMTileImageSet *images = [content imagesOnScreen];
- CGRect newLoadedBounds = [images addTiles:newTileRect ToDisplayIn:[content screenBounds]];
- RMLog(@"-> mid count = %d", [images count]);
- 
- if (!RMTileIsDummy(loadedTiles.origin.tile))
- [images removeTiles:loadedTiles];
- 
- RMLog(@"-> count = %d", [images count]);
- 
- loadedBounds = newLoadedBounds;
- loadedZoom = newTileRect.origin.tile.zoom;
- loadedTiles = newTileRect;
- 
- [content tilesUpdatedRegion:newLoadedBounds];
- }*/
-
-- (void)moveBy: (CGSize) delta
+- (void)moveBy:(CGSize)delta
 {
 	//	RMLog(@"loadedBounds %f %f %f %f -> ", loadedBounds.origin.x, loadedBounds.origin.y, loadedBounds.size.width, loadedBounds.size.height);
 	loadedBounds = RMTranslateCGRectBy(loadedBounds, delta);
@@ -174,18 +140,18 @@
 	[self updateLoadedImages];
 }
 
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center
 {
 	loadedBounds = RMScaleCGRectAboutPoint(loadedBounds, zoomFactor, center);
 	[self updateLoadedImages];
 }
 
-- (BOOL) suppressLoading
+- (BOOL)suppressLoading
 {
 	return suppressLoading;
 }
 
-- (void) setSuppressLoading: (BOOL) suppress
+- (void)setSuppressLoading:(BOOL)suppress
 {
 	suppressLoading = suppress;
 	
@@ -203,10 +169,5 @@
 	[self clearLoadedBounds];
 	[self updateLoadedImages];
 }
-
-//-(BOOL) containsRect: (CGRect)bounds
-//{
-//	return CGRectContainsRect(loadedBounds, bounds);
-//}
 
 @end

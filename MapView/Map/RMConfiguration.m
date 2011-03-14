@@ -27,38 +27,33 @@
 
 #import "RMConfiguration.h"
 
-static RMConfiguration* RMConfigurationSharedInstance = nil;
+static RMConfiguration *RMConfigurationSharedInstance = nil;
 
 @implementation RMConfiguration
 
-+ (RMConfiguration*) configuration
++ (RMConfiguration *)configuration
 {
-	
 	@synchronized (RMConfigurationSharedInstance) {
-		if (RMConfigurationSharedInstance != nil) return RMConfigurationSharedInstance;
+		if (RMConfigurationSharedInstance != nil)
+            return RMConfigurationSharedInstance;
 	
-		/// \bug magic string literals
-		RMConfigurationSharedInstance = [[RMConfiguration alloc] 
-										 initWithPath: [[NSBundle mainBundle] pathForResource:@"routeme" ofType:@"plist"]];
-
+		RMConfigurationSharedInstance = [[RMConfiguration alloc] initWithPath: [[NSBundle mainBundle] pathForResource:@"routeme" ofType:@"plist"]];
 		return RMConfigurationSharedInstance;
 	}
+
 	return nil;
 }
 
-
-- (RMConfiguration*) initWithPath: (NSString*) path
+- (RMConfiguration *)initWithPath:(NSString *)path
 {
-	self = [super init];
-	
-	if (self==nil) return nil;
-	
+	if (!(self = [super init]))
+        return nil;
+
 	NSData *plistData;
 	NSString *error;
 	NSPropertyListFormat format;
 
-	if (path==nil) 
-	{
+	if (path==nil) {
 		propList = nil;
 		return self;
 	}
@@ -66,14 +61,12 @@ static RMConfiguration* RMConfigurationSharedInstance = nil;
 	RMLog(@"reading configuration from %@", path);	
 	plistData = [NSData dataWithContentsOfFile:path];
 
-	propList = [[NSPropertyListSerialization 
-					propertyListFromData:plistData
-					mutabilityOption:NSPropertyListImmutable
-					format:&format
-					errorDescription:&error] retain];
+	propList = [[NSPropertyListSerialization propertyListFromData:plistData
+                                                 mutabilityOption:NSPropertyListImmutable
+                                                           format:&format
+                                                 errorDescription:&error] retain];
 
-	if(!propList)
-	{
+	if (!propList) {
 		RMLog(@"problem reading from %@: %@", path, error);
 		[error release];
 	}
@@ -82,17 +75,17 @@ static RMConfiguration* RMConfigurationSharedInstance = nil;
 }
 	
 
-- (void) dealloc
+- (void)dealloc
 {
-	[propList release];
+	[propList release]; propList = nil;
 	[super dealloc];
 }
 
-
-- (NSDictionary*) cacheConfiguration
+- (NSDictionary *)cacheConfiguration
 {
-	if (propList==nil) return nil;
-	/// \bug magic string literals
+	if (propList==nil)
+        return nil;
+    
 	return [propList objectForKey: @"caches"];
 }
 

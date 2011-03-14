@@ -92,7 +92,6 @@ svn checkout http://route-me.googlecode.com/svn/trunk/ route-me-read-only
 
 #import "RMNotifications.h"
 #import "RMFoundation.h"
-#import "RMLatLong.h"
 #import "RMMapViewDelegate.h"
 #import "RMMapContents.h"
 

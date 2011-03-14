@@ -27,8 +27,9 @@
 
 #import "RMTileImage.h"
 
-@interface RMDBTileImage : RMTileImage {}
+@interface RMDBTileImage : RMTileImage {
+}
 
-- (id)initWithTile:(RMTile)tile fromDB:(FMDatabase*)db;
+- (id)initWithTile:(RMTile)tile fromDB:(FMDatabase *)db;
 
 @end

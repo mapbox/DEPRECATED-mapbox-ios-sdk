@@ -24,6 +24,7 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
+
 #import "RMGlobalConstants.h"
 #import "RMCoreAnimationRenderer.h"
 #import <QuartzCore/QuartzCore.h>
@@ -35,11 +36,11 @@
 
 @implementation RMCoreAnimationRenderer
 
-- (id) initWithContent: (RMMapContents *)_contents
+- (id)initWithContent:(RMMapContents *)_contents
 {
-	if (![super initWithContent:_contents])
+	if (!(self = [super initWithContent:_contents]))
 		return nil;
-	
+
 	// NOTE: RMMapContents may still be initialising when this function
 	//       is called. Be careful using any of methods - they might return
 	//       strange data.
@@ -49,19 +50,18 @@
 	layer.masksToBounds = YES;
 	// If the frame is set incorrectly here, it will be fixed when setRenderer is called in RMMapContents
 	layer.frame = [content screenBounds];
-	
+
 	NSMutableDictionary *customActions = [NSMutableDictionary dictionaryWithDictionary:[layer actions]];
 	[customActions setObject:[NSNull null] forKey:@"sublayers"];
 	layer.actions = customActions;
-	
 	layer.delegate = self;
-	
+
 	tiles = [[NSMutableArray alloc] init];
 
 	return self;
 }
 
--(void) dealloc
+- (void)dealloc
 {
 	[tiles release];
 	[layer release];
@@ -69,42 +69,35 @@
 }
 
 /// \bug this is a no-op
--(void)mapImageLoaded: (NSNotification*)notification
+- (void)mapImageLoaded:(NSNotification *)notification
 {
 }
 
-- (id<CAAction>)actionForLayer:(CALayer *)theLayer
-                        forKey:(NSString *)key
+- (id <CAAction>)actionForLayer:(CALayer *)theLayer forKey:(NSString *)key
 {
 	if (theLayer == layer)
 	{
 //		RMLog(@"base layer key: %@", key);
 		return nil;
 	}
-	
-	//	|| [key isEqualToString:@"onLayout"]
-	if ([key isEqualToString:@"position"]
-		|| [key isEqualToString:@"bounds"])
+
+	if ([key isEqualToString:@"position"] || [key isEqualToString:@"bounds"])
 		return nil;
-//		return (id<CAAction>)[NSNull null];
-	else
-	{
+	else {
 //		RMLog(@"key: %@", key);
-		
 		return nil;
 	}
 }
 
-- (void)tileAdded: (RMTile) tile WithImage: (RMTileImage*) image
+- (void)tileAdded:(RMTile)tile withImage:(RMTileImage *)image
 {
 //	RMLog(@"tileAdded: %d %d %d at %f %f %f %f", tile.x, tile.y, tile.zoom, image.screenLocation.origin.x, image.screenLocation.origin.y,
 //		  image.screenLocation.size.width, image.screenLocation.size.height);
 	
 //	RMLog(@"tileAdded");
-	
+
 	NSUInteger min = 0, max = [tiles count];
 	CALayer *sublayer = [image layer];
-
 	sublayer.delegate = self;
 
 	while (min < max) {
@@ -125,7 +118,7 @@
 	[layer insertSublayer:sublayer atIndex:min];
 }
 
--(void) tileRemoved: (RMTile) tile
+- (void)tileRemoved:(RMTile)tile
 {
 	RMTileImage *image = nil;
 
@@ -141,10 +134,10 @@
 			break;
 		}
 	}
-	
+
 //	RMLog(@"tileRemoved: %d %d %d at %f %f %f %f", tile.x, tile.y, tile.zoom, image.screenLocation.origin.x, image.screenLocation.origin.y,
 //		  image.screenLocation.size.width, image.screenLocation.size.height);
-	
+
 	[[image layer] removeFromSuperlayer];
 }
 
@@ -153,41 +146,9 @@
 	layer.frame = [content screenBounds];
 }
 
-- (CALayer*) layer
+- (CALayer *)layer
 {
 	return layer;
 }
-
-/*
-- (void)moveBy: (CGSize) delta
-{
-	[CATransaction begin];
-	[CATransaction setValue:[NSNumber numberWithFloat:0.0f]
-					 forKey:kCATransactionAnimationDuration];
-	
-	[CATransaction setValue:(id)kCFBooleanTrue
-					 forKey:kCATransactionDisableActions];
-	
-	[super moveBy:delta];
-	[tileLoader moveBy:delta];
-
-	[CATransaction commit];
-}
-
-- (void)zoomByFactor: (float) zoomFactor Near:(CGPoint) center
-{
-	[CATransaction begin];
-	[CATransaction setValue:[NSNumber numberWithFloat:0.0f]
-					 forKey:kCATransactionAnimationDuration];
-	
-	[CATransaction setValue:(id)kCFBooleanTrue
-					 forKey:kCATransactionDisableActions];
-	
-	[super zoomByFactor:zoomFactor Near:center];
-	[tileLoader zoomByFactor:zoomFactor Near:center];
-	
-	[CATransaction commit];
-}
-*/
 
 @end

@@ -30,6 +30,7 @@
 
 // P.S. The list isn't full. Need to add missing header files, when required
 
+#import "RMLatLong.h"
 #import "RMAbstractMercatorWebSource.h"
 #import "RMCircle.h"
 #import "RMMapContents.h"

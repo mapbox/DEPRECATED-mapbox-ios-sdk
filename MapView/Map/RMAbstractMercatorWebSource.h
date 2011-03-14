@@ -35,32 +35,16 @@
 #define kDefaultLatLonBoundingBox ((RMSphericalTrapezium){.northeast = {.latitude = 90, .longitude = 180}, .southwest = {.latitude = -90, .longitude = -180}})
 #pragma mark --- end constants ---
 
-@protocol RMAbstractMercatorWebSource
-
--(NSString*) tileURL: (RMTile) tile;
-
-@end
-
 @interface RMAbstractMercatorWebSource : NSObject <RMTileSource> {
 	RMFractalTileProjection *tileProjection;
 	BOOL networkOperations;
 }
 
--(id) init;
+- (id)init;
 
--(void) networkOperationsNotification: (NSNotification*) notification;
+- (void)networkOperationsNotification:(NSNotification *)notification;
 
--(int) tileSideLength;
--(void) setTileSideLength: (NSUInteger) aTileSideLength;
-
--(float) minZoom;
--(float) maxZoom;
-
--(RMSphericalTrapezium) latitudeLongitudeBoundingBox;
-
--(NSString *)shortName;
--(NSString *)longDescription;
--(NSString *)shortAttribution;
--(NSString *)longAttribution;
+- (int)tileSideLength;
+- (void)setTileSideLength:(NSUInteger)aTileSideLength;
 
 @end

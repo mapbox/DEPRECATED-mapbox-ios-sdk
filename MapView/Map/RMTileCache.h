@@ -37,41 +37,41 @@ typedef enum {
 } RMCachePurgeStrategy;
 
 
-@protocol RMTileCache<NSObject>
+@protocol RMTileCache <NSObject>
 
 /// Returns the cached image if it exists. nil otherwise.
--(RMTileImage*) cachedImage:(RMTile)tile;
--(void)didReceiveMemoryWarning;
+- (RMTileImage *)cachedImage:(RMTile)tile;
+- (void)didReceiveMemoryWarning;
 
 @optional
 
--(void)addTile: (RMTile)tile WithImage: (RMTileImage*)image;
+- (void)addTile:(RMTile)tile withImage:(RMTileImage*)image;
 /// removes all tile images from the memory and disk subcaches
--(void)removeAllCachedImages;
+- (void)removeAllCachedImages;
 
 @end
 
 
-@interface RMTileCache : NSObject<RMTileCache>
+@interface RMTileCache : NSObject <RMTileCache>
 {
 	NSMutableArray *caches;
 }
 
--(id)initWithTileSource: (id<RMTileSource>) tileSource;
+- (id)initWithTileSource:(id <RMTileSource>)tileSource;
 
-+(NSNumber*) tileHash: (RMTile)tile;
++ (NSNumber *)tileHash:(RMTile)tile;
 
-/// Add tile to cache
+// Add tile to cache
 /*! 
  \bug Calls -makeSpaceInCache for every tile/image addition. -makeSpaceInCache does a linear scan of its contents at each call.
 
  \bug Since RMTileImage has an RMTile ivar, this API should be simplified to just -addImage:.
  */
--(void)addTile: (RMTile)tile WithImage: (RMTileImage*)image;
+- (void)addTile:(RMTile)tile withImage:(RMTileImage *)image;
 
-/// Add another cache to the chain
--(void)addCache: (id<RMTileCache>)cache;
+// Add another cache to the chain
+- (void)addCache:(id <RMTileCache>)cache;
 
--(void)didReceiveMemoryWarning;
+- (void)didReceiveMemoryWarning;
 
 @end

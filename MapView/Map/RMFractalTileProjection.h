@@ -30,29 +30,29 @@
 
 @class RMProjection;
 
-@interface RMFractalTileProjection : NSObject<RMMercatorToTileProjection> {
-	/// Maximum zoom for which our tile server stores images
+@interface RMFractalTileProjection : NSObject <RMMercatorToTileProjection> {
+	// Maximum zoom for which our tile server stores images
 	NSUInteger maxZoom, minZoom;
-	
-	/// projected bounds of the planet, in meters
+
+	// projected bounds of the planet, in meters
 	RMProjectedRect planetBounds;
-	
-	/// Normally 256. This class assumes tiles are square.
+
+	// Normally 256px. This class assumes tiles are square.
 	NSUInteger tileSideLength;
-	
-	/// The deal is, we have a scale which stores how many mercator gradiants per pixel
-	/// in the image.
-	/// If you run the maths, scale = bounds.width/(2^zoom * tileSideLength)
-	/// or if you want, z = log(bounds.width/tileSideLength) - log(s)
-	/// So here we'll cache the first term for efficiency.
-	/// I'm using width arbitrarily - I'm not sure what the effect of using the other term is when they're not the same.
+
+	// The deal is, we have a scale which stores how many mercator gradiants per pixel
+	// in the image.
+	// If you run the maths, scale = bounds.width/(2^zoom * tileSideLength)
+	// or if you want, z = log(bounds.width/tileSideLength) - log(s)
+	// So here we'll cache the first term for efficiency.
+	// I'm using width arbitrarily - I'm not sure what the effect of using the other term is when they're not the same.
 	double scaleFactor;
 }
 
-- (id) initFromProjection:(RMProjection*)projection tileSideLength:(NSUInteger)tileSideLength maxZoom: (NSUInteger) aMaxZoom minZoom: (NSUInteger) aMinZoom;
+- (id)initFromProjection:(RMProjection *)projection tileSideLength:(NSUInteger)tileSideLength maxZoom:(NSUInteger)aMaxZoom minZoom:(NSUInteger)aMinZoom;
 
-- (void) setTileSideLength: (NSUInteger) aTileSideLength;
-- (void) setMinZoom: (NSUInteger) aMinZoom;
-- (void) setMaxZoom: (NSUInteger) aMaxZoom;
+- (void)setTileSideLength:(NSUInteger)aTileSideLength;
+- (void)setMinZoom:(NSUInteger)aMinZoom;
+- (void)setMaxZoom:(NSUInteger)aMaxZoom;
 
 @end

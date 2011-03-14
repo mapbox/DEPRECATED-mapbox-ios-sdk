@@ -26,115 +26,111 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import "RMTileCache.h"
-
 #import "RMMemoryCache.h"
 #import "RMDatabaseCache.h"
 
 #import "RMConfiguration.h"
-
 #import "RMTileSource.h"
 
 
-@interface RMTileCache ( Configuration ) 
+@interface RMTileCache (Configuration)
 
-- (id<RMTileCache>) newMemoryCacheWithConfig: (NSDictionary*) cfg;
-- (id<RMTileCache>) newDatabaseCacheWithConfig: (NSDictionary*) cfg tileSource: (id<RMTileSource>) tileSource;
+- (id <RMTileCache>)newMemoryCacheWithConfig:(NSDictionary *)cfg;
+- (id <RMTileCache>)newDatabaseCacheWithConfig:(NSDictionary *)cfg tileSource:(id <RMTileSource>)tileSource;
 
 @end
 
 
 @implementation RMTileCache
 
--(id)initWithTileSource: (id<RMTileSource>) tileSource
+- (id)initWithTileSource:(id <RMTileSource>)tileSource
 {
-	if (![super init])
+	if (!(self = [super init]))
 		return nil;
-	
+
 	caches = [[NSMutableArray alloc] init];
 
-	id cacheCfg = [[RMConfiguration configuration] cacheConfiguration];
-	
+	id cacheCfg = [[RMConfiguration configuration] cacheConfiguration];	
 	if (cacheCfg==nil)
 	{
 		cacheCfg = [NSArray arrayWithObjects:
-					/// \bug magic string literals
-			[NSDictionary dictionaryWithObject: @"memory-cache" forKey: @"type"],
-			[NSDictionary dictionaryWithObject: @"db-cache"     forKey: @"type"],
-			nil
-		];
+                    [NSDictionary dictionaryWithObject: @"memory-cache" forKey: @"type"],
+                    [NSDictionary dictionaryWithObject: @"db-cache"     forKey: @"type"],
+                    nil
+                    ];
 	}
 
 	for (id cfg in cacheCfg) 
 	{
-		id<RMTileCache> newCache = nil;
+		id <RMTileCache> newCache = nil;
 				
 		@try {
-			NSString* type = [cfg valueForKey:@"type"];
+            
+			NSString *type = [cfg valueForKey:@"type"];
 			
-			/// \bug magic string literals
-			if ([@"memory-cache" isEqualToString: type]) 
-				newCache = [self newMemoryCacheWithConfig: cfg];
+			if ([@"memory-cache" isEqualToString:type]) 
+				newCache = [self newMemoryCacheWithConfig:cfg];
 
-			if ([@"db-cache" isEqualToString: type]) 
-				newCache = [self newDatabaseCacheWithConfig: cfg tileSource: tileSource];				
+			if ([@"db-cache" isEqualToString:type]) 
+				newCache = [self newDatabaseCacheWithConfig:cfg tileSource:tileSource];				
 
 			if (newCache) {
-				[caches addObject: newCache];
+				[caches addObject:newCache];
 				[newCache release];
 			} else {
 				RMLog(@"failed to create cache of type %@", type);
 			}
+
 		}
 		@catch (NSException * e) {
 			RMLog(@"*** configuration error: %@", [e reason]);
 		}
-				
 	}
 
 	return self;
 }
 
--(void) dealloc
+- (void) dealloc
 {
 	[caches release];
 	[super dealloc];
 }
 
--(void)addCache: (id<RMTileCache>)cache
+- (void)addCache:(id <RMTileCache>)cache
 {
 	[caches addObject:cache];
 }
 
-+(NSNumber*) tileHash: (RMTile)tile
++ (NSNumber *)tileHash:(RMTile)tile
 {
-	return [NSNumber numberWithUnsignedLongLong: RMTileKey(tile)];
+	return [NSNumber numberWithUnsignedLongLong:RMTileKey(tile)];
 }
 
 // Returns the cached image if it exists. nil otherwise.
--(RMTileImage*) cachedImage:(RMTile)tile
+- (RMTileImage *)cachedImage:(RMTile)tile
 {
-	for (id<RMTileCache> cache in caches)
+	for (id <RMTileCache> cache in caches)
 	{
 		RMTileImage *image = [cache cachedImage:tile];
 		if (image != nil)
 			return image;
 	}
-	
+
 	return nil;
 }
 
--(void)addTile: (RMTile)tile WithImage: (RMTileImage*)image
+- (void)addTile:(RMTile)tile withImage:(RMTileImage *)image
 {
-	for (id<RMTileCache> cache in caches)
+	for (id <RMTileCache> cache in caches)
 	{	
-		if ([cache respondsToSelector:@selector(addTile:WithImage:)])
+		if ([cache respondsToSelector:@selector(addTile:withImage:)])
 		{
-			[cache addTile:tile WithImage:image];
+			[cache addTile:tile withImage:image];
 		}
 	}
 }
 
--(void)didReceiveMemoryWarning
+- (void)didReceiveMemoryWarning
 {
 	LogMethod();		
 	for (id<RMTileCache> cache in caches)
@@ -143,36 +139,39 @@
 	}
 }
 
--(void) removeAllCachedImages
+- (void)removeAllCachedImages
 {
 	for (id<RMTileCache> cache in caches)
 	{
 		[cache removeAllCachedImages];
 	}
 }
+
 @end
 
-@implementation RMTileCache ( Configuration )
+#pragma mark -
 
-/// \bug magic numbers and strings
-- (id<RMTileCache>) newMemoryCacheWithConfig: (NSDictionary*) cfg
+@implementation RMTileCache (Configuration)
+
+- (id <RMTileCache>)newMemoryCacheWithConfig:(NSDictionary *)cfg
 {
-	NSNumber* capacity = [cfg objectForKey:@"capacity"];
-	if (capacity == nil) capacity = [NSNumber numberWithInt: 32];
-	return [[RMMemoryCache alloc] initWithCapacity: [capacity intValue]];	
+	NSNumber *capacity = [cfg objectForKey:@"capacity"];
+	if (capacity == nil) 
+        capacity = [NSNumber numberWithInt:32];
+    
+	return [[RMMemoryCache alloc] initWithCapacity:[capacity intValue]];	
 }
 
-/// \bug magic numbers and strings
-- (id<RMTileCache>) newDatabaseCacheWithConfig: (NSDictionary*) cfg tileSource: (id<RMTileSource>) theTileSource
+- (id <RMTileCache>)newDatabaseCacheWithConfig:(NSDictionary *)cfg tileSource:(id <RMTileSource>)theTileSource
 {
 	BOOL useCacheDir = NO;
 	RMCachePurgeStrategy strategy = RMCachePurgeStrategyFIFO;
-	/// \bug magic numbers
+
 	NSUInteger capacity = 1000;
 	NSUInteger minimalPurge = capacity / 10;
 	
-	NSNumber* capacityNumber = [cfg objectForKey:@"capacity"];
-	if (capacityNumber!=nil) {
+	NSNumber *capacityNumber = [cfg objectForKey:@"capacity"];
+	if (capacityNumber != nil) {
 		NSInteger value = [capacityNumber intValue];
 		
 		// 0 is valid: it means no capacity limit
@@ -183,17 +182,17 @@
 			RMLog(@"illegal value for capacity: %d", value);
 	}
 	
-	NSString* strategyStr = [cfg objectForKey:@"strategy"];
+	NSString *strategyStr = [cfg objectForKey:@"strategy"];
 	if (strategyStr != nil) {
 		if ([strategyStr caseInsensitiveCompare:@"FIFO"] == NSOrderedSame) strategy = RMCachePurgeStrategyFIFO;
 		if ([strategyStr caseInsensitiveCompare:@"LRU"] == NSOrderedSame) strategy = RMCachePurgeStrategyLRU;
 	}
 	
-	/// \bug magic string literals
-	NSNumber* useCacheDirNumber = [cfg objectForKey:@"useCachesDirectory"];
-	if (useCacheDirNumber!=nil) useCacheDir =  [useCacheDirNumber boolValue];
-	
-	NSNumber* minimalPurgeNumber = [cfg objectForKey:@"minimalPurge"];
+	NSNumber *useCacheDirNumber = [cfg objectForKey:@"useCachesDirectory"];
+	if (useCacheDirNumber != nil)
+        useCacheDir = [useCacheDirNumber boolValue];
+
+	NSNumber *minimalPurgeNumber = [cfg objectForKey:@"minimalPurge"];
 	if (minimalPurgeNumber != nil && capacity != 0) {
 		NSUInteger value = [minimalPurgeNumber unsignedIntValue];
 		if (value > 0 && value<=capacity) 
@@ -202,16 +201,12 @@
 			RMLog(@"minimalPurge must be at least one and at most the cache capacity");
 		}
 	}
-	
-	RMDatabaseCache* dbCache = [[RMDatabaseCache alloc] 
-								initWithTileSource: theTileSource 
-								usingCacheDir: useCacheDir
-								];
-	
-	[dbCache setCapacity: capacity];
-	[dbCache setPurgeStrategy: strategy];
-	[dbCache setMinimalPurge: minimalPurge];
-	
+
+	RMDatabaseCache *dbCache = [[RMDatabaseCache alloc] initWithTileSource:theTileSource usingCacheDir:useCacheDir];
+	[dbCache setCapacity:capacity];
+	[dbCache setPurgeStrategy:strategy];
+	[dbCache setMinimalPurge:minimalPurge];
+
 	return dbCache;
 }
 

@@ -95,187 +95,213 @@
 
 
 @interface RMDBMapSource(PrivateMethods)
-- (NSString*)getPreferenceAsString:(NSString*)name;
-- (float)getPreferenceAsFloat:(NSString*)name;
-- (int)getPreferenceAsInt:(NSString*)name;
+- (NSString *)getPreferenceAsString:(NSString *)name;
+- (float)getPreferenceAsFloat:(NSString *)name;
+- (int)getPreferenceAsInt:(NSString *)name;
 @end
 
 
 @implementation RMDBMapSource
 
--(id)initWithPath:(NSString*)path {
-	self = [super init];
-	if (self != nil) {
-		// open the db
-		db = [[FMDatabase alloc] initWithPath:path];
-		if ([db openWithFlags:SQLITE_OPEN_READONLY]) {
-			RMLog(@"Opening db map source %@", path);
+- (id)initWithPath:(NSString *)path
+{
+	if (!(self = [super init]))
+        return nil;
 
-			// get the tile side length
-			tileSideLength = [self getPreferenceAsInt:kTileSideLengthKey];
-			
-			// get the supported zoom levels
-			minZoom = [self getPreferenceAsFloat:kMinZoomKey];
-			maxZoom = [self getPreferenceAsFloat:kMaxZoomKey];
-			
-			// get the coverage area
-			topLeft.latitude = [self getPreferenceAsFloat:kCoverageTopLeftLatitudeKey];
-			topLeft.longitude = [self getPreferenceAsFloat:kCoverageTopLeftLongitudeKey];
-			bottomRight.latitude = [self getPreferenceAsFloat:kCoverageBottomRightLatitudeKey];
-			bottomRight.longitude = [self getPreferenceAsFloat:kCoverageBottomRightLongitudeKey];
-			center.latitude = [self getPreferenceAsFloat:kCoverageCenterLatitudeKey];
-			center.longitude = [self getPreferenceAsFloat:kCoverageCenterLongitudeKey];
-			
-			RMLog(@"Tile size: %d pixel", tileSideLength);
-			RMLog(@"Supported zoom range: %.0f - %.0f", minZoom, maxZoom);
-			RMLog(@"Coverage area: (%2.6f,%2.6f) x (%2.6f,%2.6f)", 
-				  topLeft.latitude, 
-				  topLeft.longitude,
-				  bottomRight.latitude, 
-				  bottomRight.longitude);
-			RMLog(@"Center: (%2.6f,%2.6f)", 
-				  center.latitude, 
-				  center.longitude);
-		} else {
-			RMLog(@"Error opening db map source %@", path);
-		}
-		
-		// init the tile projection
-		tileProjection = [[RMFractalTileProjection alloc] initFromProjection:[self projection] tileSideLength:tileSideLength maxZoom:maxZoom minZoom:minZoom];		
-	}
+    // open the db
+    db = [[FMDatabase alloc] initWithPath:path];
+    if ([db openWithFlags:SQLITE_OPEN_READONLY])
+    {
+        RMLog(@"Opening db map source %@", path);
+
+        // get the tile side length
+        tileSideLength = [self getPreferenceAsInt:kTileSideLengthKey];
+
+        // get the supported zoom levels
+        minZoom = [self getPreferenceAsFloat:kMinZoomKey];
+        maxZoom = [self getPreferenceAsFloat:kMaxZoomKey];
+
+        // get the coverage area
+        topLeft.latitude = [self getPreferenceAsFloat:kCoverageTopLeftLatitudeKey];
+        topLeft.longitude = [self getPreferenceAsFloat:kCoverageTopLeftLongitudeKey];
+        bottomRight.latitude = [self getPreferenceAsFloat:kCoverageBottomRightLatitudeKey];
+        bottomRight.longitude = [self getPreferenceAsFloat:kCoverageBottomRightLongitudeKey];
+        center.latitude = [self getPreferenceAsFloat:kCoverageCenterLatitudeKey];
+        center.longitude = [self getPreferenceAsFloat:kCoverageCenterLongitudeKey];
+
+        RMLog(@"Tile size: %d pixel", tileSideLength);
+        RMLog(@"Supported zoom range: %.0f - %.0f", minZoom, maxZoom);
+        RMLog(@"Coverage area: (%2.6f,%2.6f) x (%2.6f,%2.6f)", 
+              topLeft.latitude, 
+              topLeft.longitude,
+              bottomRight.latitude, 
+              bottomRight.longitude);
+        RMLog(@"Center: (%2.6f,%2.6f)", 
+              center.latitude, 
+              center.longitude);
+    } else {
+        RMLog(@"Error opening db map source %@", path);
+    }
+
+    // init the tile projection
+    tileProjection = [[RMFractalTileProjection alloc] initFromProjection:[self projection] tileSideLength:tileSideLength maxZoom:maxZoom minZoom:minZoom];		
+
 	return self;
 }
 
--(void) dealloc {
-	[db release];
-	[tileProjection release];
+- (void)dealloc
+{
+	[db release]; db = nil;
+	[tileProjection release]; tileProjection = nil;
 	[super dealloc];
 }
 
--(int)tileSideLength {
+- (int)tileSideLength
+{
 	return tileSideLength;
 }
 
-- (CLLocationCoordinate2D) topLeftOfCoverage {
+- (CLLocationCoordinate2D)topLeftOfCoverage
+{
 	return topLeft;
 }
 
-- (CLLocationCoordinate2D) bottomRightOfCoverage {
+- (CLLocationCoordinate2D)bottomRightOfCoverage
+{
 	return bottomRight;
 }
 
-- (CLLocationCoordinate2D) centerOfCoverage {
+- (CLLocationCoordinate2D)centerOfCoverage
+{
 	return center;
 }
 
 #pragma mark RMTileSource methods
 
--(float) minZoom {
+- (float)minZoom
+{
 	return minZoom;
 }
 
--(float) maxZoom {
-	return maxZoom;
-}
-
--(void) setMinZoom:(NSUInteger) aMinZoom
+- (void)setMinZoom:(NSUInteger)aMinZoom
 {
     minZoom = aMinZoom;
 }
 
--(void) setMaxZoom:(NSUInteger) aMaxZoom
+- (float)maxZoom
+{
+	return maxZoom;
+}
+
+- (void)setMaxZoom:(NSUInteger)aMaxZoom
 {
     maxZoom = aMaxZoom;
 }
 
--(NSString*) tileURL: (RMTile) tile {
+- (NSString *)tileURL:(RMTile)tile
+{
 	return nil;
 }
 
--(NSString*) tileFile: (RMTile) tile {
+- (NSString *)tileFile:(RMTile)tile
+{
 	return nil;
 }
 
--(NSString*) tilePath {
+- (NSString *)tilePath
+{
 	return nil;
 }
 
--(RMTileImage *)tileImage:(RMTile)tile {
+- (RMTileImage *)tileImage:(RMTile)tile
+{
 	tile = [tileProjection normaliseTile:tile];
 	return [RMTileImage imageForTile:tile fromDB:db];
 }
 
--(id<RMMercatorToTileProjection>) mercatorToTileProjection {
+- (id <RMMercatorToTileProjection>)mercatorToTileProjection
+{
 	return [[tileProjection retain] autorelease];
 }
 
--(RMProjection*) projection {
+- (RMProjection *) projection
+{
 	return [RMProjection googleProjection];
 }
 
--(RMSphericalTrapezium) latitudeLongitudeBoundingBox
+- (RMSphericalTrapezium)latitudeLongitudeBoundingBox
 {
     CLLocationCoordinate2D southwest, northeast;
     southwest.latitude = bottomRight.latitude;
     southwest.longitude = topLeft.longitude;
     northeast.latitude = topLeft.latitude;
     northeast.longitude = bottomRight.longitude;
-    
+
     RMSphericalTrapezium bbox;
     bbox.southwest = southwest;
     bbox.northeast = northeast;
-    
+
     return bbox;
 }
 
--(void) didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
 	LogMethod();		
 }
 
--(NSString*) uniqueTilecacheKey {
+- (NSString *)uniqueTilecacheKey
+{
 	return nil;
 }
 
--(NSString *)shortName {
+- (NSString *)shortName
+{
 	return [self getPreferenceAsString:kShortNameKey];
 }
 
--(NSString *)longDescription {
+- (NSString *)longDescription
+{
 	return [self getPreferenceAsString:kLongDescriptionKey];
 }
 
--(NSString *)shortAttribution {
+- (NSString *)shortAttribution
+{
 	return [self getPreferenceAsString:kShortAttributionKey];
 }
 
--(NSString *)longAttribution {
+- (NSString *)longAttribution
+{
 	return [self getPreferenceAsString:kLongAttributionKey];
 }
 
--(void)removeAllCachedImages {
+- (void)removeAllCachedImages
+{
 	// no-op
 }
 
 #pragma mark preference methods
 
--(NSString*)getPreferenceAsString:(NSString*)name {
+- (NSString *)getPreferenceAsString:(NSString*)name
+{
 	NSString* value = nil;
 	
-	FMResultSet* rs = [db executeQuery:@"select value from preferences where name = ?", name];
-	if ([rs next]) {
-		value = [rs stringForColumn:@"value"];
+	FMResultSet *result = [db executeQuery:@"select value from preferences where name = ?", name];
+	if ([result next]) {
+		value = [result stringForColumn:@"value"];
 	}
-	[rs close];
-	
+	[result close];
+
 	return value;
 }
 
--(float)getPreferenceAsFloat:(NSString*)name {
-	NSString* value = [self getPreferenceAsString:name];
+- (float)getPreferenceAsFloat:(NSString *)name
+{
+	NSString *value = [self getPreferenceAsString:name];
 	return (value == nil) ? INT_MIN : [value floatValue];
 }
 
--(int)getPreferenceAsInt:(NSString*)name {
+- (int)getPreferenceAsInt:(NSString *)name
+{
 	NSString* value = [self getPreferenceAsString:name];
 	return (value == nil) ? INT_MIN : [value intValue];
 }

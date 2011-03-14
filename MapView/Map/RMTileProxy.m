@@ -32,18 +32,20 @@
 static UIImage *_errorTile = nil;
 static UIImage *_missingTile = nil;
 
-+ (UIImage*) errorTile
++ (UIImage *)errorTile
 {
-	if (_errorTile) return _errorTile;
-	
+	if (_errorTile)
+        return _errorTile;
+
 	_errorTile = [[UIImage imageNamed:@"error.png"] retain];
 	return _errorTile;
 }
 
-+ (UIImage*) missingTile
++ (UIImage *)missingTile
 {
-	if (_missingTile) return _missingTile;
-	
+	if (_missingTile)
+        return _missingTile;
+
 	_missingTile = [[UIImage imageNamed:@"missing.png"] retain];
 	return _missingTile;
 }

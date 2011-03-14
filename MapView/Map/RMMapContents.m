@@ -38,7 +38,6 @@
 #import "RMTileLoader.h"
 #import "RMTileImageSet.h"
 
-#import "RMOpenStreetMapSource.h"
 #import "RMCoreAnimationRenderer.h"
 #import "RMCachedTileSource.h"
 
@@ -84,7 +83,7 @@
 	here.longitude = kDefaultInitialLongitude;
 	
 	return [self initWithView:view
-				   tilesource:[[RMOpenStreetMapSource alloc] init]
+				   tilesource:nil
 				 centerLatLon:here
 	  			    zoomLevel:kDefaultInitialZoomLevel
 				 maxZoomLevel:kDefaultMaximumZoomLevel
@@ -139,7 +138,7 @@
 
 	boundingMask = RMMapMinWidthBound;
 
-	mercatorToScreenProjection = [[RMMercatorToScreenProjection alloc] initFromProjection:[newTilesource projection] ToScreenBounds:[newView bounds]];
+	mercatorToScreenProjection = [[RMMercatorToScreenProjection alloc] initFromProjection:[newTilesource projection] toScreenBounds:[newView bounds]];
 	
 	layer = [[newView layer] retain];
     
@@ -195,7 +194,7 @@
 {
 	WarnDeprecated();
 	LogMethod();
-	id<RMTileSource> _tileSource = [[RMOpenStreetMapSource alloc] init];
+	id<RMTileSource> _tileSource = nil;
 	RMMapRenderer *_renderer = [[RMCoreAnimationRenderer alloc] initWithContent:self];
 	
 	id mapContents = [self initForView:view WithTileSource:_tileSource WithRenderer:_renderer LookingAt:latlong];
@@ -218,7 +217,7 @@
 	
 	self.boundingMask = RMMapMinWidthBound;
 //	targetView = view;
-	mercatorToScreenProjection = [[RMMercatorToScreenProjection alloc] initFromProjection:[_tileSource projection] ToScreenBounds:[view bounds]];
+	mercatorToScreenProjection = [[RMMercatorToScreenProjection alloc] initFromProjection:[_tileSource projection] toScreenBounds:[view bounds]];
 
 	tileSource = nil;
 	projection = nil;
@@ -336,9 +335,9 @@
         .latitude = (ne.latitude + sw.latitude) / 2,
         .longitude = (ne.longitude + sw.longitude) / 2
     };
-    RMProjectedPoint myOrigin = [projection latLongToPoint:midpoint];
-    RMProjectedPoint nePoint = [projection latLongToPoint:ne];
-    RMProjectedPoint swPoint = [projection latLongToPoint:sw];
+    RMProjectedPoint myOrigin = [projection coordinateToPoint:midpoint];
+    RMProjectedPoint nePoint = [projection coordinateToPoint:ne];
+    RMProjectedPoint swPoint = [projection coordinateToPoint:sw];
     RMProjectedPoint myPoint = {.easting = nePoint.easting - swPoint.easting, .northing = nePoint.northing - swPoint.northing};
     //Create the new zoom layout
     RMProjectedRect zoomRect;
@@ -364,7 +363,7 @@
     myOrigin.easting = myOrigin.easting - (zoomRect.size.width / 2);
     myOrigin.northing = myOrigin.northing - (zoomRect.size.height / 2);
     
-    RMLog(@"Origin is calculated at: %f, %f", [projection pointToLatLong:myOrigin].latitude, [projection pointToLatLong:myOrigin].longitude);
+    RMLog(@"Origin is calculated at: %f, %f", [projection pointToCoordinate:myOrigin].latitude, [projection pointToCoordinate:myOrigin].longitude);
     /*It gets all messed up if our origin is lower than the lowest place on the map, so we check.
      if(myOrigin.northing < -19971868.880409)
      {
@@ -390,7 +389,7 @@
 }
 
 - (BOOL) tileSourceBoundsContainScreenPoint:(CGPoint) point {
-    RMProjectedPoint projPoint = [mercatorToScreenProjection projectScreenPointToXY:point];
+    RMProjectedPoint projPoint = [mercatorToScreenProjection projectScreenPointToProjectedPoint:point];
     return [self tileSourceBoundsContainProjectedPoint:projPoint];
 }
 
@@ -398,7 +397,7 @@
 
 - (void)moveToLatLong: (CLLocationCoordinate2D)latlong
 {
-	RMProjectedPoint aPoint = [[self projection] latLongToPoint:latlong];
+	RMProjectedPoint aPoint = [[self projection] coordinateToPoint:latlong];
 	[self moveToProjectedPoint: aPoint];
 }
 
@@ -418,7 +417,7 @@
 - (void)moveBy: (CGSize) delta
 {
     RMProjectedPoint projCenter = [mercatorToScreenProjection projectedCenter];
-    RMProjectedSize XYDelta = [mercatorToScreenProjection projectScreenSizeToXY:delta];
+    RMProjectedSize XYDelta = [mercatorToScreenProjection projectScreenSizeToProjectedSize:delta];
     projCenter.easting = projCenter.easting - XYDelta.width;
     projCenter.northing = projCenter.northing - XYDelta.height;
     if (![self tileSourceBoundsContainProjectedPoint:projCenter]) {
@@ -491,8 +490,8 @@
 - (void)adjustMapPlacementWithScale:(float)aScale
 {
 	CGSize		adjustmentDelta = {0.0, 0.0};
-	RMLatLong	rightEdgeLatLong = {0, kMaxLong};
-	RMLatLong	leftEdgeLatLong = {0,- kMaxLong};
+	CLLocationCoordinate2D	rightEdgeLatLong = {0, kMaxLong};
+	CLLocationCoordinate2D	leftEdgeLatLong = {0,- kMaxLong};
 	
 	CGPoint		rightEdge = [self latLongToPixel:rightEdgeLatLong withMetersPerPixel:aScale];
 	CGPoint		leftEdge = [self latLongToPixel:leftEdgeLatLong withMetersPerPixel:aScale];
@@ -864,7 +863,7 @@ static NSMutableDictionary *cachedTilesources = nil;
 - (CLLocationCoordinate2D) mapCenter
 {
 	RMProjectedPoint aPoint = [mercatorToScreenProjection projectedCenter];
-	return [projection pointToLatLong:aPoint];
+	return [projection pointToCoordinate:aPoint];
 }
 
 -(void) setMapCenter: (CLLocationCoordinate2D) center
@@ -974,49 +973,31 @@ static NSMutableDictionary *cachedTilesources = nil;
 	return [[layer retain] autorelease];
 }
 
-static BOOL _performExpensiveOperations = YES;
-+ (BOOL) performExpensiveOperations
-{
-	return _performExpensiveOperations;
-}
-+ (void) setPerformExpensiveOperations: (BOOL)p
-{
-	if (p == _performExpensiveOperations)
-		return;
-	
-	_performExpensiveOperations = p;
-
-	if (p)
-		[[NSNotificationCenter defaultCenter] postNotificationName:RMResumeExpensiveOperations object:self];
-	else
-		[[NSNotificationCenter defaultCenter] postNotificationName:RMSuspendExpensiveOperations object:self];
-}
-
 #pragma mark LatLng/Pixel translation functions
 
 - (CGPoint)latLongToPixel:(CLLocationCoordinate2D)latlong
 {	
-	return [mercatorToScreenProjection projectXYPoint:[projection latLongToPoint:latlong]];
+	return [mercatorToScreenProjection projectProjectedPoint:[projection coordinateToPoint:latlong]];
 }
 
 - (CGPoint)latLongToPixel:(CLLocationCoordinate2D)latlong withMetersPerPixel:(float)aScale
 {	
-	return [mercatorToScreenProjection projectXYPoint:[projection latLongToPoint:latlong] withMetersPerPixel:aScale];
+	return [mercatorToScreenProjection projectProjectedPoint:[projection coordinateToPoint:latlong] withMetersPerPixel:aScale];
 }
 
 - (RMTilePoint)latLongToTilePoint:(CLLocationCoordinate2D)latlong withMetersPerPixel:(float)aScale
 {
-        return [mercatorToTileProjection project:[projection latLongToPoint:latlong] atZoom:aScale];
+        return [mercatorToTileProjection project:[projection coordinateToPoint:latlong] atZoom:aScale];
 }
 
 - (CLLocationCoordinate2D)pixelToLatLong:(CGPoint)aPixel
 {
-	return [projection pointToLatLong:[mercatorToScreenProjection projectScreenPointToXY:aPixel]];
+	return [projection pointToCoordinate:[mercatorToScreenProjection projectScreenPointToProjectedPoint:aPixel]];
 }
 
 - (CLLocationCoordinate2D)pixelToLatLong:(CGPoint)aPixel withMetersPerPixel:(float)aScale
 {
-	return [projection pointToLatLong:[mercatorToScreenProjection projectScreenPointToXY:aPixel withMetersPerPixel:aScale]];
+	return [projection pointToCoordinate:[mercatorToScreenProjection projectScreenPointToProjectedPoint:aPixel withMetersPerPixel:aScale]];
 }
 
 - (double)scaleDenominator {
@@ -1032,7 +1013,7 @@ static BOOL _performExpensiveOperations = YES;
 	if(ne.latitude == sw.latitude && ne.longitude == sw.longitude)//There are no bounds, probably only one marker.
 	{
 		RMProjectedRect zoomRect;
-		RMProjectedPoint myOrigin = [projection latLongToPoint:sw];
+		RMProjectedPoint myOrigin = [projection coordinateToPoint:sw];
 		//Default is with scale = 2.0 mercators/pixel
 		zoomRect.size.width = [self screenBounds].size.width * 2.0;
 		zoomRect.size.height = [self screenBounds].size.height * 2.0;
@@ -1049,9 +1030,9 @@ static BOOL _performExpensiveOperations = YES;
 			.latitude = (ne.latitude + sw.latitude) / 2,
 			.longitude = (ne.longitude + sw.longitude) / 2
 		};
-		RMProjectedPoint myOrigin = [projection latLongToPoint:midpoint];
-		RMProjectedPoint nePoint = [projection latLongToPoint:ne];
-		RMProjectedPoint swPoint = [projection latLongToPoint:sw];
+		RMProjectedPoint myOrigin = [projection coordinateToPoint:midpoint];
+		RMProjectedPoint nePoint = [projection coordinateToPoint:ne];
+		RMProjectedPoint swPoint = [projection coordinateToPoint:sw];
 		RMProjectedPoint myPoint = {.easting = nePoint.easting - swPoint.easting, .northing = nePoint.northing - swPoint.northing};
 		//Create the new zoom layout
 		RMProjectedRect zoomRect;
@@ -1076,7 +1057,7 @@ static BOOL _performExpensiveOperations = YES;
 		}
 		myOrigin.easting = myOrigin.easting - (zoomRect.size.width / 2);
 		myOrigin.northing = myOrigin.northing - (zoomRect.size.height / 2);
-		RMLog(@"Origin is calculated at: %f, %f", [projection pointToLatLong:myOrigin].latitude, [projection pointToLatLong:myOrigin].longitude);
+		RMLog(@"Origin is calculated at: %f, %f", [projection pointToCoordinate:myOrigin].latitude, [projection pointToCoordinate:myOrigin].longitude);
 		/*It gets all messed up if our origin is lower than the lowest place on the map, so we check.
 		 if(myOrigin.northing < -19971868.880409)
 		 {

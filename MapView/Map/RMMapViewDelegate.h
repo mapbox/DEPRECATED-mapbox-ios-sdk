@@ -35,26 +35,26 @@
 
 @optional
 
-- (void) beforeMapMove: (RMMapView*) map;
-- (void) afterMapMove: (RMMapView*) map ;
-- (void) afterMapMoveDeceleration: (RMMapView*) map;
+- (void)beforeMapMove:(RMMapView *)map;
+- (void)afterMapMove:(RMMapView *)map ;
+- (void)afterMapMoveDeceleration:(RMMapView *)map;
 
-- (void) beforeMapZoom: (RMMapView*) map byFactor: (float) zoomFactor near:(CGPoint) center;
-- (void) afterMapZoom: (RMMapView*) map byFactor: (float) zoomFactor near:(CGPoint) center;
+- (void)beforeMapZoom:(RMMapView *)map byFactor:(float)zoomFactor near:(CGPoint)center;
+- (void)afterMapZoom:(RMMapView *)map byFactor:(float)zoomFactor near:(CGPoint)center;
 
-- (void) beforeMapRotate: (RMMapView*) map fromAngle: (CGFloat) angle;
-- (void) afterMapRotate: (RMMapView*) map toAngle: (CGFloat) angle;
+- (void)beforeMapRotate:(RMMapView *)map fromAngle:(CGFloat)angle;
+- (void)afterMapRotate:(RMMapView *)map toAngle:(CGFloat)angle;
 
-- (void) doubleTapOnMap: (RMMapView*) map At: (CGPoint) point;
-- (void) doubleTapTwoFingersOnMap: (RMMapView*) map At: (CGPoint) point;
-- (void) singleTapOnMap: (RMMapView*) map At: (CGPoint) point;
-- (void) longSingleTapOnMap: (RMMapView*) map At: (CGPoint) point;
+- (void)doubleTapOnMap:(RMMapView *)map at:(CGPoint)point;
+- (void)doubleTapTwoFingersOnMap:(RMMapView *)map at:(CGPoint)point;
+- (void)singleTapOnMap:(RMMapView *)map at:(CGPoint)point;
+- (void)longSingleTapOnMap:(RMMapView *)map at:(CGPoint)point;
 
-- (void) tapOnMarker: (RMMarker*) marker onMap: (RMMapView*) map;
-- (void) tapOnLabelForMarker: (RMMarker*) marker onMap: (RMMapView*) map;
-- (BOOL) mapView:(RMMapView *)map shouldDragMarker:(RMMarker *)marker withEvent:(UIEvent *)event;
-- (void) mapView:(RMMapView *)map didDragMarker:(RMMarker *)marker withEvent:(UIEvent *)event;
+- (void)tapOnMarker:(RMMarker *)marker onMap:(RMMapView *)map;
+- (void)tapOnLabelForMarker:(RMMarker *)marker onMap:(RMMapView *)map;
+- (BOOL)mapView:(RMMapView *)map shouldDragMarker:(RMMarker *)marker withEvent:(UIEvent *)event;
+- (void)mapView:(RMMapView *)map didDragMarker:(RMMarker *)marker withEvent:(UIEvent *)event;
 
-- (void) afterMapTouch: (RMMapView*) map;
+- (void)afterMapTouch:(RMMapView *)map;
 
 @end

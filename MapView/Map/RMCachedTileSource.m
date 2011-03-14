@@ -32,7 +32,7 @@
 
 @synthesize cache;
 
-- (id) initWithSource: (id<RMTileSource>) _source
+- (id)initWithSource:(id <RMTileSource>)_source
 {
 	if ([_source isKindOfClass:[RMCachedTileSource class]])
 	{
@@ -40,131 +40,133 @@
 		return [_source retain];
 	}
 	
-	if (![super init])
+	if (!(self = [super init]))
 		return nil;
 	
 	tileSource = [_source retain];
-	
+
 	cache = [[RMTileCache alloc] initWithTileSource:tileSource];
-	
+
 	return self;
 }
 
-- (void) dealloc
+- (void)dealloc
 {
 	[tileSource release];
 	[cache release];
 	[super dealloc];
 }
 
-+ (RMCachedTileSource*) cachedTileSourceWithSource: (id<RMTileSource>) source
++ (RMCachedTileSource *)cachedTileSourceWithSource:(id <RMTileSource>)source
 {
 	// Doing this fixes a strange build warning...
 	id theSource = source;
 	return [[[RMCachedTileSource alloc] initWithSource:theSource] autorelease];
 }
 
--(RMTileImage *) tileImage: (RMTile) tile
+- (RMTileImage *)tileImage:(RMTile)tile
 {
 	RMTileImage *cachedImage = [cache cachedImage:tile];
-	if (cachedImage != nil)
-	{
+	if (cachedImage != nil)	{
 		return cachedImage;
 	}
-	else
-	{
+	else {
 		RMTileImage *image = [tileSource tileImage:tile];
-		[cache addTile:tile WithImage:image];
+		[cache addTile:tile withImage:image];
 		return image;
 	}
 }
 
--(id<RMMercatorToTileProjection>) mercatorToTileProjection
+- (id <RMMercatorToTileProjection>)mercatorToTileProjection
 {
 	return [tileSource mercatorToTileProjection];
 }
 
--(RMProjection*) projection
+- (RMProjection *)projection
 {
 	return [tileSource projection];
 }
 
-- (id<RMTileSource>) underlyingTileSource
+- (id <RMTileSource>)underlyingTileSource
 {
 	// I'm assuming that our tilesource isn't itself a cachedtilesource.
 	// This class's initialiser should make sure of that.
 	return tileSource;
 }
 
--(float) minZoom
+- (float)minZoom
 {
 	return [tileSource minZoom];
 }
--(float) maxZoom
+
+- (float)maxZoom
 {
 	return [tileSource maxZoom];
 }
 
--(RMSphericalTrapezium) latitudeLongitudeBoundingBox
+- (RMSphericalTrapezium)latitudeLongitudeBoundingBox
 {
 	return [tileSource latitudeLongitudeBoundingBox];
 }
 
-- (void) didReceiveMemoryWarning
+- (void)didReceiveMemoryWarning
 {
 	LogMethod();		
 	[cache didReceiveMemoryWarning];
 	[tileSource didReceiveMemoryWarning];
 }
 
--(NSString*) uniqueTilecacheKey
+- (NSString *)uniqueTilecacheKey
 {
 	return [tileSource uniqueTilecacheKey];
 }
 
--(NSString *)shortName
+- (NSString *)shortName
 {
 	return [tileSource shortName];
 }
--(NSString *)longDescription
+
+- (NSString *)longDescription
 {
 	return [tileSource longDescription];
 }
--(NSString *)shortAttribution
+
+- (NSString *)shortAttribution
 {
 	return [tileSource shortAttribution];
 }
--(NSString *)longAttribution
+
+- (NSString *)longAttribution
 {
 	return [tileSource longAttribution];
 }
 
--(NSString *) tileURL: (RMTile) tile
+- (NSString *)tileURL:(RMTile)tile
 {
-  return [tileSource tileURL:tile];
+    return [tileSource tileURL:tile];
 }
 
--(NSString *) tileFile: (RMTile) tile
+-(NSString *)tileFile:(RMTile)tile
 {
-  return [tileSource tileFile:tile];
+    return [tileSource tileFile:tile];
 }
 
--(NSString *) tilePath
+- (NSString *)tilePath
 {
   return [tileSource tilePath];
 }
 
--(void) setMinZoom:(NSUInteger)aMinZoom
+- (void)setMinZoom:(NSUInteger)aMinZoom
 {
-        [tileSource setMinZoom:aMinZoom];
+    [tileSource setMinZoom:aMinZoom];
 }
 
--(void) setMaxZoom:(NSUInteger)aMaxZoom
+- (void)setMaxZoom:(NSUInteger)aMaxZoom
 {
-        [tileSource setMaxZoom:aMaxZoom];
+    [tileSource setMaxZoom:aMaxZoom];
 }
 
--(void) removeAllCachedImages
+- (void)removeAllCachedImages
 {
 	[cache removeAllCachedImages];
 }

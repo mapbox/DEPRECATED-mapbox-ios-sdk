@@ -30,22 +30,22 @@
 
 @class RMTileCacheDAO;
 
-@interface RMDatabaseCache : NSObject<RMTileCache> {
-	NSString* databasePath;
+@interface RMDatabaseCache : NSObject <RMTileCache> {
+	NSString *databasePath;
 	RMTileCacheDAO *dao;
 	RMCachePurgeStrategy purgeStrategy;
 	NSUInteger capacity;
 	NSUInteger minimalPurge;
 }
 
-@property (retain) NSString* databasePath;
+@property (retain) NSString *databasePath;
 
-+ (NSString*)dbPathForTileSource: (id<RMTileSource>) source usingCacheDir: (BOOL) useCacheDir;
--(id) initWithDatabase: (NSString*)path;
--(id) initWithTileSource: (id<RMTileSource>) source usingCacheDir: (BOOL) useCacheDir;
++ (NSString *)dbPathForTileSource:(id <RMTileSource>)source usingCacheDir:(BOOL)useCacheDir;
+- (id)initWithDatabase:(NSString *)path;
+- (id)initWithTileSource:(id <RMTileSource>)source usingCacheDir:(BOOL)useCacheDir;
 
--(void) setPurgeStrategy: (RMCachePurgeStrategy) theStrategy;
--(void) setCapacity: (NSUInteger) theCapacity;
--(void) setMinimalPurge: (NSUInteger) thePurgeMinimum;
+- (void)setPurgeStrategy:(RMCachePurgeStrategy)theStrategy;
+- (void)setCapacity:(NSUInteger)theCapacity;
+- (void)setMinimalPurge:(NSUInteger)thePurgeMinimum;
 
 @end

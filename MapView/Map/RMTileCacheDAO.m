@@ -31,12 +31,14 @@
 #import "RMTileImage.h"
 
 @interface RMTileCacheDAO ()
+
 - (NSUInteger)countTiles;
+
 @end
 
 @implementation RMTileCacheDAO
 
--(void)configureDBForFirstUse
+- (void)configureDBForFirstUse
 {
     [db executeQuery:@"PRAGMA synchronous=OFF"];
     [db executeQuery:@"PRAGMA journal_mode=OFF"];
@@ -44,9 +46,9 @@
     [db executeUpdate:@"CREATE INDEX IF NOT EXISTS zlastUsedIndex ON ZCACHE(zLastUsed)"];
 }
 
--(id) initWithDatabase: (NSString*)path
+- (id)initWithDatabase:(NSString *)path
 {
-	if (![super init])
+	if (!(self = [super init]))
 		return nil;
 
     writeQueue = [NSOperationQueue new];
@@ -105,7 +107,7 @@
 	return count;
 }
 
--(NSData *)dataForTile:(uint64_t)tileHash
+- (NSData *)dataForTile:(uint64_t)tileHash
 {
     [writeQueueLock lock];
 
@@ -127,7 +129,7 @@
 	return data;
 }
 
--(void) purgeTiles: (NSUInteger) count;
+- (void)purgeTiles:(NSUInteger)count
 {
     RMLog(@"purging %u old tiles from db cache", count);
 	
@@ -142,7 +144,7 @@
     }        
 }
 
--(void) removeAllCachedImages 
+- (void)removeAllCachedImages 
 {
     [writeQueue addOperationWithBlock:^{
         [writeQueueLock lock];
@@ -158,7 +160,7 @@
     }];
 }
 
--(void) touchTile: (uint64_t) tileHash withDate: (NSDate*) date
+- (void)touchTile:(uint64_t)tileHash withDate:(NSDate *)date
 {
     [writeQueue addOperationWithBlock:^{
         [writeQueueLock lock];
@@ -171,7 +173,7 @@
     }];
 }
 
--(void) addData: (NSData*) data LastUsed: (NSDate*)date ForTile: (uint64_t) tileHash
+- (void)addData:(NSData *)data lastUsed:(NSDate *)date forTile:(uint64_t)tileHash
 {
     [writeQueue addOperationWithBlock:^{
 //        RMLog(@"addData\t%d", tileHash);
@@ -189,7 +191,7 @@
     }];
 }
 
--(void)didReceiveMemoryWarning
+- (void)didReceiveMemoryWarning
 {
     RMLog(@"Low memory in the tilecache");
     [writeQueue cancelAllOperations];

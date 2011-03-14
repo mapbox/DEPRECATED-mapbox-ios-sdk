@@ -35,11 +35,8 @@
 #define kDefaultFillColor [UIColor blueColor]
 
 @interface RMCircle ()
-
 - (void)updateCirclePath;
-
 @end
-
 
 @implementation RMCircle
 
@@ -52,50 +49,48 @@
 @synthesize radiusInMeters;
 @synthesize lineWidthInPixels;
 
-- (id)initWithContents:(RMMapContents*)aContents radiusInMeters:(CGFloat)newRadiusInMeters latLong:(RMLatLong)newLatLong {
-	self = [super init];
+- (id)initWithContents:(RMMapContents *)aContents radiusInMeters:(CGFloat)newRadiusInMeters latLong:(CLLocationCoordinate2D)newLatLong
+{
+	if (!(self = [super init]))
+        return nil;
 	
-	if (self) {
-		CAShapeLayer* newShapeLayer = [[CAShapeLayer alloc] init];
-		shapeLayer = newShapeLayer;
-		[self addSublayer:newShapeLayer];
-		
-		mapContents = aContents;
-		radiusInMeters = newRadiusInMeters;
-		latLong = newLatLong;
-		projectedLocation = [[mapContents projection] latLongToPoint:newLatLong];
-		[self setPosition:[[mapContents mercatorToScreenProjection] projectXYPoint:projectedLocation]];
-//		DLog(@"Position: %f, %f", [self position].x, [self position].y);
-		
-		lineWidthInPixels = kDefaultLineWidth;
-		lineColor = kDefaultLineColor;
-		fillColor = kDefaultFillColor;
-		
-		scaleLineWidth = NO;
-		enableDragging = YES;
-		enableRotation = YES;
-		
-		circlePath = NULL;
-		[self updateCirclePath];
-	}
-	
+    CAShapeLayer *newShapeLayer = [[CAShapeLayer alloc] init];
+    shapeLayer = newShapeLayer;
+    [self addSublayer:newShapeLayer];
+
+    mapContents = aContents;
+    radiusInMeters = newRadiusInMeters;
+    latLong = newLatLong;
+    projectedLocation = [[mapContents projection] coordinateToPoint:newLatLong];
+    [self setPosition:[[mapContents mercatorToScreenProjection] projectProjectedPoint:projectedLocation]];
+    
+    lineWidthInPixels = kDefaultLineWidth;
+    lineColor = kDefaultLineColor;
+    fillColor = kDefaultFillColor;
+
+    scaleLineWidth = NO;
+    enableDragging = YES;
+    enableRotation = YES;
+
+    circlePath = NULL;
+    [self updateCirclePath];
+
 	return self;
 }
 
-- (void)dealloc {
-	[shapeLayer release];
-	shapeLayer = nil;
+- (void)dealloc
+{
+	[shapeLayer release]; shapeLayer = nil;
 	CGPathRelease(circlePath);
-	[lineColor release];
-	lineColor = nil;
-	[fillColor release];
-	fillColor = nil;
+	[lineColor release]; lineColor = nil;
+	[fillColor release]; fillColor = nil;
 	[super dealloc];
 }
 
 #pragma mark -
 
-- (void)updateCirclePath {
+- (void)updateCirclePath
+{
 	CGPathRelease(circlePath);
 	
 	CGMutablePathRef newPath = CGPathCreateMutable();
@@ -128,13 +123,15 @@
 
 #pragma mark Accessors
 
-- (void)setProjectedLocation:(RMProjectedPoint)newProjectedLocation {
+- (void)setProjectedLocation:(RMProjectedPoint)newProjectedLocation
+{
 	projectedLocation = newProjectedLocation;
 	
-	[self setPosition:[[mapContents mercatorToScreenProjection] projectXYPoint:projectedLocation]];
+	[self setPosition:[[mapContents mercatorToScreenProjection] projectProjectedPoint:projectedLocation]];
 }
 
-- (void)setLineColor:(UIColor*)newLineColor {
+- (void)setLineColor:(UIColor *)newLineColor
+{
 	if (lineColor != newLineColor) {
 		[lineColor release];
 		lineColor = [newLineColor retain];
@@ -142,7 +139,8 @@
 	}
 }
 
-- (void)setFillColor:(UIColor*)newFillColor {
+- (void)setFillColor:(UIColor *)newFillColor
+{
 	if (fillColor != newFillColor) {
 		[fillColor release];
 		fillColor = [newFillColor retain];
@@ -150,34 +148,38 @@
 	}
 }
 
-- (void)setRadiusInMeters:(CGFloat)newRadiusInMeters {
+- (void)setRadiusInMeters:(CGFloat)newRadiusInMeters
+{
 	radiusInMeters = newRadiusInMeters;
 	[self updateCirclePath];
 }
 
-- (void)setLineWidthInPixels:(CGFloat)newLineWidthInPixels {
+- (void)setLineWidthInPixels:(CGFloat)newLineWidthInPixels
+{
 	lineWidthInPixels = newLineWidthInPixels;
 	[self updateCirclePath];
 }
 
 #pragma mark Map Movement and Scaling
 
-- (void)moveBy:(CGSize)delta {
+- (void)moveBy:(CGSize)delta
+{
 	if (enableDragging) {
 		[super moveBy:delta];
 	}
 }
 
-- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center {
-	[super zoomByFactor:zoomFactor near:center];
-	
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center
+{
+	[super zoomByFactor:zoomFactor near:center];	
 	[self updateCirclePath];
 }
 
-- (void)moveToLatLong:(RMLatLong)newLatLong {
+- (void)moveToLatLong:(CLLocationCoordinate2D)newLatLong
+{
 	latLong = newLatLong;
-	[self setProjectedLocation:[[mapContents projection] latLongToPoint:newLatLong]];
-	[self setPosition:[[mapContents mercatorToScreenProjection] projectXYPoint:projectedLocation]];
+	[self setProjectedLocation:[[mapContents projection] coordinateToPoint:newLatLong]];
+	[self setPosition:[[mapContents mercatorToScreenProjection] projectProjectedPoint:projectedLocation]];
 //	DLog(@"Position: %f, %f", [self position].x, [self position].y);
 }
 

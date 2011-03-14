@@ -24,6 +24,9 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
+
+#import <QuartzCore/QuartzCore.h>
+
 #import "RMGlobalConstants.h"
 #import "RMTileImage.h"
 #import "RMWebTileImage.h"
@@ -32,46 +35,44 @@
 #import "RMDBTileImage.h"
 #import "RMTileCache.h"
 #import "RMPixel.h"
-#import <QuartzCore/QuartzCore.h>
 
 @implementation RMTileImage
 
-@synthesize tile, layer, lastUsedTime;
+@synthesize screenLocation, tile, layer, lastUsedTime;
 
-- (id) initWithTile: (RMTile)_tile
+- (id)initWithTile:(RMTile)_tile
 {
-	if (![super init])
+	if (!(self = [super init]))
 		return nil;
-	
+
 	tile = _tile;
 	layer = nil;
 	lastUsedTime = nil;
 	screenLocation = CGRectZero;
-
-        [self makeLayer];
-
+    
+    [self makeLayer];
 	[self touch];
-	
+
 	[[NSNotificationCenter defaultCenter] addObserver:self
-						selector:@selector(tileRemovedFromScreen:)
-						name:RMMapImageRemovedFromScreenNotification object:self];
-		
+                                             selector:@selector(tileRemovedFromScreen:)
+                                                 name:RMMapImageRemovedFromScreenNotification object:self];
+
 	return self;
 }
 	 
--(void) tileRemovedFromScreen: (NSNotification*) notification
+- (void)tileRemovedFromScreen:(NSNotification *)notification
 {
 	[self cancelLoading];
 }
 
--(id) init
+- (id)init
 {
 	[NSException raise:@"Invalid initialiser" format:@"Use the designated initialiser for TileImage"];
 	[self release];
 	return nil;
 }
 
-+ (RMTileImage*) dummyTile: (RMTile)tile
++ (RMTileImage *)dummyTile:(RMTile)tile
 {
 	return [[[RMTileImage alloc] initWithTile:tile] autorelease];
 }
@@ -81,28 +82,27 @@
 //	RMLog(@"Removing tile image %d %d %d", tile.x, tile.y, tile.zoom);
 	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-
 	[layer release]; layer = nil;
 	[lastUsedTime release]; lastUsedTime = nil;
-	
+
 	[super dealloc];
 }
 
--(void)draw
+- (void)draw
 {
 }
 
-+ (RMTileImage*)imageForTile:(RMTile) _tile withURL: (NSString*)url
++ (RMTileImage *)imageForTile:(RMTile)_tile withURL:(NSString *)url
 {
-	return [[[RMWebTileImage alloc] initWithTile:_tile FromURL:url] autorelease];
+	return [[[RMWebTileImage alloc] initWithTile:_tile fromURL:url] autorelease];
 }
 
-+ (RMTileImage*)imageForTile:(RMTile) _tile fromFile: (NSString*)filename
++ (RMTileImage *)imageForTile:(RMTile)_tile fromFile:(NSString *)filename
 {
-	return [[[RMFileTileImage alloc] initWithTile:_tile FromFile:filename] autorelease];
+	return [[[RMFileTileImage alloc] initWithTile:_tile fromFile:filename] autorelease];
 }
 
-+ (RMTileImage*)imageForTile:(RMTile) tile withData: (NSData*)data
++ (RMTileImage *)imageForTile:(RMTile)tile withData:(NSData *)data
 {
 	UIImage *image = [[UIImage alloc] initWithData:data];
 	RMTileImage *tileImage;
@@ -116,30 +116,28 @@
 	return [tileImage autorelease];
 }
 
-+ (RMTileImage*)imageForTile:(RMTile) _tile fromDB: (FMDatabase*)db
++ (RMTileImage *)imageForTile:(RMTile)_tile fromDB:(FMDatabase *)db
 {
 	return [[[RMDBTileImage alloc] initWithTile: _tile fromDB:db] autorelease];
 }
 
--(void) cancelLoading
+- (void) cancelLoading
 {
 	[[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadingCancelledNotification
 														object:self];
 }
 
-
-- (void)updateImageUsingData: (NSData*) data
+- (void)updateImageUsingData:(NSData *)data
 {
-       [self updateImageUsingImage:[UIImage imageWithData:data]];
+    [self updateImageUsingImage:[UIImage imageWithData:data]];
 
-       NSDictionary *d = [NSDictionary dictionaryWithObject:data forKey:@"data"];
-       [[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadedNotification object:self userInfo:d];
+    NSDictionary *d = [NSDictionary dictionaryWithObject:data forKey:@"data"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadedNotification object:self userInfo:d];
 }
 
-- (void)updateImageUsingImage: (UIImage*) rawImage
+- (void)updateImageUsingImage:(UIImage *)rawImage
 {
 	layer.contents = (id)[rawImage CGImage];
-//	[self animateIn];
 }
 
 - (BOOL)isLoaded
@@ -152,7 +150,7 @@
 	return (NSUInteger)RMTileHash(tile);
 }
 
--(void) touch
+- (void)touch
 {
 	[lastUsedTime release];
 	lastUsedTime = [[NSDate date] retain];
@@ -175,59 +173,57 @@
 		layer.anchorPoint = CGPointZero;
 		layer.bounds = CGRectMake(0, 0, screenLocation.size.width, screenLocation.size.height);
 		layer.position = screenLocation.origin;
-		
-		NSMutableDictionary *customActions=[NSMutableDictionary dictionaryWithDictionary:[layer actions]];
-		
+		layer.edgeAntialiasingMask = 0;
+
+		NSMutableDictionary *customActions = [NSMutableDictionary dictionaryWithDictionary:[layer actions]];
 		[customActions setObject:[NSNull null] forKey:@"position"];
 		[customActions setObject:[NSNull null] forKey:@"bounds"];
 		[customActions setObject:[NSNull null] forKey:kCAOnOrderOut];		
         [customActions setObject:[NSNull null] forKey:kCAOnOrderIn]; 
-        
+
 		CATransition *reveal = [[CATransition alloc] init];
 		reveal.duration = 0.3;
 		reveal.type = kCATransitionFade;
         [customActions setObject:reveal forKey:@"contents"];
 		[reveal release];
-		
-		layer.actions=customActions;
-		
-		layer.edgeAntialiasingMask = 0;
+
+		layer.actions = customActions;		
 	}
 }
 
-- (void)moveBy: (CGSize) delta
+- (void)moveBy:(CGSize)delta
 {
 	self.screenLocation = RMTranslateCGRectBy(screenLocation, delta);
 }
 
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center
 {
 	self.screenLocation = RMScaleCGRectAboutPoint(screenLocation, zoomFactor, center);
 }
 
-- (CGRect) screenLocation
+- (CGRect)screenLocation
 {
 	return screenLocation;
 }
 
-- (void) setScreenLocation: (CGRect)newScreenLocation
+- (void)setScreenLocation:(CGRect)newScreenLocation
 {
 //	RMLog(@"location moving from %f %f to %f %f", screenLocation.origin.x, screenLocation.origin.y, newScreenLocation.origin.x, newScreenLocation.origin.y);
 	screenLocation = newScreenLocation;
-	
+
 	if (layer != nil)
 	{
 		// layer.frame = screenLocation;
 		layer.position = screenLocation.origin;
 		layer.bounds = CGRectMake(0, 0, screenLocation.size.width, screenLocation.size.height);
 	}
-	
+
 	[self touch];
 }
 
-- (void) displayProxy:(UIImage*) img
+- (void)displayProxy:(UIImage *)proxyImage
 {
-        layer.contents = (id)[img CGImage]; 
+    layer.contents = (id)[proxyImage CGImage]; 
 }
 
 @end

@@ -26,16 +26,17 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import <Foundation/Foundation.h>
+
 #import "RMTile.h"
 
 @class RMTileImage;
+
 /// Has only class methods defined, to return generic "error image", "not-yet-loaded image", and proxy images.
 /// \bug This functionality belongs on the tile source, and should not be freestanding.
 @interface RMTileProxy : NSObject {
-	
 }
 
-+(UIImage*) errorTile;
-+(UIImage*) missingTile;
++ (UIImage *)errorTile;
++ (UIImage *)missingTile;
 
 @end

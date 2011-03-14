@@ -25,12 +25,12 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef _TILE_H_
-#define _TILE_H_
+#ifndef _RMTILE_H_
+#define _RMTILE_H_
 
 #include <CoreGraphics/CGGeometry.h>
-//#include <Quartz/Quartz.h>
 #include <stdint.h>
+
 /*! \file RMTile.h
  */
 /*! \struct RMTile
@@ -44,7 +44,6 @@ typedef struct{
 } RMTile;
 
 /*! \struct RMTilePoint
- \brief Don't know what this is for.
  */
 typedef struct{
 	RMTile tile;
@@ -52,7 +51,6 @@ typedef struct{
 } RMTilePoint;
 
 /*! \struct RMTileRect
- \brief Don't know what this is for.
  */
 typedef struct{
 	RMTilePoint origin;
@@ -72,11 +70,5 @@ uint64_t RMTileKey(RMTile tile);
 
 /// Round the rectangle to whole numbers of tiles
 RMTileRect RMTileRectRound(RMTileRect rect);
-/*
-/// Calculate and return the intersection of two rectangles
-TileRect TileRectIntersection(TileRect one, TileRect two);
 
-/// Calculate and return the union of two rectangles
-TileRect TileRectUnion(TileRect one, TileRect two);
-*/
 #endif

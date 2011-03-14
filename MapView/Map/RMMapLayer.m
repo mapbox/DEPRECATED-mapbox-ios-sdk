@@ -32,9 +32,9 @@
 
 - (id) init
 {
-	if (![super init])
+	if (!(self = [super init]))
 		return nil;
-	
+
 	return self;
 }
 
@@ -42,26 +42,25 @@
 {
 	if (![super initWithLayer:layer])
 		return nil;
-	
+
 	return self;
 }
 
 /// \bug why return nil for the "position" and "bounds" actionForKey? Does this do anything besides block Core Animation?
-- (id<CAAction>)actionForKey:(NSString *)key
+- (id <CAAction>)actionForKey:(NSString *)key
 {
-	if ([key isEqualToString:@"position"]
-		|| [key isEqualToString:@"bounds"])
+	if ([key isEqualToString:@"position"] || [key isEqualToString:@"bounds"])
 		return nil;
-	
-	else return [super actionForKey:key];
+	else 
+        return [super actionForKey:key];
 }
 
-- (void)moveBy: (CGSize) delta
+- (void)moveBy:(CGSize)delta
 {
 	self.position = RMTranslateCGPointBy(self.position, delta);
 }
 
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) pivot
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)pivot
 {
 	self.position = RMScaleCGPointAboutPoint(self.position, zoomFactor, pivot);
 	self.bounds = RMScaleCGRectAboutPoint(self.bounds, zoomFactor, self.anchorPoint);

@@ -30,34 +30,33 @@
 
 @implementation RMMemoryCache
 
--(id)initWithCapacity: (NSUInteger) _capacity
+- (id)initWithCapacity:(NSUInteger)_capacity
 {
-	if (![super init])
+	if (!(self = [super init]))
 		return nil;
 
 	RMLog(@"initializing memory cache %@ with capacity %d", self, _capacity);
-	
+
 	cache = [[NSMutableDictionary alloc] initWithCapacity:_capacity];
 	
 	if (_capacity < 1)
 		_capacity = 1;
 	capacity = _capacity;
-	
+
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(imageLoadingCancelled:)
 												 name:RMMapImageLoadingCancelledNotification
 											   object:nil];
-	
+
 	return self;
 }
 
-/// \bug magic number
--(id)init
+- (id)init
 {
 	return [self initWithCapacity:32];
 }
 
--(void) dealloc
+- (void) dealloc
 {
 	LogMethod();
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -65,72 +64,71 @@
 	[super dealloc];
 }
 
--(void) didReceiveMemoryWarning
+- (void)didReceiveMemoryWarning
 {
 	LogMethod();		
 	[cache removeAllObjects];
 }
 
--(void) removeTile: (RMTile) tile
+- (void)removeTile:(RMTile)tile
 {
 //	RMLog(@"tile %d %d %d removed from cache", tile.x, tile.y, tile.zoom);
-	[cache removeObjectForKey:[RMTileCache tileHash: tile]];
+	[cache removeObjectForKey:[RMTileCache tileHash:tile]];
 }
 
--(void) imageLoadingCancelled: (NSNotification*)notification
+- (void)imageLoadingCancelled:(NSNotification *)notification
 {
-	[self removeTile: [[notification object] tile]];
+	[self removeTile:[[notification object] tile]];
 }
 
--(RMTileImage*) cachedImage:(RMTile)tile
+- (RMTileImage *)cachedImage:(RMTile)tile
 {
-	NSNumber *key = [RMTileCache tileHash: tile];
+	NSNumber *key = [RMTileCache tileHash:tile];
 	RMTileImage *image = [cache objectForKey:key];
 	return image;
 }
 
 /// Remove the least-recently used image from cache, if cache is at or over capacity. Removes only 1 image.
--(void)makeSpaceInCache
+- (void)makeSpaceInCache
 {
 	while ([cache count] >= capacity)
 	{
 		// Rather than scanning I would really like to be using a priority queue
 		// backed by a heap here.
-		
+
 		NSEnumerator *enumerator = [cache objectEnumerator];
 		RMTileImage *image;
-		
+
 		NSDate *oldestDate = nil;
 		RMTileImage *oldestImage = nil;
-		
-		while ((image = (RMTileImage*)[enumerator nextObject]))
+
+		while ((image = (RMTileImage *)[enumerator nextObject]))
 		{
-			if (oldestDate == nil
-				|| ([oldestDate timeIntervalSinceReferenceDate] > [[image lastUsedTime] timeIntervalSinceReferenceDate]))
+			if (oldestDate == nil || ([oldestDate timeIntervalSinceReferenceDate] > [[image lastUsedTime] timeIntervalSinceReferenceDate]))
 			{
 				oldestDate = [image lastUsedTime];
 				oldestImage = image;
 			}
 		}
-		
-		if(oldestImage) [self removeTile:[oldestImage tile]];
+
+		if (oldestImage) [self removeTile:[oldestImage tile]];
 	}
 }
 
--(void)addTile: (RMTile)tile WithImage: (RMTileImage*)image
+- (void)addTile:(RMTile)tile withImage:(RMTileImage *)image
 {
 	if (RMTileIsDummy(tile))
 		return;
-	
+
 	//	RMLog(@"cache add %@", key);
 
 	[self makeSpaceInCache];
-	
-	NSNumber *key = [RMTileCache tileHash: tile];
+
+	NSNumber *key = [RMTileCache tileHash:tile];
 	[cache setObject:image forKey:key];
 }
 
--(void) removeAllCachedImages 
+- (void)removeAllCachedImages
 {
 	[cache removeAllObjects];
 }

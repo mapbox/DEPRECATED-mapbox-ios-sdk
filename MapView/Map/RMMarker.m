@@ -26,7 +26,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import "RMMarker.h"
-
 #import "RMPixel.h"
 
 @implementation RMMarker
@@ -49,84 +48,80 @@
 // init
 - (id)init
 {
-    if (self = [super init]) {
-        label = nil;
-        textForegroundColor = [UIColor blackColor];
-        textBackgroundColor = [UIColor clearColor];
-		enableDragging = YES;
-		enableRotation = YES;
-    }
+    if (!(self = [super init]))
+        return nil;
+
+    label = nil;
+    textForegroundColor = [UIColor blackColor];
+    textBackgroundColor = [UIColor clearColor];
+    enableDragging = YES;
+    enableRotation = YES;
+
     return self;
 }
 
-- (id) initWithUIImage: (UIImage*) image
+- (id)initWithUIImage:(UIImage *)image
 {
-	return [self initWithUIImage:image anchorPoint: defaultMarkerAnchorPoint];
+	return [self initWithUIImage:image anchorPoint:defaultMarkerAnchorPoint];
 }
 
-- (id) initWithUIImage: (UIImage*) image anchorPoint: (CGPoint) _anchorPoint
+- (id)initWithUIImage:(UIImage *)image anchorPoint:(CGPoint)_anchorPoint
 {
-	if (![self init])
+	if (!(self = [self init]))
 		return nil;
-	
+
 	self.contents = (id)[image CGImage];
-	self.bounds = CGRectMake(0,0,image.size.width,image.size.height);
+	self.bounds = CGRectMake(0, 0, image.size.width, image.size.height);
 	self.anchorPoint = _anchorPoint;
-	
+
 	self.masksToBounds = NO;
 	self.label = nil;
-	
+
 	return self;
 }
 
-- (void) replaceUIImage: (UIImage*) image
+- (void)replaceUIImage:(UIImage *)image
 {
 	[self replaceUIImage:image anchorPoint:defaultMarkerAnchorPoint];
 }
 
-- (void) replaceUIImage: (UIImage*) image
-			anchorPoint: (CGPoint) _anchorPoint
+- (void)replaceUIImage:(UIImage *)image anchorPoint:(CGPoint)_anchorPoint
 {
 	self.contents = (id)[image CGImage];
-	self.bounds = CGRectMake(0,0,image.size.width,image.size.height);
+	self.bounds = CGRectMake(0, 0, image.size.width, image.size.height);
 	self.anchorPoint = _anchorPoint;
-	
+
 	self.masksToBounds = NO;
 }
 
-- (void) setLabel:(UIView*)aView
+- (void)setLabel:(UIView *)aView
 {
-	if (label == aView) {
+	if (label == aView)
 		return;
-	}
 
-	if (label != nil)
-	{
+	if (label != nil) {
 		[[label layer] removeFromSuperlayer];
-		[label release];
-		label = nil;
+		[label release]; label = nil;
 	}
 	
-	if (aView != nil)
-	{
+	if (aView != nil) {
 		label = [aView retain];
 		[self addSublayer:[label layer]];
 	}
 }
 
-- (void) changeLabelUsingText: (NSString*)text
+- (void)changeLabelUsingText:(NSString *)text
 {
 	CGPoint position = CGPointMake([self bounds].size.width / 2 - [text sizeWithFont:[RMMarker defaultFont]].width / 2, 4);
-/// \bug hardcoded font name
 	[self changeLabelUsingText:text position:position font:[RMMarker defaultFont] foregroundColor:[self textForegroundColor] backgroundColor:[self textBackgroundColor]];
 }
 
-- (void) changeLabelUsingText: (NSString*)text position:(CGPoint)position
+- (void)changeLabelUsingText:(NSString*)text position:(CGPoint)position
 {
 	[self changeLabelUsingText:text position:position font:[RMMarker defaultFont] foregroundColor:[self textForegroundColor] backgroundColor:[self textBackgroundColor]];
 }
 
-- (void) changeLabelUsingText: (NSString*)text font:(UIFont*)font foregroundColor:(UIColor*)textColor backgroundColor:(UIColor*)backgroundColor
+- (void)changeLabelUsingText:(NSString *)text font:(UIFont *)font foregroundColor:(UIColor *)textColor backgroundColor:(UIColor *)backgroundColor
 {
 	CGPoint position = CGPointMake([self bounds].size.width / 2 - [text sizeWithFont:font].width / 2, 4);
 	[self setTextForegroundColor:textColor];
@@ -134,14 +129,11 @@
 	[self changeLabelUsingText:text  position:position font:font foregroundColor:textColor backgroundColor:backgroundColor];
 }
 
-- (void) changeLabelUsingText: (NSString*)text position:(CGPoint)position font:(UIFont*)font foregroundColor:(UIColor*)textColor backgroundColor:(UIColor*)backgroundColor
+- (void)changeLabelUsingText:(NSString *)text position:(CGPoint)position font:(UIFont *)font foregroundColor:(UIColor *)textColor backgroundColor:(UIColor *)backgroundColor
 {
 	CGSize textSize = [text sizeWithFont:font];
-	CGRect frame = CGRectMake(position.x,
-							  position.y,
-							  textSize.width+4,
-							  textSize.height+4);
-	
+	CGRect frame = CGRectMake(position.x, position.y, textSize.width+4, textSize.height+4);
+
 	UILabel *aLabel = [[UILabel alloc] initWithFrame:frame];
 	[self setTextForegroundColor:textColor];
 	[self setTextBackgroundColor:backgroundColor];
@@ -152,16 +144,15 @@
 	[aLabel setFont:font];
 	[aLabel setTextAlignment:UITextAlignmentCenter];
 	[aLabel setText:text];
-	
+
 	[self setLabel:aLabel];
 	[aLabel release];
 }
 
-- (void) toggleLabel
+- (void)toggleLabel
 {
-	if (self.label == nil) {
+	if (self.label == nil)
 		return;
-	}
 	
 	if ([self.label isHidden]) {
 		[self showLabel];
@@ -170,7 +161,7 @@
 	}
 }
 
-- (void) showLabel
+- (void)showLabel
 {
 	if ([self.label isHidden]) {
 		// Using addSublayer will animate showing the label, whereas setHidden is not animated
@@ -179,7 +170,7 @@
 	}
 }
 
-- (void) hideLabel
+- (void)hideLabel
 {
 	if (![self.label isHidden]) {
 		// Using removeFromSuperlayer will animate hiding the label, whereas setHidden is not animated
@@ -188,7 +179,7 @@
 	}
 }
 
-- (void) dealloc 
+- (void)dealloc 
 {
     self.data = nil;
     self.label = nil;
@@ -197,16 +188,16 @@
 	[super dealloc];
 }
 
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center
 {
-	if(enableDragging){
+	if (enableDragging) {
 		self.position = RMScaleCGPointAboutPoint(self.position, zoomFactor, center);
 	}
 }
 
-- (void)moveBy: (CGSize) delta
+- (void)moveBy:(CGSize)delta
 {
-	if(enableDragging){
+	if (enableDragging) {
 		[super moveBy:delta];
 	}
 }

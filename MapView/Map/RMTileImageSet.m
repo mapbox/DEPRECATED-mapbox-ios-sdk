@@ -37,34 +37,34 @@
 
 @implementation RMTileImageSet
 
-@synthesize delegate, tileDepth;
+@synthesize delegate, tileDepth, zoom;
 
--(id) initWithDelegate: (id) _delegate
+- (id)initWithDelegate:(id)_delegate
 {
-	if (![super init])
+	if (!(self = [super init]))
 		return nil;
 	
 	tileSource = nil;
 	self.delegate = _delegate;
 	images = [[NSMutableSet alloc] init];
-	[[NSNotificationCenter defaultCenter]
-		addObserver:self
-		selector:@selector(tileImageLoaded:)
-		name:RMMapImageLoadedNotification
-		object:nil
-	];
+    
+	[[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(tileImageLoaded:)
+                                                 name:RMMapImageLoadedNotification
+                                               object:nil];
+    
 	return self;
 }
 
--(void) dealloc
+- (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[self removeAllTiles];
-	[images release];
+	[images release]; images = nil;
 	[super dealloc];
 }
 
--(void) removeTile: (RMTile) tile
+- (void)removeTile:(RMTile)tile
 {
 	RMTileImage *img;
 
@@ -77,12 +77,10 @@
 	
 	RMTileImage *dummyTile = [RMTileImage dummyTile:tile];
 	img = [images member:dummyTile];
-	if (!img) {
+	if (!img)
 		return;
-	}
 
-	if ([delegate respondsToSelector: @selector(tileRemoved:)])
-	{
+	if ([delegate respondsToSelector:@selector(tileRemoved:)]) {
 		[delegate tileRemoved:tile];
 	}
 
@@ -90,21 +88,20 @@
 	[images removeObject:dummyTile];
 }
 
--(void) removeAllTiles
+- (void)removeAllTiles
 {
-	for (RMTileImage * img in [images allObjects]) {
-		[self removeTile: img.tile];
+	for (RMTileImage *img in [images allObjects]) {
+		[self removeTile:img.tile];
 	}
 }
 
-- (void) setTileSource: (id<RMTileSource>)newTileSource
+- (void)setTileSource:(id <RMTileSource>)newTileSource
 {
 	[self removeAllTiles];
-
 	tileSource = newTileSource;
 }
 
--(void) addTile: (RMTile) tile WithImage: (RMTileImage *)image At: (CGRect) screenLocation
+- (void)addTile:(RMTile)tile withImage:(RMTileImage *)image at:(CGRect)screenLocation
 {
 	BOOL tileNeeded;
 
@@ -112,70 +109,67 @@
 	for (RMTileImage *img in images)
 	{
 		if (![img isLoaded])
-		{
-			continue;
-		}
+            continue;
+
 		if ([self isTile:tile worseThanTile:img.tile])
 		{
 			tileNeeded = NO;
 			break;
 		}
 	}
-	if (!tileNeeded) {
+    
+	if (!tileNeeded)
 		return;
-	}
 
-	if ([image isLoaded]) {
+	if ([image isLoaded])
 		[self removeTilesWorseThan:image];
-	}
 
 	image.screenLocation = screenLocation;
 	[images addObject:image];
-	
+
 	if (!RMTileIsDummy(image.tile))
 	{
-		if([delegate respondsToSelector:@selector(tileAdded:WithImage:)])
+		if([delegate respondsToSelector:@selector(tileAdded:withImage:)])
 		{
-			[delegate tileAdded:tile WithImage:image];
+			[delegate tileAdded:tile withImage:image];
 		}
 
 		[[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageAddedToScreenNotification object:image];
 	}
 }
 
--(void) addTile: (RMTile) tile At: (CGRect) screenLocation
+- (void)addTile:(RMTile)tile at:(CGRect)screenLocation
 {
 	//	RMLog(@"addTile: %d %d", tile.x, tile.y);
-	
+
     RMTileImage *dummyTile = [RMTileImage dummyTile:tile];
     RMTileImage *tileImage = [images member:dummyTile];
 
-	if (tileImage != nil)
-	{        
+	if (tileImage != nil) {        
 		[tileImage setScreenLocation:screenLocation];
 		[images addObject:dummyTile];
 	}
-	else
-	{
+	else {
 		RMTileImage *image = [tileSource tileImage:tile];
 		if (image != nil)
-			[self addTile:tile WithImage:image At:screenLocation];
+			[self addTile:tile withImage:image at:screenLocation];
 	}
 }
 
 // Add tiles inside rect protected to bounds. Return rectangle containing bounds
 // extended to full tile loading area
--(CGRect) addTiles: (RMTileRect)rect ToDisplayIn:(CGRect)bounds
+- (CGRect)addTiles:(RMTileRect)rect toDisplayIn:(CGRect)bounds
 {
 //	RMLog(@"addTiles: %d %d - %f %f", rect.origin.tile.x, rect.origin.tile.y, rect.size.width, rect.size.height);
 	
 	RMTile t;
 	float pixelsPerTile = bounds.size.width / rect.size.width;
 	RMTileRect roundedRect = RMTileRectRound(rect);
+    
 	// The number of tiles we'll load in the vertical and horizontal directions
 	int tileRegionWidth = (int)roundedRect.size.width;
 	int tileRegionHeight = (int)roundedRect.size.height;
-	id<RMMercatorToTileProjection> proj = [tileSource mercatorToTileProjection];
+	id <RMMercatorToTileProjection> proj = [tileSource mercatorToTileProjection];
 	short minimumZoom = [tileSource minZoom], alternateMinimum;
 
 	// Now we translate the loaded region back into screen space for loadedBounds.
@@ -187,9 +181,7 @@
 
 	alternateMinimum = zoom - tileDepth - 1;
 	if (minimumZoom < alternateMinimum)
-	{
 		minimumZoom = alternateMinimum;
-	}
 
 	for (;;)
 	{
@@ -211,7 +203,7 @@
 				screenLocation.origin.x = bounds.origin.x + (t.x - rect.origin.tile.x - rect.origin.offset.x) * pixelsPerTile;		
 				screenLocation.origin.y = bounds.origin.y + (t.y - rect.origin.tile.y - rect.origin.offset.y) * pixelsPerTile;
 
-				[self addTile:normalisedTile At:screenLocation];
+				[self addTile:normalisedTile at:screenLocation];
 			}
 		}
         
@@ -233,36 +225,36 @@
 		rect.origin.offset.y *= 0.5;
 		pixelsPerTile = bounds.size.width / rect.size.width;
 		roundedRect = RMTileRectRound(rect);
+
 		// The number of tiles we'll load in the vertical and horizontal directions
 		tileRegionWidth = (int)roundedRect.size.width;
 		tileRegionHeight = (int)roundedRect.size.height;
 	}
-	
+
 	return newLoadedBounds;
 }
 
--(RMTileImage*) imageWithTile: (RMTile) tile
+- (RMTileImage *)imageWithTile:(RMTile)tile
 {
 	RMTileImage *dummyTile = [RMTileImage dummyTile:tile];
 
 	return [images member:dummyTile];
 }
 
--(NSUInteger) count
+- (NSUInteger)count
 {
 	return [images count];
-	
 }
 
-- (void)moveBy: (CGSize) delta
+- (void)moveBy:(CGSize)delta
 {
 	for (RMTileImage *image in images)
 	{
-		[image moveBy: delta];
+		[image moveBy:delta];
 	}
 }
 
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center
 {
 	for (RMTileImage *image in images)
 	{
@@ -270,21 +262,11 @@
 	}
 }
 
-/*
-- (void) drawRect:(CGRect) rect
-{
-	for (RMTileImage *image in images)
-	{
-		[image draw];
-	}
-}
-*/
-
-- (void) printDebuggingInformation
+- (void)printDebuggingInformation
 {
 	float biggestSeamRight = 0.0f;
 	float biggestSeamDown = 0.0f;
-	
+
 	for (RMTileImage *image in images)
 	{
 		CGRect location = [image screenLocation];
@@ -312,7 +294,7 @@
 		if (seamDown != INFINITY)
 			biggestSeamDown = MAX(biggestSeamDown, seamDown);
 	}
-	
+
 	RMLog(@"Biggest seam right: %f  down: %f", biggestSeamRight, biggestSeamDown);
 }
 
@@ -324,7 +306,8 @@
 	}
 }
 
-- (RMTileImage *)anyTileImage {
+- (RMTileImage *)anyTileImage
+{
 	return [images anyObject];
 }
 
@@ -362,6 +345,7 @@
 			break;
 		}
 	}
+
 	return fullyLoaded;
 }
 
@@ -378,7 +362,8 @@
 	[self removeTilesWorseThan:img];
 }
 
-- (void)removeTilesWorseThan:(RMTileImage *)newImage {
+- (void)removeTilesWorseThan:(RMTileImage *)newImage
+{
 	RMTile newTile = newImage.tile;
 
 	if (newTile.zoom > zoom) {
@@ -391,11 +376,9 @@
 		RMTile oldTile = oldImage.tile;
 
 		if (oldImage == newImage)
-		{
 			continue;
-		}
-		if ([self isTile:oldTile worseThanTile:newTile])
-		{
+
+		if ([self isTile:oldTile worseThanTile:newTile]) {
 			[oldImage cancelLoading];
 			[self removeTile:oldTile];
 		}
@@ -408,8 +391,7 @@
 	uint32_t sx, sy, ox, oy;
 
 	objZ = object.zoom;
-	if (objZ > zoom)
-	{
+	if (objZ > zoom) {
 		// can't be worse than this tile, it's too detailed to keep long-term
 		return NO;
 	}
@@ -426,30 +408,27 @@
 	ox = object.x;
 	oy = object.y;
 
-	if (subjZ < objZ)
-	{
+	if (subjZ < objZ) {
 		// old tile is larger & blurrier
 		unsigned int dz = objZ - subjZ;
 
 		ox >>= dz;
 		oy >>= dz;
 	}
-	else if (objZ < subjZ)
-	{
+	else if (objZ < subjZ) {
 		// old tile is smaller & more detailed
 		unsigned int dz = subjZ - objZ;
 
 		sx >>= dz;
 		sy >>= dz;
 	}
-	if (sx != ox || sy != oy)
-	{
+    
+	if (sx != ox || sy != oy) {
 		// Tiles don't overlap
 		return NO;
 	}
 
-	if (abs(zoom - subjZ) < abs(zoom - objZ))
-	{
+	if (abs(zoom - subjZ) < abs(zoom - objZ)) {
 		// subject is closer to desired zoom level than object, so it's not worse
 		return NO;
 	}
@@ -457,12 +436,12 @@
 	return YES;
 }
 
--(void) removeTilesOutsideOf: (RMTileRect)rect
+- (void)removeTilesOutsideOf:(RMTileRect)rect
 {
 	uint32_t minX, maxX, minY, maxY, span;
 	short currentZoom = rect.origin.tile.zoom;
 	RMTile wrappedTile;
-	id<RMMercatorToTileProjection> proj = [tileSource mercatorToTileProjection];
+	id <RMMercatorToTileProjection> proj = [tileSource mercatorToTileProjection];
 
 	rect = RMTileRectRound(rect);
 	minX = rect.origin.tile.x;
@@ -476,10 +455,9 @@
 	wrappedTile.y = maxY;
 	wrappedTile.zoom = rect.origin.tile.zoom;
 	wrappedTile = [proj normaliseTile:wrappedTile];
+
 	if (!RMTileIsDummy(wrappedTile))
-	{
 		maxX = wrappedTile.x;
-	}
 
 	for(RMTileImage *img in [images allObjects])
 	{
@@ -527,6 +505,7 @@
 			}
 
 		}
+
 		// if haven't continued, tile is outside of rect
 		[self removeTile:tile];
 	}

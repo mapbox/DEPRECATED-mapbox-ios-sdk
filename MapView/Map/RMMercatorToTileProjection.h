@@ -34,34 +34,30 @@
 
 /// A tile projection is a projection which turns mercators into tile coordinates.
 /// At time of writing, read RMFractalTileProjection to see the implementation of this.
-@protocol RMMercatorToTileProjection<NSObject>
+@protocol RMMercatorToTileProjection <NSObject>
 
--(RMTilePoint) project: (RMProjectedPoint)aPoint atZoom:(float)zoom;
--(RMTileRect) projectRect: (RMProjectedRect)aRect atZoom:(float)zoom;
+- (RMTilePoint)project:(RMProjectedPoint)aPoint atZoom:(float)zoom;
+- (RMTileRect)projectRect:(RMProjectedRect)aRect atZoom:(float)zoom;
 
--(RMTilePoint) project: (RMProjectedPoint)aPoint atScale:(float)scale;
--(RMTileRect) projectRect: (RMProjectedRect)aRect atScale:(float)scale;
+- (RMTilePoint)project:(RMProjectedPoint)aPoint atScale:(float)scale;
+- (RMTileRect)projectRect:(RMProjectedRect)aRect atScale:(float)scale;
 
-/// This is a helper for projectRect above. Much simpler for the caller.
--(RMTileRect) project: (RMMercatorToScreenProjection*)screen;
+- (RMTile)normaliseTile:(RMTile)tile;
+- (float)normaliseZoom:(float)zoom;
 
--(RMTile) normaliseTile: (RMTile) tile;
+- (float)calculateZoomFromScale:(float)scale;
+- (float)calculateNormalisedZoomFromScale:(float)scale;
+- (float)calculateScaleFromZoom:(float)zoom;
 
--(float) normaliseZoom: (float) zoom;
+// bounds of the earth, in projected units (meters).
+@property (readonly, nonatomic) RMProjectedRect planetBounds;
 
--(float) calculateZoomFromScale: (float) scale;
--(float) calculateNormalisedZoomFromScale: (float) scale;
--(float) calculateScaleFromZoom: (float) zoom;
+// Maximum zoom for which we have tile images 
+@property (readonly, nonatomic) NSUInteger maxZoom;
+// Minimum zoom for which we have tile images 
+@property (readonly, nonatomic) NSUInteger minZoom;
 
-/// bounds of the earth, in projected units (meters).
-@property(readonly, nonatomic) RMProjectedRect planetBounds;
-
-/// Maximum zoom for which we have tile images 
-@property(readonly, nonatomic) NSUInteger maxZoom;
-/// Minimum zoom for which we have tile images 
-@property(readonly, nonatomic) NSUInteger minZoom;
-
-/// Tile side length in pixels
-@property(readonly, nonatomic) NSUInteger tileSideLength;
+// Tile side length in pixels
+@property (readonly, nonatomic) NSUInteger tileSideLength;
 
 @end

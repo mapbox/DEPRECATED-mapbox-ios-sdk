@@ -31,46 +31,54 @@
 #else
 #	import <Cocoa/Cocoa.h>
 #endif
+
 #import "RMTile.h"
 
 @class RMTileImage;
 @protocol RMTileSource;
 
-@protocol RMTileImageSetDelegate<NSObject>
-
+@protocol RMTileImageSetDelegate <NSObject>
 @optional
 
--(void) tileRemoved: (RMTile) tile;
--(void) tileAdded: (RMTile) tile WithImage: (RMTileImage*) image;
+- (void)tileRemoved:(RMTile)tile;
+- (void)tileAdded:(RMTile)tile withImage:(RMTileImage *)image;
 
 @end
 
 @interface RMTileImageSet : NSObject {
 	IBOutlet id delegate;
-	id<RMTileSource> tileSource;
+	id <RMTileSource> tileSource;
+    
 	NSMutableSet *images;
 	short zoom, tileDepth;
 }
 
--(id) initWithDelegate: (id) _delegate;
+@property (assign, nonatomic, readwrite) id delegate;
 
--(void) addTile: (RMTile) tile WithImage: (RMTileImage *)image At: (CGRect) screenLocation;
--(void) addTile: (RMTile) tile At: (CGRect) screenLocation;
-/// Add tiles inside rect protected to bounds. Return rectangle containing bounds extended to full tile loading area
--(CGRect) addTiles: (RMTileRect)rect ToDisplayIn:(CGRect)bounds;
+// tileDepth defaults to zero. if tiles have no alpha, set this higher, 3 or so, to make zooming smoother
+@property (assign, readwrite) short zoom, tileDepth;
+@property (readonly) BOOL fullyLoaded;
 
--(RMTileImage*) imageWithTile: (RMTile) tile;
+- (id)initWithDelegate:(id)_delegate;
+
+- (void)addTile:(RMTile)tile withImage:(RMTileImage *)image at:(CGRect)screenLocation;
+- (void)addTile:(RMTile)tile at:(CGRect)screenLocation;
+
+// Add tiles inside rect protected to bounds. Return rectangle containing bounds extended to full tile loading area
+- (CGRect)addTiles:(RMTileRect)rect toDisplayIn:(CGRect)bounds;
+
+- (RMTileImage *)imageWithTile:(RMTile)tile;
 	
--(void) removeTile: (RMTile) tile;
+- (void)removeTile:(RMTile)tile;
 
--(void) removeAllTiles;
+- (void)removeAllTiles;
 
-- (void) setTileSource: (id<RMTileSource>)newTileSource;
+- (void)setTileSource:(id <RMTileSource>)newTileSource;
 
--(NSUInteger) count;
+- (NSUInteger)count;
 
-- (void)moveBy: (CGSize) delta;
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center;
+- (void)moveBy:(CGSize)delta;
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center;
 
 //- (void) drawRect:(CGRect) rect;
 
@@ -78,14 +86,10 @@
 
 - (void)cancelLoading;
 
--(void) tileImageLoaded:(NSNotification *)notification;
--(void) removeTilesWorseThan: (RMTileImage *)newImage;
--(BOOL) isTile: (RMTile)subject worseThanTile: (RMTile)object;
--(RMTileImage *) anyTileImage;
--(void) removeTilesOutsideOf: (RMTileRect)rect;
+- (void)tileImageLoaded:(NSNotification *)notification;
+- (void)removeTilesWorseThan:(RMTileImage *)newImage;
+- (BOOL)isTile:(RMTile)subject worseThanTile:(RMTile)object;
+- (RMTileImage *)anyTileImage;
+- (void)removeTilesOutsideOf:(RMTileRect)rect;
 
-@property (assign, nonatomic, readwrite) id delegate;
-// tileDepth defaults to zero. if tiles have no alpha, set this higher, 3 or so, to make zooming smoother
-@property (assign, readwrite) short zoom, tileDepth;
-@property (readonly) BOOL fullyLoaded;
 @end

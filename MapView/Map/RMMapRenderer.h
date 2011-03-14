@@ -46,6 +46,6 @@
 - (void)drawRect:(CGRect)rect;
 - (void)setFrame:(CGRect)frame;
 
-- (CALayer*)layer;
+- (CALayer *)layer;
 
 @end

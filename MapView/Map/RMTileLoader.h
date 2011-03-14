@@ -46,23 +46,21 @@
 	BOOL suppressLoading;
 }
 
+@property (readonly, nonatomic) CGRect loadedBounds;
+@property (readonly, nonatomic) NSUInteger loadedZoom;
+@property (readwrite, assign) BOOL suppressLoading;
+
 /// Designated initialiser
-- (id)initWithContent: (RMMapContents *)contents;
+- (id)initWithContent:(RMMapContents *)contents;
 
 - (void)updateLoadedImages;
 
-- (void)moveBy: (CGSize) delta;
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center;
+- (void)moveBy:(CGSize)delta;
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center;
 
 - (void)clearLoadedBounds;
 
 - (void)reload;
 - (void)reset;
-
-@property (readonly, nonatomic) CGRect loadedBounds;
-@property (readonly, nonatomic) NSUInteger loadedZoom;
-@property (readwrite, assign) BOOL suppressLoading;
-
-//-(BOOL) containsRect: (CGRect)bounds;
 
 @end

@@ -39,14 +39,14 @@
     NSRecursiveLock *writeQueueLock;
 }
 
--(id) initWithDatabase: (NSString*)path;
+- (id)initWithDatabase:(NSString *)path;
 
--(NSUInteger) count;
--(NSData*) dataForTile: (uint64_t) tileHash;
--(void) touchTile: (uint64_t) tileHash withDate: (NSDate*) date;
--(void) addData: (NSData*) data LastUsed: (NSDate*)date ForTile: (uint64_t) tileHash;
--(void) purgeTiles: (NSUInteger) count;
--(void) removeAllCachedImages;
--(void)didReceiveMemoryWarning;
+- (NSUInteger)count;
+- (NSData *)dataForTile:(uint64_t)tileHash;
+- (void)touchTile:(uint64_t)tileHash withDate:(NSDate *)date;
+- (void)addData:(NSData *)data lastUsed:(NSDate *)date forTile:(uint64_t)tileHash;
+- (void)purgeTiles:(NSUInteger)count;
+- (void)removeAllCachedImages;
+- (void)didReceiveMemoryWarning;
 
 @end

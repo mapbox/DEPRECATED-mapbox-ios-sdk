@@ -26,7 +26,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import "RMAbstractMercatorWebSource.h"
-#import "RMTransform.h"
 #import "RMTileImage.h"
 #import "RMTileLoader.h"
 #import "RMFractalTileProjection.h"
@@ -35,143 +34,151 @@
 
 @implementation RMAbstractMercatorWebSource
 
--(id) init
+- (id)init
 {
-	if (![super init])
+	if (!(self = [super init]))
 		return nil;
 	
-	tileProjection = [[RMFractalTileProjection alloc] initFromProjection:[self projection] tileSideLength:kDefaultTileSize maxZoom:kDefaultMaxTileZoom minZoom:kDefaultMinTileZoom];
-	
+	tileProjection = [[RMFractalTileProjection alloc] initFromProjection:[self projection]
+                                                          tileSideLength:kDefaultTileSize
+                                                                 maxZoom:kDefaultMaxTileZoom
+                                                                 minZoom:kDefaultMinTileZoom];
 	networkOperations = TRUE;
-	
+
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(networkOperationsNotification:) name:RMSuspendNetworkOperations object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(networkOperationsNotification:) name:RMResumeNetworkOperations object:nil];
-	
+
 	return self;
 }
 
-- (void) networkOperationsNotification: (NSNotification*) notification
-{	
-	if(notification.name == RMSuspendNetworkOperations)
+- (void)networkOperationsNotification:(NSNotification *)notification
+{
+	if (notification.name == RMSuspendNetworkOperations)
 		networkOperations = FALSE;
-	else if(notification.name == RMResumeNetworkOperations)
+	else if (notification.name == RMResumeNetworkOperations)
 		networkOperations = TRUE;
 }
 
--(void) dealloc
+- (void)dealloc
 {
-	[tileProjection release];
+	[tileProjection release]; tileProjection = nil;
 	[super dealloc];
 }
 
--(int)tileSideLength
+- (int)tileSideLength
 {
 	return tileProjection.tileSideLength;
 }
 
-- (void) setTileSideLength: (NSUInteger) aTileSideLength
+- (void) setTileSideLength:(NSUInteger)aTileSideLength
 {
 	[tileProjection setTileSideLength:aTileSideLength];
 }
 
--(float) minZoom
+- (float)minZoom
 {
 	return (float)tileProjection.minZoom;
 }
 
--(float) maxZoom
-{
-	return (float)tileProjection.maxZoom;
-}
-
--(void) setMinZoom:(NSUInteger)aMinZoom
+- (void)setMinZoom:(NSUInteger)aMinZoom
 {
 	[tileProjection setMinZoom:aMinZoom];
 }
 
--(void) setMaxZoom:(NSUInteger)aMaxZoom
+- (float)maxZoom
+{
+	return (float)tileProjection.maxZoom;
+}
+
+- (void) setMaxZoom:(NSUInteger)aMaxZoom
 {
 	[tileProjection setMaxZoom:aMaxZoom];
 }
 
--(RMSphericalTrapezium) latitudeLongitudeBoundingBox;
+- (RMSphericalTrapezium) latitudeLongitudeBoundingBox
 {
 	return kDefaultLatLonBoundingBox;
 }
 
-/// \bug magic string literals
--(NSString*) tileURL: (RMTile) tile
+- (NSString *)tileURL:(RMTile)tile
 {
-	@throw [NSException exceptionWithName:@"RMAbstractMethodInvocation" reason:@"tileURL invoked on AbstractMercatorWebSource. Override this method when instantiating abstract class." userInfo:nil];
+	@throw [NSException exceptionWithName:@"RMAbstractMethodInvocation"
+                                   reason:@"tileURL invoked on AbstractMercatorWebSource. Override this method when instantiating abstract class."
+                                 userInfo:nil];
 }
 
--(NSString*) tileFile: (RMTile) tile
-{
-	return nil;
-}
-
--(NSString*) tilePath
+- (NSString *)tileFile:(RMTile)tile
 {
 	return nil;
 }
 
--(RMTileImage *)tileImage:(RMTile)tile
+- (NSString *)tilePath
+{
+	return nil;
+}
+
+- (RMTileImage *)tileImage:(RMTile)tile
 {
 	RMTileImage *image;
-	
+
 	tile = [tileProjection normaliseTile:tile];
-	
+
 	NSString *file = [self tileFile:tile];
-	
-	if(file && [[NSFileManager defaultManager] fileExistsAtPath:file])
-	{
+	if (file && [[NSFileManager defaultManager] fileExistsAtPath:file])	{
 		image = [RMTileImage imageForTile:tile fromFile:file];
 	}
-	else if(networkOperations) 
-	{
-		image = [RMTileImage imageForTile:tile withURL:[self tileURL:tile]];     
+	else if(networkOperations) {
+		image = [RMTileImage imageForTile:tile withURL:[self tileURL:tile]];
 	}
-	else
-	{
+	else {
 		image = [RMTileImage dummyTile:tile];
 	}
-	
+
 	return image;
 }
 
--(id<RMMercatorToTileProjection>) mercatorToTileProjection
+- (id <RMMercatorToTileProjection>)mercatorToTileProjection
 {
 	return [[tileProjection retain] autorelease];
 }
 
--(RMProjection*) projection
+- (RMProjection *)projection
 {
 	return [RMProjection googleProjection];
 }
 
--(void) didReceiveMemoryWarning
+- (void)didReceiveMemoryWarning
 {
 	LogMethod();		
 }
 
--(NSString *)uniqueTilecacheKey
+- (NSString *)uniqueTilecacheKey
 {
-	@throw [NSException exceptionWithName:@"RMAbstractMethodInvocation" reason:@"uniqueTilecacheKey invoked on AbstractMercatorWebSource. Override this method when instantiating abstract class." userInfo:nil];
+	@throw [NSException exceptionWithName:@"RMAbstractMethodInvocation"
+                                   reason:@"uniqueTilecacheKey invoked on AbstractMercatorWebSource. Override this method when instantiating abstract class."
+                                 userInfo:nil];
 }
 
--(NSString *)shortName
+- (NSString *)shortName
 {
-	@throw [NSException exceptionWithName:@"RMAbstractMethodInvocation" reason:@"shortName invoked on AbstractMercatorWebSource. Override this method when instantiating abstract class." userInfo:nil];
+	@throw [NSException exceptionWithName:@"RMAbstractMethodInvocation"
+                                   reason:@"shortName invoked on AbstractMercatorWebSource. Override this method when instantiating abstract class."
+                                 userInfo:nil];
 }
--(NSString *)longDescription
+
+- (NSString *)longDescription
 {
 	return [self shortName];
 }
--(NSString *)shortAttribution
+
+- (NSString *)shortAttribution
 {
-	@throw [NSException exceptionWithName:@"RMAbstractMethodInvocation" reason:@"shortAttribution invoked on AbstractMercatorWebSource. Override this method when instantiating abstract class." userInfo:nil];
+	@throw [NSException exceptionWithName:@"RMAbstractMethodInvocation"
+                                   reason:@"shortAttribution invoked on AbstractMercatorWebSource. Override this method when instantiating abstract class."
+                                 userInfo:nil];
 }
--(NSString *)longAttribution
+
+- (NSString *)longAttribution
 {
 	return [self shortAttribution];
 }
@@ -179,5 +186,6 @@
 -(void) removeAllCachedImages
 {
 }
+
 @end
 

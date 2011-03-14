@@ -28,7 +28,6 @@
 #import <UIKit/UIKit.h>
 
 #import "RMFoundation.h"
-#import "RMLatLong.h"
 #import "RMMapLayer.h"
 
 @class RMMapContents;
@@ -38,7 +37,7 @@
  */
 @interface RMPath : RMMapLayer <RMMovingMapLayer>
 {
-	BOOL	isFirstPoint;
+	BOOL isFirstPoint;
 
 	/// This is the first point.
 	RMProjectedPoint projectedLocation;
@@ -73,8 +72,8 @@
 }
 
 
-- (id) initWithContents: (RMMapContents*)aContents;
-- (id) initForMap: (RMMapView*)map;
+- (id)initWithContents:(RMMapContents *)aContents;
+- (id)initForMap:(RMMapView *)map;
 
 @property CGPathDrawingMode drawingMode;
 @property CGLineCap lineCap;
@@ -87,17 +86,16 @@
 @property (readwrite, assign) UIColor *lineColor;
 @property (readwrite, assign) UIColor *fillColor;
 
-- (void) moveToXY: (RMProjectedPoint) point;
-- (void) moveToScreenPoint: (CGPoint) point;
-- (void) moveToLatLong: (RMLatLong) point;
-- (void) addLineToXY: (RMProjectedPoint) point;
-- (void) addLineToScreenPoint: (CGPoint) point;
-- (void) addLineToLatLong: (RMLatLong) point;
+- (void)moveToXY:(RMProjectedPoint)point;
+- (void)moveToScreenPoint:(CGPoint)point;
+- (void)moveToLatLong:(CLLocationCoordinate2D)point;
+- (void)addLineToXY:(RMProjectedPoint)point;
+- (void)addLineToScreenPoint:(CGPoint)point;
+- (void)addLineToLatLong:(CLLocationCoordinate2D)point;
 
 /// This closes the path, connecting the last point to the first.
 /// After this action, no further points can be added to the path.
 /// There is no requirement that a path be closed.
-- (void) closePath;
-
+- (void)closePath;
 
 @end

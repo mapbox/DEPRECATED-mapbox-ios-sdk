@@ -9,7 +9,6 @@
 #import "RouteMeTests.h"
 #import "RMMapView.h"
 #import "RMCloudMadeMapSource.h"
-#import "RMGeoHash.h"
 #import "RMMarker.h"
 #import "RMMarkerManager.h"
 
@@ -57,21 +56,6 @@
 	STAssertNoThrow([myTilesource release], @"tilesource release failed");
 }
 
-- (void)testGeohashing 
-{
-	CLLocationCoordinate2D location1, location2;
-	location1.latitude = 38.89;
-	location1.longitude = -77.0;
-	STAssertEqualStrings([RMGeoHash fromLocation:location1 withPrecision:6], @"dqcjr2", @"6-digit geohash location1 failed");
-	STAssertEqualStrings([RMGeoHash fromLocation:location1 withPrecision:4], @"dqcj", @"4-digit geohash location1 failed");
-	
-	location2.latitude = 38.89;
-	location2.longitude = -77.1;
-	STAssertEqualStrings([RMGeoHash fromLocation:location2 withPrecision:6], @"dqcjjx", @"geohash location2 failed");
-	STAssertEqualStrings([RMGeoHash fromLocation:location2 withPrecision:4], @"dqcj", @"4-digit geohash location1 failed");
-											  
-}
-
 - (void)testProgrammaticViewCreation
 {
 	STAssertNotNil(mapView, @"mapview creation failed");
@@ -100,7 +84,7 @@
 			STAssertNotNil(newMarker, @"testMarkerCreation marker creation failed");
 			[newMarker setData:[NSArray arrayWithObjects:[NSNumber numberWithDouble:markerPosition.longitude],[NSNumber numberWithDouble:markerPosition.latitude],nil]];
 			[mapView.contents.markerManager addMarker:newMarker
-			 AtLatLong:markerPosition];
+			 atLatLong:markerPosition];
 		}
 		markerPosition.latitude += columnSpacing;
 	}
@@ -128,7 +112,7 @@
 		[testMarkers addObject:newMarker];
 		[newMarker setData:[NSArray arrayWithObjects:[NSNumber numberWithDouble:markerPosition.longitude],[NSNumber numberWithDouble:markerPosition.latitude],nil]];
 		[mapView.contents.markerManager addMarker:newMarker
-		 AtLatLong:markerPosition];
+		 atLatLong:markerPosition];
 	}
 	STAssertGreaterThan(columnSpacing, 0.0, @"this test requires positive columnSpacing");
 
@@ -146,7 +130,7 @@
 		RMMarker *rightMarker = [testMarkers objectAtIndex:j];
 		CGPoint leftScreenPosition = [mangler screenCoordinatesForMarker:leftMarker];
 		CGPoint rightScreenPosition = [mangler screenCoordinatesForMarker:rightMarker];
-		RMLatLong leftMarkerCoordinate, rightMarkerCoordinate;
+		CLLocationCoordinate2D leftMarkerCoordinate, rightMarkerCoordinate;
 		leftMarkerCoordinate.longitude = [[(NSArray *)leftMarker.data objectAtIndex:0] doubleValue];
 		leftMarkerCoordinate.latitude = [[(NSArray *)leftMarker.data objectAtIndex:1] doubleValue];
 		rightMarkerCoordinate.longitude = [[(NSArray *)rightMarker.data objectAtIndex:0] doubleValue];
@@ -192,7 +176,7 @@
 		[testMarkers addObject:newMarker];
 		[newMarker setData:[NSArray arrayWithObjects:[NSNumber numberWithDouble:markerPosition.longitude],[NSNumber numberWithDouble:markerPosition.latitude],nil]];
 		[mapView.contents.markerManager addMarker:newMarker
-		 AtLatLong:markerPosition];
+		 atLatLong:markerPosition];
 	}
 	STAssertGreaterThan(columnSpacing, 0.0, @"this test requires positive columnSpacing");
 
@@ -210,7 +194,7 @@
 		RMMarker *rightMarker = [testMarkers objectAtIndex:j];
 		CGPoint leftScreenPosition = [mangler screenCoordinatesForMarker:leftMarker];
 		CGPoint rightScreenPosition = [mangler screenCoordinatesForMarker:rightMarker];
-		RMLatLong leftMarkerCoordinate, rightMarkerCoordinate;
+		CLLocationCoordinate2D leftMarkerCoordinate, rightMarkerCoordinate;
 		leftMarkerCoordinate.longitude = [[(NSArray *)leftMarker.data objectAtIndex:0] doubleValue];
 		leftMarkerCoordinate.latitude = [[(NSArray *)leftMarker.data objectAtIndex:1] doubleValue];
 		rightMarkerCoordinate.longitude = [[(NSArray *)rightMarker.data objectAtIndex:0] doubleValue];
