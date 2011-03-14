@@ -29,6 +29,8 @@
 
 @implementation RMTileProxy
 
+static BOOL _didLoadErrorTile = NO;
+static BOOL _didLoadMissingTile = NO;
 static UIImage *_errorTile = nil;
 static UIImage *_missingTile = nil;
 
@@ -37,7 +39,12 @@ static UIImage *_missingTile = nil;
 	if (_errorTile)
         return _errorTile;
 
+    if (_didLoadErrorTile)
+        return nil;
+
 	_errorTile = [[UIImage imageNamed:@"error.png"] retain];
+    _didLoadErrorTile = YES;
+
 	return _errorTile;
 }
 
@@ -46,7 +53,12 @@ static UIImage *_missingTile = nil;
 	if (_missingTile)
         return _missingTile;
 
+    if (_didLoadMissingTile)
+        return nil;
+
 	_missingTile = [[UIImage imageNamed:@"missing.png"] retain];
+    _didLoadMissingTile = YES;
+
 	return _missingTile;
 }
 
