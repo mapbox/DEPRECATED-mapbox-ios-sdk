@@ -99,8 +99,7 @@ NSString *RMWebTileImageNotificationErrorKey = @"RMWebTileImageNotificationError
 	connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
 
 	if (!connection) {
-		[super displayProxy:[RMTileProxy errorTile]];
-		[[NSNotificationCenter defaultCenter] postNotificationName:RMTileRetrieved object:self];
+		[super displayProxy:[RMTileImage errorTile]];
 	}
 }
 
@@ -147,7 +146,7 @@ NSString *RMWebTileImageNotificationErrorKey = @"RMWebTileImageNotificationError
 	if (statusCode < 400) { // Success
 	}
     else if (statusCode == 404) { // Not Found
-        [super displayProxy:[RMTileProxy missingTile]];
+        [super displayProxy:[RMTileImage missingTile]];
 
         NSError *error = [NSError errorWithDomain:RMWebTileImageErrorDomain 
                                              code:RMWebTileImageErrorNotFoundResponse

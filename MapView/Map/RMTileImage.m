@@ -36,6 +36,11 @@
 #import "RMTileCache.h"
 #import "RMPixel.h"
 
+static BOOL _didLoadErrorTile = NO;
+static BOOL _didLoadMissingTile = NO;
+static UIImage *_errorTile = nil;
+static UIImage *_missingTile = nil;
+
 @implementation RMTileImage
 
 @synthesize screenLocation, tile, layer, lastUsedTime;
@@ -83,6 +88,39 @@
 
 	[super dealloc];
 }
+
+#pragma mark -
+
+/// \bug This functionality belongs on the tile source, and should not be freestanding.
++ (UIImage *)errorTile
+{
+	if (_errorTile)
+        return _errorTile;
+    
+    if (_didLoadErrorTile)
+        return nil;
+    
+	_errorTile = [[UIImage imageNamed:@"error.png"] retain];
+    _didLoadErrorTile = YES;
+    
+	return _errorTile;
+}
+
++ (UIImage *)missingTile
+{
+	if (_missingTile)
+        return _missingTile;
+    
+    if (_didLoadMissingTile)
+        return nil;
+    
+	_missingTile = [[UIImage imageNamed:@"missing.png"] retain];
+    _didLoadMissingTile = YES;
+    
+	return _missingTile;
+}
+
+#pragma mark -
 
 - (void)draw
 {

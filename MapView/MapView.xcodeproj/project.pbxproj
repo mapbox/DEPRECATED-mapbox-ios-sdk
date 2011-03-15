@@ -81,7 +81,6 @@
 		2BEC604E0F8AC73D008FB858 /* RMTileImage.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64D90E80E73F001663B6 /* RMTileImage.m */; };
 		2BEC604F0F8AC73E008FB858 /* RMTileImageSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64E10E80E73F001663B6 /* RMTileImageSet.m */; };
 		2BEC60500F8AC73F008FB858 /* RMTileLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64C70E80E73F001663B6 /* RMTileLoader.m */; };
-		2BEC60510F8AC740008FB858 /* RMTileProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64DB0E80E73F001663B6 /* RMTileProxy.m */; };
 		2BEC60540F8AC744008FB858 /* RMWebTileImage.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64DD0E80E73F001663B6 /* RMWebTileImage.m */; };
 		2BEC60960F8ACBF1008FB858 /* libProj4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38D818500F6F67B90034598B /* libProj4.a */; };
 		2BEC612D0F8ACC1E008FB858 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B83E65590E80E7EB001663B6 /* CoreFoundation.framework */; };
@@ -145,8 +144,6 @@
 		B8C9745D0E8A19E6007D16AD /* RMTileImageSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64E10E80E73F001663B6 /* RMTileImageSet.m */; };
 		B8C9745E0E8A19E6007D16AD /* RMTileLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = B83E64C60E80E73F001663B6 /* RMTileLoader.h */; };
 		B8C9745F0E8A19E7007D16AD /* RMTileLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64C70E80E73F001663B6 /* RMTileLoader.m */; };
-		B8C974600E8A19E7007D16AD /* RMTileProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = B83E64DA0E80E73F001663B6 /* RMTileProxy.h */; };
-		B8C974610E8A19E8007D16AD /* RMTileProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64DB0E80E73F001663B6 /* RMTileProxy.m */; };
 		B8C974620E8A19E8007D16AD /* RMTileSource.h in Headers */ = {isa = PBXBuildFile; fileRef = B83E64EC0E80E73F001663B6 /* RMTileSource.h */; };
 		B8C974670E8A19EB007D16AD /* RMWebTileImage.h in Headers */ = {isa = PBXBuildFile; fileRef = B83E64DC0E80E73F001663B6 /* RMWebTileImage.h */; };
 		B8C974680E8A19EB007D16AD /* RMWebTileImage.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64DD0E80E73F001663B6 /* RMWebTileImage.m */; };
@@ -265,8 +262,6 @@
 		B83E64D70E80E73F001663B6 /* RMTile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RMTile.c; sourceTree = "<group>"; };
 		B83E64D80E80E73F001663B6 /* RMTileImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMTileImage.h; sourceTree = "<group>"; };
 		B83E64D90E80E73F001663B6 /* RMTileImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMTileImage.m; sourceTree = "<group>"; };
-		B83E64DA0E80E73F001663B6 /* RMTileProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMTileProxy.h; sourceTree = "<group>"; };
-		B83E64DB0E80E73F001663B6 /* RMTileProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMTileProxy.m; sourceTree = "<group>"; };
 		B83E64DC0E80E73F001663B6 /* RMWebTileImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMWebTileImage.h; sourceTree = "<group>"; };
 		B83E64DD0E80E73F001663B6 /* RMWebTileImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMWebTileImage.m; sourceTree = "<group>"; };
 		B83E64DE0E80E73F001663B6 /* RMFileTileImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMFileTileImage.h; sourceTree = "<group>"; };
@@ -515,8 +510,6 @@
 				B83E64D90E80E73F001663B6 /* RMTileImage.m */,
 				D1437B31122869E400888DAE /* RMDBTileImage.h */,
 				D1437B30122869E400888DAE /* RMDBTileImage.m */,
-				B83E64DA0E80E73F001663B6 /* RMTileProxy.h */,
-				B83E64DB0E80E73F001663B6 /* RMTileProxy.m */,
 				B83E64DC0E80E73F001663B6 /* RMWebTileImage.h */,
 				B83E64DD0E80E73F001663B6 /* RMWebTileImage.m */,
 				B83E64DE0E80E73F001663B6 /* RMFileTileImage.h */,
@@ -707,7 +700,6 @@
 				B8C974310E8A19B2007D16AD /* RMAbstractMercatorWebSource.h in Headers */,
 				B8C9745C0E8A19E5007D16AD /* RMTileImageSet.h in Headers */,
 				B8C9745E0E8A19E6007D16AD /* RMTileLoader.h in Headers */,
-				B8C974600E8A19E7007D16AD /* RMTileProxy.h in Headers */,
 				B8C974620E8A19E8007D16AD /* RMTileSource.h in Headers */,
 				B8C974670E8A19EB007D16AD /* RMWebTileImage.h in Headers */,
 				B8C9746B0E8A1A50007D16AD /* RMMapView.h in Headers */,
@@ -908,7 +900,6 @@
 				2BEC604E0F8AC73D008FB858 /* RMTileImage.m in Sources */,
 				2BEC604F0F8AC73E008FB858 /* RMTileImageSet.m in Sources */,
 				2BEC60500F8AC73F008FB858 /* RMTileLoader.m in Sources */,
-				2BEC60510F8AC740008FB858 /* RMTileProxy.m in Sources */,
 				2BEC60540F8AC744008FB858 /* RMWebTileImage.m in Sources */,
 				2B5BDCDB0F8C17A500848078 /* GTMCALayer+UnitTesting.m in Sources */,
 				2B5BDCDC0F8C17A500848078 /* GTMIPhoneUnitTestDelegate.m in Sources */,
@@ -942,7 +933,6 @@
 				B8C9744C0E8A19B2007D16AD /* RMAbstractMercatorWebSource.m in Sources */,
 				B8C9745D0E8A19E6007D16AD /* RMTileImageSet.m in Sources */,
 				B8C9745F0E8A19E7007D16AD /* RMTileLoader.m in Sources */,
-				B8C974610E8A19E8007D16AD /* RMTileProxy.m in Sources */,
 				B8C974680E8A19EB007D16AD /* RMWebTileImage.m in Sources */,
 				B8C9746C0E8A1A50007D16AD /* RMMapView.m in Sources */,
 				B8C974B90E8A280A007D16AD /* RMMapContents.m in Sources */,

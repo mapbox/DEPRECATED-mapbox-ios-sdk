@@ -59,6 +59,9 @@
 
 + (RMTileImage *)dummyTile:(RMTile)tile;
 
++ (UIImage *)errorTile;
++ (UIImage *)missingTile;
+
 //- (void)drawInRect:(CGRect)rect;
 - (void)draw;
 
