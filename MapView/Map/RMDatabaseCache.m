@@ -127,7 +127,7 @@
             [dao purgeTiles: MAX(minimalPurge, 1+tilesInDb-capacity)];
         }
 	
-		[dao addData:data lastUsed:[image lastUsedTime] forTile:RMTileKey([image tile])];
+		[dao addData:data forTile:RMTileKey([image tile])];
 	}
 
 	[[NSNotificationCenter defaultCenter] removeObserver:self

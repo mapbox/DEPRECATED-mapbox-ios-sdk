@@ -44,7 +44,7 @@
 - (NSUInteger)count;
 - (NSData *)dataForTile:(uint64_t)tileHash;
 - (void)touchTile:(uint64_t)tileHash withDate:(NSDate *)date;
-- (void)addData:(NSData *)data lastUsed:(NSDate *)date forTile:(uint64_t)tileHash;
+- (void)addData:(NSData *)data forTile:(uint64_t)tileHash;
 - (void)purgeTiles:(NSUInteger)count;
 - (void)removeAllCachedImages;
 - (void)didReceiveMemoryWarning;

@@ -173,14 +173,14 @@
     }];
 }
 
-- (void)addData:(NSData *)data lastUsed:(NSDate *)date forTile:(uint64_t)tileHash
+- (void)addData:(NSData *)data forTile:(uint64_t)tileHash
 {
     [writeQueue addOperationWithBlock:^{
 //        RMLog(@"addData\t%d", tileHash);
         
         [writeQueueLock lock];
         BOOL result = [db executeUpdate:@"INSERT OR IGNORE INTO ZCACHE (ztileHash, zlastUsed, zdata) VALUES (?, ?, ?)", 
-                       [NSNumber numberWithUnsignedLongLong:tileHash], date, data];
+                       [NSNumber numberWithUnsignedLongLong:tileHash], [NSDate date], data];
         [writeQueueLock unlock];
 
         if (result == NO)
