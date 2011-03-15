@@ -64,11 +64,6 @@
 	return self;
 }
 
-- (void)dealloc
-{
-	[super dealloc];
-}
-
 - (void)clearLoadedBounds
 {
 	loadedBounds = CGRectZero;
@@ -108,22 +103,18 @@
 
 	if ([self screenIsLoaded])
 		return;
-	
-	//RMLog(@"updateLoadedImages initial count = %d", [[content imagesOnScreen] count]);
-	
+
 	RMTileRect newTileRect = [content tileBounds];
 
 	RMTileImageSet *images = [content imagesOnScreen];
 	images.zoom = newTileRect.origin.tile.zoom;
-	CGRect newLoadedBounds = [images addTiles:newTileRect toDisplayIn:[content screenBounds]];
-	//RMLog(@"updateLoadedImages added count = %d", [images count]);
+    
+	CGRect newLoadedBounds = [images loadTiles:newTileRect toDisplayIn:[content screenBounds]];
 	
 	if (!RMTileIsDummy(loadedTiles.origin.tile))
 	{
 		[images removeTilesOutsideOf:newTileRect];
 	}
-
-	//RMLog(@"updateLoadedImages final count = %d", [images count]);
 
 	loadedBounds = newLoadedBounds;
 	loadedZoom = newTileRect.origin.tile.zoom;
@@ -134,9 +125,7 @@
 
 - (void)moveBy:(CGSize)delta
 {
-	//	RMLog(@"loadedBounds %f %f %f %f -> ", loadedBounds.origin.x, loadedBounds.origin.y, loadedBounds.size.width, loadedBounds.size.height);
 	loadedBounds = RMTranslateCGRectBy(loadedBounds, delta);
-	//	RMLog(@" -> %f %f %f %f", loadedBounds.origin.x, loadedBounds.origin.y, loadedBounds.size.width, loadedBounds.size.height);
 	[self updateLoadedImages];
 }
 

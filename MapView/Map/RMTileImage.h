@@ -36,7 +36,6 @@
 #import "RMFoundation.h"
 #import "RMNotifications.h"
 #import "RMTile.h"
-#import "RMTileProxy.h"
 #import "FMDatabase.h"
 
 @interface RMTileImage : NSObject {
@@ -47,8 +46,6 @@
 	/// Used by cache
 	NSDate *lastUsedTime;
 
-	// \bug placing the "layer" on the RMTileImage implicitly assumes that a particular RMTileImage will be used in only 
-	// one UIView. Might see some interesting crashes if you have two RMMapViews using the same tile source.
 	// Only used when appropriate
 	CALayer *layer;
 }

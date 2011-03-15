@@ -55,14 +55,10 @@
 
 	[[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(tileRemovedFromScreen:)
-                                                 name:RMMapImageRemovedFromScreenNotification object:self];
+                                                 name:RMMapImageRemovedFromScreenNotification
+                                               object:self];
 
 	return self;
-}
-	 
-- (void)tileRemovedFromScreen:(NSNotification *)notification
-{
-	[self cancelLoading];
 }
 
 - (id)init
@@ -121,7 +117,7 @@
 	return [[[RMDBTileImage alloc] initWithTile: _tile fromDB:db] autorelease];
 }
 
-- (void) cancelLoading
+- (void)cancelLoading
 {
 	[[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadingCancelledNotification
 														object:self];
@@ -161,7 +157,7 @@
 	if (![anObject isKindOfClass:[RMTileImage class]])
 		return NO;
 
-	return RMTilesEqual(tile, [(RMTileImage*)anObject tile]);
+	return RMTilesEqual(tile, [(RMTileImage *)anObject tile]);
 }
 
 - (void)makeLayer

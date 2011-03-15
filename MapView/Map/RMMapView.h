@@ -121,7 +121,7 @@ typedef struct {
 @interface RMMapView : UIView <RMMapContentsFacade, RMMapContentsAnimationCallback>
 {
 	RMMapContents *contents;
-	id<RMMapViewDelegate> delegate;
+	id <RMMapViewDelegate> delegate;
 	BOOL enableDragging;
 	BOOL enableZoom;
     BOOL enableRotate;

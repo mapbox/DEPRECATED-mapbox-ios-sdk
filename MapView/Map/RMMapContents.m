@@ -24,6 +24,7 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
+
 #import "RMGlobalConstants.h"
 #import "RMMapContents.h"
 
@@ -45,8 +46,6 @@
 #import "RMMarkerManager.h"
 
 #import "RMMarker.h"
-
-
 
 
 @interface RMMapContents (PrivateMethods)
@@ -178,93 +177,6 @@
 
 	
 	RMLog(@"Map contents initialised. view: %@ tileSource %@ renderer %@ minZoom:%.0f maxZoom:%.0f", newView, tileSource, renderer, [self minZoom], [self maxZoom]);
-	return self;
-}
-
-
-/// deprecated at any moment after release 0.5	
-- (id) initForView: (UIView*) view
-{
-	WarnDeprecated();
-	return [self initWithView:view];
-}
-
-/// deprecated at any moment after release 0.5
-- (id) initForView: (UIView*) view WithLocation:(CLLocationCoordinate2D)latlong
-{
-	WarnDeprecated();
-	LogMethod();
-	id<RMTileSource> _tileSource = nil;
-	RMMapRenderer *_renderer = [[RMCoreAnimationRenderer alloc] initWithContent:self];
-	
-	id mapContents = [self initForView:view WithTileSource:_tileSource WithRenderer:_renderer LookingAt:latlong];
-	[_tileSource release];
-	[_renderer release];
-	
-	return mapContents;
-}
-
-
-/// deprecated at any moment after release 0.5
-- (id) initForView: (UIView*) view WithTileSource: (id<RMTileSource>)_tileSource WithRenderer: (RMMapRenderer*)_renderer LookingAt:(CLLocationCoordinate2D)latlong
-{
-	WarnDeprecated();
-	LogMethod();
-	if (![super init])
-		return nil;
-	
-	NSAssert1([view isKindOfClass:[RMMapView class]], @"view %@ must be a subclass of RMMapView", view);
-	
-	self.boundingMask = RMMapMinWidthBound;
-//	targetView = view;
-	mercatorToScreenProjection = [[RMMercatorToScreenProjection alloc] initFromProjection:[_tileSource projection] toScreenBounds:[view bounds]];
-
-	tileSource = nil;
-	projection = nil;
-	mercatorToTileProjection = nil;
-	
-	renderer = nil;
-	imagesOnScreen = nil;
-	tileLoader = nil;
-	
-	layer = [[view layer] retain];
-	
-	[self setTileSource:_tileSource];
-	[self setRenderer:_renderer];
-	
-	imagesOnScreen = [[RMTileImageSet alloc] initWithDelegate:renderer];
-	[imagesOnScreen setTileSource:tileSource];
-
-	tileLoader = [[RMTileLoader alloc] initWithContent:self];
-	[tileLoader setSuppressLoading:YES];
-	
-	[self setMinZoom:kDefaultMinimumZoomLevel];
-	[self setMaxZoom:kDefaultMaximumZoomLevel];
-	[self setZoom:kDefaultInitialZoomLevel];
-
-	[self moveToLatLong:latlong];
-	
-	[tileLoader setSuppressLoading:NO];
-	
-	/// \bug TODO: Make a nice background class
-	RMMapLayer *theBackground = [[RMMapLayer alloc] init];
-	[self setBackground:theBackground];
-	[theBackground release];
-	
-	RMLayerCollection *theOverlay = [[RMLayerCollection alloc] initForContents:self];
-	[self setOverlay:theOverlay];
-	[theOverlay release];
-	
-	markerManager = [[RMMarkerManager alloc] initWithContents:self];
-	
-	[view setNeedsDisplay];
-	[[NSNotificationCenter defaultCenter] addObserver:self 
-											 selector:@selector(handleMemoryWarningNotification:) 
-												 name:UIApplicationDidReceiveMemoryWarningNotification 
-											   object:nil];
-	
-	RMLog(@"Map contents initialised. view: %@ tileSource %@ renderer %@", view, tileSource, renderer);
-	
 	return self;
 }
 
@@ -479,40 +391,8 @@
 		}
 		
 	}
-	
-	//[self adjustMapPlacementWithScale:newMPP];
-	
+
 	return zoomFactor;
-}
-
-/// This currently is not called because it does not handle the case when the map is continous or not continous.  At a certain scale
-/// you can continuously move to the west or east until you get to a certain scale level that simply shows the entire world.
-- (void)adjustMapPlacementWithScale:(float)aScale
-{
-	CGSize		adjustmentDelta = {0.0, 0.0};
-	CLLocationCoordinate2D	rightEdgeLatLong = {0, kMaxLong};
-	CLLocationCoordinate2D	leftEdgeLatLong = {0,- kMaxLong};
-	
-	CGPoint		rightEdge = [self latLongToPixel:rightEdgeLatLong withMetersPerPixel:aScale];
-	CGPoint		leftEdge = [self latLongToPixel:leftEdgeLatLong withMetersPerPixel:aScale];
-	//CGPoint		topEdge = [self latLongToPixel:myLatLong withMetersPerPixel:aScale];
-	//CGPoint		bottomEdge = [self latLongToPixel:myLatLong withMetersPerPixel:aScale];
-	
-	CGRect		containerBounds = [self screenBounds];
-
-	if ( rightEdge.x < containerBounds.size.width ) 
-	{
-		adjustmentDelta.width = containerBounds.size.width - rightEdge.x;
-		[self moveBy:adjustmentDelta];
-	}
-	
-	if ( leftEdge.x > containerBounds.origin.x ) 
-	{
-		adjustmentDelta.width = containerBounds.origin.x - leftEdge.x;
-		[self moveBy:adjustmentDelta];
-	}
-	
-	
 }
 
 /// \bug this is a no-op, not a clamp, if new zoom would be outside of minzoom/maxzoom range
@@ -875,6 +755,7 @@ static NSMutableDictionary *cachedTilesources = nil;
 {
 	return [mercatorToScreenProjection projectedBounds];
 }
+
 -(void) setProjectedBounds: (RMProjectedRect) boundsRect
 {
 	[mercatorToScreenProjection setProjectedBounds:boundsRect];

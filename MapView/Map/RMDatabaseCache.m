@@ -110,7 +110,10 @@
 - (void)addTile:(RMTile)tile withImage:(RMTileImage *)image
 {
 	// The tile probably hasn't loaded any data yet... we must be patient.
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addImageData:) name:RMMapImageLoadedNotification object:image];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(addImageData:)
+                                                 name:RMMapImageLoadedNotification
+                                               object:image];
 }
 
 - (void)addImageData:(NSNotification *)notification
