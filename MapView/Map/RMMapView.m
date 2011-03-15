@@ -220,8 +220,8 @@
 	//store projections
 	RMProjection *proj=self.contents.projection;
 	
-	NEconstraint = [proj coordinateToPoint:ne];
-	SWconstraint = [proj coordinateToPoint:sw];
+	NEconstraint = [proj coordinateToProjectedPoint:ne];
+	SWconstraint = [proj coordinateToProjectedPoint:sw];
 	
 	_constrainMovement=YES;
 }

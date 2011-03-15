@@ -61,7 +61,7 @@
     mapContents = aContents;
     radiusInMeters = newRadiusInMeters;
     latLong = newLatLong;
-    projectedLocation = [[mapContents projection] coordinateToPoint:newLatLong];
+    projectedLocation = [[mapContents projection] coordinateToProjectedPoint:newLatLong];
     [self setPosition:[[mapContents mercatorToScreenProjection] projectProjectedPoint:projectedLocation]];
     
     lineWidthInPixels = kDefaultLineWidth;
@@ -178,7 +178,7 @@
 - (void)moveToLatLong:(CLLocationCoordinate2D)newLatLong
 {
 	latLong = newLatLong;
-	[self setProjectedLocation:[[mapContents projection] coordinateToPoint:newLatLong]];
+	[self setProjectedLocation:[[mapContents projection] coordinateToProjectedPoint:newLatLong]];
 	[self setPosition:[[mapContents mercatorToScreenProjection] projectProjectedPoint:projectedLocation]];
 //	DLog(@"Position: %f, %f", [self position].x, [self position].y);
 }

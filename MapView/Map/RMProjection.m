@@ -35,7 +35,7 @@
 @synthesize planetBounds;
 @synthesize projectionWrapsHorizontally;
 
-- (id)initWithString:(NSString *)params inBounds:(RMProjectedRect)projBounds
+- (id)initWithString:(NSString *)params inBounds:(RMProjectedRect)projectedBounds
 {
 	if (!(self = [super init]))
 		return nil;
@@ -48,7 +48,7 @@
 		return nil;
 	}
 
-	planetBounds = projBounds;
+	planetBounds = projectedBounds;
 	projectionWrapsHorizontally = YES;
 
 	return self;
@@ -103,7 +103,7 @@
 	return aPoint;
 }
 
-- (RMProjectedPoint)coordinateToPoint:(CLLocationCoordinate2D)aLatLong
+- (RMProjectedPoint)coordinateToProjectedPoint:(CLLocationCoordinate2D)aLatLong
 {
 	projUV uv = {
 		aLatLong.longitude * DEG_TO_RAD,
@@ -120,7 +120,7 @@
 	return result_point;
 }
 
-- (CLLocationCoordinate2D)pointToCoordinate:(RMProjectedPoint)aPoint
+- (CLLocationCoordinate2D)projectedPointToCoordinate:(RMProjectedPoint)aPoint
 {
 	projUV uv = {
 		aPoint.easting,

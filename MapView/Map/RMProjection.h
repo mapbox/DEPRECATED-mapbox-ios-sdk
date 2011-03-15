@@ -57,12 +57,12 @@
 + (RMProjection *)EPSGLatLong;
 
 /// anybody know what the InBounds: parameter means?
-- (id)initWithString:(NSString *)params inBounds:(RMProjectedRect)projBounds;
+- (id)initWithString:(NSString *)params inBounds:(RMProjectedRect)projectedBounds;
 
 /// inverse project meters, return latitude/longitude
-- (CLLocationCoordinate2D)pointToCoordinate:(RMProjectedPoint)aPoint;
+- (CLLocationCoordinate2D)projectedPointToCoordinate:(RMProjectedPoint)aPoint;
 
 /// forward project latitude/longitude, return meters
-- (RMProjectedPoint)coordinateToPoint:(CLLocationCoordinate2D)aLatLong;
+- (RMProjectedPoint)coordinateToProjectedPoint:(CLLocationCoordinate2D)aLatLong;
 
 @end

@@ -335,9 +335,9 @@
         .latitude = (ne.latitude + sw.latitude) / 2,
         .longitude = (ne.longitude + sw.longitude) / 2
     };
-    RMProjectedPoint myOrigin = [projection coordinateToPoint:midpoint];
-    RMProjectedPoint nePoint = [projection coordinateToPoint:ne];
-    RMProjectedPoint swPoint = [projection coordinateToPoint:sw];
+    RMProjectedPoint myOrigin = [projection coordinateToProjectedPoint:midpoint];
+    RMProjectedPoint nePoint = [projection coordinateToProjectedPoint:ne];
+    RMProjectedPoint swPoint = [projection coordinateToProjectedPoint:sw];
     RMProjectedPoint myPoint = {.easting = nePoint.easting - swPoint.easting, .northing = nePoint.northing - swPoint.northing};
     //Create the new zoom layout
     RMProjectedRect zoomRect;
@@ -363,7 +363,7 @@
     myOrigin.easting = myOrigin.easting - (zoomRect.size.width / 2);
     myOrigin.northing = myOrigin.northing - (zoomRect.size.height / 2);
     
-    RMLog(@"Origin is calculated at: %f, %f", [projection pointToCoordinate:myOrigin].latitude, [projection pointToCoordinate:myOrigin].longitude);
+    RMLog(@"Origin is calculated at: %f, %f", [projection projectedPointToCoordinate:myOrigin].latitude, [projection projectedPointToCoordinate:myOrigin].longitude);
     /*It gets all messed up if our origin is lower than the lowest place on the map, so we check.
      if(myOrigin.northing < -19971868.880409)
      {
@@ -397,7 +397,7 @@
 
 - (void)moveToLatLong: (CLLocationCoordinate2D)latlong
 {
-	RMProjectedPoint aPoint = [[self projection] coordinateToPoint:latlong];
+	RMProjectedPoint aPoint = [[self projection] coordinateToProjectedPoint:latlong];
 	[self moveToProjectedPoint: aPoint];
 }
 
@@ -863,7 +863,7 @@ static NSMutableDictionary *cachedTilesources = nil;
 - (CLLocationCoordinate2D) mapCenter
 {
 	RMProjectedPoint aPoint = [mercatorToScreenProjection projectedCenter];
-	return [projection pointToCoordinate:aPoint];
+	return [projection projectedPointToCoordinate:aPoint];
 }
 
 -(void) setMapCenter: (CLLocationCoordinate2D) center
@@ -977,27 +977,27 @@ static NSMutableDictionary *cachedTilesources = nil;
 
 - (CGPoint)latLongToPixel:(CLLocationCoordinate2D)latlong
 {	
-	return [mercatorToScreenProjection projectProjectedPoint:[projection coordinateToPoint:latlong]];
+	return [mercatorToScreenProjection projectProjectedPoint:[projection coordinateToProjectedPoint:latlong]];
 }
 
 - (CGPoint)latLongToPixel:(CLLocationCoordinate2D)latlong withMetersPerPixel:(float)aScale
 {	
-	return [mercatorToScreenProjection projectProjectedPoint:[projection coordinateToPoint:latlong] withMetersPerPixel:aScale];
+	return [mercatorToScreenProjection projectProjectedPoint:[projection coordinateToProjectedPoint:latlong] withMetersPerPixel:aScale];
 }
 
 - (RMTilePoint)latLongToTilePoint:(CLLocationCoordinate2D)latlong withMetersPerPixel:(float)aScale
 {
-        return [mercatorToTileProjection project:[projection coordinateToPoint:latlong] atZoom:aScale];
+        return [mercatorToTileProjection project:[projection coordinateToProjectedPoint:latlong] atZoom:aScale];
 }
 
 - (CLLocationCoordinate2D)pixelToLatLong:(CGPoint)aPixel
 {
-	return [projection pointToCoordinate:[mercatorToScreenProjection projectScreenPointToProjectedPoint:aPixel]];
+	return [projection projectedPointToCoordinate:[mercatorToScreenProjection projectScreenPointToProjectedPoint:aPixel]];
 }
 
 - (CLLocationCoordinate2D)pixelToLatLong:(CGPoint)aPixel withMetersPerPixel:(float)aScale
 {
-	return [projection pointToCoordinate:[mercatorToScreenProjection projectScreenPointToProjectedPoint:aPixel withMetersPerPixel:aScale]];
+	return [projection projectedPointToCoordinate:[mercatorToScreenProjection projectScreenPointToProjectedPoint:aPixel withMetersPerPixel:aScale]];
 }
 
 - (double)scaleDenominator {
@@ -1013,7 +1013,7 @@ static NSMutableDictionary *cachedTilesources = nil;
 	if(ne.latitude == sw.latitude && ne.longitude == sw.longitude)//There are no bounds, probably only one marker.
 	{
 		RMProjectedRect zoomRect;
-		RMProjectedPoint myOrigin = [projection coordinateToPoint:sw];
+		RMProjectedPoint myOrigin = [projection coordinateToProjectedPoint:sw];
 		//Default is with scale = 2.0 mercators/pixel
 		zoomRect.size.width = [self screenBounds].size.width * 2.0;
 		zoomRect.size.height = [self screenBounds].size.height * 2.0;
@@ -1030,9 +1030,9 @@ static NSMutableDictionary *cachedTilesources = nil;
 			.latitude = (ne.latitude + sw.latitude) / 2,
 			.longitude = (ne.longitude + sw.longitude) / 2
 		};
-		RMProjectedPoint myOrigin = [projection coordinateToPoint:midpoint];
-		RMProjectedPoint nePoint = [projection coordinateToPoint:ne];
-		RMProjectedPoint swPoint = [projection coordinateToPoint:sw];
+		RMProjectedPoint myOrigin = [projection coordinateToProjectedPoint:midpoint];
+		RMProjectedPoint nePoint = [projection coordinateToProjectedPoint:ne];
+		RMProjectedPoint swPoint = [projection coordinateToProjectedPoint:sw];
 		RMProjectedPoint myPoint = {.easting = nePoint.easting - swPoint.easting, .northing = nePoint.northing - swPoint.northing};
 		//Create the new zoom layout
 		RMProjectedRect zoomRect;
@@ -1057,7 +1057,7 @@ static NSMutableDictionary *cachedTilesources = nil;
 		}
 		myOrigin.easting = myOrigin.easting - (zoomRect.size.width / 2);
 		myOrigin.northing = myOrigin.northing - (zoomRect.size.height / 2);
-		RMLog(@"Origin is calculated at: %f, %f", [projection pointToCoordinate:myOrigin].latitude, [projection pointToCoordinate:myOrigin].longitude);
+		RMLog(@"Origin is calculated at: %f, %f", [projection projectedPointToCoordinate:myOrigin].latitude, [projection projectedPointToCoordinate:myOrigin].longitude);
 		/*It gets all messed up if our origin is lower than the lowest place on the map, so we check.
 		 if(myOrigin.northing < -19971868.880409)
 		 {

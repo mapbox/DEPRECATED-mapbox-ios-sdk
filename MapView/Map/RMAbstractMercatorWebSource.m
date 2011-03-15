@@ -131,7 +131,7 @@
 		image = [RMTileImage imageForTile:tile withURL:[self tileURL:tile]];
 	}
 	else {
-		image = [RMTileImage dummyTile:tile];
+		image = [RMTileImage tileImageFromTile:tile];
 	}
 
 	return image;
