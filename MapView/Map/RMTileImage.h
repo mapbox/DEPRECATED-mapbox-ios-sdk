@@ -57,7 +57,7 @@
 
 - (id)initWithTile:(RMTile)tile;
 
-+ (RMTileImage *)dummyTile:(RMTile)tile;
++ (RMTileImage *)tileImageFromTile:(RMTile)tile;
 
 + (UIImage *)errorTile;
 + (UIImage *)missingTile;

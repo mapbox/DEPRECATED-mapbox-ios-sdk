@@ -45,6 +45,11 @@ static UIImage *_missingTile = nil;
 
 @synthesize screenLocation, tile, layer, lastUsedTime;
 
++ (RMTileImage *)tileImageFromTile:(RMTile)tile
+{
+	return [[[RMTileImage alloc] initWithTile:tile] autorelease];
+}
+
 - (id)initWithTile:(RMTile)_tile
 {
 	if (!(self = [super init]))
@@ -73,9 +78,9 @@ static UIImage *_missingTile = nil;
 	return nil;
 }
 
-+ (RMTileImage *)dummyTile:(RMTile)tile
+- (void)tileRemovedFromScreen:(NSNotification *)notification
 {
-	return [[[RMTileImage alloc] initWithTile:tile] autorelease];
+	[self cancelLoading];
 }
 
 - (void)dealloc
@@ -163,8 +168,11 @@ static UIImage *_missingTile = nil;
 
 - (void)updateImageUsingData:(NSData *)data
 {
-    [self updateImageUsingImage:[UIImage imageWithData:data]];
-
+    UIImage *tileImage = [UIImage imageWithData:data];
+    dispatch_async(dispatch_get_main_queue(),^ {
+        [self updateImageUsingImage:tileImage];
+    });
+        
     NSDictionary *d = [NSDictionary dictionaryWithObject:data forKey:@"data"];
     [[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadedNotification object:self userInfo:d];
 }

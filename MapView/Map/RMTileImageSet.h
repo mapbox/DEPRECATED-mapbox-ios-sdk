@@ -51,6 +51,8 @@
     
 	NSMutableSet *images;
 	short zoom, tileDepth;
+    
+    NSRecursiveLock *imagesLock;
 }
 
 @property (assign, nonatomic, readwrite) id delegate;
@@ -65,12 +67,11 @@
 - (void)addTile:(RMTile)tile at:(CGRect)screenLocation;
 
 // Add tiles inside rect protected to bounds. Return rectangle containing bounds extended to full tile loading area
-- (CGRect)addTiles:(RMTileRect)rect toDisplayIn:(CGRect)bounds;
+- (CGRect)loadTiles:(RMTileRect)rect toDisplayIn:(CGRect)bounds;
 
 - (RMTileImage *)imageWithTile:(RMTile)tile;
 	
 - (void)removeTile:(RMTile)tile;
-
 - (void)removeAllTiles;
 
 - (void)setTileSource:(id <RMTileSource>)newTileSource;
