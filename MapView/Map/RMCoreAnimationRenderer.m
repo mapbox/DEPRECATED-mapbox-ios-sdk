@@ -129,8 +129,8 @@
 
 		if (RMTilesEqual(tile, potential.tile))
 		{
+			image = [[potential retain] autorelease];
 			[tiles removeObjectAtIndex:i];
-			image = potential;
 			break;
 		}
 	}
