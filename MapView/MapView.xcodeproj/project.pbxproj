@@ -518,12 +518,11 @@
 				B83E64E10E80E73F001663B6 /* RMTileImageSet.m */,
 				B83E64C60E80E73F001663B6 /* RMTileLoader.h */,
 				B83E64C70E80E73F001663B6 /* RMTileLoader.m */,
-				B83E64CF0E80E73F001663B6 /* Cache */,
 			);
 			name = "Tile Images";
 			sourceTree = "<group>";
 		};
-		B83E64CF0E80E73F001663B6 /* Cache */ = {
+		B83E64CF0E80E73F001663B6 /* Tile Cache */ = {
 			isa = PBXGroup;
 			children = (
 				B83E64D00E80E73F001663B6 /* RMTileCache.h */,
@@ -534,7 +533,7 @@
 				B8C974C90E8A9C30007D16AD /* RMCachedTileSource.m */,
 				B8474B940EB40094006A0BC1 /* Database */,
 			);
-			name = Cache;
+			name = "Tile Cache";
 			sourceTree = "<group>";
 		};
 		B83E64E20E80E73F001663B6 /* Projections */ = {
@@ -647,6 +646,7 @@
 				B8C974B30E8A23C5007D16AD /* Coordinate Systems */,
 				B83E64E20E80E73F001663B6 /* Projections */,
 				B83E64EB0E80E73F001663B6 /* Tile Source */,
+				B83E64CF0E80E73F001663B6 /* Tile Cache */,
 				B83E64CE0E80E73F001663B6 /* Tile Images */,
 				B83E64B80E80E73F001663B6 /* Renderers */,
 				B86F26A80E8742ED007A3773 /* Markers and other layers */,
@@ -1134,6 +1134,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Don't Code Sign";
+				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_FAST_MATH = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1155,8 +1156,9 @@
 				);
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				RUN_CLANG_STATIC_ANALYZER = YES;
+				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
+				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Debug;
 		};
