@@ -9,7 +9,7 @@ int main (int argc, const char * argv[]) {
     
     // delete the old db.
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    [fileManager removeFileAtPath:@"/tmp/tmp.db" handler:nil];
+    [fileManager removeItemAtPath:@"/tmp/tmp.db" error:nil];
     
     FMDatabase* db = [FMDatabase databaseWithPath:@"/tmp/tmp.db"];
     if (![db open]) {
@@ -29,6 +29,12 @@ int main (int argc, const char * argv[]) {
     if ([db hadError]) {
         NSLog(@"Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);
     }
+    
+    NSError *err = 0x00;
+    FMDBQuickCheck(![db update:@"blah blah blah" error:&err bind:nil]);
+    FMDBQuickCheck(err != nil);
+    FMDBQuickCheck([err code] == SQLITE_ERROR);
+    NSLog(@"err: '%@'", err);
     
     // but of course, I don't bother checking the error codes below.
     // Bad programmer, no cookie.
@@ -129,6 +135,10 @@ int main (int argc, const char * argv[]) {
     // test out the convenience methods in +Additions
     [db executeUpdate:@"create table t1 (a integer)"];
     [db executeUpdate:@"insert into t1 values (?)", [NSNumber numberWithInt:5]];
+    
+    NSLog(@"Count of changes (should be 1): %d", [db changes]);
+    FMDBQuickCheck([db changes] == 1);
+    
     int a = [db intForQuery:@"select a from t1 where a = ?", [NSNumber numberWithInt:5]];
     if (a != 5) {
         NSLog(@"intForQuery didn't work (a != 5)");
@@ -328,7 +338,7 @@ int main (int argc, const char * argv[]) {
     
     [db executeUpdate:@"create table nulltest2 (s text, d data, i integer, f double, b integer)"];
     
-    [db executeUpdate:@"insert into nulltest2 (s, d, i, f, b) values (?, ?, ?, ?, ?)" , @"Hi", safariCompass, [NSNumber numberWithInt:12], [NSNumber numberWithFloat:4.4], [NSNumber numberWithBool:YES]];
+    [db executeUpdate:@"insert into nulltest2 (s, d, i, f, b) values (?, ?, ?, ?, ?)" , @"Hi", safariCompass, [NSNumber numberWithInt:12], [NSNumber numberWithFloat:4.4f], [NSNumber numberWithBool:YES]];
     [db executeUpdate:@"insert into nulltest2 (s, d, i, f, b) values (?, ?, ?, ?, ?)" , nil, nil, nil, nil, [NSNull null]];
     
     rs = [db executeQuery:@"select * from nulltest2"];
@@ -441,12 +451,6 @@ int main (int argc, const char * argv[]) {
         FMDBQuickCheck(strcmp((const char*)[rs UTF8StringForColumnName:@"b"], "two") == 0);
         
         [rs close];
-        
-        
-        
-        
-        
-        
     }
     
     
@@ -460,8 +464,6 @@ int main (int argc, const char * argv[]) {
         while ([rs next]) {
             FMDBQuickCheck([[rs stringForColumn:@"type"] isEqualToString:@"table"]);
         }
-        
-        
     }
     
     
