@@ -46,6 +46,8 @@
     if (!(self = [super init]))
         return nil;
     
+    [self setQueuePriority:10]; // Highest priority
+    
     connection = nil;
     retries = kWebTileRetries;
     data = [[NSMutableData alloc] initWithCapacity:0];
@@ -226,6 +228,11 @@
 {
 	RMTile tile = [[self mercatorToTileProjection] normaliseTile:tileImage.tile];
 
+    for (NSOperation *currentRequest in [requestQueue operations])
+    {
+        [currentRequest setQueuePriority:[currentRequest queuePriority] - 1];
+    }
+    
     [requestQueue addOperation:[RMWebDownloadOperation operationWithUrl:[self URLForTile:tile] withTileImage:tileImage andTileCache:tileCache withCacheKey:aCacheKey]];
     
     return nil;
