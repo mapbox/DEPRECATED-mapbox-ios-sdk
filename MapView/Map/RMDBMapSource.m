@@ -124,6 +124,9 @@
     {
         RMLog(@"Opening db map source %@", path);
 
+        // Debug mode
+//        [db setTraceExecution:YES];
+
         // get the tile side length
         tileSideLength = [self getPreferenceAsInt:kTileSideLengthKey];
 
@@ -189,22 +192,25 @@
 
 - (UIImage *)imageForTileImage:(RMTileImage *)tileImage addToCache:(RMTileCache *)tileCache withCacheKey:(NSString *)aCacheKey
 {
+    UIImage *image = nil;
+
 	RMTile tile = [[self mercatorToTileProjection] normaliseTile:tileImage.tile];
-    
+
     // get the unique key for the tile
     NSNumber *key = [NSNumber numberWithLongLong:RMTileKey(tile)];
-    
-    // fetch the image from the db
-    FMResultSet *result = [db executeQuery:@"SELECT image FROM tiles WHERE tilekey = ?", key];
-    FMDBErrorCheck(db);
 
-    UIImage *image = nil;
-    if ([result next]) {
-        image = [[[UIImage alloc] initWithData:[result dataForColumn:@"image"]] autorelease];
-    } else {
-        image = [RMTileImage missingTile];
+    @synchronized(db) {
+        // fetch the image from the db
+        FMResultSet *result = [db executeQuery:@"SELECT image FROM tiles WHERE tilekey = ?", key];
+        FMDBErrorCheck(db);
+
+        if ([result next]) {
+            image = [[[UIImage alloc] initWithData:[result dataForColumnIndex:0]] autorelease];
+        } else {
+            image = [RMTileImage missingTile];
+        }
+        [result close];
     }
-    [result close];
 
     if (tileCache)
         [tileCache addImage:image forTile:tile withCacheKey:aCacheKey];
@@ -257,12 +263,14 @@
 - (NSString *)getPreferenceAsString:(NSString*)name
 {
 	NSString* value = nil;
-	
-	FMResultSet *result = [db executeQuery:@"select value from preferences where name = ?", name];
-	if ([result next]) {
-		value = [result stringForColumn:@"value"];
-	}
-	[result close];
+
+    @synchronized(db) {
+        FMResultSet *result = [db executeQuery:@"select value from preferences where name = ?", name];
+        if ([result next]) {
+            value = [result stringForColumn:@"value"];
+        }
+        [result close];
+    }
 
 	return value;
 }
