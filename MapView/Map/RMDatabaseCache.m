@@ -68,7 +68,7 @@
 			[[NSFileManager defaultManager] createDirectoryAtPath:cachePath withIntermediateDirectories:NO attributes:nil error:nil];
 		}
 		
-		NSString *filename = [NSString stringWithFormat:@"MapCache.sqlite"];
+		NSString *filename = [NSString stringWithFormat:@"RMTileCache.db"];
 		return [cachePath stringByAppendingPathComponent:filename];
 	}
 
