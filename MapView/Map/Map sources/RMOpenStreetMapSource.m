@@ -1,7 +1,7 @@
 //
-// RMWebMapSource.h
+//  OpenStreetMapsSource.m
 //
-// Copyright (c) 2009, Frank Schroeder, SharpMind GbR
+// Copyright (c) 2008-2009, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,37 +25,53 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import "RMAbstractMercatorTileSource.h"
-#import "RMProjection.h"
+#import "RMOpenStreetMapSource.h"
 
-@interface RMWebDownloadOperation : NSOperation {
-    RMTileImage *tileImage;
-    RMTileCache *tileCache;
-    NSString *cacheKey;
-    NSMutableData *data;
+@implementation RMOpenStreetMapSource
+
+- (id)init
+{       
+	if (!(self = [super init]))
+        return nil;
     
-    NSURL *tileURL;
-    NSURLConnection *connection;
-    NSUInteger retries;
+    // http://wiki.openstreetmap.org/index.php/FAQ#What_is_the_map_scale_for_a_particular_zoom_level_of_the_map.3F 
+    [self setMaxZoom:18];
+    [self setMinZoom:1];
 
-    BOOL isExecuting, isFinished;
+	return self;
+} 
+
+- (NSURL *)URLForTile:(RMTile)tile
+{
+	NSAssert4(((tile.zoom >= self.minZoom) && (tile.zoom <= self.maxZoom)),
+			  @"%@ tried to retrieve tile with zoomLevel %d, outside source's defined range %f to %f", 
+			  self, tile.zoom, self.minZoom, self.maxZoom);
+	return [NSURL URLWithString:[NSString stringWithFormat:@"http://tile.openstreetmap.org/%d/%d/%d.png", tile.zoom, tile.x, tile.y]];
 }
 
-@property (readonly) BOOL isExecuting;
-@property (readonly) BOOL isFinished;
-
-+ (id)operationWithUrl:(NSURL *)anURL withTileImage:(RMTileImage *)aTileImage andTileCache:(RMTileCache *)aTileCache withCacheKey:(NSString *)aCacheKey;
-
-- (id)initWithUrl:(NSURL *)anURL withTileImage:(RMTileImage *)aTileImage andTileCache:(RMTileCache *)aTileCache withCacheKey:(NSString *)aCacheKey;
-
-@end
-
-#pragma mark -
-
-@interface RMWebMapSource : RMAbstractMercatorTileSource {
-    NSOperationQueue *requestQueue;
+- (NSString *)uniqueTilecacheKey
+{
+	return @"OpenStreetMap";
 }
 
-- (NSURL *)URLForTile:(RMTile)tile;
+- (NSString *)shortName
+{
+	return @"Open Street Map";
+}
+
+- (NSString *)longDescription
+{
+	return @"Open Street Map, the free wiki world map, provides freely usable map data for all parts of the world, under the Creative Commons Attribution-Share Alike 2.0 license.";
+}
+
+- (NSString *)shortAttribution
+{
+	return @"© OpenStreetMap CC-BY-SA";
+}
+
+-(NSString *)longAttribution
+{
+	return @"Map data © OpenStreetMap, licensed under Creative Commons Share Alike By Attribution.";
+}
 
 @end
