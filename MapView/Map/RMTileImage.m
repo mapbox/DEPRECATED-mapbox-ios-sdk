@@ -132,11 +132,11 @@ static UIImage *_missingTile = nil;
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         layer.contents = (id)[image CGImage];
-    });
 
-    if (notifyListeners) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadedNotification object:self userInfo:nil];
-    }
+        if (notifyListeners) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadedNotification object:self userInfo:nil];
+        }
+    });
 }
 
 - (BOOL)isLoaded
