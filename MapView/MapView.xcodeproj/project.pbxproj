@@ -355,7 +355,7 @@
 			name = Configuration;
 			sourceTree = "<group>";
 		};
-		1605FA12133221E9008E1B13 /* Map sources */ = {
+		1605FAA413322410008E1B13 /* Map sources */ = {
 			isa = PBXGroup;
 			children = (
 				D1437B33122869E400888DAE /* RMDBMapSource.h */,
@@ -363,7 +363,7 @@
 				1605FA13133221E9008E1B13 /* RMOpenStreetMapSource.h */,
 				1605FA14133221E9008E1B13 /* RMOpenStreetMapSource.m */,
 			);
-			path = "Map sources";
+			name = "Map sources";
 			sourceTree = "<group>";
 		};
 		175701DB1323C2CF00A5D314 /* iOS Additions */ = {
@@ -552,12 +552,12 @@
 		B83E64EB0E80E73F001663B6 /* Tile Source */ = {
 			isa = PBXGroup;
 			children = (
+				1605FAA413322410008E1B13 /* Map sources */,
 				B83E64EC0E80E73F001663B6 /* RMTileSource.h */,
 				C7A967500E8412930031BA75 /* RMAbstractMercatorTileSource.h */,
 				C7A967510E8412930031BA75 /* RMAbstractMercatorTileSource.m */,
 				16097D791330DEC60057F640 /* RMAbstractWebMapSource.h */,
 				16097D7A1330DEC60057F640 /* RMAbstractWebMapSource.m */,
-				1605FA12133221E9008E1B13 /* Map sources */,
 			);
 			name = "Tile Source";
 			sourceTree = "<group>";
