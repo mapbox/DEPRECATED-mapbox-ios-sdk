@@ -1,7 +1,7 @@
 //
-//  RMWebTileImage.h
+// RMWebMapSource.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2009, Frank Schroeder, SharpMind GbR
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,36 +25,37 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import <Foundation/Foundation.h>
+#import "RMAbstractMercatorTileSource.h"
+#import "RMProjection.h"
 
-#import "RMTileImage.h"
-
-static const NSUInteger kWebTileRetries = 30;
-
-extern NSString *RMWebTileImageErrorDomain;
-extern NSString *RMWebTileImageHTTPResponseCodeKey;
-
-enum {
-    RMWebTileImageErrorUnexpectedHTTPResponse,
-    RMWebTileImageErrorZeroLengthResponse,
-    RMWebTileImageErrorNotFoundResponse
-};
-
-extern NSString *RMWebTileImageNotificationErrorKey;
-
-// RMTileImage subclass: a tile image loaded from a URL.
-@interface RMWebTileImage : RMTileImage {
+@interface RMWebDownloadOperation : NSOperation {
+    RMTileImage *tileImage;
+    RMTileCache *tileCache;
+    NSString *cacheKey;
+    NSMutableData *data;
+    
+    NSURL *tileURL;
+    NSURLConnection *connection;
     NSUInteger retries;
-    NSError *lastError;
 
-	NSURL *url;
-	NSURLConnection *connection;
-
-	NSMutableData *data;
+    BOOL isExecuting, isFinished;
 }
 
-- (id)initWithTile:(RMTile)tile fromURL:(NSString*)url;
-- (void)requestTile;
-- (void)startLoading:(NSTimer *)timer;
+@property (readonly) BOOL isExecuting;
+@property (readonly) BOOL isFinished;
+
++ (id)operationWithUrl:(NSURL *)anURL withTileImage:(RMTileImage *)aTileImage andTileCache:(RMTileCache *)aTileCache withCacheKey:(NSString *)aCacheKey;
+
+- (id)initWithUrl:(NSURL *)anURL withTileImage:(RMTileImage *)aTileImage andTileCache:(RMTileCache *)aTileCache withCacheKey:(NSString *)aCacheKey;
+
+@end
+
+#pragma mark -
+
+@interface RMWebMapSource : RMAbstractMercatorTileSource {
+    NSOperationQueue *requestQueue;
+}
+
+- (NSURL *)URLForTile:(RMTile)tile;
 
 @end

@@ -29,6 +29,7 @@
 #import "RMTileImage.h"
 #import "RMPixel.h"
 #import "RMTileSource.h"
+#import "RMTileCache.h"
 
 // For notification strings
 #import "RMTileLoader.h"
@@ -45,6 +46,7 @@
 		return nil;
 	
 	tileSource = nil;
+    tileCache = nil;
     
 	self.delegate = _delegate;
     self.tileDepth = 0;
@@ -78,13 +80,12 @@
 		return;
 	}
 	
-	RMTileImage *dummyTile = [RMTileImage tileImageFromTile:tile];
-	RMTileImage *tileImage = [images member:dummyTile];
+	RMTileImage *tileImage = [images member:[RMTileImage tileImageWithTile:tile]];
 	if (!tileImage)
 		return;
 
-	if ([delegate respondsToSelector:@selector(tileRemoved:)]) {
-		[delegate tileRemoved:tile];
+	if ([delegate respondsToSelector:@selector(tileImageRemoved:)]) {
+		[delegate tileImageRemoved:tileImage];
 	}
 
 	[[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageRemovedFromScreenNotification object:tileImage];
@@ -102,8 +103,8 @@
     {
         RMTileImage *tileImage = [images anyObject];
 
-        if ([delegate respondsToSelector:@selector(tileRemoved:)]) {
-            [delegate tileRemoved:tileImage.tile];
+        if ([delegate respondsToSelector:@selector(tileImageRemoved:)]) {
+            [delegate tileImageRemoved:tileImage];
         }
         
         [[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageRemovedFromScreenNotification object:tileImage];
@@ -120,7 +121,19 @@
 	tileSource = newTileSource;
 }
 
-- (void)addTile:(RMTile)tile withImage:(RMTileImage *)image at:(CGRect)screenLocation
+- (void)setTileCache:(RMTileCache *)newTileCache
+{
+    tileCache = newTileCache;
+}
+
+- (void)setCurrentCacheKey:(NSString *)newCacheKey
+{
+    [currentCacheKey autorelease];
+    [newCacheKey retain];
+    currentCacheKey = newCacheKey;
+}
+
+- (void)addTileImage:(RMTileImage *)image at:(CGRect)screenLocation
 {
 	BOOL tileNeeded;
 
@@ -132,7 +145,7 @@
 		if (![tileImage isLoaded])
             continue;
 
-		if ([self isTile:tile worseThanTile:tileImage.tile])
+		if ([self isTile:image.tile worseThanTile:tileImage.tile])
 		{
 			tileNeeded = NO;
 			break;
@@ -153,8 +166,8 @@
     [imagesLock unlock];
 
 	if (!RMTileIsDummy(image.tile))	{
-		if ([delegate respondsToSelector:@selector(tileAdded:withImage:)]) {
-			[delegate tileAdded:tile withImage:image];
+		if ([delegate respondsToSelector:@selector(tileImageAdded:)]) {
+			[delegate tileImageAdded:image];
 		}
 	}
 }
@@ -162,7 +175,7 @@
 - (void)addTile:(RMTile)tile at:(CGRect)screenLocation
 {
     // Is there an equivalent tile already in the cache?
-    RMTileImage *tileImage = [images member:[RMTileImage tileImageFromTile:tile]];
+    RMTileImage *tileImage = [images member:[RMTileImage tileImageWithTile:tile]];
     
 	if (tileImage != nil) {        
 		[tileImage setScreenLocation:screenLocation];
@@ -170,16 +183,26 @@
 	} else {
         // Create empty RMTileImage
         // Add the tile to the images on screen
+        tileImage = [RMTileImage tileImageWithTile:tile];
+        if (tileImage != nil)
+            [self addTileImage:tileImage at:screenLocation];
         
         // In a queue:
         //    - check cache
-        //    - check tilesource
-        //    else: remove from images or display error tile
-        
-        
-        RMTileImage *image = [tileSource tileImage:tile];
-        if (image != nil)
-            [self addTile:tile withImage:image at:screenLocation];
+        //    - check tilesource        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            UIImage *image = [tileCache cachedImage:tile withCacheKey:currentCacheKey];
+            if (image) {
+                [tileImage updateWithImage:image andNotify:NO];
+                return;
+            }
+
+            // Return nil if you want to load the image asynchronously, or your own error tile (see [RMTileImage errorTile]
+            image = [tileSource imageForTileImage:tileImage addToCache:tileCache withCacheKey:currentCacheKey];
+            if (image) {
+                [tileImage updateWithImage:image andNotify:YES];
+            }
+        });
 	}
 }
 
@@ -261,7 +284,7 @@
 
 - (RMTileImage *)imageWithTile:(RMTile)tile
 {
-	RMTileImage *dummyTile = [RMTileImage tileImageFromTile:tile];
+	RMTileImage *dummyTile = [RMTileImage tileImageWithTile:tile];
 
 	return [[[images member:dummyTile] retain] autorelease];
 }
@@ -398,13 +421,14 @@
 {
 	RMTileImage *img = (RMTileImage *)[notification object];
 
-	if (!img || img != [images member:img])
+    [imagesLock lock];
+
+	if (img && img == [images member:img])
 	{
-		// i don't contain img, it may be already removed or in another set
-		return;
+        [self removeTilesWorseThan:img];
 	}
 
-	[self removeTilesWorseThan:img];
+    [imagesLock unlock];
 }
 
 - (void)removeTilesWorseThan:(RMTileImage *)newImage

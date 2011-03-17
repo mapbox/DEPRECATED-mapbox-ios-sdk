@@ -25,21 +25,15 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import "RMTileSource.h"
+#import "RMAbstractMercatorTileSource.h"
 #import "RMProjection.h"
 #import "FMDatabase.h"
 
-@interface RMDBMapSource : NSObject <RMTileSource> {
+@interface RMDBMapSource : RMAbstractMercatorTileSource {
 	// tile database
 	FMDatabase* db;
-
-	// projection
-	RMFractalTileProjection *tileProjection;
-
-	// supported zoom levels
-	float minZoom;
-	float maxZoom;
-	int tileSideLength;
+    
+    NSString *uniqueTilecacheKey;
 
 	// coverage area
 	CLLocationCoordinate2D topLeft;
@@ -48,16 +42,6 @@
 }
 
 - (id)initWithPath:(NSString *)path;
-
-- (int)tileSideLength;
-
-- (float)minZoom;
-- (float)maxZoom;
-
-- (NSString *)shortName;
-- (NSString *)longDescription;
-- (NSString *)shortAttribution;
-- (NSString *)longAttribution;
 
 - (CLLocationCoordinate2D)topLeftOfCoverage;
 - (CLLocationCoordinate2D)bottomRightOfCoverage;

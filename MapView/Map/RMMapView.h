@@ -147,7 +147,6 @@ typedef struct {
 	BOOL _delegateHasAfterMapTouch;
 	BOOL _delegateHasShouldDragMarker;
 	BOOL _delegateHasDidDragMarker;
-	BOOL _delegateHasDragMarkerPosition;
 	
 	NSTimer *_decelerationTimer;
 	CGSize _decelerationDelta;
@@ -173,23 +172,23 @@ typedef struct {
 
 // do not retain the delegate so you can let the corresponding controller implement the
 // delegate without circular references
-@property (assign) id<RMMapViewDelegate> delegate;
+@property (assign) id <RMMapViewDelegate> delegate;
 @property (readwrite) float decelerationFactor;
 @property (readwrite) BOOL deceleration;
 
 @property (readonly) CGFloat rotation;
 
 /// recenter the map on #latlong, expressed as CLLocationCoordinate2D (latitude/longitude)
-- (void)moveToLatLong: (CLLocationCoordinate2D)latlong;
+- (void)moveToLatLong:(CLLocationCoordinate2D)latlong;
 /// recenter the map on #aPoint, expressed in projected meters
-- (void)moveToProjectedPoint: (RMProjectedPoint)aPoint;
+- (void)moveToProjectedPoint:(RMProjectedPoint)aPoint;
 
-- (void)moveBy: (CGSize) delta;
+- (void)moveBy:(CGSize)delta;
 
--(void)setConstraintsSW:(CLLocationCoordinate2D)sw NE:(CLLocationCoordinate2D)ne;
+- (void)setConstraintsSW:(CLLocationCoordinate2D)sw NE:(CLLocationCoordinate2D)ne;
 
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) aPoint;
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) aPoint animated:(BOOL)animated;
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)aPoint;
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)aPoint animated:(BOOL)animated;
 
 - (void)didReceiveMemoryWarning;
 

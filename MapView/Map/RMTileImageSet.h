@@ -34,20 +34,22 @@
 
 #import "RMTile.h"
 
-@class RMTileImage;
+@class RMTileImage, RMTileCache;
 @protocol RMTileSource;
 
 @protocol RMTileImageSetDelegate <NSObject>
 @optional
 
-- (void)tileRemoved:(RMTile)tile;
-- (void)tileAdded:(RMTile)tile withImage:(RMTileImage *)image;
+- (void)tileImageRemoved:(RMTileImage *)image;
+- (void)tileImageAdded:(RMTileImage *)image;
 
 @end
 
 @interface RMTileImageSet : NSObject {
-	IBOutlet id delegate;
+	id <RMTileImageSetDelegate> delegate;
 	id <RMTileSource> tileSource;
+    RMTileCache *tileCache;
+    NSString *currentCacheKey;
     
 	NSMutableSet *images;
 	short zoom, tileDepth;
@@ -55,7 +57,7 @@
     NSRecursiveLock *imagesLock;
 }
 
-@property (assign, nonatomic, readwrite) id delegate;
+@property (assign, nonatomic, readwrite) id <RMTileImageSetDelegate> delegate;
 
 // tileDepth defaults to zero. if tiles have no alpha, set this higher, 3 or so, to make zooming smoother
 @property (assign, readwrite) short zoom, tileDepth;
@@ -63,7 +65,7 @@
 
 - (id)initWithDelegate:(id)_delegate;
 
-- (void)addTile:(RMTile)tile withImage:(RMTileImage *)image at:(CGRect)screenLocation;
+- (void)addTileImage:(RMTileImage *)image at:(CGRect)screenLocation;
 - (void)addTile:(RMTile)tile at:(CGRect)screenLocation;
 
 // Add tiles inside rect protected to bounds. Return rectangle containing bounds extended to full tile loading area
@@ -75,15 +77,15 @@
 - (void)removeAllTiles;
 
 - (void)setTileSource:(id <RMTileSource>)newTileSource;
+- (void)setTileCache:(RMTileCache *)newTileCache;
+- (void)setCurrentCacheKey:(NSString *)newCacheKey;
 
 - (NSUInteger)count;
 
 - (void)moveBy:(CGSize)delta;
 - (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center;
 
-//- (void) drawRect:(CGRect) rect;
-
-- (void) printDebuggingInformation;
+- (void)printDebuggingInformation;
 
 - (void)cancelLoading;
 

@@ -25,38 +25,25 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import "RMAbstractMercatorWebSource.h"
+#import "RMAbstractMercatorTileSource.h"
 #import "RMTileImage.h"
 #import "RMTileLoader.h"
 #import "RMFractalTileProjection.h"
 #import "RMTiledLayerController.h"
 #import "RMProjection.h"
 
-@implementation RMAbstractMercatorWebSource
+@implementation RMAbstractMercatorTileSource
 
 - (id)init
 {
 	if (!(self = [super init]))
 		return nil;
-	
-	tileProjection = [[RMFractalTileProjection alloc] initFromProjection:[self projection]
-                                                          tileSideLength:kDefaultTileSize
-                                                                 maxZoom:kDefaultMaxTileZoom
-                                                                 minZoom:kDefaultMinTileZoom];
-	networkOperations = TRUE;
 
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(networkOperationsNotification:) name:RMSuspendNetworkOperations object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(networkOperationsNotification:) name:RMResumeNetworkOperations object:nil];
-
+    minZoom = kDefaultMinTileZoom;
+    maxZoom = kDefaultMaxTileZoom;
+    tileSideLength = kDefaultTileSize;
+    
 	return self;
-}
-
-- (void)networkOperationsNotification:(NSNotification *)notification
-{
-	if (notification.name == RMSuspendNetworkOperations)
-		networkOperations = FALSE;
-	else if (notification.name == RMResumeNetworkOperations)
-		networkOperations = TRUE;
 }
 
 - (void)dealloc
@@ -67,79 +54,56 @@
 
 - (int)tileSideLength
 {
-	return tileProjection.tileSideLength;
+	return tileSideLength;
 }
 
-- (void) setTileSideLength:(NSUInteger)aTileSideLength
+- (void)setTileSideLength:(NSUInteger)aTileSideLength
 {
-	[tileProjection setTileSideLength:aTileSideLength];
+    tileSideLength = aTileSideLength;
 }
 
 - (float)minZoom
 {
-	return (float)tileProjection.minZoom;
+	return minZoom;
 }
 
 - (void)setMinZoom:(NSUInteger)aMinZoom
 {
-	[tileProjection setMinZoom:aMinZoom];
+    minZoom = aMinZoom;
 }
 
 - (float)maxZoom
 {
-	return (float)tileProjection.maxZoom;
+	return maxZoom;
 }
 
-- (void) setMaxZoom:(NSUInteger)aMaxZoom
+- (void)setMaxZoom:(NSUInteger)aMaxZoom
 {
-	[tileProjection setMaxZoom:aMaxZoom];
+    maxZoom = aMaxZoom;
 }
 
-- (RMSphericalTrapezium) latitudeLongitudeBoundingBox
+- (RMSphericalTrapezium)latitudeLongitudeBoundingBox
 {
 	return kDefaultLatLonBoundingBox;
 }
 
-- (NSString *)tileURL:(RMTile)tile
+- (UIImage *)imageForTileImage:(RMTileImage *)tileImage addToCache:(RMTileCache *)tileCache withCacheKey:(NSString *)aCacheKey
 {
 	@throw [NSException exceptionWithName:@"RMAbstractMethodInvocation"
-                                   reason:@"tileURL invoked on AbstractMercatorWebSource. Override this method when instantiating abstract class."
+                                   reason:@"imageForTile: invoked on AbstractMercatorWebSource. Override this method when instantiating abstract class."
                                  userInfo:nil];
-}
-
-- (NSString *)tileFile:(RMTile)tile
-{
-	return nil;
-}
-
-- (NSString *)tilePath
-{
-	return nil;
-}
-
-- (RMTileImage *)tileImage:(RMTile)tile
-{
-	RMTileImage *image;
-
-	tile = [tileProjection normaliseTile:tile];
-
-	NSString *file = [self tileFile:tile];
-	if (file && [[NSFileManager defaultManager] fileExistsAtPath:file])	{
-		image = [RMTileImage imageForTile:tile fromFile:file];
-	}
-	else if(networkOperations) {
-		image = [RMTileImage imageForTile:tile withURL:[self tileURL:tile]];
-	}
-	else {
-		image = [RMTileImage tileImageFromTile:tile];
-	}
-
-	return image;
-}
+}    
 
 - (id <RMMercatorToTileProjection>)mercatorToTileProjection
 {
-	return [[tileProjection retain] autorelease];
+    if (!tileProjection) {
+        tileProjection = [[RMFractalTileProjection alloc] initFromProjection:[self projection]
+                                                              tileSideLength:[self tileSideLength]
+                                                                     maxZoom:[self maxZoom]
+                                                                     minZoom:[self minZoom]];
+    }
+
+	return tileProjection;
 }
 
 - (RMProjection *)projection
@@ -181,10 +145,6 @@
 - (NSString *)longAttribution
 {
 	return [self shortAttribution];
-}
-
--(void) removeAllCachedImages
-{
 }
 
 @end

@@ -50,24 +50,32 @@
 	[super dealloc];
 }
 
-/// \bug no-op
+- (void)tileImageAdded:(RMTileImage *)image
+{
+}
+
+- (void)tileImageRemoved:(RMTileImage *)tileImage
+{
+}
+
+// \bug no-op
 - (void) setNeedsDisplay
 {
 	
 }
 
-/// \bug calls a no-op
+// \bug calls a no-op
 - (void)mapImageLoaded:(NSNotification *)notification
 {
 	[self setNeedsDisplay];
 }
 
-/// \bug no-op
+// \bug no-op
 - (void)drawRect:(CGRect)rect
 {
 }
 
-/// \bug no-op
+// \bug no-op
 - (void)setFrame:(CGRect)frame
 {
 }

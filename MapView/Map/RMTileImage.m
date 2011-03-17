@@ -29,10 +29,7 @@
 
 #import "RMGlobalConstants.h"
 #import "RMTileImage.h"
-#import "RMWebTileImage.h"
 #import "RMTileLoader.h"
-#import "RMFileTileImage.h"
-#import "RMDBTileImage.h"
 #import "RMTileCache.h"
 #import "RMPixel.h"
 
@@ -43,60 +40,10 @@ static UIImage *_missingTile = nil;
 
 @implementation RMTileImage
 
-@synthesize screenLocation, tile, layer, lastUsedTime;
-
-+ (RMTileImage *)tileImageFromTile:(RMTile)tile
-{
-	return [[[RMTileImage alloc] initWithTile:tile] autorelease];
-}
-
-- (id)initWithTile:(RMTile)_tile
-{
-	if (!(self = [super init]))
-		return nil;
-
-	tile = _tile;
-	layer = nil;
-	lastUsedTime = nil;
-	screenLocation = CGRectZero;
-    
-    [self makeLayer];
-	[self touch];
-
-	[[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(tileRemovedFromScreen:)
-                                                 name:RMMapImageRemovedFromScreenNotification
-                                               object:self];
-
-	return self;
-}
-
-- (id)init
-{
-	[NSException raise:@"Invalid initialiser" format:@"Use the designated initialiser for TileImage"];
-	[self release];
-	return nil;
-}
-
-- (void)tileRemovedFromScreen:(NSNotification *)notification
-{
-	[self cancelLoading];
-}
-
-- (void)dealloc
-{
-//	RMLog(@"Removing tile image %d %d %d", tile.x, tile.y, tile.zoom);
-	
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	[layer release]; layer = nil;
-	[lastUsedTime release]; lastUsedTime = nil;
-
-	[super dealloc];
-}
+@synthesize screenLocation, tile, layer;
 
 #pragma mark -
 
-/// \bug This functionality belongs on the tile source, and should not be freestanding.
 + (UIImage *)errorTile
 {
 	if (_errorTile)
@@ -127,38 +74,53 @@ static UIImage *_missingTile = nil;
 
 #pragma mark -
 
-- (void)draw
++ (RMTileImage *)tileImageWithTile:(RMTile)tile
 {
+	return [[[RMTileImage alloc] initWithTile:tile] autorelease];
 }
 
-+ (RMTileImage *)imageForTile:(RMTile)_tile withURL:(NSString *)url
+- (id)initWithTile:(RMTile)_tile
 {
-	return [[[RMWebTileImage alloc] initWithTile:_tile fromURL:url] autorelease];
-}
-
-+ (RMTileImage *)imageForTile:(RMTile)_tile fromFile:(NSString *)filename
-{
-	return [[[RMFileTileImage alloc] initWithTile:_tile fromFile:filename] autorelease];
-}
-
-+ (RMTileImage *)imageForTile:(RMTile)tile withData:(NSData *)data
-{
-	UIImage *image = [[UIImage alloc] initWithData:data];
-	RMTileImage *tileImage;
-
-	if (!image)
+	if (!(self = [super init]))
 		return nil;
 
-	tileImage = [[self alloc] initWithTile:tile];
-	[tileImage updateImageUsingImage:image];
-	[image release];
-	return [tileImage autorelease];
+	tile = _tile;
+	layer = nil;
+	screenLocation = CGRectZero;
+    
+    [self makeLayer];
+
+	[[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(tileRemovedFromScreen:)
+                                                 name:RMMapImageRemovedFromScreenNotification
+                                               object:self];
+
+	return self;
 }
 
-+ (RMTileImage *)imageForTile:(RMTile)_tile fromDB:(FMDatabase *)db
+- (id)init
 {
-	return [[[RMDBTileImage alloc] initWithTile: _tile fromDB:db] autorelease];
+	[NSException raise:@"Invalid initialiser" format:@"Use the designated initialiser for TileImage"];
+	[self release];
+	return nil;
 }
+
+- (void)tileRemovedFromScreen:(NSNotification *)notification
+{
+	[self cancelLoading];
+}
+
+- (void)dealloc
+{
+//	RMLog(@"Removing tile image %d %d %d", tile.x, tile.y, tile.zoom);
+	
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	[layer release]; layer = nil;
+
+	[super dealloc];
+}
+
+#pragma mark -
 
 - (void)cancelLoading
 {
@@ -166,20 +128,15 @@ static UIImage *_missingTile = nil;
 														object:self];
 }
 
-- (void)updateImageUsingData:(NSData *)data
+- (void)updateWithImage:(UIImage *)image andNotify:(BOOL)notifyListeners
 {
-    UIImage *tileImage = [UIImage imageWithData:data];
     dispatch_async(dispatch_get_main_queue(),^ {
-        [self updateImageUsingImage:tileImage];
+        layer.contents = (id)[image CGImage];
     });
-        
-    NSDictionary *d = [NSDictionary dictionaryWithObject:data forKey:@"data"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadedNotification object:self userInfo:d];
-}
 
-- (void)updateImageUsingImage:(UIImage *)rawImage
-{
-	layer.contents = (id)[rawImage CGImage];
+    if (notifyListeners) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadedNotification object:self userInfo:nil];
+    }
 }
 
 - (BOOL)isLoaded
@@ -190,12 +147,6 @@ static UIImage *_missingTile = nil;
 - (NSUInteger)hash
 {
 	return (NSUInteger)RMTileHash(tile);
-}
-
-- (void)touch
-{
-	[lastUsedTime release];
-	lastUsedTime = [[NSDate date] retain];
 }
 
 - (BOOL)isEqual:(id)anObject
@@ -259,13 +210,6 @@ static UIImage *_missingTile = nil;
 		layer.position = screenLocation.origin;
 		layer.bounds = CGRectMake(0, 0, screenLocation.size.width, screenLocation.size.height);
 	}
-
-	[self touch];
-}
-
-- (void)displayProxy:(UIImage *)proxyImage
-{
-    layer.contents = (id)[proxyImage CGImage]; 
 }
 
 @end

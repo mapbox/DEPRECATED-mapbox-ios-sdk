@@ -1,7 +1,7 @@
 //
-// RMDBTileImage.h
+//  RMCacheObject.h
 //
-// Copyright (c) 2009, Frank Schroeder, SharpMind GbR
+// Copyright (c) 2008-2009, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,11 +25,25 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import "RMTileImage.h"
+#import "RMTile.h"
 
-@interface RMDBTileImage : RMTileImage {
+@interface RMCacheObject : NSObject {
+    id cachedObject;
+    NSString *cacheKey;
+
+    RMTile tile;
+    NSDate *timestamp;
 }
 
-- (id)initWithTile:(RMTile)tile fromDB:(FMDatabase *)db;
+@property (nonatomic, readonly) id cachedObject;
+@property (nonatomic, readonly) NSString *cacheKey;
+@property (nonatomic, readonly) RMTile tile;
+@property (nonatomic, readonly) NSDate *timestamp;
+
++ (id)cacheObject:(id)anObject forTile:(RMTile)aTile withCacheKey:(NSString *)aCacheKey;
+
+- (id)initWithObject:(id)anObject forTile:(RMTile)tile withCacheKey:(NSString *)aCacheKey;
+
+- (void)touch;
 
 @end

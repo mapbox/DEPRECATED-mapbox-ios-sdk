@@ -1,7 +1,7 @@
 //
-// RMDBTileImage.m
+//  RMCacheObject.m
 //
-// Copyright (c) 2009, Frank Schroeder, SharpMind GbR
+// Copyright (c) 2008-2009, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,36 +25,51 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-// RMDBTileImage is a tile image implementation for the RMDBMapSource.
-// 
-// See RMDBMapSource.m for a full documentation on the database schema.
-//    
+#import "RMCacheObject.h"
+#import "RMTileCache.h"
 
-#import "RMDBTileImage.h"
+@implementation RMCacheObject
 
-#define FMDBErrorCheck(db) { if ([db hadError]) { NSLog(@"DB error %d on line %d: %@", [db lastErrorCode], __LINE__, [db lastErrorMessage]); } }
+@synthesize cachedObject;
+@synthesize cacheKey;
+@synthesize tile;
+@synthesize timestamp;
 
-@implementation RMDBTileImage
-
-- (id)initWithTile:(RMTile)_tile fromDB:(FMDatabase *)db
++ (id)cacheObject:(id)anObject forTile:(RMTile)aTile withCacheKey:(NSString *)aCacheKey
 {
-	if (!(self = [super initWithTile:_tile]))
+    return [[[self alloc] initWithObject:anObject forTile:aTile withCacheKey:aCacheKey] autorelease];
+}
+
+- (id)initWithObject:(id)anObject forTile:(RMTile)aTile withCacheKey:(NSString *)aCacheKey
+{
+    if (!(self = [super init]))
         return nil;
-    
-    // get the unique key for the tile
-    NSNumber *key = [NSNumber numberWithLongLong:RMTileKey(_tile)];
 
-    // fetch the image from the db
-    FMResultSet *result = [db executeQuery:@"select image from tiles where tilekey = ?", key];
-    FMDBErrorCheck(db);
-    if ([result next]) {
-        [self updateImageUsingImage:[[[UIImage alloc] initWithData:[result dataForColumn:@"image"]] autorelease]];
-    } else {
-        [self updateImageUsingImage:[UIImage imageNamed:@"nodata.png"]];
-    }
-    [result close];
+    cachedObject = [anObject retain];
+    cacheKey = [aCacheKey retain];
+    tile = aTile;
+    timestamp = [NSDate new];
 
-	return self;
+    return self;
+}
+
+- (void)dealloc
+{
+    [cachedObject release]; cachedObject = nil;
+    [cacheKey release]; cacheKey = nil;
+    [timestamp release]; timestamp = nil;
+    [super dealloc];
+}
+
+- (void)touch
+{
+    [timestamp autorelease];
+    timestamp = [NSDate new];
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"<%@: tile='%d %d %d (%@)', cache key='%@'>", NSStringFromClass([self class]), tile.x, tile.y, tile.zoom, [RMTileCache tileHash:tile], cacheKey];
 }
 
 @end

@@ -70,9 +70,12 @@
 
 #import "RMDBMapSource.h"
 #import "RMTileImage.h"
+#import "RMTileCache.h"
 #import "RMFractalTileProjection.h"
 
 #define kDefaultLatLonBoundingBox ((RMSphericalTrapezium){.northeast = {.latitude = 90, .longitude = 180}, .southwest = {.latitude = -90, .longitude = -180}})
+
+#define FMDBErrorCheck(db) { if ([db hadError]) { NSLog(@"DB error %d on line %d: %@", [db lastErrorCode], __LINE__, [db lastErrorMessage]); } }
 
 // mandatory preference keys
 #define kMinZoomKey @"map.minZoom"
@@ -108,6 +111,8 @@
 	if (!(self = [super init]))
         return nil;
 
+    uniqueTilecacheKey = [[[path lastPathComponent] stringByDeletingPathExtension] retain];
+    
     // open the db
     db = [[FMDatabase alloc] initWithPath:path];
     if ([db openWithFlags:SQLITE_OPEN_READONLY])
@@ -144,21 +149,20 @@
     }
 
     // init the tile projection
-    tileProjection = [[RMFractalTileProjection alloc] initFromProjection:[self projection] tileSideLength:tileSideLength maxZoom:maxZoom minZoom:minZoom];		
+    tileProjection = [[RMFractalTileProjection alloc] initFromProjection:[self projection]
+                                                          tileSideLength:tileSideLength
+                                                                 maxZoom:maxZoom
+                                                                 minZoom:minZoom];
 
 	return self;
 }
 
 - (void)dealloc
 {
+    [uniqueTilecacheKey release]; uniqueTilecacheKey = nil;
 	[db release]; db = nil;
 	[tileProjection release]; tileProjection = nil;
 	[super dealloc];
-}
-
-- (int)tileSideLength
-{
-	return tileSideLength;
 }
 
 - (CLLocationCoordinate2D)topLeftOfCoverage
@@ -178,55 +182,29 @@
 
 #pragma mark RMTileSource methods
 
-- (float)minZoom
+- (UIImage *)imageForTileImage:(RMTileImage *)tileImage addToCache:(RMTileCache *)tileCache withCacheKey:(NSString *)aCacheKey
 {
-	return minZoom;
-}
+	RMTile tile = [[self mercatorToTileProjection] normaliseTile:tileImage.tile];
+    
+    // get the unique key for the tile
+    NSNumber *key = [NSNumber numberWithLongLong:RMTileKey(tile)];
+    
+    // fetch the image from the db
+    FMResultSet *result = [db executeQuery:@"SELECT image FROM tiles WHERE tilekey = ?", key];
+    FMDBErrorCheck(db);
+    
+    UIImage *image = nil;
+    if ([result next]) {
+        image = [[[UIImage alloc] initWithData:[result dataNoCopyForColumn:@"image"]] autorelease];
+    } else {
+        image = [UIImage imageNamed:@"nodata.png"];
+    }
+    [result close];
 
-- (void)setMinZoom:(NSUInteger)aMinZoom
-{
-    minZoom = aMinZoom;
-}
+    if (tileCache)
+        [tileCache addImage:image forTile:tile withCacheKey:aCacheKey];
 
-- (float)maxZoom
-{
-	return maxZoom;
-}
-
-- (void)setMaxZoom:(NSUInteger)aMaxZoom
-{
-    maxZoom = aMaxZoom;
-}
-
-- (NSString *)tileURL:(RMTile)tile
-{
-	return nil;
-}
-
-- (NSString *)tileFile:(RMTile)tile
-{
-	return nil;
-}
-
-- (NSString *)tilePath
-{
-	return nil;
-}
-
-- (RMTileImage *)tileImage:(RMTile)tile
-{
-	tile = [tileProjection normaliseTile:tile];
-	return [RMTileImage imageForTile:tile fromDB:db];
-}
-
-- (id <RMMercatorToTileProjection>)mercatorToTileProjection
-{
-	return [[tileProjection retain] autorelease];
-}
-
-- (RMProjection *) projection
-{
-	return [RMProjection googleProjection];
+	return image;
 }
 
 - (RMSphericalTrapezium)latitudeLongitudeBoundingBox
@@ -244,14 +222,9 @@
     return bbox;
 }
 
-- (void)didReceiveMemoryWarning
-{
-	LogMethod();		
-}
-
 - (NSString *)uniqueTilecacheKey
 {
-	return nil;
+    return uniqueTilecacheKey;
 }
 
 - (NSString *)shortName
@@ -272,11 +245,6 @@
 - (NSString *)longAttribution
 {
 	return [self getPreferenceAsString:kLongAttributionKey];
-}
-
-- (void)removeAllCachedImages
-{
-	// no-op
 }
 
 #pragma mark preference methods

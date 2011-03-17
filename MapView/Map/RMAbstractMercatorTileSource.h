@@ -1,5 +1,5 @@
 //
-//  RMCachedTileSource.h
+//  RMMercatorWebSource.h
 //
 // Copyright (c) 2008-2009, Route-Me Contributors
 // All rights reserved.
@@ -25,35 +25,23 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import <UIKit/UIKit.h>
-
 #import "RMTileSource.h"
+#import "RMFractalTileProjection.h"
 
-@class RMTileCache;
+#pragma mark --- begin constants ---
+#define kDefaultTileSize 256
+#define kDefaultMinTileZoom 0
+#define kDefaultMaxTileZoom 18
+#define kDefaultLatLonBoundingBox ((RMSphericalTrapezium){.northeast = {.latitude = 90, .longitude = 180}, .southwest = {.latitude = -90, .longitude = -180}})
+#pragma mark --- end constants ---
 
-/// Simple wrapper around a tilesource which checks the image cache first.
-@interface RMCachedTileSource : NSObject <RMTileSource>
-{
-	id <RMTileSource> tileSource;
-	RMTileCache *cache;
+@interface RMAbstractMercatorTileSource : NSObject <RMTileSource> {
+	RMFractalTileProjection *tileProjection;
+
+	// supported zoom levels
+	float minZoom;
+	float maxZoom;
+	int tileSideLength;
 }
-
-@property (nonatomic, readonly) RMTileCache *cache;
-
-- (id)initWithSource:(id <RMTileSource>)source;
-- (void)didReceiveMemoryWarning;
-
-+ (RMCachedTileSource *)cachedTileSourceWithSource:(id <RMTileSource>)source;
-
-- (id <RMTileSource>)underlyingTileSource;
-
-- (NSString *)tileURL:(RMTile)tile;
-- (NSString *)tileFile:(RMTile)tile;
-- (NSString *)tilePath;
-
-- (NSString *)shortName;
-- (NSString *)longDescription;
-- (NSString *)shortAttribution;
-- (NSString *)longAttribution;
 
 @end

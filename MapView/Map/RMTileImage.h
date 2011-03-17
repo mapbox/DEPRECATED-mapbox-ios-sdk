@@ -43,9 +43,6 @@
 	RMTile tile;
 	CGRect screenLocation;
 
-	/// Used by cache
-	NSDate *lastUsedTime;
-
 	// Only used when appropriate
 	CALayer *layer;
 }
@@ -53,37 +50,22 @@
 @property (readwrite, assign) CGRect screenLocation;
 @property (readonly, assign) RMTile tile;
 @property (readonly) CALayer *layer;
-@property (readonly) NSDate *lastUsedTime;
-
-- (id)initWithTile:(RMTile)tile;
-
-+ (RMTileImage *)tileImageFromTile:(RMTile)tile;
 
 + (UIImage *)errorTile;
 + (UIImage *)missingTile;
 
-//- (void)drawInRect:(CGRect)rect;
-- (void)draw;
++ (RMTileImage *)tileImageWithTile:(RMTile)tile;
 
-+ (RMTileImage *)imageForTile:(RMTile)tile withURL:(NSString *)url;
-+ (RMTileImage *)imageForTile:(RMTile)tile fromFile:(NSString *)filename;
-+ (RMTileImage *)imageForTile:(RMTile)tile withData:(NSData *)data;
-+ (RMTileImage *)imageForTile:(RMTile)tile fromDB:(FMDatabase *)db;
+- (id)initWithTile:(RMTile)tile;
 
 - (void)moveBy:(CGSize)delta;
 - (void)zoomByFactor:(float)zoomFactor near:(CGPoint) center;
 
-- (void)makeLayer;
-
+- (BOOL)isLoaded;
 - (void)cancelLoading;
 
-- (void)updateImageUsingData:(NSData *)data;
-- (void)updateImageUsingImage:(UIImage *)image;
+- (void)updateWithImage:(UIImage *)image andNotify:(BOOL)notifyListeners;
 
-- (void)touch;
-
-- (BOOL)isLoaded;
-
-- (void)displayProxy:(UIImage*)img;
+- (void)makeLayer;
 
 @end

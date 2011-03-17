@@ -38,11 +38,11 @@
 	NSUInteger minimalPurge;
 }
 
-@property (retain) NSString *databasePath;
+@property (nonatomic, retain) NSString *databasePath;
 
-+ (NSString *)dbPathForTileSource:(id <RMTileSource>)source usingCacheDir:(BOOL)useCacheDir;
++ (NSString *)dbPathUsingCacheDir:(BOOL)useCacheDir;
 - (id)initWithDatabase:(NSString *)path;
-- (id)initWithTileSource:(id <RMTileSource>)source usingCacheDir:(BOOL)useCacheDir;
+- (id)initUsingCacheDir:(BOOL)useCacheDir;
 
 - (void)setPurgeStrategy:(RMCachePurgeStrategy)theStrategy;
 - (void)setCapacity:(NSUInteger)theCapacity;

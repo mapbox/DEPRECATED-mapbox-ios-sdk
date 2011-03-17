@@ -34,7 +34,7 @@
 
 @synthesize databasePath;
 
-+ (NSString*)dbPathForTileSource:(id <RMTileSource>)source usingCacheDir:(BOOL)useCacheDir
++ (NSString *)dbPathUsingCacheDir:(BOOL)useCacheDir
 {
 	NSArray *paths;
 
@@ -55,9 +55,10 @@
 			[[NSFileManager defaultManager] createDirectoryAtPath:cachePath withIntermediateDirectories:NO attributes:nil error:nil];
 		}
 		
-		NSString *filename = [NSString stringWithFormat:@"Map%@.sqlite", [source uniqueTilecacheKey]];
+		NSString *filename = [NSString stringWithFormat:@"MapCache.sqlite"];
 		return [cachePath stringByAppendingPathComponent:filename];
 	}
+
 	return nil;
 }
 
@@ -79,16 +80,15 @@
 	return self;	
 }
 
-- (id)initWithTileSource:(id <RMTileSource>)source usingCacheDir:(BOOL)useCacheDir
+- (id)initUsingCacheDir:(BOOL)useCacheDir
 {
-	return [self initWithDatabase:[RMDatabaseCache dbPathForTileSource:source usingCacheDir:useCacheDir]];
+	return [self initWithDatabase:[RMDatabaseCache dbPathUsingCacheDir:useCacheDir]];
 }
 
-- (void) dealloc
+- (void)dealloc
 {
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	[databasePath release];
-	[dao release];
+    self.databasePath = nil;
+	[dao release]; dao = nil;
 	[super dealloc];
 }
 
@@ -107,51 +107,38 @@
 	minimalPurge = theMinimalPurge;
 }
 
-- (void)addTile:(RMTile)tile withImage:(RMTileImage *)image
+- (UIImage *)cachedImage:(RMTile)tile withCacheKey:(NSString *)aCacheKey
 {
-	// The tile probably hasn't loaded any data yet... we must be patient.
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(addImageData:)
-                                                 name:RMMapImageLoadedNotification
-                                               object:image];
+//	RMLog(@"DB cache check for tile %d %d %d", tile.x, tile.y, tile.zoom);
+
+	NSData *data = [dao dataForTile:RMTileKey(tile) withKey:aCacheKey];
+    if (data == nil)
+        return nil;
+
+    if (capacity != 0 && purgeStrategy == RMCachePurgeStrategyLRU) {
+        [dao touchTile:RMTileKey(tile) withKey:aCacheKey];
+    }
+
+//    RMLog(@"DB cache     hit    tile %d %d %d (%@)", tile.x, tile.y, tile.zoom, [RMTileCache tileHash:tile]);
+
+	return [UIImage imageWithData:data];
 }
 
-- (void)addImageData:(NSNotification *)notification
+- (void)addImage:(UIImage *)image forTile:(RMTile)tile withCacheKey:(NSString *)aCacheKey
 {
-	NSData *data = [[notification userInfo] objectForKey:@"data"];
-	RMTileImage *image = (RMTileImage*)[notification object];
-
+    // TODO: Converting the image here (again) is not so good...
+	NSData *data = UIImagePNGRepresentation(image);
+    
     if (capacity != 0) {
         NSUInteger tilesInDb = [dao count];
         if (capacity <= tilesInDb) {
             [dao purgeTiles: MAX(minimalPurge, 1+tilesInDb-capacity)];
         }
-	
-		[dao addData:data forTile:RMTileKey([image tile])];
+        
+//        RMLog(@"DB cache     insert tile %d %d %d (%@)", tile.x, tile.y, tile.zoom, [RMTileCache tileHash:tile]);
+        
+		[dao addData:data forTile:RMTileKey(tile) withKey:aCacheKey];
 	}
-
-	[[NSNotificationCenter defaultCenter] removeObserver:self
-													name:RMMapImageLoadedNotification
-												  object:image];
-
-    //	RMLog(@"%d items in DB", [dao count]);
-}
-
-- (RMTileImage *)cachedImage:(RMTile)tile
-{
-//	RMLog(@"Looking for cached image in DB");
-
-	NSData *data = [dao dataForTile:RMTileKey(tile)];
-    if (data == nil)
-        return nil;
-
-    if (capacity != 0 && purgeStrategy == RMCachePurgeStrategyLRU) {
-        [dao touchTile: RMTileKey(tile) withDate: [NSDate date]];
-    }
-	
-	RMTileImage *image = [RMTileImage imageForTile:tile withData:data];
-//	RMLog(@"DB cache hit for tile %d %d %d", tile.x, tile.y, tile.zoom);
-	return image;
 }
 
 - (void)didReceiveMemoryWarning

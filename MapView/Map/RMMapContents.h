@@ -52,6 +52,7 @@ enum {
 @class RMMarkerManager;
 @class RMProjection;
 @class RMMercatorToScreenProjection;
+@class RMTileCache;
 @class RMTileImageSet;
 @class RMTileLoader;
 @class RMMapRenderer;
@@ -104,6 +105,9 @@ enum {
 	/// controls what images are used. Can be changed while the view is visible, but see http://code.google.com/p/route-me/issues/detail?id=12
 	id <RMTileSource> tileSource;
 	
+    // Generic tile cache
+    RMTileCache *tileCache;
+    
 	RMTileImageSet *imagesOnScreen;
 	RMTileLoader *tileLoader;
 	
@@ -143,6 +147,7 @@ enum {
 @property (readonly)  RMMercatorToScreenProjection *mercatorToScreenProjection;
 
 @property (retain, readwrite) id<RMTileSource> tileSource;
+@property (nonatomic, retain) RMTileCache *tileCache;
 @property (retain, readwrite) RMMapRenderer *renderer;
 
 @property (readonly)  CALayer *layer;
