@@ -29,10 +29,18 @@
 #import "RMTileCache.h"
 
 @class RMTileCacheDAO;
+@class FMDatabase;
 
 @interface RMDatabaseCache : NSObject <RMTileCache> {
+    // Database
+	FMDatabase* db;
 	NSString *databasePath;
-	RMTileCacheDAO *dao;
+
+    NSUInteger tileCount;
+    NSOperationQueue *writeQueue;
+    NSRecursiveLock *writeQueueLock;
+
+    // Cache
 	RMCachePurgeStrategy purgeStrategy;
 	NSUInteger capacity;
 	NSUInteger minimalPurge;

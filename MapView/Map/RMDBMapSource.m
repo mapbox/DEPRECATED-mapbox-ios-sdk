@@ -98,11 +98,14 @@
 
 
 @interface RMDBMapSource(PrivateMethods)
+
 - (NSString *)getPreferenceAsString:(NSString *)name;
 - (float)getPreferenceAsFloat:(NSString *)name;
 - (int)getPreferenceAsInt:(NSString *)name;
+
 @end
 
+#pragma mark -
 
 @implementation RMDBMapSource
 
@@ -197,7 +200,7 @@
 
     UIImage *image = nil;
     if ([result next]) {
-        image = [[[UIImage alloc] initWithData:[result dataNoCopyForColumn:@"image"]] autorelease];
+        image = [[[UIImage alloc] initWithData:[result dataForColumn:@"image"]] autorelease];
     } else {
         image = [RMTileImage missingTile];
     }

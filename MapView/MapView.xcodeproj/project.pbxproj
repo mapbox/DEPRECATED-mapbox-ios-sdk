@@ -82,7 +82,6 @@
 		2BEC60490F8AC738008FB858 /* RMProjection.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64E40E80E73F001663B6 /* RMProjection.m */; };
 		2BEC604A0F8AC739008FB858 /* RMTile.c in Sources */ = {isa = PBXBuildFile; fileRef = B83E64D70E80E73F001663B6 /* RMTile.c */; };
 		2BEC604B0F8AC73A008FB858 /* RMTileCache.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64D10E80E73F001663B6 /* RMTileCache.m */; };
-		2BEC604C0F8AC73C008FB858 /* RMTileCacheDAO.m in Sources */ = {isa = PBXBuildFile; fileRef = B8474B970EB40094006A0BC1 /* RMTileCacheDAO.m */; };
 		2BEC604E0F8AC73D008FB858 /* RMTileImage.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64D90E80E73F001663B6 /* RMTileImage.m */; };
 		2BEC604F0F8AC73E008FB858 /* RMTileImageSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64E10E80E73F001663B6 /* RMTileImageSet.m */; };
 		2BEC60500F8AC73F008FB858 /* RMTileLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64C70E80E73F001663B6 /* RMTileLoader.m */; };
@@ -105,8 +104,6 @@
 		B8474B9D0EB40094006A0BC1 /* FMDatabaseAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B8474B900EB40094006A0BC1 /* FMDatabaseAdditions.m */; };
 		B8474B9F0EB40094006A0BC1 /* FMResultSet.h in Headers */ = {isa = PBXBuildFile; fileRef = B8474B920EB40094006A0BC1 /* FMResultSet.h */; };
 		B8474BA00EB40094006A0BC1 /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B8474B930EB40094006A0BC1 /* FMResultSet.m */; };
-		B8474BA20EB40094006A0BC1 /* RMTileCacheDAO.h in Headers */ = {isa = PBXBuildFile; fileRef = B8474B960EB40094006A0BC1 /* RMTileCacheDAO.h */; };
-		B8474BA30EB40094006A0BC1 /* RMTileCacheDAO.m in Sources */ = {isa = PBXBuildFile; fileRef = B8474B970EB40094006A0BC1 /* RMTileCacheDAO.m */; };
 		B8474BA40EB40094006A0BC1 /* RMDatabaseCache.h in Headers */ = {isa = PBXBuildFile; fileRef = B8474B980EB40094006A0BC1 /* RMDatabaseCache.h */; };
 		B8474BA50EB40094006A0BC1 /* RMDatabaseCache.m in Sources */ = {isa = PBXBuildFile; fileRef = B8474B990EB40094006A0BC1 /* RMDatabaseCache.m */; };
 		B8474BC10EB4019A006A0BC1 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B8474BC00EB4019A006A0BC1 /* libsqlite3.dylib */; };
@@ -281,8 +278,6 @@
 		B8474B910EB40094006A0BC1 /* fmdb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = fmdb.m; sourceTree = "<group>"; };
 		B8474B920EB40094006A0BC1 /* FMResultSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMResultSet.h; sourceTree = "<group>"; };
 		B8474B930EB40094006A0BC1 /* FMResultSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMResultSet.m; sourceTree = "<group>"; };
-		B8474B960EB40094006A0BC1 /* RMTileCacheDAO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMTileCacheDAO.h; sourceTree = "<group>"; };
-		B8474B970EB40094006A0BC1 /* RMTileCacheDAO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMTileCacheDAO.m; sourceTree = "<group>"; };
 		B8474B980EB40094006A0BC1 /* RMDatabaseCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMDatabaseCache.h; sourceTree = "<group>"; };
 		B8474B990EB40094006A0BC1 /* RMDatabaseCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMDatabaseCache.m; sourceTree = "<group>"; };
 		B8474BC00EB4019A006A0BC1 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
@@ -531,7 +526,6 @@
 				B83E64D30E80E73F001663B6 /* RMMemoryCache.m */,
 				B8474B980EB40094006A0BC1 /* RMDatabaseCache.h */,
 				B8474B990EB40094006A0BC1 /* RMDatabaseCache.m */,
-				B8474B940EB40094006A0BC1 /* Database */,
 			);
 			name = "Tile Cache";
 			sourceTree = "<group>";
@@ -587,16 +581,6 @@
 			path = FMDB;
 			sourceTree = "<group>";
 		};
-		B8474B940EB40094006A0BC1 /* Database */ = {
-			isa = PBXGroup;
-			children = (
-				B8474B8C0EB40094006A0BC1 /* FMDB */,
-				B8474B960EB40094006A0BC1 /* RMTileCacheDAO.h */,
-				B8474B970EB40094006A0BC1 /* RMTileCacheDAO.m */,
-			);
-			name = Database;
-			sourceTree = "<group>";
-		};
 		B8474C610EB53A01006A0BC1 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -633,6 +617,7 @@
 			isa = PBXGroup;
 			children = (
 				175701DB1323C2CF00A5D314 /* iOS Additions */,
+				B8474B8C0EB40094006A0BC1 /* FMDB */,
 				17F02BB01319BA4B00260C6B /* RouteMe.h */,
 				B1EB26C510B5D8E6009F8658 /* RMNotifications.h */,
 				96492C3F0FA8AD3400EBA6D2 /* RMGlobalConstants.h */,
@@ -706,7 +691,6 @@
 				B8474B9A0EB40094006A0BC1 /* FMDatabase.h in Headers */,
 				B8474B9C0EB40094006A0BC1 /* FMDatabaseAdditions.h in Headers */,
 				B8474B9F0EB40094006A0BC1 /* FMResultSet.h in Headers */,
-				B8474BA20EB40094006A0BC1 /* RMTileCacheDAO.h in Headers */,
 				B8474BA40EB40094006A0BC1 /* RMDatabaseCache.h in Headers */,
 				23A0AAEB0EB90AA6003A4521 /* RMFoundation.h in Headers */,
 				B8800FF10EC3A237003E9CDD /* RMMarkerManager.h in Headers */,
@@ -892,7 +876,6 @@
 				2BEC60490F8AC738008FB858 /* RMProjection.m in Sources */,
 				2BEC604A0F8AC739008FB858 /* RMTile.c in Sources */,
 				2BEC604B0F8AC73A008FB858 /* RMTileCache.m in Sources */,
-				2BEC604C0F8AC73C008FB858 /* RMTileCacheDAO.m in Sources */,
 				2BEC604E0F8AC73D008FB858 /* RMTileImage.m in Sources */,
 				2BEC604F0F8AC73E008FB858 /* RMTileImageSet.m in Sources */,
 				2BEC60500F8AC73F008FB858 /* RMTileLoader.m in Sources */,
@@ -935,7 +918,6 @@
 				B8474B9B0EB40094006A0BC1 /* FMDatabase.m in Sources */,
 				B8474B9D0EB40094006A0BC1 /* FMDatabaseAdditions.m in Sources */,
 				B8474BA00EB40094006A0BC1 /* FMResultSet.m in Sources */,
-				B8474BA30EB40094006A0BC1 /* RMTileCacheDAO.m in Sources */,
 				B8474BA50EB40094006A0BC1 /* RMDatabaseCache.m in Sources */,
 				126693040EB76C0B00E002D5 /* RMConfiguration.m in Sources */,
 				23A0AAE90EB90A99003A4521 /* RMFoundation.c in Sources */,
