@@ -1,7 +1,7 @@
 //
-//  RMTileProxy.h
+// RMWebMapSource.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2009, Frank Schroeder, SharpMind GbR
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,18 +25,37 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import <Foundation/Foundation.h>
+#import "RMAbstractMercatorTileSource.h"
+#import "RMProjection.h"
 
-#import "RMTile.h"
+@interface RMWebDownloadOperation : NSOperation {
+    RMTileImage *tileImage;
+    RMTileCache *tileCache;
+    NSString *cacheKey;
+    NSMutableData *data;
+    
+    NSURL *tileURL;
+    NSURLConnection *connection;
+    NSUInteger retries;
 
-@class RMTileImage;
-
-/// Has only class methods defined, to return generic "error image", "not-yet-loaded image", and proxy images.
-/// \bug This functionality belongs on the tile source, and should not be freestanding.
-@interface RMTileProxy : NSObject {
+    BOOL isExecuting, isFinished;
 }
 
-+ (UIImage *)errorTile;
-+ (UIImage *)missingTile;
+@property (readonly) BOOL isExecuting;
+@property (readonly) BOOL isFinished;
+
++ (id)operationWithUrl:(NSURL *)anURL withTileImage:(RMTileImage *)aTileImage andTileCache:(RMTileCache *)aTileCache withCacheKey:(NSString *)aCacheKey;
+
+- (id)initWithUrl:(NSURL *)anURL withTileImage:(RMTileImage *)aTileImage andTileCache:(RMTileCache *)aTileCache withCacheKey:(NSString *)aCacheKey;
+
+@end
+
+#pragma mark -
+
+@interface RMWebMapSource : RMAbstractMercatorTileSource {
+    NSOperationQueue *requestQueue;
+}
+
+- (NSURL *)URLForTile:(RMTile)tile;
 
 @end

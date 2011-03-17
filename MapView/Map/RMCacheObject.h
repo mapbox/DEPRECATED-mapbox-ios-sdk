@@ -1,5 +1,5 @@
 //
-//  RMTileProxy.m
+//  RMCacheObject.h
 //
 // Copyright (c) 2008-2009, Route-Me Contributors
 // All rights reserved.
@@ -25,29 +25,25 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import "RMTileProxy.h"
+#import "RMTile.h"
 
-@implementation RMTileProxy
+@interface RMCacheObject : NSObject {
+    id cachedObject;
+    NSString *cacheKey;
 
-static UIImage *_errorTile = nil;
-static UIImage *_missingTile = nil;
-
-+ (UIImage *)errorTile
-{
-	if (_errorTile)
-        return _errorTile;
-
-	_errorTile = [[UIImage imageNamed:@"error.png"] retain];
-	return _errorTile;
+    RMTile tile;
+    NSDate *timestamp;
 }
 
-+ (UIImage *)missingTile
-{
-	if (_missingTile)
-        return _missingTile;
+@property (nonatomic, readonly) id cachedObject;
+@property (nonatomic, readonly) NSString *cacheKey;
+@property (nonatomic, readonly) RMTile tile;
+@property (nonatomic, readonly) NSDate *timestamp;
 
-	_missingTile = [[UIImage imageNamed:@"missing.png"] retain];
-	return _missingTile;
-}
++ (id)cacheObject:(id)anObject forTile:(RMTile)aTile withCacheKey:(NSString *)aCacheKey;
+
+- (id)initWithObject:(id)anObject forTile:(RMTile)tile withCacheKey:(NSString *)aCacheKey;
+
+- (void)touch;
 
 @end

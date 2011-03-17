@@ -42,9 +42,10 @@
 - (id)initWithDatabase:(NSString *)path;
 
 - (NSUInteger)count;
-- (NSData *)dataForTile:(uint64_t)tileHash;
-- (void)touchTile:(uint64_t)tileHash withDate:(NSDate *)date;
-- (void)addData:(NSData *)data lastUsed:(NSDate *)date forTile:(uint64_t)tileHash;
+- (NSData *)dataForTile:(uint64_t)tileHash withKey:(NSString *)cacheKey;
+- (void)touchTile:(uint64_t)tileHash withKey:(NSString *)cacheKey;
+- (void)addData:(NSData *)data forTile:(uint64_t)tileHash withKey:(NSString *)cacheKey;
+
 - (void)purgeTiles:(NSUInteger)count;
 - (void)removeAllCachedImages;
 - (void)didReceiveMemoryWarning;

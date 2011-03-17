@@ -28,46 +28,46 @@
 #import <Foundation/Foundation.h>
 #import "RMTile.h"
 #import "RMTileSource.h"
+#import "RMCacheObject.h"
 
-@class RMTileImage;
+@class RMTileImage, RMMemoryCache;
 
 typedef enum {
 	RMCachePurgeStrategyLRU,
 	RMCachePurgeStrategyFIFO,
 } RMCachePurgeStrategy;
 
+#pragma mark -
 
 @protocol RMTileCache <NSObject>
 
-/// Returns the cached image if it exists. nil otherwise.
-- (RMTileImage *)cachedImage:(RMTile)tile;
+// Returns the cached image if it exists. nil otherwise.
+- (UIImage *)cachedImage:(RMTile)tile withCacheKey:(NSString *)cacheKey;
+
 - (void)didReceiveMemoryWarning;
 
 @optional
 
-- (void)addTile:(RMTile)tile withImage:(RMTileImage*)image;
-/// removes all tile images from the memory and disk subcaches
+- (void)addImage:(UIImage *)image forTile:(RMTile)tile withCacheKey:(NSString *)cacheKey;
+
+// removes all tile images from the memory and disk subcaches
 - (void)removeAllCachedImages;
 
 @end
 
+#pragma mark -
 
 @interface RMTileCache : NSObject <RMTileCache>
 {
 	NSMutableArray *caches;
+
+    // The memory cache, if we have one
+    // This one has its own variable because we want to propagate cache hits down in
+    // the cache hierarchy up to the memory cache
+    RMMemoryCache *memoryCache;    
 }
 
-- (id)initWithTileSource:(id <RMTileSource>)tileSource;
-
 + (NSNumber *)tileHash:(RMTile)tile;
-
-// Add tile to cache
-/*! 
- \bug Calls -makeSpaceInCache for every tile/image addition. -makeSpaceInCache does a linear scan of its contents at each call.
-
- \bug Since RMTileImage has an RMTile ivar, this API should be simplified to just -addImage:.
- */
-- (void)addTile:(RMTile)tile withImage:(RMTileImage *)image;
 
 // Add another cache to the chain
 - (void)addCache:(id <RMTileCache>)cache;

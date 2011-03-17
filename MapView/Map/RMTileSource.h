@@ -31,30 +31,25 @@
 #import "RMFoundation.h"
 #import "RMGlobalConstants.h"
 
-@class RMTileImage;
-@class RMFractalTileProjection;
-@class RMTileLoader;
-@class RMTiledLayerController;
-@class RMTileCache;
-@class RMProjection;
+@class RMFractalTileProjection, RMTileCache, RMProjection, RMTileImage, RMTileCache;
 
 @protocol RMMercatorToTileProjection;
 
 @protocol RMTileSource <NSObject>
 
-- (RMTileImage *)tileImage:(RMTile)tile;
-- (NSString *)tileURL:(RMTile)tile;
-- (NSString *)tileFile:(RMTile)tile;
-- (NSString *)tilePath;
+- (UIImage *)imageForTileImage:(RMTileImage *)tileImage addToCache:(RMTileCache *)tileCache withCacheKey:(NSString *)aCacheKey;
 
 - (id <RMMercatorToTileProjection>)mercatorToTileProjection;
 - (RMProjection *)projection;
 
 - (float)minZoom;
-- (float)maxZoom;
-
 - (void)setMinZoom:(NSUInteger)aMinZoom;
+
+- (float)maxZoom;
 - (void)setMaxZoom:(NSUInteger)aMaxZoom;
+
+- (int)tileSideLength;
+- (void)setTileSideLength:(NSUInteger)aTileSideLength;
 
 - (RMSphericalTrapezium)latitudeLongitudeBoundingBox;
 
@@ -64,11 +59,6 @@
 - (NSString *)longDescription;
 - (NSString *)shortAttribution;
 - (NSString *)longAttribution;
-
-/*! \brief clear all images from the in-memory and on-disk image caches
- \bug This method belongs on RMCachedTileSource, not on RMTileSource, because an RMTileSource doesn't have a cache.
- */
--(void)removeAllCachedImages;
 
 - (void)didReceiveMemoryWarning;
 

@@ -32,7 +32,6 @@
 #import "RMTileLoader.h"
 #import "RMPixel.h"
 #import "RMTileImage.h"
-#import "RMTileImageSet.h"
 
 @implementation RMCoreAnimationRenderer
 
@@ -89,13 +88,14 @@
 	}
 }
 
-- (void)tileAdded:(RMTile)tile withImage:(RMTileImage *)image
+- (void)tileImageAdded:(RMTileImage *)image
 {
 //	RMLog(@"tileAdded: %d %d %d at %f %f %f %f", tile.x, tile.y, tile.zoom, image.screenLocation.origin.x, image.screenLocation.origin.y,
 //		  image.screenLocation.size.width, image.screenLocation.size.height);
 	
 //	RMLog(@"tileAdded");
 
+    RMTile tile = image.tile;
 	NSUInteger min = 0, max = [tiles count];
 	CALayer *sublayer = [image layer];
 	sublayer.delegate = self;
@@ -118,10 +118,11 @@
 	[layer insertSublayer:sublayer atIndex:min];
 }
 
-- (void)tileRemoved:(RMTile)tile
+- (void)tileImageRemoved:(RMTileImage *)tileImage
 {
 	RMTileImage *image = nil;
-
+    RMTile tile = tileImage.tile;
+    
 	NSUInteger i = [tiles count];
 	while (i--)
 	{
@@ -129,8 +130,8 @@
 
 		if (RMTilesEqual(tile, potential.tile))
 		{
+			image = [[potential retain] autorelease];
 			[tiles removeObjectAtIndex:i];
-			image = potential;
 			break;
 		}
 	}

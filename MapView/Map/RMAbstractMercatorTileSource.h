@@ -1,5 +1,5 @@
 //
-//  RMWebTileImage.h
+//  RMMercatorWebSource.h
 //
 // Copyright (c) 2008-2009, Route-Me Contributors
 // All rights reserved.
@@ -25,36 +25,23 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import <Foundation/Foundation.h>
+#import "RMTileSource.h"
+#import "RMFractalTileProjection.h"
 
-#import "RMTileImage.h"
+#pragma mark --- begin constants ---
+#define kDefaultTileSize 256
+#define kDefaultMinTileZoom 0
+#define kDefaultMaxTileZoom 18
+#define kDefaultLatLonBoundingBox ((RMSphericalTrapezium){.northeast = {.latitude = 90, .longitude = 180}, .southwest = {.latitude = -90, .longitude = -180}})
+#pragma mark --- end constants ---
 
-static const NSUInteger kWebTileRetries = 30;
+@interface RMAbstractMercatorTileSource : NSObject <RMTileSource> {
+	RMFractalTileProjection *tileProjection;
 
-extern NSString *RMWebTileImageErrorDomain;
-extern NSString *RMWebTileImageHTTPResponseCodeKey;
-
-enum {
-    RMWebTileImageErrorUnexpectedHTTPResponse,
-    RMWebTileImageErrorZeroLengthResponse,
-    RMWebTileImageErrorNotFoundResponse
-};
-
-extern NSString *RMWebTileImageNotificationErrorKey;
-
-// RMTileImage subclass: a tile image loaded from a URL.
-@interface RMWebTileImage : RMTileImage {
-    NSUInteger retries;
-    NSError *lastError;
-
-	NSURL *url;
-	NSURLConnection *connection;
-
-	NSMutableData *data;
+	// supported zoom levels
+	float minZoom;
+	float maxZoom;
+	int tileSideLength;
 }
-
-- (id)initWithTile:(RMTile)tile fromURL:(NSString*)url;
-- (void)requestTile;
-- (void)startLoading:(NSTimer *)timer;
 
 @end

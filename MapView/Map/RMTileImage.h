@@ -36,7 +36,6 @@
 #import "RMFoundation.h"
 #import "RMNotifications.h"
 #import "RMTile.h"
-#import "RMTileProxy.h"
 #import "FMDatabase.h"
 
 @interface RMTileImage : NSObject {
@@ -44,11 +43,6 @@
 	RMTile tile;
 	CGRect screenLocation;
 
-	/// Used by cache
-	NSDate *lastUsedTime;
-
-	// \bug placing the "layer" on the RMTileImage implicitly assumes that a particular RMTileImage will be used in only 
-	// one UIView. Might see some interesting crashes if you have two RMMapViews using the same tile source.
 	// Only used when appropriate
 	CALayer *layer;
 }
@@ -56,34 +50,22 @@
 @property (readwrite, assign) CGRect screenLocation;
 @property (readonly, assign) RMTile tile;
 @property (readonly) CALayer *layer;
-@property (readonly) NSDate *lastUsedTime;
+
++ (UIImage *)errorTile;
++ (UIImage *)missingTile;
+
++ (RMTileImage *)tileImageWithTile:(RMTile)tile;
 
 - (id)initWithTile:(RMTile)tile;
-
-+ (RMTileImage *)dummyTile:(RMTile)tile;
-
-//- (void)drawInRect:(CGRect)rect;
-- (void)draw;
-
-+ (RMTileImage *)imageForTile:(RMTile)tile withURL:(NSString *)url;
-+ (RMTileImage *)imageForTile:(RMTile)tile fromFile:(NSString *)filename;
-+ (RMTileImage *)imageForTile:(RMTile)tile withData:(NSData *)data;
-+ (RMTileImage *)imageForTile:(RMTile)tile fromDB:(FMDatabase *)db;
 
 - (void)moveBy:(CGSize)delta;
 - (void)zoomByFactor:(float)zoomFactor near:(CGPoint) center;
 
-- (void)makeLayer;
-
+- (BOOL)isLoaded;
 - (void)cancelLoading;
 
-- (void)updateImageUsingData:(NSData *)data;
-- (void)updateImageUsingImage:(UIImage *)image;
+- (void)updateWithImage:(UIImage *)image andNotify:(BOOL)notifyListeners;
 
-- (void)touch;
-
-- (BOOL)isLoaded;
-
-- (void)displayProxy:(UIImage*)img;
+- (void)makeLayer;
 
 @end

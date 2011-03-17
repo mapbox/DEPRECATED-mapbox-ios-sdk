@@ -28,9 +28,5 @@
 static NSString* const RMSuspendNetworkOperations = @"RMSuspendNetworkOperations";
 static NSString* const RMResumeNetworkOperations = @"RMResumeNetworkOperations";
 static NSString* const RMMapImageRemovedFromScreenNotification = @"RMMapImageRemovedFromScreen";
-static NSString* const RMMapImageAddedToScreenNotification = @"RMMapImageAddedToScreen";
-static NSString* const RMTileRetrieved = @"RMTileRetrieved";
-static NSString* const RMTileRequested = @"RMTileRequested";
-static NSString* const RMTileError = @"RMTileError";
 static NSString* const RMMapImageLoadedNotification = @"RMMapImageLoaded";
 static NSString* const RMMapImageLoadingCancelledNotification = @"RMMapImageLoadingCancelled";

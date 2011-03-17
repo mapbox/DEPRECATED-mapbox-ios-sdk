@@ -29,6 +29,7 @@
 #import <CoreGraphics/CoreGraphics.h>
 
 #import "RMFoundation.h"
+#import "RMTileImageSet.h"
 
 @class CALayer;
 @class UIView;
@@ -36,7 +37,7 @@
 @protocol RMTileSource;
 @class RMMapContents;
 
-@interface RMMapRenderer : NSObject
+@interface RMMapRenderer : NSObject <RMTileImageSetDelegate>
 {
 	RMMapContents *content;
 }

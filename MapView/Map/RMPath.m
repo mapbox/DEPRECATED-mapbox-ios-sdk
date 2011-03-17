@@ -194,7 +194,7 @@
 
 - (void)moveToLatLong:(CLLocationCoordinate2D)point
 {
-	RMProjectedPoint mercator = [[contents projection] coordinateToPoint:point];
+	RMProjectedPoint mercator = [[contents projection] coordinateToProjectedPoint:point];
 	[self moveToXY:mercator];
 }
 
@@ -211,7 +211,7 @@
 
 - (void)addLineToLatLong:(CLLocationCoordinate2D)point
 {
-	RMProjectedPoint mercator = [[contents projection] coordinateToPoint:point];
+	RMProjectedPoint mercator = [[contents projection] coordinateToProjectedPoint:point];
 	[self addLineToXY:mercator];
 }
 

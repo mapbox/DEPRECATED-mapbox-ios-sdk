@@ -60,8 +60,8 @@
 - (void)addMarker:(RMMarker *)marker atLatLong:(CLLocationCoordinate2D)point
 {
 	[marker setAffineTransform:rotationTransform];
-	[marker setProjectedLocation:[[contents projection]coordinateToPoint:point]];
-	[marker setPosition:[[contents mercatorToScreenProjection] projectProjectedPoint:[[contents projection] coordinateToPoint:point]]];
+	[marker setProjectedLocation:[[contents projection]coordinateToProjectedPoint:point]];
+	[marker setPosition:[[contents mercatorToScreenProjection] projectProjectedPoint:[[contents projection] coordinateToProjectedPoint:point]]];
 	[[contents overlay] addSublayer:marker];
 }
 
@@ -164,8 +164,8 @@
 
 - (void)moveMarker:(RMMarker *)marker atLatLon:(CLLocationCoordinate2D)point
 {
-	[marker setProjectedLocation:[[contents projection]coordinateToPoint:point]];
-	[marker setPosition:[[contents mercatorToScreenProjection] projectProjectedPoint:[[contents projection] coordinateToPoint:point]]];
+	[marker setProjectedLocation:[[contents projection]coordinateToProjectedPoint:point]];
+	[marker setPosition:[[contents mercatorToScreenProjection] projectProjectedPoint:[[contents projection] coordinateToProjectedPoint:point]]];
 }
 
 - (void)moveMarker:(RMMarker *)marker atXY:(CGPoint)point

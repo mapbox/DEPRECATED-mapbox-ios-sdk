@@ -29,16 +29,55 @@
 
 #import "RMGlobalConstants.h"
 #import "RMTileImage.h"
-#import "RMWebTileImage.h"
 #import "RMTileLoader.h"
-#import "RMFileTileImage.h"
-#import "RMDBTileImage.h"
 #import "RMTileCache.h"
 #import "RMPixel.h"
 
+static BOOL _didLoadErrorTile = NO;
+static BOOL _didLoadMissingTile = NO;
+static UIImage *_errorTile = nil;
+static UIImage *_missingTile = nil;
+
 @implementation RMTileImage
 
-@synthesize screenLocation, tile, layer, lastUsedTime;
+@synthesize screenLocation, tile, layer;
+
+#pragma mark -
+
++ (UIImage *)errorTile
+{
+	if (_errorTile)
+        return _errorTile;
+    
+    if (_didLoadErrorTile)
+        return nil;
+    
+	_errorTile = [[UIImage imageNamed:@"error.png"] retain];
+    _didLoadErrorTile = YES;
+    
+	return _errorTile;
+}
+
++ (UIImage *)missingTile
+{
+	if (_missingTile)
+        return _missingTile;
+    
+    if (_didLoadMissingTile)
+        return nil;
+    
+	_missingTile = [[UIImage imageNamed:@"missing.png"] retain];
+    _didLoadMissingTile = YES;
+    
+	return _missingTile;
+}
+
+#pragma mark -
+
++ (RMTileImage *)tileImageWithTile:(RMTile)tile
+{
+	return [[[RMTileImage alloc] initWithTile:tile] autorelease];
+}
 
 - (id)initWithTile:(RMTile)_tile
 {
@@ -47,22 +86,16 @@
 
 	tile = _tile;
 	layer = nil;
-	lastUsedTime = nil;
 	screenLocation = CGRectZero;
     
     [self makeLayer];
-	[self touch];
 
 	[[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(tileRemovedFromScreen:)
-                                                 name:RMMapImageRemovedFromScreenNotification object:self];
+                                                 name:RMMapImageRemovedFromScreenNotification
+                                               object:self];
 
 	return self;
-}
-	 
-- (void)tileRemovedFromScreen:(NSNotification *)notification
-{
-	[self cancelLoading];
 }
 
 - (id)init
@@ -72,9 +105,9 @@
 	return nil;
 }
 
-+ (RMTileImage *)dummyTile:(RMTile)tile
+- (void)tileRemovedFromScreen:(NSNotification *)notification
 {
-	return [[[RMTileImage alloc] initWithTile:tile] autorelease];
+	[self cancelLoading];
 }
 
 - (void)dealloc
@@ -83,61 +116,27 @@
 	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[layer release]; layer = nil;
-	[lastUsedTime release]; lastUsedTime = nil;
 
 	[super dealloc];
 }
 
-- (void)draw
-{
-}
+#pragma mark -
 
-+ (RMTileImage *)imageForTile:(RMTile)_tile withURL:(NSString *)url
-{
-	return [[[RMWebTileImage alloc] initWithTile:_tile fromURL:url] autorelease];
-}
-
-+ (RMTileImage *)imageForTile:(RMTile)_tile fromFile:(NSString *)filename
-{
-	return [[[RMFileTileImage alloc] initWithTile:_tile fromFile:filename] autorelease];
-}
-
-+ (RMTileImage *)imageForTile:(RMTile)tile withData:(NSData *)data
-{
-	UIImage *image = [[UIImage alloc] initWithData:data];
-	RMTileImage *tileImage;
-
-	if (!image)
-		return nil;
-
-	tileImage = [[self alloc] initWithTile:tile];
-	[tileImage updateImageUsingImage:image];
-	[image release];
-	return [tileImage autorelease];
-}
-
-+ (RMTileImage *)imageForTile:(RMTile)_tile fromDB:(FMDatabase *)db
-{
-	return [[[RMDBTileImage alloc] initWithTile: _tile fromDB:db] autorelease];
-}
-
-- (void) cancelLoading
+- (void)cancelLoading
 {
 	[[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadingCancelledNotification
 														object:self];
 }
 
-- (void)updateImageUsingData:(NSData *)data
+- (void)updateWithImage:(UIImage *)image andNotify:(BOOL)notifyListeners
 {
-    [self updateImageUsingImage:[UIImage imageWithData:data]];
+    dispatch_async(dispatch_get_main_queue(),^ {
+        layer.contents = (id)[image CGImage];
+    });
 
-    NSDictionary *d = [NSDictionary dictionaryWithObject:data forKey:@"data"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadedNotification object:self userInfo:d];
-}
-
-- (void)updateImageUsingImage:(UIImage *)rawImage
-{
-	layer.contents = (id)[rawImage CGImage];
+    if (notifyListeners) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadedNotification object:self userInfo:nil];
+    }
 }
 
 - (BOOL)isLoaded
@@ -150,18 +149,12 @@
 	return (NSUInteger)RMTileHash(tile);
 }
 
-- (void)touch
-{
-	[lastUsedTime release];
-	lastUsedTime = [[NSDate date] retain];
-}
-
 - (BOOL)isEqual:(id)anObject
 {
 	if (![anObject isKindOfClass:[RMTileImage class]])
 		return NO;
 
-	return RMTilesEqual(tile, [(RMTileImage*)anObject tile]);
+	return RMTilesEqual(tile, [(RMTileImage *)anObject tile]);
 }
 
 - (void)makeLayer
@@ -217,13 +210,6 @@
 		layer.position = screenLocation.origin;
 		layer.bounds = CGRectMake(0, 0, screenLocation.size.width, screenLocation.size.height);
 	}
-
-	[self touch];
-}
-
-- (void)displayProxy:(UIImage *)proxyImage
-{
-    layer.contents = (id)[proxyImage CGImage]; 
 }
 
 @end

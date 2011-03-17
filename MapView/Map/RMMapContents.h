@@ -24,13 +24,13 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
+
 #import <UIKit/UIKit.h>
 
 #import "RMFoundation.h"
 #import "RMTile.h"
 
 #import "RMTilesUpdateDelegate.h"
-
 
 // constants for boundingMask
 enum {
@@ -52,6 +52,7 @@ enum {
 @class RMMarkerManager;
 @class RMProjection;
 @class RMMercatorToScreenProjection;
+@class RMTileCache;
 @class RMTileImageSet;
 @class RMTileLoader;
 @class RMMapRenderer;
@@ -64,7 +65,9 @@ enum {
 
 @protocol RMMapContentsAnimationCallback <NSObject>
 @optional
+
 - (void)animationFinishedWithZoomFactor:(float)zoomFactor near:(CGPoint)p;
+
 @end
 
 
@@ -94,20 +97,22 @@ enum {
 	/// Latlong is calculated dynamically from mercatorBounds.
 	RMProjection *projection;
 	
-	id<RMMercatorToTileProjection> mercatorToTileProjection;
-//	RMTileRect tileBounds;
+	id <RMMercatorToTileProjection> mercatorToTileProjection;
 	
 	/// (guess) converts from projected meters to screen pixel coordinates
 	RMMercatorToScreenProjection *mercatorToScreenProjection;
 	
 	/// controls what images are used. Can be changed while the view is visible, but see http://code.google.com/p/route-me/issues/detail?id=12
-	id<RMTileSource> tileSource;
+	id <RMTileSource> tileSource;
 	
+    // Generic tile cache
+    RMTileCache *tileCache;
+    
 	RMTileImageSet *imagesOnScreen;
 	RMTileLoader *tileLoader;
 	
 	RMMapRenderer *renderer;
-	NSUInteger		boundingMask;
+	NSUInteger	   boundingMask;
 	
 	/// minimum zoom number allowed for the view. #minZoom and #maxZoom must be within the limits of #tileSource but can be stricter; they are clamped to tilesource limits if needed.
 	float minZoom;
@@ -142,6 +147,7 @@ enum {
 @property (readonly)  RMMercatorToScreenProjection *mercatorToScreenProjection;
 
 @property (retain, readwrite) id<RMTileSource> tileSource;
+@property (nonatomic, retain) RMTileCache *tileCache;
 @property (retain, readwrite) RMMapRenderer *renderer;
 
 @property (readonly)  CALayer *layer;
@@ -171,13 +177,6 @@ enum {
 	  minZoomLevel:(float)minZoomLevel
    backgroundImage:(UIImage *)backgroundImage;
 
-/// \deprecated subject to removal at any moment after 0.5 is released
-- (id) initForView: (UIView*) view;
-/// \deprecated subject to removal at any moment after 0.5 is released
-- (id) initForView: (UIView*) view WithLocation:(CLLocationCoordinate2D)latlong;
-/// \deprecated subject to removal at any moment after 0.5 is released
-- (id)initForView:(UIView*)view WithTileSource:(id<RMTileSource>)tileSource WithRenderer:(RMMapRenderer*)renderer LookingAt:(CLLocationCoordinate2D)latlong;
-
 - (void)setFrame:(CGRect)frame;
 
 - (void)handleMemoryWarningNotification:(NSNotification *)notification;
@@ -198,15 +197,10 @@ enum {
 - (void)zoomInToNextNativeZoomAt:(CGPoint) pivot;
 - (void)zoomOutToNextNativeZoomAt:(CGPoint) pivot; 
 - (float)adjustZoomForBoundingMask:(float)zoomFactor;
-- (void)adjustMapPlacementWithScale:(float)aScale;
 - (float)nextNativeZoomFactor;
 - (float)prevNativeZoomFactor;
 
 - (void) drawRect: (CGRect) rect;
-
-//-(void)addLayer: (id<RMMapLayer>) layer above: (id<RMMapLayer>) other;
-//-(void)addLayer: (id<RMMapLayer>) layer below: (id<RMMapLayer>) other;
-//-(void)removeLayer: (id<RMMapLayer>) layer;
 
 - (CGPoint)latLongToPixel:(CLLocationCoordinate2D)latlong;
 - (CGPoint)latLongToPixel:(CLLocationCoordinate2D)latlong withMetersPerPixel:(float)aScale;
@@ -255,7 +249,6 @@ enum {
 - (void)zoomInToNextNativeZoomAt:(CGPoint) pivot;
 - (void)zoomOutToNextNativeZoomAt:(CGPoint) pivot; 
 - (float)adjustZoomForBoundingMask:(float)zoomFactor;
-- (void)adjustMapPlacementWithScale:(float)aScale;
 
 - (CGPoint)latLongToPixel:(CLLocationCoordinate2D)latlong;
 - (CGPoint)latLongToPixel:(CLLocationCoordinate2D)latlong withMetersPerPixel:(float)aScale;
@@ -264,11 +257,6 @@ enum {
 
 - (void)zoomWithLatLngBoundsNorthEast:(CLLocationCoordinate2D)ne SouthWest:(CLLocationCoordinate2D)se;
 - (void)zoomWithRMMercatorRectBounds:(RMProjectedRect)bounds;
-
-/// \deprecated name change pending after 0.5
-- (RMSphericalTrapezium) latitudeLongitudeBoundingBoxForScreen;
-/// \deprecated name change pending after 0.5
-- (RMSphericalTrapezium) latitudeLongitudeBoundingBoxFor:(CGRect) rect;
 
 - (void) tilesUpdatedRegion:(CGRect)region;
 
