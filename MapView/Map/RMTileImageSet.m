@@ -53,7 +53,7 @@
     
 	images = [[NSMutableSet alloc] init];
     imagesLock = [[NSRecursiveLock alloc] init];
-    
+
 	[[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(tileImageLoaded:)
                                                  name:RMMapImageLoadedNotification
@@ -80,18 +80,21 @@
 		return;
 	}
 	
-	RMTileImage *tileImage = [images member:[RMTileImage tileImageWithTile:tile]];
-	if (!tileImage)
-		return;
-
-	if ([delegate respondsToSelector:@selector(tileImageRemoved:)]) {
-		[delegate tileImageRemoved:tileImage];
-	}
-
-	[[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageRemovedFromScreenNotification object:tileImage];
-
     [imagesLock lock];
+
+    RMTileImage *tileImage = [images member:[RMTileImage tileImageWithTile:tile]];
+    if (!tileImage) {
+        [imagesLock unlock];
+        return;
+    }
+
+    if ([delegate respondsToSelector:@selector(tileImageRemoved:)])
+        [delegate tileImageRemoved:tileImage];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageRemovedFromScreenNotification object:tileImage];
+
     [images removeObject:tileImage];
+
     [imagesLock unlock];
 }
 
@@ -99,18 +102,17 @@
 {
     [imagesLock lock];
 
-	for (NSInteger i=[images count]; i>0; --i)
+    for (NSInteger i=[images count]; i>0; --i)
     {
         RMTileImage *tileImage = [images anyObject];
 
-        if ([delegate respondsToSelector:@selector(tileImageRemoved:)]) {
+        if ([delegate respondsToSelector:@selector(tileImageRemoved:)])
             [delegate tileImageRemoved:tileImage];
-        }
-        
+
         [[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageRemovedFromScreenNotification object:tileImage];
-        
+
         [images removeObject:tileImage];
-	}
+    }
 
     [imagesLock unlock];
 }
@@ -140,19 +142,21 @@
 	tileNeeded = YES;
 
     [imagesLock lock];
-	for (RMTileImage *tileImage in images)
-	{
-		if (![tileImage isLoaded])
+
+    for (RMTileImage *tileImage in images)
+    {
+        if (![tileImage isLoaded])
             continue;
 
-		if ([self isTile:image.tile worseThanTile:tileImage.tile])
-		{
-			tileNeeded = NO;
-			break;
-		}
-	}
+        if ([self isTile:image.tile worseThanTile:tileImage.tile])
+        {
+            tileNeeded = NO;
+            break;
+        }
+    }
+
     [imagesLock unlock];
-    
+
 	if (!tileNeeded)
 		return;
 
@@ -161,8 +165,8 @@
 
 	image.screenLocation = screenLocation;
     
-    [imagesLock lock];
-	[images addObject:image];
+    [imagesLock lock];    
+    [images addObject:image];
     [imagesLock unlock];
 
 	if (!RMTileIsDummy(image.tile))	{
@@ -175,8 +179,12 @@
 - (void)addTile:(RMTile)tile at:(CGRect)screenLocation
 {
     // Is there an equivalent tile already in the cache?
-    RMTileImage *tileImage = [images member:[RMTileImage tileImageWithTile:tile]];
+    RMTileImage *tileImage = nil;
     
+    [imagesLock lock];
+    tileImage = [[[images member:[RMTileImage tileImageWithTile:tile]] retain] autorelease];
+    [imagesLock unlock];
+
 	if (tileImage != nil) {        
 		[tileImage setScreenLocation:screenLocation];
 
@@ -284,9 +292,13 @@
 
 - (RMTileImage *)imageWithTile:(RMTile)tile
 {
-	RMTileImage *dummyTile = [RMTileImage tileImageWithTile:tile];
+    RMTileImage *tileImage = nil;
 
-	return [[[images member:dummyTile] retain] autorelease];
+    [imagesLock lock];
+    tileImage = [[[images member:[RMTileImage tileImageWithTile:tile]] retain] autorelease];
+    [imagesLock unlock];
+
+	return tileImage;
 }
 
 - (NSUInteger)count
@@ -298,10 +310,10 @@
 {
     [imagesLock lock];
 
-	for (RMTileImage *image in images)
-	{
-		[image moveBy:delta];
-	}
+    for (RMTileImage *image in images)
+    {
+        [image moveBy:delta];
+    }
 
     [imagesLock unlock];
 }
@@ -310,11 +322,11 @@
 {
     [imagesLock lock];
 
-	for (RMTileImage *image in images)
-	{
-		[image zoomByFactor:zoomFactor near:center];
-	}
-
+    for (RMTileImage *image in images)
+    {
+        [image zoomByFactor:zoomFactor near:center];
+    }
+    
     [imagesLock unlock];
 }
 
@@ -325,34 +337,34 @@
 
     [imagesLock lock];
 
-	for (RMTileImage *image in images)
-	{
-		CGRect location = [image screenLocation];
-/*		RMLog(@"Image at %f, %f %f %f",
-			  location.origin.x,
-			  location.origin.y,
-			  location.origin.x + location.size.width,
-			  location.origin.y + location.size.height);
-*/
-		float seamRight = INFINITY;
-		float seamDown = INFINITY;
-		
-		for (RMTileImage *other_image in images)
-		{
-			CGRect other_location = [other_image screenLocation];
-			if (other_location.origin.x > location.origin.x)
-				seamRight = MIN(seamRight, other_location.origin.x - (location.origin.x + location.size.width));
-			if (other_location.origin.y > location.origin.y)
-				seamDown = MIN(seamDown, other_location.origin.y - (location.origin.y + location.size.height));
-		}
-		
-		if (seamRight != INFINITY)
-			biggestSeamRight = MAX(biggestSeamRight, seamRight);
-		
-		if (seamDown != INFINITY)
-			biggestSeamDown = MAX(biggestSeamDown, seamDown);
-	}
-
+    for (RMTileImage *image in images)
+    {
+        CGRect location = [image screenLocation];
+        /*		RMLog(@"Image at %f, %f %f %f",
+         location.origin.x,
+         location.origin.y,
+         location.origin.x + location.size.width,
+         location.origin.y + location.size.height);
+         */
+        float seamRight = INFINITY;
+        float seamDown = INFINITY;
+        
+        for (RMTileImage *other_image in images)
+        {
+            CGRect other_location = [other_image screenLocation];
+            if (other_location.origin.x > location.origin.x)
+                seamRight = MIN(seamRight, other_location.origin.x - (location.origin.x + location.size.width));
+            if (other_location.origin.y > location.origin.y)
+                seamDown = MIN(seamDown, other_location.origin.y - (location.origin.y + location.size.height));
+        }
+        
+        if (seamRight != INFINITY)
+            biggestSeamRight = MAX(biggestSeamRight, seamRight);
+        
+        if (seamDown != INFINITY)
+            biggestSeamDown = MAX(biggestSeamDown, seamDown);
+    }
+    
     [imagesLock unlock];
 
 	RMLog(@"Biggest seam right: %f  down: %f", biggestSeamRight, biggestSeamDown);
@@ -362,17 +374,23 @@
 {
     [imagesLock lock];
 
-	for (RMTileImage *image in images)
-	{
-		[image cancelLoading];
-	}
+    for (RMTileImage *image in images)
+    {
+        [image cancelLoading];
+    }
 
     [imagesLock unlock];
 }
 
 - (RMTileImage *)anyTileImage
 {
-	return [[[images anyObject] retain] autorelease];
+    RMTileImage *tileImage = nil;
+    
+    [imagesLock lock];
+    tileImage = [[[images anyObject] retain] autorelease];
+    [imagesLock unlock];
+
+	return tileImage;
 }
 
 - (short)zoom
@@ -387,6 +405,8 @@
 		return;
 	}
 
+    [imagesLock lock];
+
 	zoom = value;
 	for (RMTileImage *image in [images allObjects])
 	{
@@ -395,6 +415,8 @@
 		}
 		[self removeTilesWorseThan:image];
 	}
+
+    [imagesLock unlock];
 }
 
 - (BOOL)fullyLoaded
@@ -403,14 +425,14 @@
 
     [imagesLock lock];
 
-	for (RMTileImage *image in images)
-	{
-		if (![image isLoaded])
-		{
-			fullyLoaded = NO;
-			break;
-		}
-	}
+    for (RMTileImage *image in images)
+    {
+        if (![image isLoaded])
+        {
+            fullyLoaded = NO;
+            break;
+        }
+    }
 
     [imagesLock unlock];
 
@@ -421,14 +443,17 @@
 {
 	RMTileImage *img = (RMTileImage *)[notification object];
 
+    BOOL removeTiles = NO;
+    
     [imagesLock lock];
 
-	if (img && img == [images member:img])
-	{
-        [self removeTilesWorseThan:img];
-	}
+    if (img && img == [images member:img]) {
+        removeTiles = YES;
+    }
 
-    [imagesLock unlock];
+    [imagesLock lock];
+
+    if (removeTiles) [self removeTilesWorseThan:img];
 }
 
 - (void)removeTilesWorseThan:(RMTileImage *)newImage
@@ -442,11 +467,11 @@
 
     [imagesLock lock];
 
-	for (RMTileImage *oldImage in [images allObjects])
-	{
-		RMTile oldTile = oldImage.tile;
+    for (RMTileImage *oldImage in [images allObjects])
+    {
+        RMTile oldTile = oldImage.tile;
 
-		if (oldImage == newImage)
+        if (oldImage == newImage)
 			continue;
 
 		if ([self isTile:oldTile worseThanTile:newTile]) {

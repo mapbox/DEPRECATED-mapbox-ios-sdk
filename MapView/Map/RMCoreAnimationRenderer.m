@@ -41,12 +41,13 @@
 		return nil;
 
 	// NOTE: RMMapContents may still be initialising when this function
-	//       is called. Be careful using any of methods - they might return
+	//       is called. Be careful using any of the methods - they might return
 	//       strange data.
 
 	layer = [[CAScrollLayer layer] retain];
 	layer.anchorPoint = CGPointZero;
 	layer.masksToBounds = YES;
+
 	// If the frame is set incorrectly here, it will be fixed when setRenderer is called in RMMapContents
 	layer.frame = [content screenBounds];
 
@@ -62,8 +63,8 @@
 
 - (void)dealloc
 {
-	[tiles release];
-	[layer release];
+	[tiles release]; tiles = nil;
+	[layer release]; layer = nil;
 	[super dealloc];
 }
 
@@ -74,16 +75,13 @@
 
 - (id <CAAction>)actionForLayer:(CALayer *)theLayer forKey:(NSString *)key
 {
-	if (theLayer == layer)
-	{
-//		RMLog(@"base layer key: %@", key);
+	if (theLayer == layer) {
 		return nil;
 	}
 
 	if ([key isEqualToString:@"position"] || [key isEqualToString:@"bounds"])
 		return nil;
 	else {
-//		RMLog(@"key: %@", key);
 		return nil;
 	}
 }
@@ -95,51 +93,58 @@
 	
 //	RMLog(@"tileAdded");
 
-    RMTile tile = image.tile;
-	NSUInteger min = 0, max = [tiles count];
-	CALayer *sublayer = [image layer];
-	sublayer.delegate = self;
+    @synchronized(tiles) {
 
-	while (min < max) {
-		// Binary search for insertion point
-		NSUInteger pivot = (min + max) / 2;
-		RMTileImage *other = [tiles objectAtIndex:pivot];
-		RMTile otherTile = other.tile;
+        RMTile tile = image.tile;
+        NSUInteger min = 0, max = [tiles count];
+        CALayer *sublayer = [image layer];
+        sublayer.delegate = self;
 
-		if (otherTile.zoom <= tile.zoom) {
-			min = pivot + 1;
-		}
-		if (otherTile.zoom > tile.zoom) {
-			max = pivot;
-		}
-	}
+        while (min < max) {
+            // Binary search for insertion point
+            NSUInteger pivot = (min + max) / 2;
+            RMTileImage *other = [tiles objectAtIndex:pivot];
+            RMTile otherTile = other.tile;
 
-	[tiles insertObject:image atIndex:min];
-	[layer insertSublayer:sublayer atIndex:min];
+            if (otherTile.zoom <= tile.zoom) {
+                min = pivot + 1;
+            }
+            if (otherTile.zoom > tile.zoom) {
+                max = pivot;
+            }
+        }
+
+        [tiles insertObject:image atIndex:min];
+        [layer insertSublayer:sublayer atIndex:min];
+
+    }
 }
 
 - (void)tileImageRemoved:(RMTileImage *)tileImage
 {
-	RMTileImage *image = nil;
-    RMTile tile = tileImage.tile;
-    
-	NSUInteger i = [tiles count];
-	while (i--)
-	{
-		RMTileImage *potential = [tiles objectAtIndex:i];
+    @synchronized(tiles) {
 
-		if (RMTilesEqual(tile, potential.tile))
-		{
-			image = [[potential retain] autorelease];
-			[tiles removeObjectAtIndex:i];
-			break;
-		}
-	}
+        RMTileImage *image = nil;
+        RMTile tile = tileImage.tile;
+
+        NSUInteger i = [tiles count];
+        while (i--)
+        {
+            RMTileImage *potential = [tiles objectAtIndex:i];
+
+            if (RMTilesEqual(tile, potential.tile))
+            {
+                image = [[potential retain] autorelease];
+                [tiles removeObjectAtIndex:i];
+                break;
+            }
+        }
 
 //	RMLog(@"tileRemoved: %d %d %d at %f %f %f %f", tile.x, tile.y, tile.zoom, image.screenLocation.origin.x, image.screenLocation.origin.y,
 //		  image.screenLocation.size.width, image.screenLocation.size.height);
 
-	[[image layer] removeFromSuperlayer];
+        [[image layer] removeFromSuperlayer];
+    }
 }
 
 - (void)setFrame:(CGRect)frame
