@@ -194,12 +194,12 @@
     // fetch the image from the db
     FMResultSet *result = [db executeQuery:@"SELECT image FROM tiles WHERE tilekey = ?", key];
     FMDBErrorCheck(db);
-    
+
     UIImage *image = nil;
     if ([result next]) {
         image = [[[UIImage alloc] initWithData:[result dataNoCopyForColumn:@"image"]] autorelease];
     } else {
-        image = [UIImage imageNamed:@"nodata.png"];
+        image = [RMTileImage missingTile];
     }
     [result close];
 
