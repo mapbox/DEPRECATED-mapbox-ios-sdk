@@ -65,8 +65,10 @@
             
 			NSString *type = [cfg valueForKey:@"type"];
 			
-			if ([@"memory-cache" isEqualToString:type])
+			if ([@"memory-cache" isEqualToString:type]) {
 				memoryCache = [[self memoryCacheWithConfig:cfg] retain];
+                continue;
+            }
 
 			if ([@"db-cache" isEqualToString:type])
 				newCache = [self databaseCacheWithConfig:cfg];
