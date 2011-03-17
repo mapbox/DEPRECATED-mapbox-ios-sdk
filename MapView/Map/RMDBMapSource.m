@@ -106,6 +106,8 @@
 
 @implementation RMDBMapSource
 
+@synthesize uniqueTilecacheKey;
+
 - (id)initWithPath:(NSString *)path
 {
 	if (!(self = [super init]))
