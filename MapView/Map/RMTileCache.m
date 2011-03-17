@@ -60,13 +60,15 @@
 	for (id cfg in cacheCfg) 
 	{
 		id <RMTileCache> newCache = nil;
-				
+
 		@try {
-            
+
 			NSString *type = [cfg valueForKey:@"type"];
-			
-			if ([@"memory-cache" isEqualToString:type])
+
+			if ([@"memory-cache" isEqualToString:type]) {
 				memoryCache = [[self memoryCacheWithConfig:cfg] retain];
+                continue;
+            }
 
 			if ([@"db-cache" isEqualToString:type])
 				newCache = [self databaseCacheWithConfig:cfg];
@@ -186,7 +188,7 @@
 
 	NSUInteger capacity = 1000;
 	NSUInteger minimalPurge = capacity / 10;
-	
+
 	NSNumber *capacityNumber = [cfg objectForKey:@"capacity"];
 	if (capacityNumber != nil) {
 		NSInteger value = [capacityNumber intValue];
@@ -198,13 +200,13 @@
 		} else 
 			RMLog(@"illegal value for capacity: %d", value);
 	}
-	
+
 	NSString *strategyStr = [cfg objectForKey:@"strategy"];
 	if (strategyStr != nil) {
 		if ([strategyStr caseInsensitiveCompare:@"FIFO"] == NSOrderedSame) strategy = RMCachePurgeStrategyFIFO;
 		if ([strategyStr caseInsensitiveCompare:@"LRU"] == NSOrderedSame) strategy = RMCachePurgeStrategyLRU;
 	}
-	
+
 	NSNumber *useCacheDirNumber = [cfg objectForKey:@"useCachesDirectory"];
 	if (useCacheDirNumber != nil)
         useCacheDir = [useCacheDirNumber boolValue];

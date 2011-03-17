@@ -41,6 +41,8 @@
 	CLLocationCoordinate2D center;
 }
 
+@property (nonatomic, retain) NSString *uniqueTilecacheKey;
+
 - (id)initWithPath:(NSString *)path;
 
 - (CLLocationCoordinate2D)topLeftOfCoverage;

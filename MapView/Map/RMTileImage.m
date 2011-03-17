@@ -130,7 +130,7 @@ static UIImage *_missingTile = nil;
 
 - (void)updateWithImage:(UIImage *)image andNotify:(BOOL)notifyListeners
 {
-    dispatch_async(dispatch_get_main_queue(),^ {
+    dispatch_async(dispatch_get_main_queue(), ^{
         layer.contents = (id)[image CGImage];
     });
 

@@ -74,7 +74,7 @@
 	[marker changeLabelUsingText:@"Hello"];
 	
 	[markerManager addMarker:marker 
-				   AtLatLong:[[mapView contents] mapCenter]];
+				   atLatLong:[[mapView contents] mapCenter]];
 	
 	[marker release];
 	markers  = [markerManager markersWithinScreenBounds];
@@ -111,7 +111,7 @@ shouldDragMarker:(RMMarker *)marker
 	CGRect rect = [marker bounds];
 	
 	[markerManager moveMarker:marker 
-						 AtXY:CGPointMake(position.x,position.y +rect.size.height/3)];
+						 atXY:CGPointMake(position.x,position.y +rect.size.height/3)];
 
 }
 
@@ -133,7 +133,7 @@ shouldDragMarker:(RMMarker *)marker
 		[marker changeLabelUsingText:@"World"];
 		tap=YES;
 		[markerManager moveMarker:marker 
-							 AtXY:CGPointMake([marker position].x,[marker position].y + 20.0)];
+							 atXY:CGPointMake([marker position].x,[marker position].y + 20.0)];
 		[mapView setDeceleration:YES];
 	}
 	else
@@ -142,7 +142,7 @@ shouldDragMarker:(RMMarker *)marker
 				   anchorPoint:CGPointMake(0.5, 1.0)];
 		[marker changeLabelUsingText:@"Hello"];
 		[markerManager moveMarker:marker 
-							 AtXY:CGPointMake([marker position].x, [marker position].y - 20.0)];
+							 atXY:CGPointMake([marker position].x, [marker position].y - 20.0)];
 		tap = NO;
 		[mapView setDeceleration:NO];
 	}
@@ -195,7 +195,7 @@ shouldDragMarker:(RMMarker *)marker
 	[marker setTextForegroundColor:[UIColor blueColor]];
 	[marker changeLabelUsingText:@"Hello"];
 	[markerManager addMarker:marker 
-				   AtLatLong:currentLocation];
+				   atLatLong:currentLocation];
 	[marker release];
 }
 
@@ -245,7 +245,7 @@ shouldDragMarker:(RMMarker *)marker
 			location.longitude == oldLocation.coordinate.longitude)
 		{
 			[markerManager moveMarker: marker
-							AtLatLon: newLocation.coordinate];
+							atLatLon: newLocation.coordinate];
 			break; // We're done. 
 		}
 	}

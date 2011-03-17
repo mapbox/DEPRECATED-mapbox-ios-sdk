@@ -79,7 +79,7 @@
 											anchorPoint:CGPointMake(0.5, 1.0)];
 	[marker changeLabelUsingText:@"Hello"];
 	
-	[markerManager addMarker:marker AtLatLong:[[mapView contents] mapCenter]];
+	[markerManager addMarker:marker atLatLong:[[mapView contents] mapCenter]];
 	
 	[marker release];
 	markers  = [markerManager markersWithinScreenBounds];
@@ -111,7 +111,7 @@
 	NSLog(@"New location: east:%lf north:%lf", [marker projectedLocation].easting, [marker projectedLocation].northing);
 	CGRect rect = [marker bounds];
 	
-	[markerManager moveMarker:marker AtXY:CGPointMake(position.x,position.y +rect.size.height/3)];
+	[markerManager moveMarker:marker atXY:CGPointMake(position.x,position.y +rect.size.height/3)];
 
 }
 
@@ -129,14 +129,14 @@
 		[marker replaceUIImage:[UIImage imageNamed:@"marker-red.png"]];
 		[marker changeLabelUsingText:@"World"];
 		tap=YES;
-		[markerManager moveMarker:marker AtXY:CGPointMake([marker position].x,[marker position].y + 20.0)];
+		[markerManager moveMarker:marker atXY:CGPointMake([marker position].x,[marker position].y + 20.0)];
 		[mapView setDeceleration:YES];
 	}else
 	{
 			[marker replaceUIImage:[UIImage imageNamed:@"marker-blue.png"]
 					   anchorPoint:CGPointMake(0.5, 1.0)];
 		[marker changeLabelUsingText:@"Hello"];
-		[markerManager moveMarker:marker AtXY:CGPointMake([marker position].x,[marker position].y - 20.0)];
+		[markerManager moveMarker:marker atXY:CGPointMake([marker position].x,[marker position].y - 20.0)];
 		tap=NO;
 		[mapView setDeceleration:NO];
 	}
@@ -165,7 +165,7 @@
 											anchorPoint:CGPointMake(0.5, 1.0)];
 	[marker setTextForegroundColor:[UIColor blueColor]];
 	[marker changeLabelUsingText:@"Hello"];
-	[markerManager addMarker:marker AtLatLong:[[mapView contents] mapCenter]];
+	[markerManager addMarker:marker atLatLong:[[mapView contents] mapCenter]];
 	[marker release];
 	NSLog(@"Center: Lat: %lf Lon: %lf", mapView.contents.mapCenter.latitude, mapView.contents.mapCenter.longitude);
 }

@@ -34,6 +34,7 @@
 #import "RMProjection.h"
 #import "RMMercatorToScreenProjection.h"
 #import "RMMercatorToTileProjection.h"
+#import "RMOpenStreetMapSource.h"
 
 #import "RMTileCache.h"
 #import "RMTileSource.h"
@@ -83,7 +84,7 @@
 	here.longitude = kDefaultInitialLongitude;
 	
 	return [self initWithView:view
-				   tilesource:nil
+				   tilesource:[[[RMOpenStreetMapSource alloc] init] autorelease]
 				 centerLatLon:here
 	  			    zoomLevel:kDefaultInitialZoomLevel
 				 maxZoomLevel:kDefaultMaximumZoomLevel

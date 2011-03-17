@@ -7,6 +7,8 @@
  *
  */
 
+#import <CoreLocation/CoreLocation.h>
+
 #ifndef _GLOBAL_CONSTANTS_H_
 #define _GLOBAL_CONSTANTS_H_
 
