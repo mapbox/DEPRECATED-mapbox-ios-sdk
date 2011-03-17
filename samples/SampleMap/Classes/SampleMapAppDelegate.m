@@ -19,7 +19,7 @@
     [window makeKeyAndVisible];
 }
 
--(RMMapContents *)mapContents
+- (RMMapContents *)mapContents
 {
 	return self.rootViewController.mainViewController.mapView.contents;
 }

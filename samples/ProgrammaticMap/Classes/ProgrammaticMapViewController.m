@@ -39,8 +39,7 @@
 	CLLocationCoordinate2D firstLocation;
 	firstLocation.latitude = 51.2795;
 	firstLocation.longitude = 1.082;
-	self.mapView = [[[RMMapView alloc] initWithFrame:CGRectMake(10,20,200,300)
-										WithLocation:firstLocation] autorelease];
+	self.mapView = [[[RMMapView alloc] initWithFrame:CGRectMake(10,20,200,300)] autorelease];
 //	[[mapView contents] setZoom:10.0];
 	[mapView setBackgroundColor:[UIColor greenColor]];
 	[[self view] addSubview:mapView];

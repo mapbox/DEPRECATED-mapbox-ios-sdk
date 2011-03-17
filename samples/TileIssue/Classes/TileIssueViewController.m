@@ -23,7 +23,7 @@
 	latlong.latitude = 43.61675;
 	latlong.longitude = 6.97167;
 	
-	RMMapView *map = [[RMMapView alloc]initWithFrame:CGRectMake(0.0, 0.0, [[UIScreen mainScreen]applicationFrame].size.width, [[UIScreen mainScreen]applicationFrame].size.height-79) WithLocation:latlong];
+	RMMapView *map = [[RMMapView alloc]initWithFrame:CGRectMake(0.0, 0.0, [[UIScreen mainScreen]applicationFrame].size.width, [[UIScreen mainScreen]applicationFrame].size.height-79)];
 	[self setMapView:map];
 	[map release];
 	[[[self mapView] contents]setZoom:18];
