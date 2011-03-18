@@ -264,7 +264,7 @@
 		}
         
         // Performance issue!
-        break;
+//        break;
         
 		// adjust rect for next zoom level down until we're at minimum
 		if (--rect.origin.tile.zoom <= minimumZoom)
