@@ -30,7 +30,7 @@
 #import "RMTileImage.h"
 #import "RMTile.h"
 
-#define kWriteQueueLimit 25
+#define kWriteQueueLimit 15
 
 @interface RMDatabaseCache ()
 
@@ -199,7 +199,12 @@
 
         // Don't add new images to the database while there are still more than kWriteQueueLimit
         // insert operations pending. This prevents some memory issues.
-        if ([writeQueue operationCount] > kWriteQueueLimit) return;
+        BOOL skipThisTile = NO;
+        [writeQueueLock lock];
+        if ([writeQueue operationCount] > kWriteQueueLimit) skipThisTile = YES;
+        [writeQueueLock unlock];
+
+        if (skipThisTile) return;
 
         [writeQueue addOperationWithBlock:^{
             //        RMLog(@"addData\t%d", tileHash);

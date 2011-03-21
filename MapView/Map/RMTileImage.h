@@ -45,11 +45,14 @@
 
 	// Only used when appropriate
 	CALayer *layer;
+
+    BOOL loadingCancelled;
 }
 
 @property (readwrite, assign) CGRect screenLocation;
 @property (readonly, assign) RMTile tile;
 @property (readonly) CALayer *layer;
+@property (readonly) BOOL loadingCancelled;
 
 + (UIImage *)errorTile;
 + (UIImage *)missingTile;

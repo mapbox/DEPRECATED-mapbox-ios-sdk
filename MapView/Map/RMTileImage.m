@@ -40,7 +40,7 @@ static UIImage *_missingTile = nil;
 
 @implementation RMTileImage
 
-@synthesize screenLocation, tile, layer;
+@synthesize screenLocation, tile, layer, loadingCancelled;
 
 #pragma mark -
 
@@ -87,6 +87,7 @@ static UIImage *_missingTile = nil;
 	tile = _tile;
 	layer = nil;
 	screenLocation = CGRectZero;
+    loadingCancelled = NO;
     
     [self makeLayer];
 
@@ -124,6 +125,7 @@ static UIImage *_missingTile = nil;
 
 - (void)cancelLoading
 {
+    loadingCancelled = YES;
 	[[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadingCancelledNotification
 														object:self];
 }
@@ -175,7 +177,7 @@ static UIImage *_missingTile = nil;
         [customActions setObject:[NSNull null] forKey:kCAOnOrderIn]; 
 
 		CATransition *reveal = [[CATransition alloc] init];
-		reveal.duration = 0.3;
+		reveal.duration = 0.2;
 		reveal.type = kCATransitionFade;
         [customActions setObject:reveal forKey:@"contents"];
 		[reveal release];

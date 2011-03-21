@@ -73,19 +73,6 @@
 {
 }
 
-- (id <CAAction>)actionForLayer:(CALayer *)theLayer forKey:(NSString *)key
-{
-	if (theLayer == layer) {
-		return nil;
-	}
-
-	if ([key isEqualToString:@"position"] || [key isEqualToString:@"bounds"])
-		return nil;
-	else {
-		return nil;
-	}
-}
-
 - (void)tileImageAdded:(RMTileImage *)image
 {
 //	RMLog(@"tileAdded: %d %d %d at %f %f %f %f", tile.x, tile.y, tile.zoom, image.screenLocation.origin.x, image.screenLocation.origin.y,
@@ -127,8 +114,7 @@
         RMTileImage *image = nil;
         RMTile tile = tileImage.tile;
 
-        NSUInteger i = [tiles count];
-        while (i--)
+        for (NSInteger i = [tiles count]-1; i>=0; --i)
         {
             RMTileImage *potential = [tiles objectAtIndex:i];
 
