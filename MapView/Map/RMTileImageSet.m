@@ -36,6 +36,38 @@
 
 #import "RMMercatorToTileProjection.h"
 
+@interface RMShuffleContainer : NSObject
+{}
+
+@property (nonatomic, assign) RMTile tile;
+@property (nonatomic, assign) CGRect screenLocation;
+
++ (id)containerWithTile:(RMTile)aTile at:(CGRect)aScreenLocation;
+- (id)initWithTile:(RMTile)aTile at:(CGRect)aScreenLocation;
+
+@end
+
+@implementation RMShuffleContainer
+
+@synthesize tile, screenLocation;
+
++ (id)containerWithTile:(RMTile)aTile at:(CGRect)aScreenLocation
+{
+    return [[[self alloc] initWithTile:aTile at:aScreenLocation] autorelease];
+}
+
+- (id)initWithTile:(RMTile)aTile at:(CGRect)aScreenLocation
+{
+    if (!(self = [super init])) return nil;
+    self.tile = aTile;
+    self.screenLocation = aScreenLocation;
+    return self;
+}
+
+@end
+
+#pragma mark -
+
 @implementation RMTileImageSet
 
 @synthesize delegate, tileDepth, zoom;
@@ -246,6 +278,8 @@
 		screenLocation.size.height = pixelsPerTile;
 		t.zoom = rect.origin.tile.zoom;
 
+        NSMutableArray *tilesToLoad = [NSMutableArray array];
+
 		for (t.x = roundedRect.origin.tile.x; t.x < roundedRect.origin.tile.x + tileRegionWidth; t.x++)
 		{
 			for (t.y = roundedRect.origin.tile.y; t.y < roundedRect.origin.tile.y + tileRegionHeight; t.y++)
@@ -259,13 +293,25 @@
 				screenLocation.origin.x = bounds.origin.x + (t.x - rect.origin.tile.x - rect.origin.offset.x) * pixelsPerTile;		
 				screenLocation.origin.y = bounds.origin.y + (t.y - rect.origin.tile.y - rect.origin.offset.y) * pixelsPerTile;
 
-				[self addTile:normalisedTile at:screenLocation];
+                [tilesToLoad addObject:[RMShuffleContainer containerWithTile:normalisedTile at:screenLocation]];
+//				[self addTile:normalisedTile at:screenLocation];
 			}
 		}
-        
+
+//        RMLog(@"%d tiles to load", [tilesToLoad count]);
+
+        // Load the tiles from the middle to the outside
+        for (NSInteger i=[tilesToLoad count]; i>0; --i)
+        {
+            NSInteger index = i/2;
+            RMShuffleContainer *tileToLoad = [tilesToLoad objectAtIndex:index];
+            [self addTile:tileToLoad.tile at:tileToLoad.screenLocation];
+            [tilesToLoad removeObjectAtIndex:index];
+        }
+
         // Performance issue!
 //        break;
-        
+
 		// adjust rect for next zoom level down until we're at minimum
 		if (--rect.origin.tile.zoom <= minimumZoom)
 			break;
