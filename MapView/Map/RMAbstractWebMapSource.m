@@ -46,7 +46,7 @@
     if (!(self = [super init]))
         return nil;
     
-    [self setQueuePriority:10]; // Highest priority
+//    [self setQueuePriority:10]; // Highest priority
     
     connection = nil;
     retries = kWebTileRetries;
@@ -100,6 +100,11 @@
         return;
     }
 
+    if (tileImage.loadingCancelled) {
+        [self finish];
+        return;
+    }
+
     [self willChangeValueForKey:@"isExecuting"];
     isExecuting = YES;
     [self didChangeValueForKey:@"isExecuting"];
@@ -119,25 +124,27 @@
 	int statusCode = NSURLErrorUnknown; // unknown
 	if ([aResponse isKindOfClass:[NSHTTPURLResponse class]])
         statusCode = [(NSHTTPURLResponse *)aResponse statusCode];
-    
+
 	[data setLength:0];
-    
+
 	if (statusCode < 400) { // Success
 	}
     else if (statusCode == 404) { // Not Found
-        [tileImage updateWithImage:[RMTileImage missingTile] andNotify:NO];
+        if (!tileImage.loadingCancelled)
+            [tileImage updateWithImage:[RMTileImage missingTile] andNotify:NO];
+
         [self finish];
 	}
 	else { // Other Error
            //RMLog(@"didReceiveResponse %@ %d", _connection, statusCode);
 		BOOL retry = FALSE;
-		
+
 		switch(statusCode)
 		{
 			case 500: retry = TRUE; break;
 			case 503: retry = TRUE; break;
 		}
-        
+
 		if (retry) {
 			[self start];
 		}
@@ -158,6 +165,11 @@
 		[self start];
 	}
 	else {
+        if (tileImage.loadingCancelled) {
+            [self finish];
+            return;
+        }
+
         UIImage *image = [UIImage imageWithData:data];
         [tileImage updateWithImage:image andNotify:YES];
         if (tileCache) [tileCache addImage:image forTile:tileImage.tile withCacheKey:cacheKey];
@@ -228,10 +240,12 @@
 {
 	RMTile tile = [[self mercatorToTileProjection] normaliseTile:tileImage.tile];
 
-    for (NSOperation *currentRequest in [requestQueue operations])
-    {
-        [currentRequest setQueuePriority:[currentRequest queuePriority] - 1];
-    }
+//    [requestQueue setSuspended:YES];
+//    for (NSOperation *currentRequest in [requestQueue operations])
+//    {
+//        [currentRequest setQueuePriority:[currentRequest queuePriority] - 1];
+//    }
+//    [requestQueue setSuspended:NO];
     
     [requestQueue addOperation:[RMWebDownloadOperation operationWithUrl:[self URLForTile:tile] withTileImage:tileImage andTileCache:tileCache withCacheKey:aCacheKey]];
     
