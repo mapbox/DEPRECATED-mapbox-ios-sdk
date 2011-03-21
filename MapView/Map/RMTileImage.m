@@ -177,7 +177,7 @@ static UIImage *_missingTile = nil;
         [customActions setObject:[NSNull null] forKey:kCAOnOrderIn]; 
 
 		CATransition *reveal = [[CATransition alloc] init];
-		reveal.duration = 0.3;
+		reveal.duration = 0.2;
 		reveal.type = kCATransitionFade;
         [customActions setObject:reveal forKey:@"contents"];
 		[reveal release];
