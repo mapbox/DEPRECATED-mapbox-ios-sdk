@@ -67,6 +67,7 @@
 - (void)clearLoadedBounds
 {
 	loadedBounds = CGRectZero;
+    [[content imagesOnScreen] removeAllTiles];
 }
 
 - (BOOL)screenIsLoaded

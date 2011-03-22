@@ -943,9 +943,9 @@
 - (void)zoomWithRMMercatorRectBounds:(RMProjectedRect)bounds
 {
 	[self setProjectedBounds:bounds];
-	[overlay correctPositionOfAllSublayers];
 	[tileLoader clearLoadedBounds];
 	[tileLoader updateLoadedImages];
+	[overlay correctPositionOfAllSublayers];
 	[renderer setNeedsDisplay];
 }
 
