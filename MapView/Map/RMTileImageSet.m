@@ -59,8 +59,8 @@
 - (id)initWithTile:(RMTile)aTile at:(CGRect)aScreenLocation
 {
     if (!(self = [super init])) return nil;
-    self.tile = aTile;
-    self.screenLocation = aScreenLocation;
+    self.tile = RMTileMake(aTile.x, aTile.y, aTile.zoom);
+    self.screenLocation = CGRectMake(aScreenLocation.origin.x, aScreenLocation.origin.y, aScreenLocation.size.width, aScreenLocation.size.height);
     return self;
 }
 
