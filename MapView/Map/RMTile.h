@@ -62,6 +62,8 @@ char RMTilesEqual(RMTile one, RMTile two);
 char RMTileIsDummy(RMTile tile);
 RMTile RMTileDummy();
 
+RMTile RMTileMake(uint32_t x, uint32_t y, short zoom);
+
 /// Return a hash of the tile, used to override the NSObject hash method for RMTile.
 uint64_t RMTileHash(RMTile tile);
 

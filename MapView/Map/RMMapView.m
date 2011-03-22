@@ -649,7 +649,7 @@
 			double zoomFactor = newGesture.averageDistanceFromCenter / lastGesture.averageDistanceFromCenter;
 
 			[self moveBy:delta];
-			[self zoomByFactor: zoomFactor near: newGesture.center];
+			[self zoomByFactor:zoomFactor near:newGesture.center];
 		}
 		else {
 			[self moveBy:delta];

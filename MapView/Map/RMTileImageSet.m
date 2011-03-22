@@ -59,8 +59,8 @@
 - (id)initWithTile:(RMTile)aTile at:(CGRect)aScreenLocation
 {
     if (!(self = [super init])) return nil;
-    self.tile = aTile;
-    self.screenLocation = aScreenLocation;
+    self.tile = RMTileMake(aTile.x, aTile.y, aTile.zoom);
+    self.screenLocation = CGRectMake(aScreenLocation.origin.x, aScreenLocation.origin.y, aScreenLocation.size.width, aScreenLocation.size.height);
     return self;
 }
 
@@ -81,7 +81,7 @@
     tileCache = nil;
     
 	self.delegate = _delegate;
-    self.tileDepth = 0;
+    self.tileDepth = 1;
     
 	images = [[NSMutableSet alloc] init];
     imagesLock = [[NSRecursiveLock alloc] init];
@@ -237,7 +237,7 @@
                 return;
             }
 
-            // Return nil if you want to load the image asynchronously, or your own error tile (see [RMTileImage errorTile]
+            // Return nil if you want to load the image asynchronously or display your own error tile (see [RMTileImage errorTile]
             image = [tileSource imageForTileImage:tileImage addToCache:tileCache withCacheKey:currentCacheKey];
             if (image) {
                 [tileImage updateWithImage:image andNotify:YES];
@@ -294,7 +294,6 @@
 				screenLocation.origin.y = bounds.origin.y + (t.y - rect.origin.tile.y - rect.origin.offset.y) * pixelsPerTile;
 
                 [tilesToLoad addObject:[RMShuffleContainer containerWithTile:normalisedTile at:screenLocation]];
-//				[self addTile:normalisedTile at:screenLocation];
 			}
 		}
 
@@ -308,9 +307,6 @@
             [self addTile:tileToLoad.tile at:tileToLoad.screenLocation];
             [tilesToLoad removeObjectAtIndex:index];
         }
-
-        // Performance issue!
-//        break;
 
 		// adjust rect for next zoom level down until we're at minimum
 		if (--rect.origin.tile.zoom <= minimumZoom)

@@ -74,6 +74,15 @@ char RMTilesEqual(RMTile one, RMTile two)
 	return (one.x == two.x) && (one.y == two.y) && (one.zoom == two.zoom);
 }
 
+RMTile RMTileMake(uint32_t x, uint32_t y, short zoom)
+{
+	RMTile t;
+	t.x = x;
+	t.y = y;
+	t.zoom = zoom;
+	return t;
+}
+
 // Round the rectangle to whole numbers of tiles
 RMTileRect RMTileRectRound(RMTileRect rect)
 {
