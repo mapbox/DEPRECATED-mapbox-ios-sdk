@@ -82,6 +82,7 @@
 	[db executeUpdate:@"CREATE TABLE IF NOT EXISTS ZCACHE (tile_hash INTEGER NOT NULL, cache_key VARCHAR(25) NOT NULL, last_used DOUBLE NOT NULL, data BLOB NOT NULL)"];
     [db executeUpdate:@"CREATE UNIQUE INDEX IF NOT EXISTS main_index ON ZCACHE(tile_hash, cache_key)"];
     [db executeUpdate:@"CREATE INDEX IF NOT EXISTS last_used_index ON ZCACHE(last_used)"];
+    [db executeQuery:@"VACUUM"];
 }
 
 - (id)initWithDatabase:(NSString *)path
@@ -192,7 +193,7 @@
     {
         NSUInteger tilesInDb = [self count];
         if (capacity <= tilesInDb) {
-            [self purgeTiles: MAX(minimalPurge, 1+tilesInDb-capacity)];
+            [self purgeTiles:MAX(minimalPurge, 1+tilesInDb-capacity)];
         }
 
 //        RMLog(@"DB cache     insert tile %d %d %d (%@)", tile.x, tile.y, tile.zoom, [RMTileCache tileHash:tile]);
@@ -252,7 +253,6 @@
 
     [writeQueueLock lock];
     BOOL result = [db executeUpdate: @"DELETE FROM ZCACHE WHERE tile_hash IN (SELECT tile_hash FROM ZCACHE ORDER BY last_used LIMIT ?)", [NSNumber numberWithUnsignedInt:count]];
-    [db executeQuery:@"VACUUM"];
     tileCount = [self countTiles];
     [writeQueueLock unlock];
 
@@ -292,8 +292,10 @@
 
 - (void)didReceiveMemoryWarning
 {
-    RMLog(@"Low memory in the tilecache");
+    RMLog(@"Low memory in the database tilecache");
+    [writeQueueLock lock];
     [writeQueue cancelAllOperations];
+    [writeQueueLock unlock];
 }
 
 @end
