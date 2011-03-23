@@ -35,21 +35,24 @@
 
 @implementation NSUserDefaults (RouteMe)
 
-- (RMProjectedPoint)projectedPointForKey:(NSString *)key {
+- (RMProjectedPoint)projectedPointForKey:(NSString *)key
+{
 	NSDictionary *projectedPointDictionary = [self dictionaryForKey:key];
 	RMProjectedPoint projectedPoint = RMMakeProjectedPoint([[projectedPointDictionary objectForKey:kEasting] doubleValue],
 														   [[projectedPointDictionary objectForKey:kNorthing] doubleValue]);
 	return projectedPoint;
 }
 
-- (void)setProjectedPoint:(RMProjectedPoint)projectedPoint forKey:(NSString *)key {
+- (void)setProjectedPoint:(RMProjectedPoint)projectedPoint forKey:(NSString *)key
+{
 	NSDictionary *projectedPointDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
 											  [NSNumber numberWithDouble:projectedPoint.easting], kEasting,
 											  [NSNumber numberWithDouble:projectedPoint.northing], kNorthing, nil];
 	[self setObject:projectedPointDictionary forKey:key];
 }
 
-- (RMProjectedRect)projectedRectForKey:(NSString *)key {
+- (RMProjectedRect)projectedRectForKey:(NSString *)key
+{
 	NSDictionary *projectedRectDictionary = [self dictionaryForKey:key];
 	RMProjectedRect projectedRect = RMMakeProjectedRect([[projectedRectDictionary objectForKey:kEasting] doubleValue],
 														[[projectedRectDictionary objectForKey:kNorthing] doubleValue],
@@ -58,7 +61,8 @@
 	return projectedRect;
 }
 
-- (void)setProjectedRect:(RMProjectedRect)projectedRect forKey:(NSString *)key {
+- (void)setProjectedRect:(RMProjectedRect)projectedRect forKey:(NSString *)key
+{
 	NSDictionary *projectedRectDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
 											 [NSNumber numberWithDouble:projectedRect.origin.easting], kEasting,
 											 [NSNumber numberWithDouble:projectedRect.origin.northing], kNorthing,

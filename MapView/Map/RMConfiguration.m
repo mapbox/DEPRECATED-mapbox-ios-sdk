@@ -37,7 +37,7 @@ static RMConfiguration *RMConfigurationSharedInstance = nil;
 		if (RMConfigurationSharedInstance != nil)
             return RMConfigurationSharedInstance;
 	
-		RMConfigurationSharedInstance = [[RMConfiguration alloc] initWithPath: [[NSBundle mainBundle] pathForResource:@"routeme" ofType:@"plist"]];
+		RMConfigurationSharedInstance = [[RMConfiguration alloc] initWithPath:[[NSBundle mainBundle] pathForResource:@"routeme" ofType:@"plist"]];
 		return RMConfigurationSharedInstance;
 	}
 
@@ -73,7 +73,6 @@ static RMConfiguration *RMConfigurationSharedInstance = nil;
 
 	return self;
 }
-	
 
 - (void)dealloc
 {

@@ -616,8 +616,6 @@
 		B8C9740D0E8A196E007D16AD /* Map */ = {
 			isa = PBXGroup;
 			children = (
-				175701DB1323C2CF00A5D314 /* iOS Additions */,
-				B8474B8C0EB40094006A0BC1 /* FMDB */,
 				17F02BB01319BA4B00260C6B /* RouteMe.h */,
 				B1EB26C510B5D8E6009F8658 /* RMNotifications.h */,
 				96492C3F0FA8AD3400EBA6D2 /* RMGlobalConstants.h */,
@@ -635,6 +633,8 @@
 				B83E64B80E80E73F001663B6 /* Renderers */,
 				B86F26A80E8742ED007A3773 /* Markers and other layers */,
 				1266929E0EB75BEA00E002D5 /* Configuration */,
+				175701DB1323C2CF00A5D314 /* iOS Additions */,
+				B8474B8C0EB40094006A0BC1 /* FMDB */,
 				B8474C610EB53A01006A0BC1 /* Resources */,
 			);
 			path = Map;
