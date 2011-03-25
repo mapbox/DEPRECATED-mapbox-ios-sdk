@@ -52,6 +52,11 @@ RMProjectedRect  RMScaleProjectedRectAboutPoint(RMProjectedRect rect, float fact
 RMProjectedPoint RMTranslateProjectedPointBy(RMProjectedPoint point, RMProjectedSize delta);
 RMProjectedRect  RMTranslateProjectedRectBy(RMProjectedRect rect, RMProjectedSize delta);
 
+/// \brief The function checks whether two passed projected points are equal.
+bool RMProjectedPointEqualToProjectedPoint(RMProjectedPoint point1, RMProjectedPoint point2);
+/// \brief The function returs true, if passed rects intersect each other.
+bool RMProjectedRectInterectsProjectedRect(RMProjectedRect rect1, RMProjectedRect rect2);
+
 RMProjectedPoint RMMakeProjectedPoint(double easting, double northing);
 RMProjectedRect  RMMakeProjectedRect(double easting, double northing, double width, double height);
 
