@@ -67,6 +67,7 @@ enum {
 @optional
 
 - (void)animationFinishedWithZoomFactor:(float)zoomFactor near:(CGPoint)p;
+- (void)animationStepped;
 
 @end
 
@@ -126,6 +127,7 @@ enum {
 }
 
 @property (readwrite) CLLocationCoordinate2D mapCenter;
+@property (readwrite) RMProjectedPoint centerProjectedPoint;
 @property (readwrite) RMProjectedRect projectedBounds;
 @property (readonly)  RMTileRect tileBounds;
 @property (readonly)  CGRect screenBounds;
@@ -182,17 +184,16 @@ enum {
 - (void)handleMemoryWarningNotification:(NSNotification *)notification;
 - (void)didReceiveMemoryWarning;
 
-- (BOOL) tileSourceBoundsContainProjectedPoint:(RMProjectedPoint) point;
+- (BOOL)tileSourceBoundsContainProjectedPoint:(RMProjectedPoint) point;
 
-- (void)moveToLatLong: (CLLocationCoordinate2D)latlong;
-- (void)moveToProjectedPoint: (RMProjectedPoint)aPoint;
+- (void)moveToLatLong:(CLLocationCoordinate2D)latlong;
 
-- (void)moveBy: (CGSize) delta;
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center;
-- (void)zoomInToNextNativeZoomAt:(CGPoint) pivot animated:(BOOL) animated;
-- (void)zoomOutToNextNativeZoomAt:(CGPoint) pivot animated:(BOOL) animated; 
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center animated:(BOOL) animated;
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center animated:(BOOL) animated withCallback:(id<RMMapContentsAnimationCallback>)callback;
+- (void)moveBy:(CGSize)delta;
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center;
+- (void)zoomInToNextNativeZoomAt:(CGPoint)pivot animated:(BOOL)animated;
+- (void)zoomOutToNextNativeZoomAt:(CGPoint)pivot animated:(BOOL)animated; 
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center animated:(BOOL)animated;
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center animated:(BOOL)animated withCallback:(id<RMMapContentsAnimationCallback>)callback;
 
 - (void)zoomInToNextNativeZoomAt:(CGPoint) pivot;
 - (void)zoomOutToNextNativeZoomAt:(CGPoint) pivot; 

@@ -139,7 +139,6 @@
 
 static RMProjection *_google = nil;
 static RMProjection *_latlong = nil;
-static RMProjection *_osgb = nil;
 
 + (RMProjection *)googleProjection
 {

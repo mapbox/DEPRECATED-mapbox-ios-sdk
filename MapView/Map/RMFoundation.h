@@ -28,6 +28,8 @@
 #ifndef _RMFOUNDATION_H_
 #define _RMFOUNDATION_H_
 
+#include <stdbool.h>
+
 /*! \struct RMProjectedPoint 
  \brief coordinates, in projected meters, paralleling CGPoint */
 typedef struct {

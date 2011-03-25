@@ -203,7 +203,7 @@
 - (void)moveToProjectedPoint:(RMProjectedPoint)aPoint
 {
 	if (_delegateHasBeforeMapMove) [delegate beforeMapMove:self];
-	[contents moveToProjectedPoint:aPoint];
+	[contents setCenterProjectedPoint:aPoint];
 	if (_delegateHasAfterMapMove) [delegate afterMapMove:self];
 }
 
@@ -218,10 +218,17 @@
 {
 	RMProjection *proj = self.contents.projection;
 
-	NEconstraint = [proj coordinateToProjectedPoint:ne];
-	SWconstraint = [proj coordinateToProjectedPoint:sw];
+    RMProjectedPoint projectedNE = [proj coordinateToProjectedPoint:ne];
+    RMProjectedPoint projectedSW = [proj coordinateToProjectedPoint:sw];
 
-	_constrainMovement=YES;
+    [self setProjectedConstraintsSW:projectedSW NE:projectedNE];
+}
+
+- (void)setProjectedConstraintsSW:(RMProjectedPoint)sw NE:(RMProjectedPoint)ne
+{
+    SWconstraint = sw;
+    NEconstraint = ne;
+	_constrainMovement = YES;
 }
 
 - (void)moveBy:(CGSize)delta 
