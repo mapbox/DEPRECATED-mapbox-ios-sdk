@@ -83,8 +83,8 @@
 @property (nonatomic, assign) RMProjectedPoint projectedLocation;
 @property (assign) BOOL enableDragging;
 @property (assign) BOOL enableRotation;
-@property (readwrite, assign) UIColor *lineColor;
-@property (readwrite, assign) UIColor *fillColor;
+@property (readwrite, retain) UIColor *lineColor;
+@property (readwrite, retain) UIColor *fillColor;
 
 - (void)moveToXY:(RMProjectedPoint)point;
 - (void)moveToScreenPoint:(CGPoint)point;
