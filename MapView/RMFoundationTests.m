@@ -1,7 +1,8 @@
 //
-//  RMMarkerManager.h
-//
-// Copyright (c) 2008-2009, Route-Me Contributors
+//  RMFoundationTests.m
+//  MapView
+// 
+// Copyright (c) 2008-2011, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,39 +26,22 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import <UIKit/UIKit.h>
+#import "RMFoundationTests.h"
 
-#import "RMMapContents.h"
-#import "RMMarker.h"
+@implementation RMFoundationTests
 
-@class RMProjection;
-
-@interface RMMarkerManager : NSObject {
-	RMMapContents *contents;
-    CGAffineTransform rotationTransform;
+- (void)testProjectedRectIntersectsProjectedRect {
+	RMProjectedRect r0022 = RMMakeProjectedRect(0.0, 0.0, 2.0, 2.0);
+	RMProjectedRect r0123 = RMMakeProjectedRect(0.0, 1.0, 2.0, 2.0);
+	RMProjectedRect r0325 = RMMakeProjectedRect(0.0, 3.0, 2.0, 2.0);
+	RMProjectedRect r1032 = RMMakeProjectedRect(1.0, 0.0, 2.0, 2.0);
+	
+	STAssertTrue(RMProjectedRectInterectsProjectedRect(r0123, r1032), nil);
+	STAssertTrue(RMProjectedRectInterectsProjectedRect(r1032, r0123), nil);
+	STAssertFalse(RMProjectedRectInterectsProjectedRect(r0022, r0325), nil);
+	STAssertFalse(RMProjectedRectInterectsProjectedRect(r0325, r0022), nil);
+	STAssertTrue(RMProjectedRectInterectsProjectedRect(r0022, r0123), nil);
+	STAssertTrue(RMProjectedRectInterectsProjectedRect(r0123, r0022), nil);
 }
-
-@property (assign, readwrite) RMMapContents *contents;
-
-- (id)initWithContents:(RMMapContents *)mapContents;
-
-- (void)addMarker:(RMMarker *)marker atProjectedPoint:(RMProjectedPoint)projectedPoint;
-- (void)addMarker:(RMMarker *)marker atLatLong:(CLLocationCoordinate2D)point;
-- (void)removeMarkers;
-- (void)hideAllMarkers;
-- (void)unhideAllMarkers;
-
-- (NSArray *)markers;
-- (void)removeMarker:(RMMarker *)marker;
-- (void)removeMarkers:(NSArray *)markers;
-- (CGPoint)screenCoordinatesForMarker:(RMMarker *)marker;
-- (CLLocationCoordinate2D)latitudeLongitudeForMarker:(RMMarker *)marker;
-- (NSArray *)markersWithinScreenBounds;
-- (BOOL)isMarkerWithinScreenBounds:(RMMarker *)marker;
-- (BOOL)isMarker:(RMMarker*)marker withinBounds:(CGRect)rect;
-- (BOOL)managingMarker:(RMMarker *)marker;
-- (void)moveMarker:(RMMarker *)marker atLatLon:(CLLocationCoordinate2D)point;
-- (void)moveMarker:(RMMarker *)marker atXY:(CGPoint)point;
-- (void)setRotation:(float)angle;
 
 @end

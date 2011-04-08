@@ -46,8 +46,7 @@
 
 - (void) dealloc 
 {
-	[sublayers release];
-	sublayers = nil;
+	[sublayers release]; sublayers = nil;
 	mapContents = nil;
 	[super dealloc];
 }

@@ -79,10 +79,10 @@
 
 - (void)dealloc
 {
-	CGPathRelease(path);
-    [self setLineColor:nil];
-    [self setFillColor:nil];
-	[super dealloc];
+    CGPathRelease(path); path = NULL;
+    [lineColor release]; lineColor = nil;
+    [fillColor release]; fillColor = nil;
+    [super dealloc];
 }
 
 - (id <CAAction>)actionForKey:(NSString *)key

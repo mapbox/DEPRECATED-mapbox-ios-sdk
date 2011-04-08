@@ -35,25 +35,25 @@
 @interface RMTiledLayerController : NSObject
 {
 	CATiledLayer *layer;
-	
+
 //	MercatorPoint topLeft;
-	
+
 	// Size in pixels
 //	CGSize viewSize;
-	
+
 	float metersPerPixel;
-	
+
 	id tileSource;
 }
 
--(id) initWithTileSource: (id <RMTileSource>) tileSource;
+- (id)initWithTileSource:(id <RMTileSource>)tileSource;
 
--(void) setMetersPerPixel: (float) scale;
+- (void)setMetersPerPixel:(float)scale;
 
--(void) centerProjectedPoint: (RMProjectedPoint) aPoint animate: (BOOL) animate;
--(void) centerLatLong: (CLLocationCoordinate2D) point animate: (BOOL) animate;
--(void) dragBy: (CGSize) delta;
--(void) zoomByFactor: (float) zoomFactor near:(CGPoint) center;
+- (void)centerProjectedPoint:(RMProjectedPoint)aPoint animate:(BOOL)animate;
+- (void)centerLatLong:(CLLocationCoordinate2D)point animate:(BOOL)animate;
+- (void)dragBy:(CGSize)delta;
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center;
 
 /*
 -(CGPoint) projectMercatorPoint: (MercatorPoint) point;
@@ -64,6 +64,7 @@
 
 -(MercatorRect) bounds;
 */
+
 @property (assign, readwrite, nonatomic) float metersPerPixel;
 @property (readonly, nonatomic) CATiledLayer *layer;
 

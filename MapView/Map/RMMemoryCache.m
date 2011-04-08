@@ -53,7 +53,7 @@
 
 - (void)dealloc
 {
-	[cache release];
+	[cache release]; cache = nil;
 	[super dealloc];
 }
 

@@ -1,7 +1,7 @@
 //
-//  RMMarkerManager.h
-//
-// Copyright (c) 2008-2009, Route-Me Contributors
+//  RMFoundationTests.h
+// 
+// Copyright (c) 2008-2011, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,39 +25,13 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+
+#import <SenTestingKit/SenTestingKit.h>
 #import <UIKit/UIKit.h>
 
-#import "RMMapContents.h"
-#import "RMMarker.h"
 
-@class RMProjection;
-
-@interface RMMarkerManager : NSObject {
-	RMMapContents *contents;
-    CGAffineTransform rotationTransform;
+@interface RMFoundationTests : SenTestCase {
+    
 }
-
-@property (assign, readwrite) RMMapContents *contents;
-
-- (id)initWithContents:(RMMapContents *)mapContents;
-
-- (void)addMarker:(RMMarker *)marker atProjectedPoint:(RMProjectedPoint)projectedPoint;
-- (void)addMarker:(RMMarker *)marker atLatLong:(CLLocationCoordinate2D)point;
-- (void)removeMarkers;
-- (void)hideAllMarkers;
-- (void)unhideAllMarkers;
-
-- (NSArray *)markers;
-- (void)removeMarker:(RMMarker *)marker;
-- (void)removeMarkers:(NSArray *)markers;
-- (CGPoint)screenCoordinatesForMarker:(RMMarker *)marker;
-- (CLLocationCoordinate2D)latitudeLongitudeForMarker:(RMMarker *)marker;
-- (NSArray *)markersWithinScreenBounds;
-- (BOOL)isMarkerWithinScreenBounds:(RMMarker *)marker;
-- (BOOL)isMarker:(RMMarker*)marker withinBounds:(CGRect)rect;
-- (BOOL)managingMarker:(RMMarker *)marker;
-- (void)moveMarker:(RMMarker *)marker atLatLon:(CLLocationCoordinate2D)point;
-- (void)moveMarker:(RMMarker *)marker atXY:(CGPoint)point;
-- (void)setRotation:(float)angle;
 
 @end

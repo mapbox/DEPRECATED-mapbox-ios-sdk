@@ -319,19 +319,7 @@
 - (void)moveToLatLong:(CLLocationCoordinate2D)latlong
 {
 	RMProjectedPoint aPoint = [[self projection] coordinateToProjectedPoint:latlong];
-	[self moveToProjectedPoint: aPoint];
-}
-
-- (void)moveToProjectedPoint:(RMProjectedPoint)aPoint
-{
-    if (![self tileSourceBoundsContainProjectedPoint:aPoint])
-        return;
-
-	[mercatorToScreenProjection setProjectedCenter:aPoint];
-	[overlay correctPositionOfAllSublayers];
-	[tileLoader reload];
-	[renderer setNeedsDisplay];
-    [overlay setNeedsDisplay];
+	[self setCenterProjectedPoint:aPoint];
 }
 
 - (void)moveBy:(CGSize)delta
@@ -737,6 +725,23 @@
 - (void)setMapCenter:(CLLocationCoordinate2D)center
 {
 	[self moveToLatLong:center];
+}
+
+- (RMProjectedPoint)centerProjectedPoint
+{
+    return [mercatorToScreenProjection projectedCenter];
+}
+
+- (void)setCenterProjectedPoint:(RMProjectedPoint)projectedPoint
+{
+    if (![self tileSourceBoundsContainProjectedPoint:projectedPoint])
+        return;
+
+    [mercatorToScreenProjection setProjectedCenter:projectedPoint];
+    [overlay correctPositionOfAllSublayers];
+    [tileLoader reload];
+    [renderer setNeedsDisplay];
+    [overlay setNeedsDisplay];
 }
 
 - (RMProjectedRect)projectedBounds
