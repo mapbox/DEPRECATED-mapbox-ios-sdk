@@ -75,6 +75,7 @@
 	
 - (void)removeTile:(RMTile)tile;
 - (void)removeAllTiles;
+- (void)resetTiles;
 
 - (void)setTileSource:(id <RMTileSource>)newTileSource;
 - (void)setTileCache:(RMTileCache *)newTileCache;
