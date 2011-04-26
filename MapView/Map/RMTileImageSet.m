@@ -149,6 +149,18 @@
     [imagesLock unlock];
 }
 
+- (void)resetTiles
+{
+    [imagesLock lock];
+
+    for (RMTileImage *tileImage in images)
+    {
+        [tileImage setScreenLocation:CGRectZero];
+    }
+
+    [imagesLock unlock];
+}
+
 - (void)setTileSource:(id <RMTileSource>)newTileSource
 {
 	[self removeAllTiles];
@@ -579,7 +591,7 @@
 - (void)removeTilesOutsideOf:(RMTileRect)rect
 {
 	uint32_t minX, maxX, minY, maxY, span;
-	short currentZoom = rect.origin.tile.zoom;
+	volatile short currentZoom = rect.origin.tile.zoom;
 	RMTile wrappedTile;
 	id <RMMercatorToTileProjection> mercatorToTileProjection = [tileSource mercatorToTileProjection];
 
@@ -645,7 +657,6 @@
 				if (x >= zoomedMinX || x <= zoomedMaxX)
 					continue;
 			}
-
 		}
 
 		// if haven't continued, tile is outside of rect
