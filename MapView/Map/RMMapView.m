@@ -207,11 +207,50 @@
 	if (_delegateHasAfterMapMove) [delegate afterMapMove:self];
 }
 
-- (void)moveToLatLong:(CLLocationCoordinate2D)point
+- (void)moveToLatLong:(CLLocationCoordinate2D)latlong
 {
 	if (_delegateHasBeforeMapMove) [delegate beforeMapMove:self];
-	[contents moveToLatLong:point];
+	[contents moveToLatLong:latlong];
 	if (_delegateHasAfterMapMove) [delegate afterMapMove:self];
+}
+
+#define kMoveAnimationDuration 0.25f
+#define kMoveAnimationStepDuration 0.02f
+
+- (void)moveToLatLong:(CLLocationCoordinate2D)latlong animated:(BOOL)animated
+{
+    if (!animated) {
+        [self moveToLatLong:latlong];
+        return;
+    }
+
+    if (_delegateHasBeforeMapMove) [delegate beforeMapMove:self];
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        long int steps = lroundf(kMoveAnimationDuration / kMoveAnimationStepDuration);
+
+        while (--steps > 0)
+        {
+            [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:kMoveAnimationStepDuration]];
+
+            CGPoint startPoint = [contents latLongToPixel:contents.mapCenter];
+            CGPoint endPoint   = [contents latLongToPixel:latlong];
+            CGPoint delta = CGPointMake((startPoint.x - endPoint.x) / steps, (startPoint.y - endPoint.y) / steps);
+            if (delta.x == 0.0 && delta.y == 0.0) return;
+
+            RMLog(@"%d steps from (%f,%f) to final location (%f,%f)", steps, self.contents.mapCenter.longitude, self.contents.mapCenter.latitude, latlong.longitude, latlong.latitude);
+
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                [contents moveBy:CGSizeMake(delta.x, delta.y)];
+            });
+        }
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [contents moveToLatLong:latlong];
+            if (_delegateHasAfterMapMove) [delegate afterMapMove:self];
+            if (_delegateHasAfterMapMoveDeceleration) [delegate afterMapMoveDeceleration:self];
+        });
+    });
 }
 
 - (void)setConstraintsSW:(CLLocationCoordinate2D)sw NE:(CLLocationCoordinate2D)ne

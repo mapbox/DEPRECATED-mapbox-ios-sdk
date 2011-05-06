@@ -180,6 +180,8 @@ typedef struct {
 
 /// recenter the map on #latlong, expressed as CLLocationCoordinate2D (latitude/longitude)
 - (void)moveToLatLong:(CLLocationCoordinate2D)latlong;
+- (void)moveToLatLong:(CLLocationCoordinate2D)latlong animated:(BOOL)animated;
+
 /// recenter the map on #aPoint, expressed in projected meters
 - (void)moveToProjectedPoint:(RMProjectedPoint)aPoint;
 
