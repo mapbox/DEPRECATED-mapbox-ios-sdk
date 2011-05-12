@@ -80,6 +80,17 @@
 	return self;
 }
 
+- (void)dealloc
+{
+    self.data = nil;
+    self.label = nil;
+    self.textForegroundColor = nil;
+    self.textBackgroundColor = nil;
+    [super dealloc];
+}
+
+#pragma mark -
+
 - (void)replaceUIImage:(UIImage *)image
 {
 	[self replaceUIImage:image anchorPoint:defaultMarkerAnchorPoint];
@@ -177,15 +188,6 @@
 		[[self.label layer] removeFromSuperlayer];
 		[self.label setHidden:YES];
 	}
-}
-
-- (void)dealloc 
-{
-    self.data = nil;
-    self.label = nil;
-    self.textForegroundColor = nil;
-    self.textBackgroundColor = nil;
-	[super dealloc];
 }
 
 - (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center
