@@ -249,6 +249,8 @@
                 return;
             }
 
+            // RMTileDump(tile);
+
             // Return nil if you want to load the image asynchronously or display your own error tile (see [RMTileImage errorTile]
             image = [tileSource imageForTileImage:tileImage addToCache:tileCache withCacheKey:currentCacheKey];
             if (image) {
@@ -265,7 +267,7 @@
 	RMTile t;
 	float pixelsPerTile = bounds.size.width / rect.size.width;
 	RMTileRect roundedRect = RMTileRectRound(rect);
-    
+
 	// The number of tiles we'll load in the vertical and horizontal directions
 	int tileRegionWidth = (int)roundedRect.size.width;
 	int tileRegionHeight = (int)roundedRect.size.height;
@@ -304,7 +306,6 @@
 				// this regrouping of terms is better for calculation precision (issue 128)		
 				screenLocation.origin.x = bounds.origin.x + (t.x - rect.origin.tile.x - rect.origin.offset.x) * pixelsPerTile;		
 				screenLocation.origin.y = bounds.origin.y + (t.y - rect.origin.tile.y - rect.origin.offset.y) * pixelsPerTile;
-
                 [tilesToLoad addObject:[RMShuffleContainer containerWithTile:normalisedTile at:screenLocation]];
 			}
 		}

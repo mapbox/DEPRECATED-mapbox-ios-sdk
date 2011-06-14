@@ -213,14 +213,14 @@ enum {
 - (void)zoomWithRMMercatorRectBounds:(RMProjectedRect)bounds;
 
 /// returns the smallest bounding box containing the entire screen
-- (RMSphericalTrapezium) latitudeLongitudeBoundingBoxForScreen;
+- (RMSphericalTrapezium)latitudeLongitudeBoundingBoxForScreen;
 /// returns the smallest bounding box containing a rectangular region of the screen
-- (RMSphericalTrapezium) latitudeLongitudeBoundingBoxFor:(CGRect) rect;
-- (BOOL) projectedBounds:(RMProjectedRect)bounds containsPoint:(RMProjectedPoint)point;
+- (RMSphericalTrapezium)latitudeLongitudeBoundingBoxFor:(CGRect) rect;
+- (BOOL)projectedBounds:(RMProjectedRect)bounds containsPoint:(RMProjectedPoint)point;
 
 - (void)setRotation:(float)angle;
 
-- (void) tilesUpdatedRegion:(CGRect)region;
+- (void)tilesUpdatedRegion:(CGRect)region;
 
 /*! \brief Clear all images from the #tileSource's caching system.
  
@@ -259,8 +259,7 @@ enum {
 - (void)zoomWithLatLngBoundsNorthEast:(CLLocationCoordinate2D)ne SouthWest:(CLLocationCoordinate2D)se;
 - (void)zoomWithRMMercatorRectBounds:(RMProjectedRect)bounds;
 
-- (void) tilesUpdatedRegion:(CGRect)region;
-
+- (void)tilesUpdatedRegion:(CGRect)region;
 
 @end
 
