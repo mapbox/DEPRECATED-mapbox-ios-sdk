@@ -73,4 +73,7 @@ uint64_t RMTileKey(RMTile tile);
 /// Round the rectangle to whole numbers of tiles
 RMTileRect RMTileRectRound(RMTileRect rect);
 
+/// Dump a description of the tile to the console
+void RMTileDump(RMTile tile);
+
 #endif
