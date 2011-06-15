@@ -1105,8 +1105,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (
+					"$(ARCHS_STANDARD_32_BIT)",
 					armv6,
-					armv7,
 				);
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Don't Code Sign";
 				GCC_C_LANGUAGE_STANDARD = c99;
@@ -1133,8 +1133,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (
+					"$(ARCHS_STANDARD_32_BIT)",
 					armv6,
-					armv7,
 				);
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
