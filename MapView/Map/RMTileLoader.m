@@ -43,7 +43,7 @@
 
 - (id)init
 {
-    if (![self initWithContent:nil])
+    if (!(self = [self initWithContent:nil]))
         return nil;
 
     return self;

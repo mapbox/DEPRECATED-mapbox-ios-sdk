@@ -118,7 +118,7 @@
    backgroundImage:(UIImage *)backgroundImage
 {
     LogMethod();
-    if (![super init])
+    if (!(self = [super init]))
         return nil;
 
     NSAssert1([newView isKindOfClass:[RMMapView class]], @"view %@ must be a subclass of RMMapView", newView);
