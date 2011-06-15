@@ -120,43 +120,44 @@ typedef struct {
  */
 @interface RMMapView : UIView <RMMapContentsFacade, RMMapContentsAnimationCallback>
 {
-	RMMapContents *contents;
-	id <RMMapViewDelegate> delegate;
-	BOOL enableDragging;
-	BOOL enableZoom;
+    RMMapContents *contents;
+    id <RMMapViewDelegate> delegate;
+    BOOL enableDragging;
+    BOOL enableZoom;
     BOOL enableRotate;
-	RMGestureDetails lastGesture;
-	float decelerationFactor;
-	BOOL deceleration;
+    RMGestureDetails lastGesture;
+    float decelerationFactor;
+    BOOL deceleration;
     CGFloat rotation;
-	
+
 @private
-   	BOOL _delegateHasBeforeMapMove;
-	BOOL _delegateHasAfterMapMove;
+    BOOL _delegateHasBeforeMapMove;
+    BOOL _delegateHasAfterMapMove;
     BOOL _delegateHasAfterMapMoveDeceleration;
-	BOOL _delegateHasBeforeMapZoomByFactor;
-	BOOL _delegateHasAfterMapZoomByFactor;
-	BOOL _delegateHasBeforeMapRotate;
-	BOOL _delegateHasAfterMapRotate;
-	BOOL _delegateHasDoubleTapOnMap;
-	BOOL _delegateHasDoubleTapTwoFingersOnMap;
-	BOOL _delegateHasSingleTapOnMap;
+    BOOL _delegateHasBeforeMapZoomByFactor;
+    BOOL _delegateHasAfterMapZoomByFactor;
+    BOOL _delegateHasMapViewRegionDidChange;
+    BOOL _delegateHasBeforeMapRotate;
+    BOOL _delegateHasAfterMapRotate;
+    BOOL _delegateHasDoubleTapOnMap;
+    BOOL _delegateHasDoubleTapTwoFingersOnMap;
+    BOOL _delegateHasSingleTapOnMap;
     BOOL _delegateHasLongSingleTapOnMap;
-	BOOL _delegateHasTapOnMarker;
-	BOOL _delegateHasTapOnLabelForMarker;
-	BOOL _delegateHasAfterMapTouch;
-	BOOL _delegateHasShouldDragMarker;
-	BOOL _delegateHasDidDragMarker;
-	
-	NSTimer *_decelerationTimer;
-	CGSize _decelerationDelta;
-	
+    BOOL _delegateHasTapOnMarker;
+    BOOL _delegateHasTapOnLabelForMarker;
+    BOOL _delegateHasAfterMapTouch;
+    BOOL _delegateHasShouldDragMarker;
+    BOOL _delegateHasDidDragMarker;
+
+    NSTimer *_decelerationTimer;
+    CGSize _decelerationDelta;
+
     CGPoint _longPressPosition;
-    
-	BOOL _constrainMovement;
-	RMProjectedPoint NEconstraint, SWconstraint;
-	
-	BOOL _contentsIsSet; // "contents" must be set, but is initialized lazily to allow apps to override defaults in -awakeFromNib
+
+    BOOL _constrainMovement;
+    RMProjectedPoint NEconstraint, SWconstraint;
+
+    BOOL _contentsIsSet; // "contents" must be set, but is initialized lazily to allow apps to override defaults in -awakeFromNib
 }
 
 /// Any other functionality you need to manipulate the map you can access through this

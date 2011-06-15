@@ -51,9 +51,9 @@
 
 - (id)initWithContents:(RMMapContents *)aContents radiusInMeters:(CGFloat)newRadiusInMeters latLong:(CLLocationCoordinate2D)newLatLong
 {
-	if (!(self = [super init]))
+    if (!(self = [super init]))
         return nil;
-	
+
     CAShapeLayer *newShapeLayer = [[CAShapeLayer alloc] init];
     shapeLayer = newShapeLayer;
     [self addSublayer:newShapeLayer];
@@ -63,7 +63,7 @@
     latLong = newLatLong;
     projectedLocation = [[mapContents projection] coordinateToProjectedPoint:newLatLong];
     [self setPosition:[[mapContents mercatorToScreenProjection] projectProjectedPoint:projectedLocation]];
-    
+
     lineWidthInPixels = kDefaultLineWidth;
     lineColor = kDefaultLineColor;
     fillColor = kDefaultFillColor;
@@ -75,112 +75,111 @@
     circlePath = NULL;
     [self updateCirclePath];
 
-	return self;
+    return self;
 }
 
 - (void)dealloc
 {
-	[shapeLayer release]; shapeLayer = nil;
-	CGPathRelease(circlePath);
-	[lineColor release]; lineColor = nil;
-	[fillColor release]; fillColor = nil;
-	[super dealloc];
+    mapContents = nil;
+    [shapeLayer release]; shapeLayer = nil;
+    CGPathRelease(circlePath); circlePath = NULL;
+    [lineColor release]; lineColor = nil;
+    [fillColor release]; fillColor = nil;
+    [super dealloc];
 }
 
 #pragma mark -
 
 - (void)updateCirclePath
 {
-	CGPathRelease(circlePath);
-	
-	CGMutablePathRef newPath = CGPathCreateMutable();
-	
-	CGFloat latRadians = latLong.latitude * M_PI / 180.0f;
-	CGFloat pixelRadius = radiusInMeters / cos(latRadians) / [mapContents metersPerPixel];
-//	DLog(@"Pixel Radius: %f", pixelRadius);
-	
-	CGRect rectangle = CGRectMake(self.position.x - pixelRadius, 
-								  self.position.y - pixelRadius, 
-								  (pixelRadius * 2), 
-								  (pixelRadius * 2));
-	
-	CGFloat offset = floorf(-lineWidthInPixels / 2.0f) - 2;
-//	DLog(@"Offset: %f", offset);
-	CGRect newBoundsRect = CGRectInset(rectangle, offset, offset);
-	[self setBounds:newBoundsRect];
-	
-//	DLog(@"Circle Rectangle: %f, %f, %f, %f", rectangle.origin.x, rectangle.origin.y, rectangle.size.width, rectangle.size.height);
-//	DLog(@"Bounds Rectangle: %f, %f, %f, %f", self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
-	
-	CGPathAddEllipseInRect(newPath, NULL, rectangle);
-	circlePath = newPath;
-	
-	[[self shapeLayer] setPath:newPath];
-	[[self shapeLayer] setFillColor:[fillColor CGColor]];
-	[[self shapeLayer] setStrokeColor:[lineColor CGColor]];
-	[[self shapeLayer] setLineWidth:lineWidthInPixels];
+    CGPathRelease(circlePath); circlePath = NULL;
+
+    CGMutablePathRef newPath = CGPathCreateMutable();
+
+    CGFloat latRadians = latLong.latitude * M_PI / 180.0f;
+    CGFloat pixelRadius = radiusInMeters / cos(latRadians) / [mapContents metersPerPixel];
+    //	DLog(@"Pixel Radius: %f", pixelRadius);
+
+    CGRect rectangle = CGRectMake(self.position.x - pixelRadius,
+                                  self.position.y - pixelRadius,
+                                  (pixelRadius * 2),
+                                  (pixelRadius * 2));
+
+    CGFloat offset = floorf(-lineWidthInPixels / 2.0f) - 2;
+    CGRect newBoundsRect = CGRectInset(rectangle, offset, offset);
+    [self setBounds:newBoundsRect];
+
+    //	DLog(@"Circle Rectangle: %f, %f, %f, %f", rectangle.origin.x, rectangle.origin.y, rectangle.size.width, rectangle.size.height);
+    //	DLog(@"Bounds Rectangle: %f, %f, %f, %f", self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
+
+    CGPathAddEllipseInRect(newPath, NULL, rectangle);
+    circlePath = newPath;
+
+    [[self shapeLayer] setPath:newPath];
+    [[self shapeLayer] setFillColor:[fillColor CGColor]];
+    [[self shapeLayer] setStrokeColor:[lineColor CGColor]];
+    [[self shapeLayer] setLineWidth:lineWidthInPixels];
 }
 
 #pragma mark Accessors
 
 - (void)setProjectedLocation:(RMProjectedPoint)newProjectedLocation
 {
-	projectedLocation = newProjectedLocation;
-	
-	[self setPosition:[[mapContents mercatorToScreenProjection] projectProjectedPoint:projectedLocation]];
+    projectedLocation = newProjectedLocation;
+
+    [self setPosition:[[mapContents mercatorToScreenProjection] projectProjectedPoint:projectedLocation]];
 }
 
 - (void)setLineColor:(UIColor *)newLineColor
 {
-	if (lineColor != newLineColor) {
-		[lineColor release];
-		lineColor = [newLineColor retain];
-		[self updateCirclePath];
-	}
+    if (lineColor != newLineColor) {
+        [lineColor release];
+        lineColor = [newLineColor retain];
+        [self updateCirclePath];
+    }
 }
 
 - (void)setFillColor:(UIColor *)newFillColor
 {
-	if (fillColor != newFillColor) {
-		[fillColor release];
-		fillColor = [newFillColor retain];
-		[self updateCirclePath];
-	}
+    if (fillColor != newFillColor) {
+        [fillColor release];
+        fillColor = [newFillColor retain];
+        [self updateCirclePath];
+    }
 }
 
 - (void)setRadiusInMeters:(CGFloat)newRadiusInMeters
 {
-	radiusInMeters = newRadiusInMeters;
-	[self updateCirclePath];
+    radiusInMeters = newRadiusInMeters;
+    [self updateCirclePath];
 }
 
 - (void)setLineWidthInPixels:(CGFloat)newLineWidthInPixels
 {
-	lineWidthInPixels = newLineWidthInPixels;
-	[self updateCirclePath];
+    lineWidthInPixels = newLineWidthInPixels;
+    [self updateCirclePath];
 }
 
 #pragma mark Map Movement and Scaling
 
 - (void)moveBy:(CGSize)delta
 {
-	if (enableDragging) {
-		[super moveBy:delta];
-	}
+    if (enableDragging) {
+        [super moveBy:delta];
+    }
 }
 
 - (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center
 {
-	[super zoomByFactor:zoomFactor near:center];	
-	[self updateCirclePath];
+    [super zoomByFactor:zoomFactor near:center];
+    [self updateCirclePath];
 }
 
 - (void)moveToLatLong:(CLLocationCoordinate2D)newLatLong
 {
-	latLong = newLatLong;
-	[self setProjectedLocation:[[mapContents projection] coordinateToProjectedPoint:newLatLong]];
-	[self setPosition:[[mapContents mercatorToScreenProjection] projectProjectedPoint:projectedLocation]];
-//	DLog(@"Position: %f, %f", [self position].x, [self position].y);
+    latLong = newLatLong;
+    [self setProjectedLocation:[[mapContents projection] coordinateToProjectedPoint:newLatLong]];
+    [self setPosition:[[mapContents mercatorToScreenProjection] projectProjectedPoint:projectedLocation]];
 }
 
 @end

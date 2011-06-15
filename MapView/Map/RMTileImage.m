@@ -46,79 +46,79 @@ static UIImage *_missingTile = nil;
 
 + (UIImage *)errorTile
 {
-	if (_errorTile)
+    if (_errorTile)
         return _errorTile;
-    
+
     if (_didLoadErrorTile)
         return nil;
-    
-	_errorTile = [[UIImage imageNamed:@"error.png"] retain];
+
+    _errorTile = [[UIImage imageNamed:@"error.png"] retain];
     _didLoadErrorTile = YES;
-    
-	return _errorTile;
+
+    return _errorTile;
 }
 
 + (UIImage *)missingTile
 {
-	if (_missingTile)
+    if (_missingTile)
         return _missingTile;
-    
+
     if (_didLoadMissingTile)
         return nil;
-    
-	_missingTile = [[UIImage imageNamed:@"missing.png"] retain];
+
+    _missingTile = [[UIImage imageNamed:@"missing.png"] retain];
     _didLoadMissingTile = YES;
-    
-	return _missingTile;
+
+    return _missingTile;
 }
 
 #pragma mark -
 
 + (RMTileImage *)tileImageWithTile:(RMTile)tile
 {
-	return [[[RMTileImage alloc] initWithTile:tile] autorelease];
+    return [[[RMTileImage alloc] initWithTile:tile] autorelease];
 }
 
 - (id)initWithTile:(RMTile)_tile
 {
-	if (!(self = [super init]))
-		return nil;
+    if (!(self = [super init]))
+        return nil;
 
-	tile = _tile;
-	layer = nil;
-	screenLocation = CGRectZero;
+    tile = _tile;
+    layer = nil;
+    screenLocation = CGRectZero;
     loadingCancelled = NO;
-    
+
     [self makeLayer];
 
-	[[NSNotificationCenter defaultCenter] addObserver:self
+    [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(tileRemovedFromScreen:)
                                                  name:RMMapImageRemovedFromScreenNotification
                                                object:self];
 
-	return self;
+    return self;
 }
 
 - (id)init
 {
-	[NSException raise:@"Invalid initialiser" format:@"Use the designated initialiser for TileImage"];
-	[self release];
-	return nil;
+    [NSException raise:@"Invalid initialiser" format:@"Use the designated initialiser for TileImage"];
+    [self release];
+    return nil;
 }
 
 - (void)tileRemovedFromScreen:(NSNotification *)notification
 {
-	[self cancelLoading];
+    [self cancelLoading];
 }
 
 - (void)dealloc
 {
-//	RMLog(@"Removing tile image %d %d %d", tile.x, tile.y, tile.zoom);
-	
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	[layer release]; layer = nil;
+    //	RMLog(@"Removing tile image %d %d %d", tile.x, tile.y, tile.zoom);
 
-	[super dealloc];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [layer release]; layer = nil;
+
+    [super dealloc];
 }
 
 #pragma mark -
@@ -126,8 +126,8 @@ static UIImage *_missingTile = nil;
 - (void)cancelLoading
 {
     loadingCancelled = YES;
-	[[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadingCancelledNotification
-														object:self];
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadingCancelledNotification
+                                                        object:self];
 }
 
 - (void)updateWithImage:(UIImage *)image andNotify:(BOOL)notifyListeners
@@ -143,75 +143,75 @@ static UIImage *_missingTile = nil;
 
 - (BOOL)isLoaded
 {
-	return (layer != nil && layer.contents != NULL);
+    return (layer != nil && layer.contents != NULL);
 }
 
 - (NSUInteger)hash
 {
-	return (NSUInteger)RMTileHash(tile);
+    return (NSUInteger)RMTileHash(tile);
 }
 
 - (BOOL)isEqual:(id)anObject
 {
-	if (![anObject isKindOfClass:[RMTileImage class]])
-		return NO;
+    if (![anObject isKindOfClass:[RMTileImage class]])
+        return NO;
 
-	return RMTilesEqual(tile, [(RMTileImage *)anObject tile]);
+    return RMTilesEqual(tile, [(RMTileImage *)anObject tile]);
 }
 
 - (void)makeLayer
 {
-	if (layer == nil)
-	{
-		layer = [[CALayer alloc] init];
-		layer.contents = nil;
-		layer.anchorPoint = CGPointZero;
-		layer.bounds = CGRectMake(0, 0, screenLocation.size.width, screenLocation.size.height);
-		layer.position = screenLocation.origin;
-		layer.edgeAntialiasingMask = 0;
+    if (layer == nil)
+    {
+        layer = [[CALayer alloc] init];
+        layer.contents = nil;
+        layer.anchorPoint = CGPointZero;
+        layer.bounds = CGRectMake(0, 0, screenLocation.size.width, screenLocation.size.height);
+        layer.position = screenLocation.origin;
+        layer.edgeAntialiasingMask = 0;
 
-		NSMutableDictionary *customActions = [NSMutableDictionary dictionaryWithDictionary:[layer actions]];
-		[customActions setObject:[NSNull null] forKey:@"position"];
-		[customActions setObject:[NSNull null] forKey:@"bounds"];
-		[customActions setObject:[NSNull null] forKey:kCAOnOrderOut];		
-        [customActions setObject:[NSNull null] forKey:kCAOnOrderIn]; 
+        NSMutableDictionary *customActions = [NSMutableDictionary dictionaryWithDictionary:[layer actions]];
+        [customActions setObject:[NSNull null] forKey:@"position"];
+        [customActions setObject:[NSNull null] forKey:@"bounds"];
+        [customActions setObject:[NSNull null] forKey:kCAOnOrderOut];
+        [customActions setObject:[NSNull null] forKey:kCAOnOrderIn];
 
-		CATransition *reveal = [[CATransition alloc] init];
-		reveal.duration = 0.2;
-		reveal.type = kCATransitionFade;
+        CATransition *reveal = [[CATransition alloc] init];
+        reveal.duration = 0.2;
+        reveal.type = kCATransitionFade;
         [customActions setObject:reveal forKey:@"contents"];
-		[reveal release];
+        [reveal release];
 
-		layer.actions = customActions;		
-	}
+        layer.actions = customActions;
+    }
 }
 
 - (void)moveBy:(CGSize)delta
 {
-	self.screenLocation = RMTranslateCGRectBy(screenLocation, delta);
+    self.screenLocation = RMTranslateCGRectBy(screenLocation, delta);
 }
 
 - (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center
 {
-	self.screenLocation = RMScaleCGRectAboutPoint(screenLocation, zoomFactor, center);
+    self.screenLocation = RMScaleCGRectAboutPoint(screenLocation, zoomFactor, center);
 }
 
 - (CGRect)screenLocation
 {
-	return screenLocation;
+    return screenLocation;
 }
 
 - (void)setScreenLocation:(CGRect)newScreenLocation
 {
-//	RMLog(@"location moving from %f %f to %f %f", screenLocation.origin.x, screenLocation.origin.y, newScreenLocation.origin.x, newScreenLocation.origin.y);
-	screenLocation = newScreenLocation;
+    //	RMLog(@"location moving from %f %f to %f %f", screenLocation.origin.x, screenLocation.origin.y, newScreenLocation.origin.x, newScreenLocation.origin.y);
+    screenLocation = newScreenLocation;
 
-	if (layer != nil)
-	{
-		// layer.frame = screenLocation;
-		layer.position = screenLocation.origin;
-		layer.bounds = CGRectMake(0, 0, screenLocation.size.width, screenLocation.size.height);
-	}
+    if (layer != nil)
+    {
+        // layer.frame = screenLocation;
+        layer.position = screenLocation.origin;
+        layer.bounds = CGRectMake(0, 0, screenLocation.size.width, screenLocation.size.height);
+    }
 }
 
 @end

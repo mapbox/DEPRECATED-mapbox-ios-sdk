@@ -39,7 +39,9 @@
 
 @end
 
-@protocol RMMovingMapLayer
+#pragma mark -
+
+@protocol RMMovingMapLayer <NSObject>
 
 @property (assign, nonatomic) RMProjectedPoint projectedLocation;
 @property (assign) BOOL enableDragging;

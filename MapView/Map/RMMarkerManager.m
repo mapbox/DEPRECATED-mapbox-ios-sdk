@@ -32,23 +32,23 @@
 
 @implementation RMMarkerManager
 
-@synthesize contents;
+@synthesize mapContents;
 
-- (id)initWithContents:(RMMapContents *)mapContents
+- (id)initWithContents:(RMMapContents *)contents
 {
-	if (!(self = [super init]))
-		return nil;
+    if (!(self = [super init]))
+        return nil;
 
-	contents = mapContents;	
-	rotationTransform = CGAffineTransformIdentity; 
+    mapContents = contents;
+    rotationTransform = CGAffineTransformIdentity;
 
-	return self;
+    return self;
 }
 
 - (void)dealloc
 {
-	contents = nil;
-	[super dealloc];
+    mapContents = nil;
+    [super dealloc];
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,39 +60,17 @@
 {
     [marker setAffineTransform:rotationTransform];
     [marker setProjectedLocation:projectedPoint];
-    [marker setPosition:[[contents mercatorToScreenProjection] projectProjectedPoint:projectedPoint]];
-    [[contents overlay] addSublayer:marker];
+    [marker setPosition:[[mapContents mercatorToScreenProjection] projectProjectedPoint:projectedPoint]];
+    [[mapContents overlay] addSublayer:marker];
 }
 
 /// place the (newly created) marker onto the map and take ownership of it
-/// \bug should return the marker
 - (void)addMarker:(RMMarker *)marker atLatLong:(CLLocationCoordinate2D)point
 {
-	[marker setAffineTransform:rotationTransform];
-	[marker setProjectedLocation:[[contents projection] coordinateToProjectedPoint:point]];
-	[marker setPosition:[[contents mercatorToScreenProjection] projectProjectedPoint:[[contents projection] coordinateToProjectedPoint:point]]];
-	[[contents overlay] addSublayer:marker];
-}
-
-/// \bug see http://code.google.com/p/route-me/issues/detail?id=75
-/// (halmueller): I am skeptical about interactions of this code with paths
-- (void)removeMarkers
-{
-	[[contents overlay] setSublayers:[NSArray arrayWithObjects:nil]]; 
-}
-
-/// \bug this will hide path overlays too?
-/// \deprecated syntactic sugar. Might have a place on RMMapView, but not on RMMarkerManager.
-- (void)hideAllMarkers 
-{
-	[[contents overlay] setHidden:YES];
-}
-
-/// \bug this will hide path overlays too?
-/// \deprecated syntactic sugar. Might have a place on RMMapView, but not on RMMarkerManager.
-- (void)unhideAllMarkers
-{
-	[[contents overlay] setHidden:NO];
+    [marker setAffineTransform:rotationTransform];
+    [marker setProjectedLocation:[[mapContents projection] coordinateToProjectedPoint:point]];
+    [marker setPosition:[[mapContents mercatorToScreenProjection] projectProjectedPoint:[[mapContents projection] coordinateToProjectedPoint:point]]];
+    [[mapContents overlay] addSublayer:marker];
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -101,96 +79,96 @@
 
 - (NSArray *)markers
 {
-	return [[contents overlay] sublayers];
+    return [[mapContents overlay] sublayers];
 }
 
 - (void)removeMarker:(RMMarker *)marker
 {
-	[[contents overlay] removeSublayer:marker];
+    [[mapContents overlay] removeSublayer:marker];
 }
 
 - (void)removeMarkers:(NSArray *)markers
 {
-	[[contents overlay] removeSublayers:markers];
+    [[mapContents overlay] removeSublayers:markers];
 }
 
 - (CGPoint)screenCoordinatesForMarker:(RMMarker *)marker
 {
-	return [[contents mercatorToScreenProjection] projectProjectedPoint:[marker projectedLocation]];
+    return [[mapContents mercatorToScreenProjection] projectProjectedPoint:[marker projectedLocation]];
 }
 
 - (CLLocationCoordinate2D)latitudeLongitudeForMarker:(RMMarker *)marker
 {
-	return [contents pixelToLatLong:[self screenCoordinatesForMarker:marker]];
+    return [mapContents pixelToLatLong:[self screenCoordinatesForMarker:marker]];
 }
 
 - (NSArray *)markersWithinScreenBounds
 {
-	NSMutableArray *markersInScreenBounds = [NSMutableArray array];
-	CGRect rect = [[contents mercatorToScreenProjection] screenBounds];
+    NSMutableArray *markersInScreenBounds = [NSMutableArray array];
+    CGRect rect = [[mapContents mercatorToScreenProjection] screenBounds];
 
-	for (RMMarker *marker in [self markers]) {
-		if ([self isMarker:marker withinBounds:rect]) {
-			[markersInScreenBounds addObject:marker];
-		}
-	}
-	
-	return markersInScreenBounds;
+    for (RMMarker *marker in [self markers]) {
+        if ([self isMarker:marker withinBounds:rect]) {
+            [markersInScreenBounds addObject:marker];
+        }
+    }
+
+    return markersInScreenBounds;
 }
 
 - (BOOL)isMarkerWithinScreenBounds:(RMMarker *)marker
 {
-	return [self isMarker:marker withinBounds:[[contents mercatorToScreenProjection] screenBounds]];
+    return [self isMarker:marker withinBounds:[[mapContents mercatorToScreenProjection] screenBounds]];
 }
 
 /// \deprecated violates Objective-C naming rules
 - (BOOL)isMarker:(RMMarker *)marker withinBounds:(CGRect)rect
 {
-	if (![self managingMarker:marker]) {
-		return NO;
-	}
+    if (![self managingMarker:marker]) {
+        return NO;
+    }
 
-	CGPoint markerCoord = [self screenCoordinatesForMarker:marker];	
-	if (markerCoord.x > rect.origin.x
-		&& markerCoord.x < rect.origin.x + rect.size.width
-		&& markerCoord.y > rect.origin.y
-		&& markerCoord.y < rect.origin.y + rect.size.height)
-	{
-		return YES;
-	}
+    CGPoint markerCoord = [self screenCoordinatesForMarker:marker];
+    if (markerCoord.x > rect.origin.x
+        && markerCoord.x < rect.origin.x + rect.size.width
+        && markerCoord.y > rect.origin.y
+        && markerCoord.y < rect.origin.y + rect.size.height)
+    {
+        return YES;
+    }
 
-	return NO;
+    return NO;
 }
 
 /// \deprecated violates Objective-C naming rules
-- (BOOL)managingMarker:(RMMarker*)marker
+- (BOOL)managingMarker:(RMMarker *)marker
 {
-	if (marker != nil && [[self markers] indexOfObject:marker] != NSNotFound) {
-		return YES;
-	}
-	return NO;
+    if (marker != nil && [[self markers] indexOfObject:marker] != NSNotFound) {
+        return YES;
+    }
+    return NO;
 }
 
 - (void)moveMarker:(RMMarker *)marker atLatLon:(CLLocationCoordinate2D)point
 {
-	[marker setProjectedLocation:[[contents projection]coordinateToProjectedPoint:point]];
-	[marker setPosition:[[contents mercatorToScreenProjection] projectProjectedPoint:[[contents projection] coordinateToProjectedPoint:point]]];
+    [marker setProjectedLocation:[[mapContents projection]coordinateToProjectedPoint:point]];
+    [marker setPosition:[[mapContents mercatorToScreenProjection] projectProjectedPoint:[[mapContents projection] coordinateToProjectedPoint:point]]];
 }
 
 - (void)moveMarker:(RMMarker *)marker atXY:(CGPoint)point
 {
-	[marker setProjectedLocation:[[contents mercatorToScreenProjection] projectScreenPointToProjectedPoint:point]];
-	[marker setPosition:point];
+    [marker setProjectedLocation:[[mapContents mercatorToScreenProjection] projectScreenPointToProjectedPoint:point]];
+    [marker setPosition:point];
 }
 
 - (void)setRotation:(float)angle
 {
-  rotationTransform = CGAffineTransformMakeRotation(angle); // store rotation transform for subsequent markers
+    rotationTransform = CGAffineTransformMakeRotation(angle); // store rotation transform for subsequent markers
 
-  for (RMMarker *marker in [self markers]) 
-  {
-	  [marker setAffineTransform:rotationTransform];
-  }
+    for (RMMarker *marker in [self markers])
+    {
+        [marker setAffineTransform:rotationTransform];
+    }
 }
 
 @end
