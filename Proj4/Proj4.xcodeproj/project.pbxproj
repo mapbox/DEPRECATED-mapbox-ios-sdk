@@ -824,7 +824,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (
-					"$(ARCHS_STANDARD_32_BIT)",
 					armv6,
 					armv7,
 				);
@@ -848,7 +847,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (
-					"$(ARCHS_STANDARD_32_BIT)",
 					armv6,
 					armv7,
 				);
