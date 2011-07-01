@@ -81,7 +81,7 @@
     tileCache = nil;
 
     self.delegate = _delegate;
-    self.tileDepth = 1;
+    self.tileDepth = 0;
 
     images = [[NSMutableSet alloc] init];
     imagesLock = [[NSRecursiveLock alloc] init];
@@ -125,6 +125,7 @@
 
     [[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageRemovedFromScreenNotification object:tileImage];
 
+    [tileImage cancelLoading];
     [images removeObject:tileImage];
 
     [imagesLock unlock];
@@ -143,6 +144,7 @@
 
         [[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageRemovedFromScreenNotification object:tileImage];
 
+        [tileImage cancelLoading];
         [images removeObject:tileImage];
     }
 
@@ -246,6 +248,7 @@
             UIImage *image = [tileCache cachedImage:tile withCacheKey:currentCacheKey];
             if (image) {
                 [tileImage updateWithImage:image andNotify:NO];
+                [self removeTilesWorseThan:tileImage];
                 return;
             }
 
@@ -460,9 +463,15 @@
         return;
     }
 
+    zoom = value;
+
+    if (tileDepth == 0) {
+        [self removeAllTiles];
+        return;
+    }
+
     [imagesLock lock];
 
-    zoom = value;
     for (RMTileImage *image in [images allObjects])
     {
         if (![image isLoaded]) {
@@ -506,7 +515,7 @@
         removeTiles = YES;
     }
 
-    [imagesLock lock];
+    [imagesLock unlock];
 
     if (removeTiles) [self removeTilesWorseThan:img];
 }
