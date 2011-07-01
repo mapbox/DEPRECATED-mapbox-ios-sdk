@@ -134,7 +134,6 @@ static UIImage *_missingTile = nil;
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         layer.contents = (id)[image CGImage];
-        layer.zPosition = 30.0 - (CGFloat)self.tile.zoom;
 
         if (notifyListeners) {
             [[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadedNotification object:self userInfo:nil];
