@@ -39,8 +39,9 @@
 @interface RMMarker : RMMapLayer <RMMovingMapLayer> {
     /// expressed in projected meters. The anchorPoint of the image is plotted here.
     RMProjectedPoint projectedLocation;
+
     /// provided for storage of arbitrary user data
-    NSObject* data;
+    id data;
 
     /// Text label, visible by default if it has content, but not required.
     UIView *label;
@@ -55,7 +56,7 @@
 @property (assign) BOOL enableDragging;
 @property (assign) BOOL enableRotation;
 
-@property (nonatomic, retain) NSObject *data;
+@property (nonatomic, retain) id        data;
 @property (nonatomic, retain) UIView   *label;
 @property (nonatomic, retain) UIColor  *textForegroundColor;
 @property (nonatomic, retain) UIColor  *textBackgroundColor;
