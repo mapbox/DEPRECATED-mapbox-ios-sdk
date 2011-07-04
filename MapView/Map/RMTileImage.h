@@ -39,12 +39,12 @@
 #import "FMDatabase.h"
 
 @interface RMTileImage : NSObject {
-	// I know this is a bit nasty.
-	RMTile tile;
-	CGRect screenLocation;
+    // I know this is a bit nasty.
+    RMTile tile;
+    CGRect screenLocation;
 
-	// Only used when appropriate
-	CALayer *layer;
+    // Only used when appropriate
+    CALayer *layer;
 
     BOOL loadingCancelled;
 }

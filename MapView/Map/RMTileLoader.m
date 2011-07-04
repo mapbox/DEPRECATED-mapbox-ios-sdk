@@ -43,122 +43,121 @@
 
 - (id)init
 {
-	if (![self initWithContent:nil])
-		return nil;
+    if (!(self = [self initWithContent:nil]))
+        return nil;
 
-	return self;
+    return self;
 }
 
-- (id)initWithContent:(RMMapContents *)_contents
+- (id)initWithContent:(RMMapContents *)contents
 {
-	if (!(self = [super init]))
-		return nil;
+    if (!(self = [super init]))
+        return nil;
 
-	content = _contents;
+    mapContents = contents;
 
-	[self clearLoadedBounds];
-	loadedTiles.origin.tile = RMTileDummy();
+    [self clearLoadedBounds];
+    loadedTiles.origin.tile = RMTileDummy();
 
-	suppressLoading = NO;
+    suppressLoading = NO;
 
-	return self;
+    return self;
 }
 
 - (void)clearLoadedBounds
 {
-	loadedBounds = CGRectZero;
-//    [[content imagesOnScreen] removeAllTiles];
-    [[content imagesOnScreen] resetTiles];
+    loadedBounds = CGRectZero;
+    [[mapContents imagesOnScreen] resetTiles];
 }
 
 - (BOOL)screenIsLoaded
 {
-	//	RMTileRect targetRect = [content tileBounds];
-	BOOL contained = CGRectContainsRect(loadedBounds, [content screenBounds]);
+    //	RMTileRect targetRect = [content tileBounds];
+    BOOL contained = CGRectContainsRect(loadedBounds, [mapContents screenBounds]);
 
-	NSUInteger targetZoom = (NSUInteger)([[content mercatorToTileProjection] calculateNormalisedZoomFromScale:[content scaledMetersPerPixel]]);
-	if ((targetZoom > content.maxZoom) || (targetZoom < content.minZoom))
+    NSUInteger targetZoom = (NSUInteger)([[mapContents mercatorToTileProjection] calculateNormalisedZoomFromScale:[mapContents scaledMetersPerPixel]]);
+    if ((targetZoom > mapContents.maxZoom) || (targetZoom < mapContents.minZoom))
     {
-          RMLog(@"target zoom %d is outside of RMMapContents limits %f to %f", targetZoom, content.minZoom, content.maxZoom);
+        RMLog(@"target zoom %d is outside of RMMapContents limits %f to %f", targetZoom, mapContents.minZoom, mapContents.maxZoom);
     }
-    
-	if (contained == NO)
-	{
-        // RMLog(@"reassembling because its not contained");
-	}
-	
-	if (targetZoom != loadedZoom)
-	{
-		// RMLog(@"reassembling because target zoom = %f, loaded zoom = %d", targetZoom, loadedZoom);
-	}
 
-	return contained && targetZoom == loadedZoom;
+//    if (contained == NO)
+//    {
+//        RMLog(@"reassembling because its not contained");
+//    }
+
+//    if (targetZoom != loadedZoom)
+//    {
+//        RMLog(@"reassembling because target zoom = %f, loaded zoom = %d", targetZoom, loadedZoom);
+//    }
+
+    return contained && targetZoom == loadedZoom;
 }
 
 - (void)updateLoadedImages
 {
-	if (suppressLoading)
-		return;
+    if (suppressLoading)
+        return;
 
-	if ([content mercatorToTileProjection] == nil || [content mercatorToScreenProjection] == nil)
-		return;
+    if ([mapContents mercatorToTileProjection] == nil || [mapContents mercatorToScreenProjection] == nil)
+        return;
 
-	if ([self screenIsLoaded])
-		return;
+    if ([self screenIsLoaded])
+        return;
 
-	RMTileRect newTileRect = [content tileBounds];
+    RMTileRect newTileRect = [mapContents tileBounds];
 
-	RMTileImageSet *images = [content imagesOnScreen];
-	images.zoom = newTileRect.origin.tile.zoom;
-    
-	CGRect newLoadedBounds = [images loadTiles:newTileRect toDisplayIn:[content screenBounds]];
-	
-	if (!RMTileIsDummy(loadedTiles.origin.tile))
-	{
-		[images removeTilesOutsideOf:newTileRect];
-	}
+    RMTileImageSet *images = [mapContents imagesOnScreen];
+    images.zoom = newTileRect.origin.tile.zoom;
 
-	loadedBounds = newLoadedBounds;
-	loadedZoom = newTileRect.origin.tile.zoom;
-	loadedTiles = newTileRect;
+    CGRect newLoadedBounds = [images loadTiles:newTileRect toDisplayIn:[mapContents screenBounds]];
 
-	[content tilesUpdatedRegion:newLoadedBounds];
-} 
+    if (!RMTileIsDummy(loadedTiles.origin.tile))
+    {
+        [images removeTilesOutsideOf:newTileRect];
+    }
+
+    loadedBounds = newLoadedBounds;
+    loadedZoom = newTileRect.origin.tile.zoom;
+    loadedTiles = newTileRect;
+
+    [mapContents tilesUpdatedRegion:newLoadedBounds];
+}
 
 - (void)moveBy:(CGSize)delta
 {
-	loadedBounds = RMTranslateCGRectBy(loadedBounds, delta);
-	[self updateLoadedImages];
+    loadedBounds = RMTranslateCGRectBy(loadedBounds, delta);
+    [self updateLoadedImages];
 }
 
 - (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center
 {
-	loadedBounds = RMScaleCGRectAboutPoint(loadedBounds, zoomFactor, center);
-	[self updateLoadedImages];
+    loadedBounds = RMScaleCGRectAboutPoint(loadedBounds, zoomFactor, center);
+    [self updateLoadedImages];
 }
 
 - (BOOL)suppressLoading
 {
-	return suppressLoading;
+    return suppressLoading;
 }
 
 - (void)setSuppressLoading:(BOOL)suppress
 {
-	suppressLoading = suppress;
-	
-	if (suppress == NO)
-		[self updateLoadedImages];
+    suppressLoading = suppress;
+
+    if (suppress == NO)
+        [self updateLoadedImages];
 }
 
 - (void)reset
 {
-	loadedTiles.origin.tile = RMTileDummy();
+    loadedTiles.origin.tile = RMTileDummy();
 }
 
 - (void)reload
 {
-	[self clearLoadedBounds];
-	[self updateLoadedImages];
+    [self clearLoadedBounds];
+    [self updateLoadedImages];
 }
 
 @end

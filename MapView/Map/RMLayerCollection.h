@@ -41,13 +41,13 @@
  */
 @interface RMLayerCollection : RMMapLayer
 {
-	/// The actual collection of all sublayers, including those offscreen.
-	/// It is ordered back to front.
-	NSMutableArray *sublayers;
-	
-	/// Backpointer to map; we need this reference so we can access the projections...
-	RMMapContents *mapContents;
-	CGAffineTransform rotationTransform;
+    /// The actual collection of all sublayers, including those offscreen.
+    /// It is ordered back to front.
+    NSMutableArray *sublayers;
+
+    /// Backpointer to map; we need this reference so we can access the projections...
+    RMMapContents *mapContents;
+    CGAffineTransform rotationTransform;
 }
 
 - (id)initForContents:(RMMapContents *)contents;

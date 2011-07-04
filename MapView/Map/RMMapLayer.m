@@ -30,7 +30,7 @@
 
 @implementation RMMapLayer
 
-- (id) init
+- (id)init
 {
 	if (!(self = [super init]))
 		return nil;
@@ -40,30 +40,34 @@
 
 - (id)initWithLayer:(id)layer
 {
-	if (![super initWithLayer:layer])
-		return nil;
+    if (!(self = [super initWithLayer:layer]))
+        return nil;
 
-	return self;
+    return self;
 }
 
 /// \bug why return nil for the "position" and "bounds" actionForKey? Does this do anything besides block Core Animation?
 - (id <CAAction>)actionForKey:(NSString *)key
 {
-	if ([key isEqualToString:@"position"] || [key isEqualToString:@"bounds"])
-		return nil;
-	else 
+    if ([key isEqualToString:@"position"] || [key isEqualToString:@"bounds"])
+        return nil;
+    else
         return [super actionForKey:key];
 }
 
 - (void)moveBy:(CGSize)delta
 {
-	self.position = RMTranslateCGPointBy(self.position, delta);
+    self.position = RMTranslateCGPointBy(self.position, delta);
 }
 
 - (void)zoomByFactor:(float)zoomFactor near:(CGPoint)pivot
 {
-	self.position = RMScaleCGPointAboutPoint(self.position, zoomFactor, pivot);
-	self.bounds = RMScaleCGRectAboutPoint(self.bounds, zoomFactor, self.anchorPoint);
+    // a empty layer has size=(0,0) which cause divide by 0 if scaled
+    if (self.bounds.size.width == 0.0 || self.bounds.size.height == 0.0)
+        return;
+
+    self.position = RMScaleCGPointAboutPoint(self.position, zoomFactor, pivot);
+    self.bounds = RMScaleCGRectAboutPoint(self.bounds, zoomFactor, self.anchorPoint);
 }
 
 @end

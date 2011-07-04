@@ -28,51 +28,71 @@
 #import "RMLayerCollection.h"
 #import "RMMapContents.h"
 #import "RMMercatorToScreenProjection.h"
+#import "RMMarker.h"
 
 @implementation RMLayerCollection
 
-- (id)initForContents:(RMMapContents *)_contents
+- (id)initForContents:(RMMapContents *)contents
 {
-	if (!(self = [super init]))
-		return nil;
+    if (!(self = [super init]))
+        return nil;
 
-	sublayers = [[NSMutableArray alloc] init];
-	mapContents = _contents;
-	self.masksToBounds = YES;
-	rotationTransform = CGAffineTransformIdentity;
+    sublayers = [[NSMutableArray alloc] init];
+    mapContents = contents;
+    self.masksToBounds = YES;
+    rotationTransform = CGAffineTransformIdentity;
 
-	return self;
+    return self;
 }
 
-- (void) dealloc 
+- (void)dealloc
 {
-	[sublayers release]; sublayers = nil;
-	mapContents = nil;
-	[super dealloc];
+    [sublayers release]; sublayers = nil;
+    mapContents = nil;
+    [super dealloc];
 }
 
 - (void)correctScreenPosition:(CALayer *)layer
 {
-	if ([layer conformsToProtocol:@protocol(RMMovingMapLayer)])
-	{
-		// Kinda ugly.
-		CALayer <RMMovingMapLayer> *layer_with_proto = (CALayer <RMMovingMapLayer> *)layer;
-		if (layer_with_proto.enableDragging) {
-			RMProjectedPoint location = [layer_with_proto projectedLocation];
-			layer_with_proto.position = [[mapContents mercatorToScreenProjection] projectProjectedPoint:location];
-		}
-		if (!layer_with_proto.enableRotation) {
-			[layer_with_proto setAffineTransform:rotationTransform];
-		}
-	}
+    if ([layer conformsToProtocol:@protocol(RMMovingMapLayer)])
+    {
+        // Kinda ugly.
+        CALayer <RMMovingMapLayer> *mapLayer = (CALayer <RMMovingMapLayer> *)layer;
+        if (mapLayer.enableDragging)
+        {
+            RMProjectedPoint location = [mapLayer projectedLocation];
+            CGPoint markerPosition = [[mapContents mercatorToScreenProjection] projectProjectedPoint:location];
+            mapLayer.position = markerPosition;
+
+            // Hide markers outside of the screen area
+            if ([mapLayer isKindOfClass:[RMMarker class]])
+            {
+                BOOL layerIsHidden = YES;
+                CGRect screenBounds = [[mapContents mercatorToScreenProjection] screenBounds];
+                if (markerPosition.x > screenBounds.origin.x
+                    && markerPosition.x < screenBounds.origin.x + screenBounds.size.width
+                    && markerPosition.y > screenBounds.origin.y
+                    && markerPosition.y < screenBounds.origin.y + screenBounds.size.height)
+                {
+                    layerIsHidden = NO;
+                }
+                mapLayer.hidden = layerIsHidden;
+
+//                RMLog(@"Marker position (%.0f,%.0f) - visible=%@", mapLayer.position.x, mapLayer.position.y, layerIsHidden ? @"NO" : @"YES");
+            }
+        }
+        if (!mapLayer.enableRotation) {
+            [mapLayer setAffineTransform:rotationTransform];
+        }
+    }
 }
 
 - (void)setSublayers:(NSArray *)array
 {
-	for (CALayer *layer in array)
-	{
-		[self correctScreenPosition:layer];
-	}
+    for (CALayer *layer in array)
+    {
+        [self correctScreenPosition:layer];
+    }
     
     @synchronized(sublayers) {	
         [sublayers removeAllObjects];
@@ -92,21 +112,21 @@
 
 - (void)removeSublayer:(CALayer *)layer
 {
-	@synchronized(sublayers) {
-		[sublayers removeObject:layer];
-		[layer removeFromSuperlayer];
-	}
+    @synchronized(sublayers) {
+        [sublayers removeObject:layer];
+        [layer removeFromSuperlayer];
+    }
 }
 
 - (void)removeSublayers:(NSArray *)layers
 {
-	@synchronized(sublayers) {
-		for(CALayer *aLayer in layers)
-		{
-			[sublayers removeObject:aLayer];
-			[aLayer removeFromSuperlayer];
-		}
-	}
+    @synchronized(sublayers) {
+        for (CALayer *aLayer in layers)
+        {
+            [sublayers removeObject:aLayer];
+            [aLayer removeFromSuperlayer];
+        }
+    }
 }
 
 - (void)insertSublayer:(CALayer *)layer above:(CALayer *)siblingLayer
@@ -134,29 +154,27 @@
     @synchronized(sublayers) {
         [self correctScreenPosition:layer];
         [sublayers insertObject:layer atIndex:index];
-        
-        /// \bug TODO: Fix this.
-        [super addSublayer:layer];	
+        [super insertSublayer:layer atIndex:index];
     }
 }
 
 - (void)moveToProjectedPoint:(RMProjectedPoint)aPoint
 {
-	/// \bug TODO: Test this. Does it work?
-	[self correctPositionOfAllSublayers];
+    /// \bug TODO: Test this. Does it work?
+    [self correctPositionOfAllSublayers];
 }
 
 - (void)moveBy:(CGSize)delta
 {
-	@synchronized(sublayers) {
-		for (id layer in sublayers)
-		{
-			if ([layer respondsToSelector:@selector(moveBy:)])
-				[layer moveBy:delta];
+    @synchronized(sublayers) {
+        for (id layer in sublayers)
+        {
+            if ([layer respondsToSelector:@selector(moveBy:)])
+                [layer moveBy:delta];
 
-			// if layer moves on and offscreen...
-		}
-	}
+            // if layer moves on and offscreen...
+        }
+    }
 }
 
 - (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center
@@ -182,22 +200,22 @@
 
 - (BOOL)hasSubLayer:(CALayer *)layer
 {
-	return [sublayers containsObject:layer];
+    return [sublayers containsObject:layer];
 }
 
 - (void)setRotationOfAllSublayers:(float)angle
 {
-	rotationTransform = CGAffineTransformMakeRotation(angle); // store rotation transform for subsequent layers
+    rotationTransform = CGAffineTransformMakeRotation(angle); // store rotation transform for subsequent layers
 
-	@synchronized(sublayers) {
-		for (id layer in sublayers)
-		{
-			CALayer <RMMovingMapLayer> *layer_with_proto = (CALayer <RMMovingMapLayer> *)layer;
-			if (!layer_with_proto.enableRotation) {
-				[layer_with_proto setAffineTransform:rotationTransform];
-			}
-		}
-	}
+    @synchronized(sublayers) {
+        for (id layer in sublayers)
+        {
+            CALayer <RMMovingMapLayer> *mapLayer = (CALayer <RMMovingMapLayer> *)layer;
+            if (!mapLayer.enableRotation) {
+                [mapLayer setAffineTransform:rotationTransform];
+            }
+        }
+    }
 }
 
 @end

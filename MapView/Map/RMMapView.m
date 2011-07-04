@@ -164,33 +164,35 @@
 
 - (void)setDelegate:(id <RMMapViewDelegate>)_delegate
 {
-	if (delegate == _delegate)
+    if (delegate == _delegate)
         return;
 
-	delegate = _delegate;
+    delegate = _delegate;
 
-	_delegateHasBeforeMapMove = [(NSObject *)delegate respondsToSelector:@selector(beforeMapMove:)];
-	_delegateHasAfterMapMove  = [(NSObject *)delegate respondsToSelector:@selector(afterMapMove:)];
-	_delegateHasAfterMapMoveDeceleration = [(NSObject *)delegate respondsToSelector:@selector(afterMapMoveDeceleration:)];
+    _delegateHasBeforeMapMove = [delegate respondsToSelector:@selector(beforeMapMove:)];
+    _delegateHasAfterMapMove  = [delegate respondsToSelector:@selector(afterMapMove:)];
+    _delegateHasAfterMapMoveDeceleration = [delegate respondsToSelector:@selector(afterMapMoveDeceleration:)];
 
-	_delegateHasBeforeMapZoomByFactor = [(NSObject *)delegate respondsToSelector:@selector(beforeMapZoom:byFactor:near:)];
-	_delegateHasAfterMapZoomByFactor  = [(NSObject *)delegate respondsToSelector:@selector(afterMapZoom:byFactor:near:)];
+    _delegateHasBeforeMapZoomByFactor = [delegate respondsToSelector:@selector(beforeMapZoom:byFactor:near:)];
+    _delegateHasAfterMapZoomByFactor  = [delegate respondsToSelector:@selector(afterMapZoom:byFactor:near:)];
 
-	_delegateHasBeforeMapRotate  = [(NSObject *)delegate respondsToSelector:@selector(beforeMapRotate:fromAngle:)];
-	_delegateHasAfterMapRotate  = [(NSObject *)delegate respondsToSelector:@selector(afterMapRotate:toAngle:)];
+    _delegateHasMapViewRegionDidChange = [delegate respondsToSelector:@selector(mapViewRegionDidChange:)];
 
-	_delegateHasDoubleTapOnMap = [(NSObject *)delegate respondsToSelector:@selector(doubleTapOnMap:at:)];
-    _delegateHasDoubleTapTwoFingersOnMap = [(NSObject *)delegate respondsToSelector:@selector(doubleTapTwoFingersOnMap:at:)];
-	_delegateHasSingleTapOnMap = [(NSObject *)delegate respondsToSelector:@selector(singleTapOnMap:at:)];
-	_delegateHasLongSingleTapOnMap = [(NSObject *)delegate respondsToSelector:@selector(longSingleTapOnMap:at:)];
+    _delegateHasBeforeMapRotate  = [delegate respondsToSelector:@selector(beforeMapRotate:fromAngle:)];
+    _delegateHasAfterMapRotate  = [delegate respondsToSelector:@selector(afterMapRotate:toAngle:)];
 
-	_delegateHasTapOnMarker = [(NSObject *)delegate respondsToSelector:@selector(tapOnMarker:onMap:)];
-	_delegateHasTapOnLabelForMarker = [(NSObject *)delegate respondsToSelector:@selector(tapOnLabelForMarker:onMap:)];
+    _delegateHasDoubleTapOnMap = [delegate respondsToSelector:@selector(doubleTapOnMap:at:)];
+    _delegateHasDoubleTapTwoFingersOnMap = [delegate respondsToSelector:@selector(doubleTapTwoFingersOnMap:at:)];
+    _delegateHasSingleTapOnMap = [delegate respondsToSelector:@selector(singleTapOnMap:at:)];
+    _delegateHasLongSingleTapOnMap = [delegate respondsToSelector:@selector(longSingleTapOnMap:at:)];
 
-	_delegateHasAfterMapTouch  = [(NSObject *)delegate respondsToSelector:@selector(afterMapTouch:)];
+    _delegateHasTapOnMarker = [delegate respondsToSelector:@selector(tapOnMarker:onMap:)];
+    _delegateHasTapOnLabelForMarker = [delegate respondsToSelector:@selector(tapOnLabelForMarker:onMap:)];
 
-   	_delegateHasShouldDragMarker = [(NSObject *)delegate respondsToSelector:@selector(mapView:shouldDragMarker:withEvent:)];
-   	_delegateHasDidDragMarker = [(NSObject *)delegate respondsToSelector:@selector(mapView:didDragMarker:withEvent:)];
+    _delegateHasAfterMapTouch  = [delegate respondsToSelector:@selector(afterMapTouch:)];
+
+    _delegateHasShouldDragMarker = [delegate respondsToSelector:@selector(mapView:shouldDragMarker:withEvent:)];
+    _delegateHasDidDragMarker = [delegate respondsToSelector:@selector(mapView:didDragMarker:withEvent:)];
 }
 
 - (id <RMMapViewDelegate>)delegate
@@ -202,16 +204,18 @@
 
 - (void)moveToProjectedPoint:(RMProjectedPoint)aPoint
 {
-	if (_delegateHasBeforeMapMove) [delegate beforeMapMove:self];
-	[contents setCenterProjectedPoint:aPoint];
-	if (_delegateHasAfterMapMove) [delegate afterMapMove:self];
+    if (_delegateHasBeforeMapMove) [delegate beforeMapMove:self];
+    [contents setCenterProjectedPoint:aPoint];
+    if (_delegateHasAfterMapMove) [delegate afterMapMove:self];
+    if (_delegateHasMapViewRegionDidChange) [delegate mapViewRegionDidChange:self];
 }
 
 - (void)moveToLatLong:(CLLocationCoordinate2D)latlong
 {
-	if (_delegateHasBeforeMapMove) [delegate beforeMapMove:self];
-	[contents moveToLatLong:latlong];
-	if (_delegateHasAfterMapMove) [delegate afterMapMove:self];
+    if (_delegateHasBeforeMapMove) [delegate beforeMapMove:self];
+    [contents moveToLatLong:latlong];
+    if (_delegateHasAfterMapMove) [delegate afterMapMove:self];
+    if (_delegateHasMapViewRegionDidChange) [delegate mapViewRegionDidChange:self];
 }
 
 #define kMoveAnimationDuration 0.25f
@@ -249,6 +253,7 @@
             [contents moveToLatLong:latlong];
             if (_delegateHasAfterMapMove) [delegate afterMapMove:self];
             if (_delegateHasAfterMapMoveDeceleration) [delegate afterMapMoveDeceleration:self];
+            if (_delegateHasMapViewRegionDidChange) [delegate mapViewRegionDidChange:self];
         });
     });
 }
@@ -317,46 +322,46 @@
 {
 	if (_constrainMovement)
 	{
-		//check that bounds after zoom don't exceed map constraints
-		//the logic is copued from the method zoomByFactor,
+		// check that bounds after zoom don't exceed map constraints
+		// the logic is copued from the method zoomByFactor,
 		float _zoomFactor = [self.contents adjustZoomForBoundingMask:zoomFactor];
 		float zoomDelta = log2f(_zoomFactor);
 		float targetZoom = zoomDelta + [self.contents zoom];
-		BOOL canZoom=NO;
-		if (targetZoom == [self.contents zoom]){
+		BOOL canZoom = NO;
+		if (targetZoom == [self.contents zoom]) {
 			//OK... . I could even do a return here.. but it will hamper with future logic..
-			canZoom=YES;
+			canZoom = YES;
 		}
 		// clamp zoom to remain below or equal to maxZoom after zoomAfter will be applied
-		if(targetZoom > [self.contents maxZoom]){
+		if (targetZoom > [self.contents maxZoom]) {
 			zoomFactor = exp2f([self.contents maxZoom] - [self.contents zoom]);
 		}
-		
+
 		// clamp zoom to remain above or equal to minZoom after zoomAfter will be applied
-		if(targetZoom < [self.contents minZoom]){
+		if (targetZoom < [self.contents minZoom]) {
 			zoomFactor = 1/exp2f([self.contents zoom] - [self.contents minZoom]);
 		}
-		
-		//bools for syntactical sugar to understand the logic in the if statement below
+
+		// bools for syntactical sugar to understand the logic in the if statement below
 		BOOL zoomAtMax = ([self.contents  zoom] == [self.contents  maxZoom]);
 		BOOL zoomAtMin = ([self.contents  zoom] == [self.contents  minZoom]);
 		BOOL zoomGreaterMin = ([self.contents  zoom] > [self.contents  minZoom]);
 		BOOL zoomLessMax = ([self.contents  zoom] < [ self.contents maxZoom]);
-		
+
 		//zooming in zoomFactor > 1
 		//zooming out zoomFactor < 1
-		
+
 		if ((zoomGreaterMin && zoomLessMax) || (zoomAtMax && zoomFactor<1) || (zoomAtMin && zoomFactor>1))
 		{
-			//if I'm here it means I could zoom, now we have to see what will happen after zoom
-			RMMercatorToScreenProjection *mtsp= self.contents.mercatorToScreenProjection ;
-			
-			//get copies of mercatorRoScreenProjection's data
-			RMProjectedPoint origin=[mtsp origin];
-			float metersPerPixel=mtsp.metersPerPixel;
-			CGRect screenBounds=[mtsp screenBounds];
-			
-			//tjis is copied from [RMMercatorToScreenBounds zoomScreenByFactor]
+			// if I'm here it means I could zoom, now we have to see what will happen after zoom
+			RMMercatorToScreenProjection *mtsp = self.contents.mercatorToScreenProjection;
+
+			// get copies of mercatorRoScreenProjection's data
+			RMProjectedPoint origin = [mtsp origin];
+			float metersPerPixel = mtsp.metersPerPixel;
+			CGRect screenBounds = [mtsp screenBounds];
+
+			// this is copied from [RMMercatorToScreenBounds zoomScreenByFactor]
 			// First we move the origin to the pivot...
 			origin.easting += center.x * metersPerPixel;
 			origin.northing += (screenBounds.size.height - center.y) * metersPerPixel;
@@ -365,33 +370,38 @@
 			// Then translate back
 			origin.easting -= center.x * metersPerPixel;
 			origin.northing -= (screenBounds.size.height - center.y) * metersPerPixel;
-			
+
 			origin = [mtsp.projection wrapPointHorizontally:origin];
-			
-			//calculate new bounds
+
+			// calculate new bounds
 			RMProjectedRect zRect;
 			zRect.origin = origin;
 			zRect.size.width = screenBounds.size.width * metersPerPixel;
 			zRect.size.height = screenBounds.size.height * metersPerPixel;
-			 
-			//can zoom only if within bounds
-			canZoom= !(zRect.origin.northing < SWconstraint.northing || zRect.origin.northing+zRect.size.height> NEconstraint.northing ||
+
+			// can zoom only if within bounds
+			canZoom = !(zRect.origin.northing < SWconstraint.northing || zRect.origin.northing+zRect.size.height> NEconstraint.northing ||
 			  zRect.origin.easting < SWconstraint.easting || zRect.origin.easting+zRect.size.width > NEconstraint.easting);
-				
 		}
-		
-		if(!canZoom){
+
+		if (!canZoom) {
 			RMLog(@"Zooming will move map out of bounds: no zoom");
 			return;
 		}
-	
 	}
-	
-	if (_delegateHasBeforeMapZoomByFactor) [delegate beforeMapZoom:self byFactor:zoomFactor near:center];
-	[contents zoomByFactor:zoomFactor near:center animated:animated withCallback:(animated && _delegateHasAfterMapZoomByFactor) ? self : nil];
 
-	if (!animated)
+	if (_delegateHasBeforeMapZoomByFactor) [delegate beforeMapZoom:self byFactor:zoomFactor near:center];
+	[contents zoomByFactor:zoomFactor near:center animated:animated withCallback:(animated && (_delegateHasAfterMapZoomByFactor || _delegateHasMapViewRegionDidChange)) ? self : nil];
+
+	if (!animated) {
 		if (_delegateHasAfterMapZoomByFactor) [delegate afterMapZoom:self byFactor:zoomFactor near:center];
+        if (_delegateHasMapViewRegionDidChange) [delegate mapViewRegionDidChange:self];
+    }
+}
+
+- (void)animationStepped
+{
+    if (_delegateHasMapViewRegionDidChange) [delegate mapViewRegionDidChange:self];
 }
 
 - (void)zoomWithLatLngBoundsNorthEast:(CLLocationCoordinate2D)ne SouthWest:(CLLocationCoordinate2D)sw

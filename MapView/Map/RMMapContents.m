@@ -117,73 +117,71 @@
 	  minZoomLevel:(float)minZoomLevel
    backgroundImage:(UIImage *)backgroundImage
 {
-	LogMethod();
-	if (![super init])
-		return nil;
+    LogMethod();
+    if (!(self = [super init]))
+        return nil;
 
-	NSAssert1([newView isKindOfClass:[RMMapView class]], @"view %@ must be a subclass of RMMapView", newView);
-//	[(RMMapView *)newView setContents:self];
+    NSAssert1([newView isKindOfClass:[RMMapView class]], @"view %@ must be a subclass of RMMapView", newView);
+    //	[(RMMapView *)newView setContents:self];
 
-	tileSource = nil;
-	projection = nil;
-	mercatorToTileProjection = nil;
-	renderer = nil;
-	imagesOnScreen = nil;
-	tileLoader = nil;
-    
+    tileSource = nil;
+    projection = nil;
+    mercatorToTileProjection = nil;
+    renderer = nil;
+    imagesOnScreen = nil;
+    tileLoader = nil;
+
     screenScale = 1.0;
     if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
     {
         screenScale = [[[UIScreen mainScreen] valueForKey:@"scale"] floatValue];
     }
 
-	boundingMask = RMMapMinWidthBound;
+    boundingMask = RMMapMinWidthBound;
 
-	mercatorToScreenProjection = [[RMMercatorToScreenProjection alloc] initFromProjection:[newTilesource projection] toScreenBounds:[newView bounds]];
-	
-	layer = [[newView layer] retain];
-    
+    mercatorToScreenProjection = [[RMMercatorToScreenProjection alloc] initFromProjection:[newTilesource projection] toScreenBounds:[newView bounds]];
+
+    layer = [[newView layer] retain];
+
     [self setTileCache:[[[RMTileCache alloc] init] autorelease]];
-     
-	[self setTileSource:newTilesource];
-	[self setRenderer: [[[RMCoreAnimationRenderer alloc] initWithContent:self] autorelease]];
-	
-	imagesOnScreen = [[RMTileImageSet alloc] initWithDelegate:renderer];
-	[imagesOnScreen setTileSource:tileSource];
+
+    [self setTileSource:newTilesource];
+    [self setRenderer: [[[RMCoreAnimationRenderer alloc] initWithContent:self] autorelease]];
+
+    imagesOnScreen = [[RMTileImageSet alloc] initWithDelegate:renderer];
+    [imagesOnScreen setTileSource:tileSource];
     [imagesOnScreen setTileCache:tileCache];
     [imagesOnScreen setCurrentCacheKey:[newTilesource uniqueTilecacheKey]];
 
-	tileLoader = [[RMTileLoader alloc] initWithContent:self];
-	[tileLoader setSuppressLoading:YES];
+    tileLoader = [[RMTileLoader alloc] initWithContent:self];
+    [tileLoader setSuppressLoading:YES];
 
     [self setMinZoom:minZoomLevel];
     [self setMaxZoom:maxZoomLevel];
-	[self setZoom:initialZoomLevel];
+    [self setZoom:initialZoomLevel];
+    [self moveToLatLong:initialCenter];
 
-	[self moveToLatLong:initialCenter];
-	
-	[tileLoader setSuppressLoading:NO];
-	
-	/// \bug TODO: Make a nice background class
-	RMMapLayer *theBackground = [[RMMapLayer alloc] init];
-	[self setBackground:theBackground];
-	[theBackground release];
-	
-	RMLayerCollection *theOverlay = [[RMLayerCollection alloc] initForContents:self];
-	[self setOverlay:theOverlay];
-	[theOverlay release];
-	
-	markerManager = [[RMMarkerManager alloc] initWithContents:self];
-	
-	[newView setNeedsDisplay];
-	[[NSNotificationCenter defaultCenter] addObserver:self 
-											 selector:@selector(handleMemoryWarningNotification:) 
-												 name:UIApplicationDidReceiveMemoryWarningNotification 
-											   object:nil];
+    [tileLoader setSuppressLoading:NO];
 
-	
-	RMLog(@"Map contents initialised. view: %@ tileSource %@ renderer %@ minZoom:%.0f maxZoom:%.0f", newView, tileSource, renderer, [self minZoom], [self maxZoom]);
-	return self;
+    /// \bug TODO: Make a nice background class
+    RMMapLayer *theBackground = [[RMMapLayer alloc] init];
+    [self setBackground:theBackground];
+    [theBackground release];
+
+    RMLayerCollection *theOverlay = [[RMLayerCollection alloc] initForContents:self];
+    [self setOverlay:theOverlay];
+    [theOverlay release];
+
+    markerManager = [[RMMarkerManager alloc] initWithContents:self];
+
+    [newView setNeedsDisplay];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleMemoryWarningNotification:)
+                                                 name:UIApplicationDidReceiveMemoryWarningNotification
+                                               object:nil];
+
+    RMLog(@"Map contents initialised. view: %@ tileSource %@ renderer %@ minZoom:%.0f maxZoom:%.0f", newView, tileSource, renderer, [self minZoom], [self maxZoom]);
+    return self;
 }
 
 - (void)setFrame:(CGRect)frame
@@ -504,27 +502,30 @@
 
 - (void)animatedZoomStep:(NSTimer *)timer
 {
-	double zoomIncr = [[[timer userInfo] objectForKey:@"zoomIncr"] doubleValue];
-	double targetZoom = [[[timer userInfo] objectForKey:@"targetZoom"] doubleValue];
+    double zoomIncr = [[[timer userInfo] objectForKey:@"zoomIncr"] doubleValue];
+    double targetZoom = [[[timer userInfo] objectForKey:@"targetZoom"] doubleValue];
 
-	if ((zoomIncr > 0 && [self zoom] >= targetZoom-1.0e-6) || (zoomIncr < 0 && [self zoom] <= targetZoom+1.0e-6))
-	{
+    NSDictionary *userInfo = [[[timer userInfo] retain] autorelease];
+    id <RMMapContentsAnimationCallback> callback = [userInfo objectForKey:@"callback"];
+
+    if ((zoomIncr > 0 && [self zoom] >= targetZoom-1.0e-6) || (zoomIncr < 0 && [self zoom] <= targetZoom+1.0e-6))
+    {
         if ([self zoom] != targetZoom )
             [self setZoom:targetZoom];
 
-		NSDictionary * userInfo = [[timer userInfo] retain];
-		[timer invalidate];	// ASAP
-		id <RMMapContentsAnimationCallback> callback = [userInfo objectForKey:@"callback"];
-		if (callback && [callback respondsToSelector:@selector(animationFinishedWithZoomFactor:near:)]) {
-			[callback animationFinishedWithZoomFactor:[[userInfo objectForKey:@"factor"] floatValue] near:[[userInfo objectForKey:@"pivot"] CGPointValue]];
-		}
-		[userInfo release];
-	}
-	else
-	{
-		float zoomFactorStep = exp2f(zoomIncr);
-		[self zoomByFactor:zoomFactorStep near:[[[timer userInfo] objectForKey:@"pivot"] CGPointValue] animated:NO];
-	}
+        [timer invalidate];	// ASAP
+        if ([callback respondsToSelector:@selector(animationFinishedWithZoomFactor:near:)]) {
+            [callback animationFinishedWithZoomFactor:[[userInfo objectForKey:@"factor"] floatValue] near:[[userInfo objectForKey:@"pivot"] CGPointValue]];
+        }
+    }
+    else
+    {
+        float zoomFactorStep = exp2f(zoomIncr);
+        [self zoomByFactor:zoomFactorStep near:[[[timer userInfo] objectForKey:@"pivot"] CGPointValue] animated:NO];
+        if ([callback respondsToSelector:@selector(animationStepped)]) {
+            [callback animationStepped];
+        }
+    }
 }
 
 - (void)zoomInToNextNativeZoomAt:(CGPoint)pivot

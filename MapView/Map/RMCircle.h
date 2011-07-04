@@ -40,7 +40,7 @@
 	RMProjectedPoint projectedLocation;
 	BOOL enableDragging;
 	BOOL enableRotation;
-	
+
 	UIColor *lineColor;
 	UIColor *fillColor;
 	CGFloat radiusInMeters;

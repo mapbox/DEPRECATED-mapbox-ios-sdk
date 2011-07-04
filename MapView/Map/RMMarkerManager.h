@@ -33,19 +33,16 @@
 @class RMProjection;
 
 @interface RMMarkerManager : NSObject {
-	RMMapContents *contents;
+	RMMapContents *mapContents;
     CGAffineTransform rotationTransform;
 }
 
-@property (assign, readwrite) RMMapContents *contents;
+@property (assign, readwrite) RMMapContents *mapContents;
 
-- (id)initWithContents:(RMMapContents *)mapContents;
+- (id)initWithContents:(RMMapContents *)contents;
 
 - (void)addMarker:(RMMarker *)marker atProjectedPoint:(RMProjectedPoint)projectedPoint;
 - (void)addMarker:(RMMarker *)marker atLatLong:(CLLocationCoordinate2D)point;
-- (void)removeMarkers;
-- (void)hideAllMarkers;
-- (void)unhideAllMarkers;
 
 - (NSArray *)markers;
 - (void)removeMarker:(RMMarker *)marker;

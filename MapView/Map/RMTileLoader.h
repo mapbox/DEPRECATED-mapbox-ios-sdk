@@ -37,13 +37,13 @@
 @protocol RMTileSource;
 
 @interface RMTileLoader : NSObject {
-	RMMapContents *content;
+    RMMapContents *mapContents;
 
-	CGRect loadedBounds;
-	NSUInteger loadedZoom;
-	RMTileRect loadedTiles;
-	
-	BOOL suppressLoading;
+    CGRect loadedBounds;
+    NSUInteger loadedZoom;
+    RMTileRect loadedTiles;
+
+    BOOL suppressLoading;
 }
 
 @property (readonly, nonatomic) CGRect loadedBounds;

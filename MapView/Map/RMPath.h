@@ -37,47 +37,58 @@
  */
 @interface RMPath : RMMapLayer <RMMovingMapLayer>
 {
-	BOOL isFirstPoint;
+    BOOL isFirstPoint;
 
-	/// This is the first point.
-	RMProjectedPoint projectedLocation;
-	
-	/// The color of the line, or the outline if a polygon
-	UIColor *lineColor;
-	/// The color of polygon's fill.
-	UIColor *fillColor;
-	
-	CGMutablePathRef path;
+    /// This is the first point.
+    RMProjectedPoint projectedLocation;
 
-	/// Width of the line, units unknown; pixels maybe?
-	float lineWidth;
-	
-	/*! Drawing mode of the path; Choices are
-	 kCGPathFill,
-	 kCGPathEOFill,
-	 kCGPathStroke,
-	 kCGPathFillStroke,
-	 kCGPathEOFillStroke */
-	CGPathDrawingMode drawingMode;
-	
-	//Line cap and join styles
-	CGLineCap lineCap;
-	CGLineJoin lineJoin;	
-	BOOL scaleLineWidth;
-	BOOL enableDragging;
-	BOOL enableRotation;
-	
-	float renderedScale;
-	RMMapContents *contents;
+    /// The color of the line, or the outline if a polygon
+    UIColor *lineColor;
+    /// The color of polygon's fill.
+    UIColor *fillColor;
+
+    CGMutablePathRef path;
+
+    /// Width of the line, units unknown; pixels maybe?
+    float lineWidth;
+
+    /*! Drawing mode of the path; Choices are
+     kCGPathFill,
+     kCGPathEOFill,
+     kCGPathStroke,
+     kCGPathFillStroke,
+     kCGPathEOFillStroke */
+    CGPathDrawingMode drawingMode;
+
+    //Line cap and join styles
+    CGLineCap lineCap;
+    CGLineJoin lineJoin;
+
+    //Line dash style
+    CGFloat *_lineDashLengths;
+    CGFloat *_scaledLineDashLengths;
+    size_t _lineDashCount;
+    CGFloat lineDashPhase;
+
+    BOOL scaleLineWidth;
+    BOOL scaleLineDash; // if YES line dashes will be scaled to keep a constant size if the layer is zoomed
+
+    BOOL enableDragging;
+    BOOL enableRotation;
+
+    float renderedScale;
+    RMMapContents *mapContents;
 }
 
-
-- (id)initWithContents:(RMMapContents *)aContents;
+- (id)initWithContents:(RMMapContents *)contents;
 - (id)initForMap:(RMMapView *)map;
 
 @property CGPathDrawingMode drawingMode;
 @property CGLineCap lineCap;
 @property CGLineJoin lineJoin;
+@property (nonatomic, readwrite, assign) NSArray *lineDashLengths;
+@property CGFloat lineDashPhase;
+@property BOOL scaleLineDash;
 @property float lineWidth;
 @property BOOL	scaleLineWidth;
 @property (nonatomic, assign) RMProjectedPoint projectedLocation;

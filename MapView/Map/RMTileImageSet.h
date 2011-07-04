@@ -46,14 +46,14 @@
 @end
 
 @interface RMTileImageSet : NSObject {
-	id <RMTileImageSetDelegate> delegate;
-	id <RMTileSource> tileSource;
+    id <RMTileImageSetDelegate> delegate;
+    id <RMTileSource> tileSource;
     RMTileCache *tileCache;
     NSString *currentCacheKey;
-    
-	NSMutableSet *images;
-	short zoom, tileDepth;
-    
+
+    NSMutableSet *images;
+    short zoom, tileDepth;
+
     NSRecursiveLock *imagesLock;
 }
 

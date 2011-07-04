@@ -37,6 +37,7 @@
 #import "RMMapView.h"
 #import "RMMarkerManager.h"
 #import "RMProjection.h"
+#import "RMTileLoader.h"
 #import "RMTileSource.h"
 
 #import "NSUserDefaults+RouteMe.h"
