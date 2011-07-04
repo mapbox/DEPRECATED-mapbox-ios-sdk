@@ -52,52 +52,59 @@
     [super dealloc];
 }
 
+- (BOOL)isLayer:(CALayer *)layer withinBounds:(CGRect)bounds
+{
+    CGPoint markerPosition = layer.position;
+
+    if (![layer isKindOfClass:[RMMarker class]])
+        return YES;
+
+    if (markerPosition.x > bounds.origin.x
+        && markerPosition.x < bounds.origin.x + bounds.size.width
+        && markerPosition.y > bounds.origin.y
+        && markerPosition.y < bounds.origin.y + bounds.size.height)
+    {
+        return YES;
+    }
+
+    return NO;
+}
+
+- (BOOL)isLayerOnScreen:(CALayer *)layer
+{
+    CGRect screenBounds = [[mapContents mercatorToScreenProjection] screenBounds];
+    return [self isLayer:layer withinBounds:screenBounds];
+}
+
 - (void)correctScreenPosition:(CALayer *)layer
 {
     if ([layer conformsToProtocol:@protocol(RMMovingMapLayer)])
     {
         // Kinda ugly.
-        CALayer <RMMovingMapLayer> *mapLayer = (CALayer <RMMovingMapLayer> *)layer;
-        if (mapLayer.enableDragging)
+        if (((CALayer <RMMovingMapLayer> *)layer).enableDragging)
         {
-            RMProjectedPoint location = [mapLayer projectedLocation];
+            RMProjectedPoint location = [((CALayer <RMMovingMapLayer> *)layer) projectedLocation];
             CGPoint markerPosition = [[mapContents mercatorToScreenProjection] projectProjectedPoint:location];
-            mapLayer.position = markerPosition;
-
-            // Hide markers outside of the screen area
-            if ([mapLayer isKindOfClass:[RMMarker class]])
-            {
-                BOOL layerIsHidden = YES;
-                CGRect screenBounds = [[mapContents mercatorToScreenProjection] screenBounds];
-                if (markerPosition.x > screenBounds.origin.x
-                    && markerPosition.x < screenBounds.origin.x + screenBounds.size.width
-                    && markerPosition.y > screenBounds.origin.y
-                    && markerPosition.y < screenBounds.origin.y + screenBounds.size.height)
-                {
-                    layerIsHidden = NO;
-                }
-                mapLayer.hidden = layerIsHidden;
-
-//                RMLog(@"Marker position (%.0f,%.0f) - visible=%@", mapLayer.position.x, mapLayer.position.y, layerIsHidden ? @"NO" : @"YES");
-            }
+            layer.position = markerPosition;
         }
-        if (!mapLayer.enableRotation) {
-            [mapLayer setAffineTransform:rotationTransform];
+        if (!((CALayer <RMMovingMapLayer> *)layer).enableRotation) {
+            [((CALayer <RMMovingMapLayer> *)layer) setAffineTransform:rotationTransform];
         }
     }
 }
 
 - (void)setSublayers:(NSArray *)array
 {
-    for (CALayer *layer in array)
-    {
-        [self correctScreenPosition:layer];
-    }
-    
-    @synchronized(sublayers) {	
+    @synchronized(sublayers) {
         [sublayers removeAllObjects];
         [sublayers addObjectsFromArray:array];
-        [super setSublayers:array];
+
+        for (CALayer *layer in array)
+        {
+            [self correctScreenPosition:layer];
+            if ([self isLayerOnScreen:layer])
+                [super addSublayer:layer];
+        }
     }
 }
 
@@ -106,7 +113,8 @@
     @synchronized(sublayers) {
         [self correctScreenPosition:layer];
         [sublayers addObject:layer];
-        [super addSublayer:layer];
+        if ([self isLayerOnScreen:layer])
+            [super addSublayer:layer];
     }
 }
 
@@ -135,7 +143,8 @@
         [self correctScreenPosition:layer];
         NSUInteger index = [sublayers indexOfObject:siblingLayer];
         [sublayers insertObject:layer atIndex:index + 1];
-        [super insertSublayer:layer above:siblingLayer];
+        if ([self isLayerOnScreen:layer])
+            [super insertSublayer:layer above:siblingLayer];
     }
 }
 
@@ -145,7 +154,8 @@
         [self correctScreenPosition:layer];
         NSUInteger index = [sublayers indexOfObject:siblingLayer];
         [sublayers insertObject:layer atIndex:index];
-        [super insertSublayer:layer below:siblingLayer];
+        if ([self isLayerOnScreen:layer])
+            [super insertSublayer:layer below:siblingLayer];
     }
 }
 
@@ -154,7 +164,8 @@
     @synchronized(sublayers) {
         [self correctScreenPosition:layer];
         [sublayers insertObject:layer atIndex:index];
-        [super insertSublayer:layer atIndex:index];
+        if ([self isLayerOnScreen:layer])
+            [super insertSublayer:layer atIndex:index];
     }
 }
 
@@ -190,10 +201,39 @@
 
 - (void)correctPositionOfAllSublayers
 {
+    [self correctPositionOfAllSublayersIncludingInvisibleLayers:YES];
+}
+
+- (void)correctPositionOfAllSublayersIncludingInvisibleLayers:(BOOL)correctAllLayers
+{
     @synchronized(sublayers) {
-        for (id layer in sublayers)
-        {
-            [self correctScreenPosition:layer];
+        CGRect screenBounds = [[mapContents mercatorToScreenProjection] screenBounds];
+        CALayer *lastLayer = nil;
+
+        if (correctAllLayers) {
+            for (id layer in sublayers)
+            {
+                [self correctScreenPosition:layer];
+                if ([self isLayer:layer withinBounds:screenBounds]) {
+                    if (![[self sublayers] containsObject:layer]) {
+                        if (!lastLayer)
+                            [super insertSublayer:layer atIndex:0];
+                        else
+                            [super insertSublayer:layer above:lastLayer];
+                    }
+                } else {
+                    [layer removeFromSuperlayer];
+                }
+                lastLayer = layer;
+            }
+//            RMLog(@"%d layers on screen", [[self sublayers] count]);
+
+        } else {
+            for (id layer in [self sublayers])
+            {
+                [self correctScreenPosition:layer];
+            }
+//            RMLog(@"updated %d layers on screen", [[self sublayers] count]);
         }
     }
 }

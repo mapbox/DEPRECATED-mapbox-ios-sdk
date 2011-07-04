@@ -186,15 +186,15 @@
 
 - (void)setFrame:(CGRect)frame
 {
-  CGRect bounds = CGRectMake(0, 0, frame.size.width, frame.size.height);
-  [mercatorToScreenProjection setScreenBounds:bounds];
-  background.frame = bounds;
-  layer.frame = frame;
-  overlay.frame = bounds;
-  [tileLoader clearLoadedBounds];
-  [tileLoader updateLoadedImages];
-  [renderer setFrame:frame];
-  [overlay correctPositionOfAllSublayers];
+    CGRect bounds = CGRectMake(0, 0, frame.size.width, frame.size.height);
+    [mercatorToScreenProjection setScreenBounds:bounds];
+    background.frame = bounds;
+    layer.frame = frame;
+    overlay.frame = bounds;
+    [tileLoader clearLoadedBounds];
+    [tileLoader updateLoadedImages];
+    [renderer setFrame:frame];
+    [overlay correctPositionOfAllSublayers];
 }
 
 - (void)dealloc
@@ -320,13 +320,13 @@
 	[self setCenterProjectedPoint:aPoint];
 }
 
-- (void)moveBy:(CGSize)delta
+- (void)moveBy:(CGSize)delta andCorrectAllSublayers:(BOOL)correctAllSublayers
 {
     RMProjectedPoint projCenter = [mercatorToScreenProjection projectedCenter];
     RMProjectedSize XYDelta = [mercatorToScreenProjection projectScreenSizeToProjectedSize:delta];
     projCenter.easting = projCenter.easting - XYDelta.width;
     projCenter.northing = projCenter.northing - XYDelta.height;
-    
+
     if (![self tileSourceBoundsContainProjectedPoint:projCenter])
         return;
 
@@ -334,8 +334,13 @@
 	[imagesOnScreen moveBy:delta];
 	[tileLoader moveBy:delta];
 	[overlay moveBy:delta];
-	[overlay correctPositionOfAllSublayers];
+	[overlay correctPositionOfAllSublayersIncludingInvisibleLayers:correctAllSublayers];
 	[renderer setNeedsDisplay];
+}
+
+- (void)moveBy:(CGSize)delta
+{
+    return [self moveBy:delta andCorrectAllSublayers:YES];
 }
 
 // \bug doesn't really adjust anything, just makes a computation. CLANG flags some dead assignments (write-only variables)
@@ -409,11 +414,6 @@
 	} 
 }
 
-- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)pivot animated:(BOOL)animated
-{
-	[self zoomByFactor:zoomFactor near:pivot animated:animated withCallback:nil];
-}
-
 - (BOOL)shouldZoomToTargetZoom:(float)targetZoom withZoomFactor:(float)zoomFactor
 {
 	//bools for syntactical sugar to understand the logic in the if statement below
@@ -435,7 +435,12 @@
 	}
 }
 
-- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)pivot animated:(BOOL)animated withCallback:(id <RMMapContentsAnimationCallback>)callback
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)pivot animated:(BOOL)animated
+{
+    [self zoomByFactor:zoomFactor near:pivot animated:animated withCallback:nil isIntermediateAnimationStep:NO];
+}
+
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)pivot animated:(BOOL)animated withCallback:(id <RMMapContentsAnimationCallback>)callback isIntermediateAnimationStep:(BOOL)isIntermediateAnimationStep
 {
     if (![self tileSourceBoundsContainScreenPoint:pivot])
         return;
@@ -487,7 +492,7 @@
             [imagesOnScreen zoomByFactor:zoomFactor near:pivot];
             [tileLoader zoomByFactor:zoomFactor near:pivot];
             [overlay zoomByFactor:zoomFactor near:pivot];
-            [overlay correctPositionOfAllSublayers];
+            [overlay correctPositionOfAllSublayersIncludingInvisibleLayers:!isIntermediateAnimationStep];
             [renderer setNeedsDisplay];
         }
     }
@@ -517,11 +522,14 @@
         if ([callback respondsToSelector:@selector(animationFinishedWithZoomFactor:near:)]) {
             [callback animationFinishedWithZoomFactor:[[userInfo objectForKey:@"factor"] floatValue] near:[[userInfo objectForKey:@"pivot"] CGPointValue]];
         }
+
+        [overlay correctPositionOfAllSublayersIncludingInvisibleLayers:YES];
+
     }
     else
     {
         float zoomFactorStep = exp2f(zoomIncr);
-        [self zoomByFactor:zoomFactorStep near:[[[timer userInfo] objectForKey:@"pivot"] CGPointValue] animated:NO];
+        [self zoomByFactor:zoomFactorStep near:[[[timer userInfo] objectForKey:@"pivot"] CGPointValue] animated:NO withCallback:nil isIntermediateAnimationStep:YES];
         if ([callback respondsToSelector:@selector(animationStepped)]) {
             [callback animationStepped];
         }

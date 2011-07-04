@@ -55,8 +55,8 @@
 @synthesize enableRotate;
 
 #pragma mark --- begin constants ----
-#define kDefaultDecelerationFactor .88f
-#define kMinDecelerationDelta 0.01f
+#define kDefaultDecelerationFactor .85f
+#define kMinDecelerationDelta 0.03f
 #pragma mark --- end constants ----
 
 - (RMMarkerManager *)markerManager
@@ -245,7 +245,7 @@
             RMLog(@"%d steps from (%f,%f) to final location (%f,%f)", steps, self.contents.mapCenter.longitude, self.contents.mapCenter.latitude, latlong.longitude, latlong.latitude);
 
             dispatch_sync(dispatch_get_main_queue(), ^{
-                [contents moveBy:CGSizeMake(delta.x, delta.y)];
+                [contents moveBy:CGSizeMake(delta.x, delta.y) andCorrectAllSublayers:NO];
             });
         }
 
@@ -275,7 +275,12 @@
 	_constrainMovement = YES;
 }
 
-- (void)moveBy:(CGSize)delta 
+- (void)moveBy:(CGSize)delta
+{
+    [self moveBy:delta isIntermediateAnimationStep:NO];
+}
+
+- (void)moveBy:(CGSize)delta isIntermediateAnimationStep:(BOOL)isIntermediateAnimationStep
 {
 	if (_constrainMovement) 
 	{
@@ -309,7 +314,7 @@
 	}
 
 	if (_delegateHasBeforeMapMove) [delegate beforeMapMove:self];
-	[contents moveBy:delta];
+	[contents moveBy:delta andCorrectAllSublayers:!isIntermediateAnimationStep];
 	if (_delegateHasAfterMapMove) [delegate afterMapMove:self];
 }
  
@@ -391,7 +396,7 @@
 	}
 
 	if (_delegateHasBeforeMapZoomByFactor) [delegate beforeMapZoom:self byFactor:zoomFactor near:center];
-	[contents zoomByFactor:zoomFactor near:center animated:animated withCallback:(animated && (_delegateHasAfterMapZoomByFactor || _delegateHasMapViewRegionDidChange)) ? self : nil];
+	[contents zoomByFactor:zoomFactor near:center animated:animated withCallback:(animated && (_delegateHasAfterMapZoomByFactor || _delegateHasMapViewRegionDidChange)) ? self : nil isIntermediateAnimationStep:!animated];
 
 	if (!animated) {
 		if (_delegateHasAfterMapZoomByFactor) [delegate afterMapZoom:self byFactor:zoomFactor near:center];
@@ -740,10 +745,10 @@
 	}
 
 	// avoid calling delegate methods? design call here
-	[self moveBy:_decelerationDelta];
+	[self moveBy:_decelerationDelta isIntermediateAnimationStep:YES];
 
-	_decelerationDelta.width *= [self decelerationFactor];
-	_decelerationDelta.height *= [self decelerationFactor];
+	_decelerationDelta.width *= self.decelerationFactor;
+	_decelerationDelta.height *= self.decelerationFactor;
 }
 
 - (void)stopDeceleration

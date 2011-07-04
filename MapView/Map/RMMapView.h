@@ -186,7 +186,7 @@ typedef struct {
 /// recenter the map on #aPoint, expressed in projected meters
 - (void)moveToProjectedPoint:(RMProjectedPoint)aPoint;
 
-- (void)moveBy:(CGSize)delta;
+- (void)moveBy:(CGSize)delta isIntermediateAnimationStep:(BOOL)isIntermediateAnimationStep;
 
 - (void)setConstraintsSW:(CLLocationCoordinate2D)sw NE:(CLLocationCoordinate2D)ne;
 - (void)setProjectedConstraintsSW:(RMProjectedPoint)sw NE:(RMProjectedPoint)ne;

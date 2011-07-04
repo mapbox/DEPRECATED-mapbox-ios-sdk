@@ -61,6 +61,7 @@
 /// (guess) recompute the screen coordinates for the sublayers (map markers, paths) 
 /// \deprecated name will change after 0.5
 - (void)correctPositionOfAllSublayers;
+- (void)correctPositionOfAllSublayersIncludingInvisibleLayers:(BOOL)correctAllLayers;
 - (BOOL)hasSubLayer:(CALayer *)layer;
 - (void)setRotationOfAllSublayers:(float)angle;
 

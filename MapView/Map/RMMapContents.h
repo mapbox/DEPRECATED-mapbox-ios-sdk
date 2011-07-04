@@ -186,14 +186,15 @@ enum {
 
 - (BOOL)tileSourceBoundsContainProjectedPoint:(RMProjectedPoint) point;
 
+- (void)moveBy:(CGSize)delta;
+- (void)moveBy:(CGSize)delta andCorrectAllSublayers:(BOOL)correctAllSublayers;
 - (void)moveToLatLong:(CLLocationCoordinate2D)latlong;
 
-- (void)moveBy:(CGSize)delta;
 - (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center;
 - (void)zoomInToNextNativeZoomAt:(CGPoint)pivot animated:(BOOL)animated;
 - (void)zoomOutToNextNativeZoomAt:(CGPoint)pivot animated:(BOOL)animated; 
 - (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center animated:(BOOL)animated;
-- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center animated:(BOOL)animated withCallback:(id<RMMapContentsAnimationCallback>)callback;
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)pivot animated:(BOOL)animated withCallback:(id <RMMapContentsAnimationCallback>)callback isIntermediateAnimationStep:(BOOL)isIntermediateAnimationStep;
 
 - (void)zoomInToNextNativeZoomAt:(CGPoint) pivot;
 - (void)zoomOutToNextNativeZoomAt:(CGPoint) pivot; 
@@ -238,17 +239,17 @@ enum {
 @protocol RMMapContentsFacade
 
 @optional
-- (void)moveToLatLong: (CLLocationCoordinate2D)latlong;
-- (void)moveToProjectedPoint: (RMProjectedPoint)aPoint;
+- (void)moveToLatLong:(CLLocationCoordinate2D)latlong;
+- (void)moveToProjectedPoint:(RMProjectedPoint)aPoint;
 
-- (void)moveBy: (CGSize) delta;
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center;
-- (void)zoomInToNextNativeZoomAt:(CGPoint) pivot animated:(BOOL) animated;
-- (void)zoomOutToNextNativeZoomAt:(CGPoint) pivot animated:(BOOL) animated; 
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) center animated:(BOOL) animated;
+- (void)moveBy:(CGSize)delta;
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center;
+- (void)zoomInToNextNativeZoomAt:(CGPoint)pivot animated:(BOOL)animated;
+- (void)zoomOutToNextNativeZoomAt:(CGPoint)pivot animated:(BOOL)animated; 
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center animated:(BOOL)animated;
 
-- (void)zoomInToNextNativeZoomAt:(CGPoint) pivot;
-- (void)zoomOutToNextNativeZoomAt:(CGPoint) pivot; 
+- (void)zoomInToNextNativeZoomAt:(CGPoint)pivot;
+- (void)zoomOutToNextNativeZoomAt:(CGPoint)pivot; 
 - (float)adjustZoomForBoundingMask:(float)zoomFactor;
 
 - (CGPoint)latLongToPixel:(CLLocationCoordinate2D)latlong;
