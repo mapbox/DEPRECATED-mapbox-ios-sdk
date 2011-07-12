@@ -55,8 +55,9 @@
 @synthesize enableRotate;
 
 #pragma mark --- begin constants ----
-#define kDefaultDecelerationFactor .80f
-#define kMinDecelerationDelta 0.8f
+#define kDefaultDecelerationFactor .88f
+#define kMinDecelerationDelta 0.6f
+#define kDecelerationTimerInterval 0.025f
 #pragma mark --- end constants ----
 
 - (RMMarkerManager *)markerManager
@@ -728,7 +729,7 @@
     {
 		_decelerationDelta = delta;
         if ( !_decelerationTimer ) {
-            _decelerationTimer = [NSTimer scheduledTimerWithTimeInterval:0.015f
+            _decelerationTimer = [NSTimer scheduledTimerWithTimeInterval:kDecelerationTimerInterval
                                                                   target:self
                                                                 selector:@selector(incrementDeceleration:) 
                                                                 userInfo:nil 
