@@ -49,6 +49,7 @@
 
     CGMutablePathRef path;
     CGRect pathBoundingBox;
+    BOOL ignorePathUpdates;
 
     /// Width of the line, units unknown; pixels maybe?
     float lineWidth;
@@ -105,6 +106,9 @@
 - (void)addLineToXY:(RMProjectedPoint)point;
 - (void)addLineToScreenPoint:(CGPoint)point;
 - (void)addLineToLatLong:(CLLocationCoordinate2D)point;
+
+// Change the path without recalculating the geometry (performance!)
+- (void)performBatchOperations:(void (^)(RMPath *aPath))block;
 
 /// This closes the path, connecting the last point to the first.
 /// After this action, no further points can be added to the path.

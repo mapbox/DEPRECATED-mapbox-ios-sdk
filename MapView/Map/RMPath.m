@@ -53,6 +53,7 @@
 
     path = CGPathCreateMutable();
     pathBoundingBox = CGRectZero;
+    ignorePathUpdates = NO;
 
     lineWidth = kDefaultLineWidth;
     drawingMode = kCGPathFillStroke;
@@ -104,6 +105,8 @@
 
 - (void)recalculateGeometry
 {
+    if (ignorePathUpdates) return;
+
     RMMercatorToScreenProjection *projection = [mapContents mercatorToScreenProjection];
     float scale = [projection metersPerPixel];
     float scaledLineWidth;
@@ -226,6 +229,14 @@
 {
     RMProjectedPoint mercator = [[mapContents projection] coordinateToProjectedPoint:point];
     [self addLineToXY:mercator];
+}
+
+- (void)performBatchOperations:(void (^)(RMPath *aPath))block
+{
+    ignorePathUpdates = YES;
+    block(self);
+    ignorePathUpdates = NO;
+    [self recalculateGeometry];
 }
 
 - (void)drawInContext:(CGContextRef)theContext
