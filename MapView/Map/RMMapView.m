@@ -55,8 +55,8 @@
 @synthesize enableRotate;
 
 #pragma mark --- begin constants ----
-#define kDefaultDecelerationFactor .85f
-#define kMinDecelerationDelta 0.03f
+#define kDefaultDecelerationFactor .80f
+#define kMinDecelerationDelta 0.8f
 #pragma mark --- end constants ----
 
 - (RMMarkerManager *)markerManager
@@ -724,11 +724,11 @@
 
 - (void)startDecelerationWithDelta:(CGSize)delta
 {
-	if (ABS(delta.width) >= 1.0f && ABS(delta.height) >= 1.0f)
+	if (fabsf(delta.width) >= 1.0f && fabsf(delta.height) >= 1.0f)
     {
 		_decelerationDelta = delta;
         if ( !_decelerationTimer ) {
-            _decelerationTimer = [NSTimer scheduledTimerWithTimeInterval:0.01f 
+            _decelerationTimer = [NSTimer scheduledTimerWithTimeInterval:0.015f
                                                                   target:self
                                                                 selector:@selector(incrementDeceleration:) 
                                                                 userInfo:nil 
@@ -739,7 +739,7 @@
 
 - (void)incrementDeceleration:(NSTimer *)timer
 {
-	if (ABS(_decelerationDelta.width) < kMinDecelerationDelta && ABS(_decelerationDelta.height) < kMinDecelerationDelta) {
+	if (fabsf(_decelerationDelta.width) < kMinDecelerationDelta && fabsf(_decelerationDelta.height) < kMinDecelerationDelta) {
 		[self stopDeceleration];
 		return;
 	}
