@@ -88,11 +88,12 @@
             [cache removeObjectForKey:tileHash];
             return nil;
         }
+
+        [cachedObject touch];
     }
 
 //    RMLog(@"Memory cache hit    tile %d %d %d (%@)", tile.x, tile.y, tile.zoom, [RMTileCache tileHash:tile]);
 
-    [cachedObject touch];
     return [cachedObject cachedObject];
 }
 
@@ -123,7 +124,7 @@
             }
 
             if (oldestImage) {
-                //            RMLog(@"Memory cache delete tile %d %d %d (%@)", oldestImage.tile.x, oldestImage.tile.y, oldestImage.tile.zoom, [RMTileCache tileHash:oldestImage.tile]);
+                // RMLog(@"Memory cache delete tile %d %d %d (%@)", oldestImage.tile.x, oldestImage.tile.y, oldestImage.tile.zoom, [RMTileCache tileHash:oldestImage.tile]);
                 [cache removeObjectForKey:[RMTileCache tileHash:oldestImage.tile]];
             }
         }
