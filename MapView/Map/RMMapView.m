@@ -57,7 +57,7 @@
 #pragma mark --- begin constants ----
 #define kDefaultDecelerationFactor .88f
 #define kMinDecelerationDelta 0.6f
-#define kDecelerationTimerInterval 0.025f
+#define kDecelerationTimerInterval 0.02f
 #pragma mark --- end constants ----
 
 - (RMMarkerManager *)markerManager
