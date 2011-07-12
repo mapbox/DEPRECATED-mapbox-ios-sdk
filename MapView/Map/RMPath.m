@@ -88,8 +88,8 @@
 - (void)dealloc
 {
     mapContents = nil;
-    [self setLineDashLengths:nil];
     CGPathRelease(path); path = NULL;
+    [self setLineDashLengths:nil];
     [lineColor release]; lineColor = nil;
     [fillColor release]; fillColor = nil;
     [super dealloc];
