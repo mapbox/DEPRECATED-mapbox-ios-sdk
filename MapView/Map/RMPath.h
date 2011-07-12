@@ -50,6 +50,7 @@
     CGMutablePathRef path;
     CGRect pathBoundingBox;
     BOOL ignorePathUpdates;
+    CGRect previousBounds;
 
     /// Width of the line, units unknown; pixels maybe?
     float lineWidth;

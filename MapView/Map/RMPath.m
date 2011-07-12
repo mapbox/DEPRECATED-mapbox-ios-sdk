@@ -54,6 +54,7 @@
     path = CGPathCreateMutable();
     pathBoundingBox = CGRectZero;
     ignorePathUpdates = NO;
+    previousBounds = CGRectZero;
 
     lineWidth = kDefaultLineWidth;
     drawingMode = kCGPathFillStroke;
@@ -108,9 +109,10 @@
     if (ignorePathUpdates) return;
 
     RMMercatorToScreenProjection *projection = [mapContents mercatorToScreenProjection];
+    CGPoint myPosition = [projection projectProjectedPoint:projectedLocation];
+
     float scale = [projection metersPerPixel];
     float scaledLineWidth;
-    CGPoint myPosition;
     CGRect pixelBounds, screenBounds;
     float offset;
     const float outset = 100.0f; // provides a buffer off screen edges for when path is scaled or moved
@@ -130,7 +132,6 @@
 
     // Clip bound rect to screen bounds.
     // If bounds are not clipped, they won't display when you zoom in too much.
-    myPosition = [projection projectProjectedPoint:projectedLocation];
     screenBounds = [mapContents screenBounds];
 
     // Clip top
@@ -158,6 +159,8 @@
 
     [super setPosition:myPosition];
     self.bounds = pixelBounds;
+    previousBounds = pixelBounds;
+
 //    RMLog(@"x:%f y:%f screen bounds: %f %f %f %f", myPosition.x, myPosition.y,  screenBounds.origin.x, screenBounds.origin.y, screenBounds.size.width, screenBounds.size.height);
 //    RMLog(@"new bounds: %f %f %f %f", self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
 
@@ -175,7 +178,7 @@
         isFirstPoint = FALSE;
         projectedLocation = point;
 
-        self.position = [[mapContents mercatorToScreenProjection] projectProjectedPoint: projectedLocation];
+        self.position = [[mapContents mercatorToScreenProjection] projectProjectedPoint:projectedLocation];
         // RMLog(@"screen position set to %f %f", self.position.x, self.position.y);
         CGPathMoveToPoint(path, NULL, 0.0f, 0.0f);
     }
@@ -409,6 +412,8 @@
 
 - (void)setPosition:(CGPoint)value
 {
+    if (CGPointEqualToPoint(value, super.position) && CGRectEqualToRect(self.bounds, previousBounds)) return;
+
     [self recalculateGeometry];
 }
 
