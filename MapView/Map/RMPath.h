@@ -48,6 +48,7 @@
     UIColor *fillColor;
 
     CGMutablePathRef path;
+    CGRect pathBoundingBox;
 
     /// Width of the line, units unknown; pixels maybe?
     float lineWidth;
@@ -96,6 +97,7 @@
 @property (assign) BOOL enableRotation;
 @property (readwrite, retain) UIColor *lineColor;
 @property (readwrite, retain) UIColor *fillColor;
+@property (nonatomic, readonly) CGRect pathBoundingBox;
 
 - (void)moveToXY:(RMProjectedPoint)point;
 - (void)moveToScreenPoint:(CGPoint)point;

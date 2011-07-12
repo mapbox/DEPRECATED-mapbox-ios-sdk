@@ -29,6 +29,7 @@
 #import "RMMapContents.h"
 #import "RMMercatorToScreenProjection.h"
 #import "RMMarker.h"
+#import "RMPath.h"
 
 @implementation RMLayerCollection
 
@@ -54,20 +55,18 @@
 
 - (BOOL)isLayer:(CALayer *)layer withinBounds:(CGRect)bounds
 {
-    CGPoint markerPosition = layer.position;
-
-    if (![layer isKindOfClass:[RMMarker class]])
-        return YES;
-
-    if (markerPosition.x > bounds.origin.x
-        && markerPosition.x < bounds.origin.x + bounds.size.width
-        && markerPosition.y > bounds.origin.y
-        && markerPosition.y < bounds.origin.y + bounds.size.height)
+    if ([layer isKindOfClass:[RMMarker class]])
     {
-        return YES;
+        CGPoint markerPosition = layer.position;
+        return CGRectContainsPoint(bounds, markerPosition);
+
+    } else if ([layer isKindOfClass:[RMPath class]])
+    {
+        CGRect pathBoundingBox = ((RMPath *)layer).pathBoundingBox;
+        return CGRectIntersectsRect(bounds, pathBoundingBox);
     }
 
-    return NO;
+    return YES;
 }
 
 - (BOOL)isLayerOnScreen:(CALayer *)layer

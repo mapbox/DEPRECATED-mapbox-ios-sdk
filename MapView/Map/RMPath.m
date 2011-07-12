@@ -40,6 +40,7 @@
 @synthesize enableRotation;
 @synthesize lineDashPhase;
 @synthesize scaleLineDash;
+@synthesize pathBoundingBox;
 
 #define kDefaultLineWidth 2
 
@@ -51,6 +52,7 @@
     mapContents = contents;
 
     path = CGPathCreateMutable();
+    pathBoundingBox = CGRectZero;
 
     lineWidth = kDefaultLineWidth;
     drawingMode = kCGPathFillStroke;
@@ -153,9 +155,10 @@
 
     [super setPosition:myPosition];
     self.bounds = pixelBounds;
-    //RMLog(@"x:%f y:%f screen bounds: %f %f %f %f", myPosition.x, myPosition.y,  screenBounds.origin.x, screenBounds.origin.y, screenBounds.size.width, screenBounds.size.height);
-    //RMLog(@"new bounds: %f %f %f %f", self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
+//    RMLog(@"x:%f y:%f screen bounds: %f %f %f %f", myPosition.x, myPosition.y,  screenBounds.origin.x, screenBounds.origin.y, screenBounds.size.width, screenBounds.size.height);
+//    RMLog(@"new bounds: %f %f %f %f", self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
 
+    pathBoundingBox = CGRectMake(myPosition.x + self.bounds.origin.x, myPosition.y + self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
     self.anchorPoint = CGPointMake(-pixelBounds.origin.x / pixelBounds.size.width,-pixelBounds.origin.y / pixelBounds.size.height);
     [self setNeedsDisplay];
 }
