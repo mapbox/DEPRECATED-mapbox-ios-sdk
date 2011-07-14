@@ -497,6 +497,9 @@
 
 - (void)handleLongPress
 {
+    if (deceleration && _decelerationTimer != nil)
+        return;
+
     if (_delegateHasLongSingleTapOnMap)
         [delegate longSingleTapOnMap:self at:_longPressPosition];
 }
@@ -517,11 +520,8 @@
 	//	RMLog(@"touchesBegan %d", [[event allTouches] count]);
 	lastGesture = [self gestureDetails:[event allTouches]];
 
-	if (deceleration)
-	{
-		if (_decelerationTimer != nil) {
-			[self stopDeceleration];
-		}
+	if (deceleration && _decelerationTimer != nil) {
+        [self stopDeceleration];
 	}
 
     _longPressPosition = lastGesture.center;
@@ -668,7 +668,7 @@
     CGPoint newLongPressPosition = newGesture.center;
     CGFloat dx = newLongPressPosition.x - _longPressPosition.x;
     CGFloat dy = newLongPressPosition.y - _longPressPosition.y;
-    if (sqrt(dx*dx + dy*dy) > 5)
+    if (sqrt(dx*dx + dy*dy) > 5.0)
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(handleLongPress) object:nil];
 
 	CALayer* hit = [contents.overlay hitTest:[touch locationInView:self]];

@@ -165,19 +165,19 @@ typedef struct {
 @property (nonatomic, retain) RMMapContents *contents;
 
 // View properties
-@property (readwrite) BOOL enableDragging;
-@property (readwrite) BOOL enableZoom;
-@property (readwrite) BOOL enableRotate;
+@property (nonatomic, readwrite) BOOL enableDragging;
+@property (nonatomic, readwrite) BOOL enableZoom;
+@property (nonatomic, readwrite) BOOL enableRotate;
 
 @property (nonatomic, retain, readonly) RMMarkerManager *markerManager;
 
 // do not retain the delegate so you can let the corresponding controller implement the
 // delegate without circular references
-@property (assign) id <RMMapViewDelegate> delegate;
-@property (readwrite) float decelerationFactor;
-@property (readwrite) BOOL deceleration;
+@property (nonatomic, assign) id <RMMapViewDelegate> delegate;
+@property (nonatomic, readwrite) float decelerationFactor;
+@property (nonatomic, readwrite) BOOL deceleration;
 
-@property (readonly) CGFloat rotation;
+@property (nonatomic, readonly) CGFloat rotation;
 
 /// recenter the map on #latlong, expressed as CLLocationCoordinate2D (latitude/longitude)
 - (void)moveToLatLong:(CLLocationCoordinate2D)latlong;
