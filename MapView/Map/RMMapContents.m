@@ -76,13 +76,13 @@
 
 #pragma mark Initialisation
 
-- (id)initWithView: (UIView*) view
+- (id)initWithView:(UIView *)view
 {	
 	LogMethod();
 	CLLocationCoordinate2D here;
 	here.latitude = kDefaultInitialLatitude;
 	here.longitude = kDefaultInitialLongitude;
-	
+
 	return [self initWithView:view
 				   tilesource:[[[RMOpenStreetMapSource alloc] init] autorelease]
 				 centerLatLon:here
@@ -92,14 +92,14 @@
 			  backgroundImage:nil];
 }
 
-- (id)initWithView: (UIView*) view
-		tilesource:(id<RMTileSource>)newTilesource
+- (id)initWithView:(UIView *)view
+		tilesource:(id <RMTileSource>)newTilesource
 {	
 	LogMethod();
 	CLLocationCoordinate2D here;
 	here.latitude = kDefaultInitialLatitude;
 	here.longitude = kDefaultInitialLongitude;
-	
+
 	return [self initWithView:view
 				   tilesource:newTilesource
 				 centerLatLon:here
@@ -109,8 +109,8 @@
 			  backgroundImage:nil];
 }
 
-- (id)initWithView:(UIView*)newView
-		tilesource:(id<RMTileSource>)newTilesource
+- (id)initWithView:(UIView *)newView
+		tilesource:(id <RMTileSource>)newTilesource
 	  centerLatLon:(CLLocationCoordinate2D)initialCenter
 		 zoomLevel:(float)initialZoomLevel
 	  maxZoomLevel:(float)maxZoomLevel
@@ -144,7 +144,6 @@
     layer = [[newView layer] retain];
 
     [self setTileCache:[[[RMTileCache alloc] init] autorelease]];
-
     [self setTileSource:newTilesource];
     [self setRenderer: [[[RMCoreAnimationRenderer alloc] initWithContent:self] autorelease]];
 
@@ -222,7 +221,7 @@
 	[self didReceiveMemoryWarning];
 }
 
-- (void) didReceiveMemoryWarning
+- (void)didReceiveMemoryWarning
 {
 	LogMethod();
 	[tileSource didReceiveMemoryWarning];
@@ -231,7 +230,7 @@
 
 #pragma mark Tile Source Bounds 
 
-- (BOOL) projectedBounds:(RMProjectedRect)bounds containsPoint:(RMProjectedPoint)point
+- (BOOL)projectedBounds:(RMProjectedRect)bounds containsPoint:(RMProjectedPoint)point
 {
     if (bounds.origin.easting > point.easting ||
         bounds.origin.easting + bounds.size.width < point.easting ||
@@ -606,23 +605,23 @@
     if (([tileSource minZoom] - minZoom) <= 1.0) {
         RMLog(@"Graphics & memory are overly taxed if [contents minZoom] is more than 1.5 smaller than [tileSource minZoom]");
     }
-    
+
 	[projection release];
 	projection = [[tileSource projection] retain];
 
 	[mercatorToTileProjection release];
 	mercatorToTileProjection = [[tileSource mercatorToTileProjection] retain];
     tileSourceProjectedBounds = (RMProjectedRect)[self projectedRectFromLatLonBounds:[tileSource latitudeLongitudeBoundingBox]];
-        
+
     [imagesOnScreen setTileCache:tileCache];
 	[imagesOnScreen setTileSource:tileSource];
     [imagesOnScreen setCurrentCacheKey:[newTileSource uniqueTilecacheKey]];
-    
+
     [tileLoader reset];
 	[tileLoader reload];
 }
 
-- (id<RMTileSource>)tileSource
+- (id <RMTileSource>)tileSource
 {
 	return [[tileSource retain] autorelease];
 }
@@ -974,7 +973,7 @@
 }
 
 - (RMSphericalTrapezium)latitudeLongitudeBoundingBoxFor:(CGRect)rect
-{	
+{
 	RMSphericalTrapezium boundingBox;
 	CGPoint northwestScreen = rect.origin;
 

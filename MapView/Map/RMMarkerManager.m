@@ -69,7 +69,7 @@
 {
     [marker setAffineTransform:rotationTransform];
     [marker setProjectedLocation:[[mapContents projection] coordinateToProjectedPoint:point]];
-    [marker setPosition:[[mapContents mercatorToScreenProjection] projectProjectedPoint:[[mapContents projection] coordinateToProjectedPoint:point]]];
+    [marker setPosition:[[mapContents mercatorToScreenProjection] projectProjectedPoint:[marker projectedLocation]]];
     [[mapContents overlay] addSublayer:marker];
 }
 

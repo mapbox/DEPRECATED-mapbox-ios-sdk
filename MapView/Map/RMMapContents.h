@@ -145,10 +145,10 @@ enum {
 @property (readonly)  RMTileLoader *tileLoader;
 
 @property (readonly)  RMProjection *projection;
-@property (readonly)  id<RMMercatorToTileProjection> mercatorToTileProjection;
+@property (readonly)  id <RMMercatorToTileProjection> mercatorToTileProjection;
 @property (readonly)  RMMercatorToScreenProjection *mercatorToScreenProjection;
 
-@property (retain, readwrite) id<RMTileSource> tileSource;
+@property (retain, readwrite) id <RMTileSource> tileSource;
 @property (nonatomic, retain) RMTileCache *tileCache;
 @property (retain, readwrite) RMMapRenderer *renderer;
 
@@ -158,21 +158,21 @@ enum {
 @property (retain, readwrite) RMLayerCollection *overlay;
 @property (retain, readonly)  RMMarkerManager *markerManager;
 /// \bug probably shouldn't be retaining this delegate
-@property (nonatomic, retain) id<RMTilesUpdateDelegate> tilesUpdateDelegate;
+@property (nonatomic, retain) id <RMTilesUpdateDelegate> tilesUpdateDelegate;
 @property (readwrite) NSUInteger boundingMask;
 /// The denominator in a cartographic scale like 1/24000, 1/50000, 1/2000000.
-@property (readonly)double scaleDenominator;
+@property (readonly) double scaleDenominator;
 
 // tileDepth defaults to zero. if tiles have no alpha, set this higher, 3 or so, to make zooming smoother
 @property (readwrite, assign) short tileDepth;
-@property (readonly, assign) BOOL fullyLoaded;
+@property (readonly, assign)  BOOL fullyLoaded;
 
-- (id)initWithView: (UIView*) view;
-- (id)initWithView: (UIView*) view
-		tilesource:(id<RMTileSource>)newTilesource;
+- (id)initWithView:(UIView *)view;
+- (id)initWithView:(UIView *)view
+		tilesource:(id <RMTileSource>)newTilesource;
 /// designated initializer
-- (id)initWithView:(UIView*)view
-		tilesource:(id<RMTileSource>)tilesource
+- (id)initWithView:(UIView *)view
+		tilesource:(id <RMTileSource>)tilesource
 	  centerLatLon:(CLLocationCoordinate2D)initialCenter
 		 zoomLevel:(float)initialZoomLevel
 	  maxZoomLevel:(float)maxZoomLevel
@@ -184,7 +184,7 @@ enum {
 - (void)handleMemoryWarningNotification:(NSNotification *)notification;
 - (void)didReceiveMemoryWarning;
 
-- (BOOL)tileSourceBoundsContainProjectedPoint:(RMProjectedPoint) point;
+- (BOOL)tileSourceBoundsContainProjectedPoint:(RMProjectedPoint)point;
 
 - (void)moveBy:(CGSize)delta;
 - (void)moveBy:(CGSize)delta andCorrectAllSublayers:(BOOL)correctAllSublayers;
