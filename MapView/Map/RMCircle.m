@@ -26,9 +26,9 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import "RMCircle.h"
-#import "RMMapContents.h"
 #import "RMProjection.h"
 #import "RMMercatorToScreenProjection.h"
+#import "RMMapView.h"
 
 #define kDefaultLineWidth 10
 #define kDefaultLineColor [UIColor blackColor]
@@ -49,20 +49,19 @@
 @synthesize radiusInMeters;
 @synthesize lineWidthInPixels;
 
-- (id)initWithContents:(RMMapContents *)aContents radiusInMeters:(CGFloat)newRadiusInMeters latLong:(CLLocationCoordinate2D)newLatLong
+- (id)initWithView:(RMMapView *)aMapView radiusInMeters:(CGFloat)newRadiusInMeters coordinate:(CLLocationCoordinate2D)newCoordinate
 {
     if (!(self = [super init]))
         return nil;
 
-    CAShapeLayer *newShapeLayer = [[CAShapeLayer alloc] init];
-    shapeLayer = newShapeLayer;
-    [self addSublayer:newShapeLayer];
+    shapeLayer = [[CAShapeLayer alloc] init];
+    [self addSublayer:shapeLayer];
 
-    mapContents = aContents;
+    mapView = aMapView;
     radiusInMeters = newRadiusInMeters;
-    latLong = newLatLong;
-    projectedLocation = [[mapContents projection] coordinateToProjectedPoint:newLatLong];
-    [self setPosition:[[mapContents mercatorToScreenProjection] projectProjectedPoint:projectedLocation]];
+    coordinate = newCoordinate;
+    projectedLocation = [[mapView projection] coordinateToProjectedPoint:newCoordinate];
+    [self setPosition:[[mapView mercatorToScreenProjection] projectProjectedPoint:projectedLocation]];
 
     lineWidthInPixels = kDefaultLineWidth;
     lineColor = kDefaultLineColor;
@@ -80,7 +79,7 @@
 
 - (void)dealloc
 {
-    mapContents = nil;
+    mapView = nil;
     [shapeLayer release]; shapeLayer = nil;
     CGPathRelease(circlePath); circlePath = NULL;
     [lineColor release]; lineColor = nil;
@@ -96,8 +95,8 @@
 
     CGMutablePathRef newPath = CGPathCreateMutable();
 
-    CGFloat latRadians = latLong.latitude * M_PI / 180.0f;
-    CGFloat pixelRadius = radiusInMeters / cos(latRadians) / [mapContents metersPerPixel];
+    CGFloat latRadians = coordinate.latitude * M_PI / 180.0f;
+    CGFloat pixelRadius = radiusInMeters / cos(latRadians) / [mapView metersPerPixel];
     //	DLog(@"Pixel Radius: %f", pixelRadius);
 
     CGRect rectangle = CGRectMake(self.position.x - pixelRadius,
@@ -115,10 +114,10 @@
     CGPathAddEllipseInRect(newPath, NULL, rectangle);
     circlePath = newPath;
 
-    [[self shapeLayer] setPath:newPath];
-    [[self shapeLayer] setFillColor:[fillColor CGColor]];
-    [[self shapeLayer] setStrokeColor:[lineColor CGColor]];
-    [[self shapeLayer] setLineWidth:lineWidthInPixels];
+    [self.shapeLayer setPath:newPath];
+    [self.shapeLayer setFillColor:[fillColor CGColor]];
+    [self.shapeLayer setStrokeColor:[lineColor CGColor]];
+    [self.shapeLayer setLineWidth:lineWidthInPixels];
 }
 
 #pragma mark Accessors
@@ -126,8 +125,7 @@
 - (void)setProjectedLocation:(RMProjectedPoint)newProjectedLocation
 {
     projectedLocation = newProjectedLocation;
-
-    [self setPosition:[[mapContents mercatorToScreenProjection] projectProjectedPoint:projectedLocation]];
+    [self setPosition:[[mapView mercatorToScreenProjection] projectProjectedPoint:projectedLocation]];
 }
 
 - (void)setLineColor:(UIColor *)newLineColor
@@ -175,11 +173,11 @@
     [self updateCirclePath];
 }
 
-- (void)moveToLatLong:(CLLocationCoordinate2D)newLatLong
+- (void)moveToCoordinate:(CLLocationCoordinate2D)newCoordinate
 {
-    latLong = newLatLong;
-    [self setProjectedLocation:[[mapContents projection] coordinateToProjectedPoint:newLatLong]];
-    [self setPosition:[[mapContents mercatorToScreenProjection] projectProjectedPoint:projectedLocation]];
+    coordinate = newCoordinate;
+    [self setProjectedLocation:[[mapView projection] coordinateToProjectedPoint:newCoordinate]];
+    [self setPosition:[[mapView mercatorToScreenProjection] projectProjectedPoint:projectedLocation]];
 }
 
 @end

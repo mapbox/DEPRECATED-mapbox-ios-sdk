@@ -27,19 +27,18 @@
 
 #import <UIKit/UIKit.h>
 
-#import "RMMapContents.h"
+#import "RMMapView.h"
 #import "RMMarker.h"
 
 @class RMProjection;
 
 @interface RMMarkerManager : NSObject {
-	RMMapContents *mapContents;
-    CGAffineTransform rotationTransform;
+	RMMapView *mapView;
 }
 
-@property (assign, readwrite) RMMapContents *mapContents;
+@property (nonatomic, assign) RMMapView *mapView;
 
-- (id)initWithContents:(RMMapContents *)contents;
+- (id)initWithView:(RMMapView *)aMapView;
 
 - (void)addMarker:(RMMarker *)marker atProjectedPoint:(RMProjectedPoint)projectedPoint;
 - (void)addMarker:(RMMarker *)marker atLatLong:(CLLocationCoordinate2D)point;
@@ -55,6 +54,5 @@
 - (BOOL)managingMarker:(RMMarker *)marker;
 - (void)moveMarker:(RMMarker *)marker atLatLon:(CLLocationCoordinate2D)point;
 - (void)moveMarker:(RMMarker *)marker atXY:(CGPoint)point;
-- (void)setRotation:(float)angle;
 
 @end

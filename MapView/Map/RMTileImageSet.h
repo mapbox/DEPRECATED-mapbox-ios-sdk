@@ -26,11 +26,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import <TargetConditionals.h>
-#if TARGET_OS_IPHONE
-#	import <UIKit/UIKit.h>
-#else
-#	import <Cocoa/Cocoa.h>
-#endif
+#import <UIKit/UIKit.h>
 
 #import "RMTile.h"
 
@@ -45,6 +41,8 @@
 
 @end
 
+#pragma mark -
+
 @interface RMTileImageSet : NSObject {
     id <RMTileImageSetDelegate> delegate;
     id <RMTileSource> tileSource;
@@ -57,13 +55,14 @@
     NSRecursiveLock *imagesLock;
 }
 
-@property (assign, nonatomic, readwrite) id <RMTileImageSetDelegate> delegate;
+@property (nonatomic, assign) id <RMTileImageSetDelegate> delegate;
 
 // tileDepth defaults to zero. if tiles have no alpha, set this higher, 3 or so, to make zooming smoother
-@property (assign, readwrite) short zoom, tileDepth;
-@property (readonly) BOOL fullyLoaded;
+@property (nonatomic, assign) short tileDepth;
+@property (nonatomic, assign) short zoom;
+@property (nonatomic, readonly) BOOL fullyLoaded;
 
-- (id)initWithDelegate:(id)_delegate;
+- (id)initWithDelegate:(id)delegate;
 
 - (void)addTileImage:(RMTileImage *)image at:(CGRect)screenLocation;
 - (void)addTile:(RMTile)tile at:(CGRect)screenLocation;

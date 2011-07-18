@@ -32,7 +32,7 @@
 @interface RMDBMapSource : RMAbstractMercatorTileSource {
 	// tile database
 	FMDatabase* db;
-    
+
     NSString *uniqueTilecacheKey;
 
 	// coverage area

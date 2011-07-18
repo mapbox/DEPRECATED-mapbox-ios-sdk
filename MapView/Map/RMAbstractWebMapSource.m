@@ -114,7 +114,7 @@
     [connection cancel]; [connection release]; connection = nil;
     connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
     if (!connection) {
-        [tileImage updateWithImage:[RMTileImage errorTile] andNotify:NO];
+        [tileImage updateWithImage:[RMTileImage errorTile] andNotifyListeners:NO];
         [self finish];
     }
 }
@@ -131,7 +131,7 @@
 	}
     else if (statusCode == 404) { // Not Found
         if (!tileImage.loadingCancelled)
-            [tileImage updateWithImage:[RMTileImage missingTile] andNotify:NO];
+            [tileImage updateWithImage:[RMTileImage missingTile] andNotifyListeners:NO];
 
         [self finish];
 	}
@@ -171,7 +171,7 @@
         }
 
         UIImage *image = [UIImage imageWithData:data];
-        [tileImage updateWithImage:image andNotify:YES];
+        [tileImage updateWithImage:image andNotifyListeners:YES];
         if (tileCache) [tileCache addImage:image forTile:tileImage.tile withCacheKey:cacheKey];
         [self finish];
 	}

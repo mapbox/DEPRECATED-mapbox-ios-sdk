@@ -28,6 +28,7 @@
 #import "RMGlobalConstants.h"
 #import "RMTileLoader.h"
 
+#import "RMMapView.h"
 #import "RMTileImage.h"
 #import "RMTileSource.h"
 #import "RMPixel.h"
@@ -43,18 +44,18 @@
 
 - (id)init
 {
-    if (!(self = [self initWithContent:nil]))
+    if (!(self = [self initWithView:nil]))
         return nil;
 
     return self;
 }
 
-- (id)initWithContent:(RMMapContents *)contents
+- (id)initWithView:(RMMapView *)aMapView
 {
     if (!(self = [super init]))
         return nil;
 
-    mapContents = contents;
+    mapView = aMapView;
 
     [self clearLoadedBounds];
     loadedTiles.origin.tile = RMTileDummy();
@@ -67,18 +68,18 @@
 - (void)clearLoadedBounds
 {
     loadedBounds = CGRectZero;
-    [[mapContents imagesOnScreen] resetTiles];
+    [[mapView imagesOnScreen] resetTiles];
 }
 
-- (BOOL)screenIsLoaded
+- (BOOL)isScreenLoaded
 {
     //	RMTileRect targetRect = [content tileBounds];
-    BOOL contained = CGRectContainsRect(loadedBounds, [mapContents screenBounds]);
+    BOOL contained = CGRectContainsRect(loadedBounds, [mapView screenBounds]);
 
-    NSUInteger targetZoom = (NSUInteger)([[mapContents mercatorToTileProjection] calculateNormalisedZoomFromScale:[mapContents scaledMetersPerPixel]]);
-    if ((targetZoom > mapContents.maxZoom) || (targetZoom < mapContents.minZoom))
+    NSUInteger targetZoom = (NSUInteger)([[mapView mercatorToTileProjection] calculateNormalisedZoomFromScale:[mapView scaledMetersPerPixel]]);
+    if ((targetZoom > mapView.maxZoom) || (targetZoom < mapView.minZoom))
     {
-        RMLog(@"target zoom %d is outside of RMMapContents limits %f to %f", targetZoom, mapContents.minZoom, mapContents.maxZoom);
+        RMLog(@"target zoom %d is outside of RMMapContents limits %f to %f", targetZoom, mapView.minZoom, mapView.maxZoom);
     }
 
 //    if (contained == NO)
@@ -99,18 +100,18 @@
     if (suppressLoading)
         return;
 
-    if ([mapContents mercatorToTileProjection] == nil || [mapContents mercatorToScreenProjection] == nil)
+    if ([mapView mercatorToTileProjection] == nil || [mapView mercatorToScreenProjection] == nil)
         return;
 
-    if ([self screenIsLoaded])
+    if ([self isScreenLoaded])
         return;
 
-    RMTileRect newTileRect = [mapContents tileBounds];
+    RMTileRect newTileRect = [mapView tileBounds];
 
-    RMTileImageSet *images = [mapContents imagesOnScreen];
+    RMTileImageSet *images = [mapView imagesOnScreen];
     images.zoom = newTileRect.origin.tile.zoom;
 
-    CGRect newLoadedBounds = [images loadTiles:newTileRect toDisplayIn:[mapContents screenBounds]];
+    CGRect newLoadedBounds = [images loadTiles:newTileRect toDisplayIn:[mapView screenBounds]];
 
     if (!RMTileIsDummy(loadedTiles.origin.tile))
     {
@@ -120,8 +121,6 @@
     loadedBounds = newLoadedBounds;
     loadedZoom = newTileRect.origin.tile.zoom;
     loadedTiles = newTileRect;
-
-    [mapContents tilesUpdatedRegion:newLoadedBounds];
 }
 
 - (void)moveBy:(CGSize)delta

@@ -25,20 +25,24 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+#import <QuartzCore/QuartzCore.h>
+
 #import "RMGlobalConstants.h"
 #import "RMCoreAnimationRenderer.h"
-#import <QuartzCore/QuartzCore.h>
 #import "RMTile.h"
 #import "RMTileLoader.h"
 #import "RMPixel.h"
 #import "RMTileImage.h"
+#import "RMMapView.h"
 
 @implementation RMCoreAnimationRenderer
 
-- (id)initWithContent:(RMMapContents *)_contents
+- (id)initWithView:(RMMapView *)aMapView
 {
-	if (!(self = [super initWithContent:_contents]))
+	if (!(self = [super init]))
 		return nil;
+
+	mapView = aMapView;
 
 	// NOTE: RMMapContents may still be initialising when this function
 	//       is called. Be careful using any of the methods - they might return
@@ -49,7 +53,7 @@
 	layer.masksToBounds = YES;
 
 	// If the frame is set incorrectly here, it will be fixed when setRenderer is called in RMMapContents
-	layer.frame = [content screenBounds];
+	layer.frame = [mapView screenBounds];
 
 	NSMutableDictionary *customActions = [NSMutableDictionary dictionaryWithDictionary:[layer actions]];
 	[customActions setObject:[NSNull null] forKey:@"sublayers"];
@@ -68,11 +72,6 @@
 	[super dealloc];
 }
 
-/// \bug this is a no-op
-- (void)mapImageLoaded:(NSNotification *)notification
-{
-}
-
 - (void)tileImageAdded:(RMTileImage *)image
 {
 //	RMLog(@"tileAdded: %d %d %d at %f %f %f %f", tile.x, tile.y, tile.zoom, image.screenLocation.origin.x, image.screenLocation.origin.y,
@@ -80,8 +79,7 @@
 	
 //	RMLog(@"tileAdded");
 
-    @synchronized(tiles) {
-
+    @synchronized (tiles) {
         RMTile tile = image.tile;
         NSUInteger min = 0, max = [tiles count];
         CALayer *sublayer = [image layer];
@@ -103,14 +101,12 @@
 
         [tiles insertObject:image atIndex:min];
         [layer insertSublayer:sublayer atIndex:min];
-
     }
 }
 
 - (void)tileImageRemoved:(RMTileImage *)tileImage
 {
-    @synchronized(tiles) {
-
+    @synchronized (tiles) {
         RMTileImage *image = nil;
         RMTile tile = tileImage.tile;
 
@@ -133,9 +129,15 @@
     }
 }
 
+- (CGRect)frame
+{
+    return layer.frame;
+}
+
+// \bug ??? frame is always set to the screen bounds?
 - (void)setFrame:(CGRect)frame
 {
-	layer.frame = [content screenBounds];
+	layer.frame = [mapView screenBounds];
 }
 
 - (CALayer *)layer

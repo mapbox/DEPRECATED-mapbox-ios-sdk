@@ -52,20 +52,20 @@
     BOOL enableRotation;
 }
 
-@property (assign, nonatomic) RMProjectedPoint projectedLocation;
-@property (assign) BOOL enableDragging;
-@property (assign) BOOL enableRotation;
+@property (nonatomic, assign) RMProjectedPoint projectedLocation;
+@property (nonatomic, assign) BOOL enableDragging;
+@property (nonatomic, assign) BOOL enableRotation;
 
-@property (nonatomic, retain) id        data;
-@property (nonatomic, retain) UIView   *label;
-@property (nonatomic, retain) UIColor  *textForegroundColor;
-@property (nonatomic, retain) UIColor  *textBackgroundColor;
+@property (nonatomic, retain) id       data;
+@property (nonatomic, retain) UIView  *label;
+@property (nonatomic, retain) UIColor *textForegroundColor;
+@property (nonatomic, retain) UIColor *textBackgroundColor;
 
 /// the font used for labels when another font is not explicitly requested; currently [UIFont systemFontOfSize:15]
 + (UIFont *)defaultFont;
 
 /// returns RMMarker initialized with #image, and the default anchor point (0.5, 0.5)
-- (id)initWithUIImage:(UIImage*) image;
+- (id)initWithUIImage:(UIImage *)image;
 
 /// \brief returns RMMarker initialized with provided image and anchorPoint. 
 /// #anchorPoint x and y range from 0 to 1, normalized to the width and height of image, 

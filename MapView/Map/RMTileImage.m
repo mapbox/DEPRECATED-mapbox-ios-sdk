@@ -126,11 +126,10 @@ static UIImage *_missingTile = nil;
 - (void)cancelLoading
 {
     loadingCancelled = YES;
-    [[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadingCancelledNotification
-                                                        object:self];
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadingCancelledNotification object:self];
 }
 
-- (void)updateWithImage:(UIImage *)image andNotify:(BOOL)notifyListeners
+- (void)updateWithImage:(UIImage *)image andNotifyListeners:(BOOL)notifyListeners
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         layer.contents = (id)[image CGImage];

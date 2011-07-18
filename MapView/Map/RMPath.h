@@ -30,7 +30,6 @@
 #import "RMFoundation.h"
 #import "RMMapLayer.h"
 
-@class RMMapContents;
 @class RMMapView;
 
 /*! \brief buggy, incomplete, untested; overlays paths/polygons on map
@@ -80,33 +79,33 @@
     BOOL enableRotation;
 
     float renderedScale;
-    RMMapContents *mapContents;
+    RMMapView *mapView;
 }
 
-- (id)initWithContents:(RMMapContents *)contents;
-- (id)initForMap:(RMMapView *)map;
+- (id)initWithView:(RMMapView *)aMapView;
 
-@property CGPathDrawingMode drawingMode;
-@property CGLineCap lineCap;
-@property CGLineJoin lineJoin;
-@property (nonatomic, readwrite, assign) NSArray *lineDashLengths;
-@property CGFloat lineDashPhase;
-@property BOOL scaleLineDash;
-@property float lineWidth;
-@property BOOL	scaleLineWidth;
+@property (nonatomic, assign) CGPathDrawingMode drawingMode;
+@property (nonatomic, assign) CGLineCap lineCap;
+@property (nonatomic, assign) CGLineJoin lineJoin;
+@property (nonatomic, assign) NSArray *lineDashLengths;
+@property (nonatomic, assign) CGFloat lineDashPhase;
+@property (nonatomic, assign) BOOL scaleLineDash;
+@property (nonatomic, assign) float lineWidth;
+@property (nonatomic, assign) BOOL	scaleLineWidth;
 @property (nonatomic, assign) RMProjectedPoint projectedLocation;
-@property (assign) BOOL enableDragging;
-@property (assign) BOOL enableRotation;
-@property (readwrite, retain) UIColor *lineColor;
-@property (readwrite, retain) UIColor *fillColor;
+@property (nonatomic, assign) BOOL enableDragging;
+@property (nonatomic, assign) BOOL enableRotation;
+@property (nonatomic, retain) UIColor *lineColor;
+@property (nonatomic, retain) UIColor *fillColor;
 @property (nonatomic, readonly) CGRect pathBoundingBox;
 
-- (void)moveToXY:(RMProjectedPoint)point;
+- (void)moveToProjectedPoint:(RMProjectedPoint)projectedPoint;
 - (void)moveToScreenPoint:(CGPoint)point;
-- (void)moveToLatLong:(CLLocationCoordinate2D)point;
-- (void)addLineToXY:(RMProjectedPoint)point;
+- (void)moveToCoordinate:(CLLocationCoordinate2D)coordinate;
+
+- (void)addLineToProjectedPoint:(RMProjectedPoint)projectedPoint;
 - (void)addLineToScreenPoint:(CGPoint)point;
-- (void)addLineToLatLong:(CLLocationCoordinate2D)point;
+- (void)addLineToCoordinate:(CLLocationCoordinate2D)coordinate;
 
 // Change the path without recalculating the geometry (performance!)
 - (void)performBatchOperations:(void (^)(RMPath *aPath))block;

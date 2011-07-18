@@ -26,12 +26,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import <TargetConditionals.h>
-#if TARGET_OS_IPHONE
-	#import <UIKit/UIKit.h>
-#else
-	#import <Cocoa/Cocoa.h>
-    typedef NSImage UIImage;
-#endif
+#import <UIKit/UIKit.h>
 
 #import "RMFoundation.h"
 #import "RMNotifications.h"
@@ -49,10 +44,10 @@
     BOOL loadingCancelled;
 }
 
-@property (readwrite, assign) CGRect screenLocation;
-@property (readonly, assign) RMTile tile;
-@property (readonly) CALayer *layer;
-@property (readonly) BOOL loadingCancelled;
+@property (nonatomic, assign) CGRect screenLocation;
+@property (nonatomic, readonly) RMTile tile;
+@property (nonatomic, readonly) CALayer *layer;
+@property (nonatomic, readonly) BOOL loadingCancelled;
 
 + (UIImage *)errorTile;
 + (UIImage *)missingTile;
@@ -67,7 +62,7 @@
 - (BOOL)isLoaded;
 - (void)cancelLoading;
 
-- (void)updateWithImage:(UIImage *)image andNotify:(BOOL)notifyListeners;
+- (void)updateWithImage:(UIImage *)image andNotifyListeners:(BOOL)notifyListeners;
 
 - (void)makeLayer;
 

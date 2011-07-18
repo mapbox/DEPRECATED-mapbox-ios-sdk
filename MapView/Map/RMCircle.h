@@ -29,14 +29,14 @@
 #import "RMFoundation.h"
 #import "RMMapLayer.h"
 
-@class RMMapContents;
+@class RMMapView;
 
 @interface RMCircle : RMMapLayer <RMMovingMapLayer> {
 @private
-	RMMapContents *mapContents;
+	RMMapView *mapView;
 	CAShapeLayer *shapeLayer;
-	
-	CLLocationCoordinate2D latLong;
+
+	CLLocationCoordinate2D coordinate;
 	RMProjectedPoint projectedLocation;
 	BOOL enableDragging;
 	BOOL enableRotation;
@@ -52,14 +52,15 @@
 
 @property (nonatomic, retain) CAShapeLayer *shapeLayer;
 @property (nonatomic, assign) RMProjectedPoint projectedLocation;
-@property (assign) BOOL enableDragging;
-@property (assign) BOOL enableRotation;
+@property (nonatomic, assign) BOOL enableDragging;
+@property (nonatomic, assign) BOOL enableRotation;
 @property (nonatomic, retain) UIColor *lineColor;
 @property (nonatomic, retain) UIColor *fillColor;
 @property (nonatomic, assign) CGFloat radiusInMeters;
 @property (nonatomic, assign) CGFloat lineWidthInPixels;
 
-- (id)initWithContents:(RMMapContents *)aContents radiusInMeters:(CGFloat)newRadiusInMeters latLong:(CLLocationCoordinate2D)newLatLong;
-- (void)moveToLatLong:(CLLocationCoordinate2D)newLatLong;
+- (id)initWithView:(RMMapView *)aMapView radiusInMeters:(CGFloat)newRadiusInMeters coordinate:(CLLocationCoordinate2D)coordinate;
+
+- (void)moveToCoordinate:(CLLocationCoordinate2D)coordinate;
 
 @end

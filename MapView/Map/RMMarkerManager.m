@@ -32,22 +32,21 @@
 
 @implementation RMMarkerManager
 
-@synthesize mapContents;
+@synthesize mapView;
 
-- (id)initWithContents:(RMMapContents *)contents
+- (id)initWithView:(RMMapView *)aMapView;
 {
     if (!(self = [super init]))
         return nil;
 
-    mapContents = contents;
-    rotationTransform = CGAffineTransformIdentity;
+    mapView = aMapView;
 
     return self;
 }
 
 - (void)dealloc
 {
-    mapContents = nil;
+    mapView = nil;
     [super dealloc];
 }
 
@@ -58,19 +57,17 @@
 /// place the (new created) marker onto the map at projected point and take ownership of it
 - (void)addMarker:(RMMarker *)marker atProjectedPoint:(RMProjectedPoint)projectedPoint
 {
-    [marker setAffineTransform:rotationTransform];
     [marker setProjectedLocation:projectedPoint];
-    [marker setPosition:[[mapContents mercatorToScreenProjection] projectProjectedPoint:projectedPoint]];
-    [[mapContents overlay] addSublayer:marker];
+    [marker setPosition:[[mapView mercatorToScreenProjection] projectProjectedPoint:projectedPoint]];
+    [[mapView overlay] addSublayer:marker];
 }
 
 /// place the (newly created) marker onto the map and take ownership of it
 - (void)addMarker:(RMMarker *)marker atLatLong:(CLLocationCoordinate2D)point
 {
-    [marker setAffineTransform:rotationTransform];
-    [marker setProjectedLocation:[[mapContents projection] coordinateToProjectedPoint:point]];
-    [marker setPosition:[[mapContents mercatorToScreenProjection] projectProjectedPoint:[marker projectedLocation]]];
-    [[mapContents overlay] addSublayer:marker];
+    [marker setProjectedLocation:[[mapView projection] coordinateToProjectedPoint:point]];
+    [marker setPosition:[[mapView mercatorToScreenProjection] projectProjectedPoint:[marker projectedLocation]]];
+    [[mapView overlay] addSublayer:marker];
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -79,33 +76,33 @@
 
 - (NSArray *)markers
 {
-    return [[mapContents overlay] sublayers];
+    return [[mapView overlay] sublayers];
 }
 
 - (void)removeMarker:(RMMarker *)marker
 {
-    [[mapContents overlay] removeSublayer:marker];
+    [[mapView overlay] removeSublayer:marker];
 }
 
 - (void)removeMarkers:(NSArray *)markers
 {
-    [[mapContents overlay] removeSublayers:markers];
+    [[mapView overlay] removeSublayers:markers];
 }
 
 - (CGPoint)screenCoordinatesForMarker:(RMMarker *)marker
 {
-    return [[mapContents mercatorToScreenProjection] projectProjectedPoint:[marker projectedLocation]];
+    return [[mapView mercatorToScreenProjection] projectProjectedPoint:[marker projectedLocation]];
 }
 
 - (CLLocationCoordinate2D)latitudeLongitudeForMarker:(RMMarker *)marker
 {
-    return [mapContents pixelToLatLong:[self screenCoordinatesForMarker:marker]];
+    return [mapView pixelToCoordinate:[self screenCoordinatesForMarker:marker]];
 }
 
 - (NSArray *)markersWithinScreenBounds
 {
     NSMutableArray *markersInScreenBounds = [NSMutableArray array];
-    CGRect rect = [[mapContents mercatorToScreenProjection] screenBounds];
+    CGRect rect = [[mapView mercatorToScreenProjection] screenBounds];
 
     for (RMMarker *marker in [self markers]) {
         if ([self isMarker:marker withinBounds:rect]) {
@@ -118,7 +115,7 @@
 
 - (BOOL)isMarkerWithinScreenBounds:(RMMarker *)marker
 {
-    return [self isMarker:marker withinBounds:[[mapContents mercatorToScreenProjection] screenBounds]];
+    return [self isMarker:marker withinBounds:[[mapView mercatorToScreenProjection] screenBounds]];
 }
 
 /// \deprecated violates Objective-C naming rules
@@ -151,24 +148,14 @@
 
 - (void)moveMarker:(RMMarker *)marker atLatLon:(CLLocationCoordinate2D)point
 {
-    [marker setProjectedLocation:[[mapContents projection]coordinateToProjectedPoint:point]];
-    [marker setPosition:[[mapContents mercatorToScreenProjection] projectProjectedPoint:[[mapContents projection] coordinateToProjectedPoint:point]]];
+    [marker setProjectedLocation:[[mapView projection]coordinateToProjectedPoint:point]];
+    [marker setPosition:[[mapView mercatorToScreenProjection] projectProjectedPoint:[[mapView projection] coordinateToProjectedPoint:point]]];
 }
 
 - (void)moveMarker:(RMMarker *)marker atXY:(CGPoint)point
 {
-    [marker setProjectedLocation:[[mapContents mercatorToScreenProjection] projectScreenPointToProjectedPoint:point]];
+    [marker setProjectedLocation:[[mapView mercatorToScreenProjection] projectScreenPointToProjectedPoint:point]];
     [marker setPosition:point];
-}
-
-- (void)setRotation:(float)angle
-{
-    rotationTransform = CGAffineTransformMakeRotation(angle); // store rotation transform for subsequent markers
-
-    for (RMMarker *marker in [self markers])
-    {
-        [marker setAffineTransform:rotationTransform];
-    }
 }
 
 @end

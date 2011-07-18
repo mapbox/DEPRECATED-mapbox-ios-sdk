@@ -221,15 +221,15 @@
 {
 	[[mapView contents] setZoom: 10];
 	CLLocationCoordinate2D coord = {45.5,-121};
-	[mapView moveToLatLong:coord];
+	[mapView moveToCoordinate:coord];
 	
-	CGPoint point1 = [mapView latLongToPixel:coord];
-	
-	coord.longitude -= .125;
-	CGPoint point2 = [mapView latLongToPixel:coord];
+	CGPoint point1 = [mapView coordinateToPixel:coord];
 	
 	coord.longitude -= .125;
-	CGPoint point3 = [mapView latLongToPixel:coord];
+	CGPoint point2 = [mapView coordinateToPixel:coord];
+	
+	coord.longitude -= .125;
+	CGPoint point3 = [mapView coordinateToPixel:coord];
 	
 	STAssertEqualsWithAccuracy(point1.y, point2.y, kAccuracyThresholdForPixelCoordinates,
 							   @"Y pixel values should be equal");
@@ -245,15 +245,15 @@
 {
 	[[mapView contents] setZoom: 10];
 	CLLocationCoordinate2D coord = {45.5,179.9};
-	[mapView moveToLatLong:coord];
+	[mapView moveToCoordinate:coord];
 	
-	CGPoint point1 = [mapView latLongToPixel:coord];
-	
-	coord.longitude += .125;
-	CGPoint point2 = [mapView latLongToPixel:coord];
+	CGPoint point1 = [mapView coordinateToPixel:coord];
 	
 	coord.longitude += .125;
-	CGPoint point3 = [mapView latLongToPixel:coord];
+	CGPoint point2 = [mapView coordinateToPixel:coord];
+	
+	coord.longitude += .125;
+	CGPoint point3 = [mapView coordinateToPixel:coord];
 	
 	STAssertEqualsWithAccuracy(point1.y, point2.y, kAccuracyThresholdForPixelCoordinates,
 							   @"Y pixel values should be equal");
@@ -269,15 +269,15 @@
 {
 	[[mapView contents] setZoom: 10];
 	CLLocationCoordinate2D coord = {45.5,-179.9};
-	[mapView moveToLatLong:coord];
+	[mapView moveToCoordinate:coord];
 	
-	CGPoint point1 = [mapView latLongToPixel:coord];
-	
-	coord.longitude -= .125;
-	CGPoint point2 = [mapView latLongToPixel:coord];
+	CGPoint point1 = [mapView coordinateToPixel:coord];
 	
 	coord.longitude -= .125;
-	CGPoint point3 = [mapView latLongToPixel:coord];
+	CGPoint point2 = [mapView coordinateToPixel:coord];
+	
+	coord.longitude -= .125;
+	CGPoint point3 = [mapView coordinateToPixel:coord];
 	
 	STAssertEqualsWithAccuracy(point1.y, point2.y, kAccuracyThresholdForPixelCoordinates,
 							   @"Y pixel values should be equal");

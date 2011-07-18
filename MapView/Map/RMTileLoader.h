@@ -26,18 +26,16 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import <Foundation/Foundation.h>
+
 #import "RMTile.h"
-#import "RMTileImageSet.h"
-#import "RMMapContents.h"
 
 @class RMTileImage;
 @class RMTileImageSet;
 @class RMMercatorToScreenProjection;
-
-@protocol RMTileSource;
+@class RMMapView;
 
 @interface RMTileLoader : NSObject {
-    RMMapContents *mapContents;
+    RMMapView *mapView;
 
     CGRect loadedBounds;
     NSUInteger loadedZoom;
@@ -46,12 +44,12 @@
     BOOL suppressLoading;
 }
 
-@property (readonly, nonatomic) CGRect loadedBounds;
-@property (readonly, nonatomic) NSUInteger loadedZoom;
-@property (readwrite, assign) BOOL suppressLoading;
+@property (nonatomic, readonly) CGRect loadedBounds;
+@property (nonatomic, readonly) NSUInteger loadedZoom;
+@property (nonatomic, assign) BOOL suppressLoading;
 
 /// Designated initialiser
-- (id)initWithContent:(RMMapContents *)contents;
+- (id)initWithView:(RMMapView *)aMapView;
 
 - (void)updateLoadedImages;
 

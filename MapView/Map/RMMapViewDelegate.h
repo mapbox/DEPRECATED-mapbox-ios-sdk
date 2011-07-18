@@ -25,8 +25,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import <UIKit/UIKit.h>
-
 @class RMMapView;
 @class RMMarker;
 
@@ -49,9 +47,6 @@
  Therefore, your implementation of this method should be as lightweight as possible to avoid affecting scrolling and zooming performance.
  */
 - (void)mapViewRegionDidChange:(RMMapView *)mapView;
-
-- (void)beforeMapRotate:(RMMapView *)map fromAngle:(CGFloat)angle;
-- (void)afterMapRotate:(RMMapView *)map toAngle:(CGFloat)angle;
 
 - (void)doubleTapOnMap:(RMMapView *)map at:(CGPoint)point;
 - (void)doubleTapTwoFingersOnMap:(RMMapView *)map at:(CGPoint)point;

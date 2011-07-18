@@ -30,7 +30,7 @@
 #import "RMMapLayer.h"
 
 @class RMMapRenderer;
-@class RMMapContents;
+@class RMMapView;
 
 /*! Appears to be some sort of interface between RMMapContents and markers.
  
@@ -46,11 +46,10 @@
     NSMutableArray *sublayers;
 
     /// Backpointer to map; we need this reference so we can access the projections...
-    RMMapContents *mapContents;
-    CGAffineTransform rotationTransform;
+    RMMapView *mapView;
 }
 
-- (id)initForContents:(RMMapContents *)contents;
+- (id)initWithView:(RMMapView *)aMapView;
 
 - (void)moveToProjectedPoint:(RMProjectedPoint)aPoint;
 - (void)moveBy:(CGSize)delta;
@@ -63,6 +62,5 @@
 - (void)correctPositionOfAllSublayers;
 - (void)correctPositionOfAllSublayersIncludingInvisibleLayers:(BOOL)correctAllLayers;
 - (BOOL)hasSubLayer:(CALayer *)layer;
-- (void)setRotationOfAllSublayers:(float)angle;
 
 @end

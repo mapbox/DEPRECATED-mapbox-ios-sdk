@@ -25,23 +25,22 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+#import "RMMapView.h"
 #import "RMLayerCollection.h"
-#import "RMMapContents.h"
 #import "RMMercatorToScreenProjection.h"
 #import "RMMarker.h"
 #import "RMPath.h"
 
 @implementation RMLayerCollection
 
-- (id)initForContents:(RMMapContents *)contents
+- (id)initWithView:(RMMapView *)aMapView
 {
     if (!(self = [super init]))
         return nil;
 
     sublayers = [[NSMutableArray alloc] init];
-    mapContents = contents;
+    mapView = aMapView;
     self.masksToBounds = YES;
-    rotationTransform = CGAffineTransformIdentity;
 
     return self;
 }
@@ -49,7 +48,7 @@
 - (void)dealloc
 {
     [sublayers release]; sublayers = nil;
-    mapContents = nil;
+    mapView = nil;
     [super dealloc];
 }
 
@@ -71,7 +70,7 @@
 
 - (BOOL)isLayerOnScreen:(CALayer *)layer
 {
-    CGRect screenBounds = [[mapContents mercatorToScreenProjection] screenBounds];
+    CGRect screenBounds = [[mapView mercatorToScreenProjection] screenBounds];
     return [self isLayer:layer withinBounds:screenBounds];
 }
 
@@ -83,11 +82,8 @@
         if (((CALayer <RMMovingMapLayer> *)layer).enableDragging)
         {
             RMProjectedPoint location = [((CALayer <RMMovingMapLayer> *)layer) projectedLocation];
-            CGPoint markerPosition = [[mapContents mercatorToScreenProjection] projectProjectedPoint:location];
+            CGPoint markerPosition = [[mapView mercatorToScreenProjection] projectProjectedPoint:location];
             layer.position = markerPosition;
-        }
-        if (!((CALayer <RMMovingMapLayer> *)layer).enableRotation) {
-            [((CALayer <RMMovingMapLayer> *)layer) setAffineTransform:rotationTransform];
         }
     }
 }
@@ -206,7 +202,7 @@
 - (void)correctPositionOfAllSublayersIncludingInvisibleLayers:(BOOL)correctAllLayers
 {
     @synchronized(sublayers) {
-        CGRect screenBounds = [[mapContents mercatorToScreenProjection] screenBounds];
+        CGRect screenBounds = [[mapView mercatorToScreenProjection] screenBounds];
         CALayer *lastLayer = nil;
 
         if (correctAllLayers) {
@@ -240,21 +236,6 @@
 - (BOOL)hasSubLayer:(CALayer *)layer
 {
     return [sublayers containsObject:layer];
-}
-
-- (void)setRotationOfAllSublayers:(float)angle
-{
-    rotationTransform = CGAffineTransformMakeRotation(angle); // store rotation transform for subsequent layers
-
-    @synchronized(sublayers) {
-        for (id layer in sublayers)
-        {
-            CALayer <RMMovingMapLayer> *mapLayer = (CALayer <RMMovingMapLayer> *)layer;
-            if (!mapLayer.enableRotation) {
-                [mapLayer setAffineTransform:rotationTransform];
-            }
-        }
-    }
 }
 
 @end

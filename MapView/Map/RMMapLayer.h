@@ -43,8 +43,8 @@
 
 @protocol RMMovingMapLayer <NSObject>
 
-@property (assign, nonatomic) RMProjectedPoint projectedLocation;
-@property (assign) BOOL enableDragging;
-@property (assign) BOOL enableRotation;
+@property (nonatomic, assign) RMProjectedPoint projectedLocation;
+@property (nonatomic, assign) BOOL enableDragging;
+@property (nonatomic, assign) BOOL enableRotation;
 
 @end
