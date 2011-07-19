@@ -32,7 +32,7 @@
 @class RMMapRenderer;
 @class RMMapView;
 
-@interface RMLayerCollection : RMMapLayer
+@interface RMMarkerLayer : RMMapLayer
 {
     /// The actual collection of all sublayers, including those offscreen.
     /// It is ordered back to front.

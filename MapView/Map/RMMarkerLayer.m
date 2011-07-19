@@ -26,12 +26,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import "RMMapView.h"
-#import "RMLayerCollection.h"
+#import "RMMarkerLayer.h"
 #import "RMMercatorToScreenProjection.h"
 #import "RMMarker.h"
 #import "RMPath.h"
 
-@implementation RMLayerCollection
+@implementation RMMarkerLayer
 
 - (id)initWithView:(RMMapView *)aMapView
 {

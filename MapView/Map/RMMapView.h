@@ -119,7 +119,7 @@ enum {
 @class RMTileLoader;
 @class RMCoreAnimationRenderer;
 @class RMMapLayer;
-@class RMLayerCollection;
+@class RMMarkerLayer;
 @class RMMarker;
 @protocol RMMercatorToTileProjection;
 @protocol RMTileSource;
@@ -142,7 +142,7 @@ enum {
     RMMercatorToScreenProjection *mercatorToScreenProjection;
 
     RMMarkerManager *markerManager;
-    RMLayerCollection *overlay; /// subview for markers and paths
+    RMMarkerLayer *overlay; /// subview for markers and paths
     RMCoreAnimationRenderer *renderer;
     RMTileImageSet *imagesOnScreen;
     RMTileLoader *tileLoader;
@@ -212,7 +212,7 @@ enum {
 @property (nonatomic, assign) float maxZoom;
 
 @property (nonatomic, readonly) RMMarkerManager *markerManager;
-@property (nonatomic, readonly) RMLayerCollection *overlay;
+@property (nonatomic, readonly) RMMarkerLayer *overlay;
 
 @property (nonatomic, readonly) RMTileImageSet *imagesOnScreen;
 @property (nonatomic, readonly) RMTileLoader *tileLoader;

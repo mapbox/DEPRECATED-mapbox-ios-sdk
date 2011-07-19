@@ -35,7 +35,7 @@
 #import "RMFoundation.h"
 #import "RMProjection.h"
 #import "RMMarkerManager.h"
-#import "RMLayerCollection.h"
+#import "RMMarkerLayer.h"
 #import "RMMarker.h"
 
 #import "RMMercatorToScreenProjection.h"
@@ -74,7 +74,7 @@
 
 @interface RMMapView (PrivateMethods)
 
-@property (nonatomic, retain) RMLayerCollection *overlay;
+@property (nonatomic, retain) RMMarkerLayer *overlay;
 
 // methods for post-touch deceleration
 - (void)startDecelerationWithDelta:(CGSize)delta;
@@ -199,7 +199,7 @@
 
     /// \bug TODO: Make a nice background class
     [self setBackground:[[[CALayer alloc] init] autorelease]];
-    [self setOverlay:[[[RMLayerCollection alloc] initWithView:self] autorelease]];
+    [self setOverlay:[[[RMMarkerLayer alloc] initWithView:self] autorelease]];
     markerManager = [[RMMarkerManager alloc] initWithView:self];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -1040,7 +1040,7 @@
     return [[background retain] autorelease];
 }
 
-- (void)setOverlay:(RMLayerCollection *)aLayer
+- (void)setOverlay:(RMMarkerLayer *)aLayer
 {
     if (overlay == aLayer)
         return;
@@ -1064,7 +1064,7 @@
         [self.layer insertSublayer:[renderer layer] atIndex:0];
 }
 
-- (RMLayerCollection *)overlay
+- (RMMarkerLayer *)overlay
 {
     return [[overlay retain] autorelease];
 }
