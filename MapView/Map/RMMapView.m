@@ -1560,7 +1560,7 @@
         }
     }
 
-    if (enableDragging && newGesture.numTouches == lastGesture.numTouches)
+    if (newGesture.numTouches == lastGesture.numTouches)
     {
         CGSize delta;
         delta.width = newGesture.center.x - lastGesture.center.x;
@@ -1576,7 +1576,7 @@
             [self moveBy:delta];
             [self zoomByFactor:zoomFactor near:newGesture.center];
         }
-        else
+        else if (enableDragging)
         {
             [self moveBy:delta];
         }
