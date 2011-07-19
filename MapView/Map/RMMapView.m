@@ -27,6 +27,7 @@
 
 #import "RMMapView.h"
 #import "RMMapViewDelegate.h"
+#import "RMPixel.h"
 
 #import "RMTileLoader.h"
 
@@ -34,9 +35,9 @@
 #import "RMMarker.h"
 #import "RMFoundation.h"
 #import "RMProjection.h"
-#import "RMMarkerManager.h"
-#import "RMMarkerLayer.h"
 #import "RMMarker.h"
+#import "RMPath.h"
+#import "RMAnnotation.h"
 
 #import "RMMercatorToScreenProjection.h"
 #import "RMMercatorToTileProjection.h"
@@ -74,7 +75,7 @@
 
 @interface RMMapView (PrivateMethods)
 
-@property (nonatomic, retain) RMMarkerLayer *overlay;
+@property (nonatomic, retain) RMMapLayer *overlay;
 
 // methods for post-touch deceleration
 - (void)startDecelerationWithDelta:(CGSize)delta;
@@ -83,6 +84,9 @@
 
 - (void)animationFinishedWithZoomFactor:(float)zoomFactor near:(CGPoint)p;
 - (void)animationStepped;
+
+- (void)correctPositionOfAllAnnotations;
+- (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllLayers;
 
 @end
 
@@ -107,23 +111,6 @@
 
 #pragma mark -
 #pragma mark Initialization
-
-- (void)performInitialSetup
-{
-	LogMethod();
-
-	enableDragging = YES;
-	enableZoom = YES;
-	decelerationFactor = kDefaultDecelerationFactor;
-	deceleration = NO;
-
-	if (enableZoom)
-		[self setMultipleTouchEnabled:TRUE];
-
-	self.backgroundColor = [UIColor grayColor];
-
-	_constrainMovement = NO;
-}
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -159,7 +146,17 @@
     if (!(self = [super initWithFrame:frame]))
         return nil;
 
-    [self performInitialSetup];
+    enableDragging = YES;
+    enableZoom = YES;
+    decelerationFactor = kDefaultDecelerationFactor;
+    deceleration = NO;
+
+    if (enableZoom)
+        [self setMultipleTouchEnabled:TRUE];
+
+    self.backgroundColor = [UIColor grayColor];
+
+	_constrainMovement = NO;
 
     tileSource = nil;
     projection = nil;
@@ -199,8 +196,10 @@
 
     /// \bug TODO: Make a nice background class
     [self setBackground:[[[CALayer alloc] init] autorelease]];
-    [self setOverlay:[[[RMMarkerLayer alloc] initWithView:self] autorelease]];
-    markerManager = [[RMMarkerManager alloc] initWithView:self];
+    [self setOverlay:[[[RMMapLayer alloc] init] autorelease]];
+
+    annotations = [NSMutableArray new];
+    visibleAnnotations = [NSMutableSet new];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleMemoryWarningNotification:)
@@ -224,7 +223,7 @@
         overlay.frame = bounds;
         [tileLoader clearLoadedBounds];
         [tileLoader updateLoadedImages];
-        [overlay correctPositionOfAllSublayers];
+        [self correctPositionOfAllAnnotations];
     }
 }
 
@@ -245,7 +244,8 @@
     [tileSource release]; tileSource = nil;
     [self setOverlay:nil];
     [self setBackground:nil];
-    [markerManager release]; markerManager = nil;
+    [annotations release]; annotations = nil;
+    [visibleAnnotations release]; visibleAnnotations = nil;
     [super dealloc];
 }
 
@@ -296,13 +296,13 @@
     _delegateHasSingleTapOnMap = [delegate respondsToSelector:@selector(singleTapOnMap:at:)];
     _delegateHasLongSingleTapOnMap = [delegate respondsToSelector:@selector(longSingleTapOnMap:at:)];
 
-    _delegateHasTapOnMarker = [delegate respondsToSelector:@selector(tapOnMarker:onMap:)];
-    _delegateHasTapOnLabelForMarker = [delegate respondsToSelector:@selector(tapOnLabelForMarker:onMap:)];
+    _delegateHasTapOnMarker = [delegate respondsToSelector:@selector(tapOnAnnotation:onMap:)];
+    _delegateHasTapOnLabelForMarker = [delegate respondsToSelector:@selector(tapOnLabelForAnnotation:onMap:)];
 
     _delegateHasAfterMapTouch  = [delegate respondsToSelector:@selector(afterMapTouch:)];
 
-    _delegateHasShouldDragMarker = [delegate respondsToSelector:@selector(mapView:shouldDragMarker:withEvent:)];
-    _delegateHasDidDragMarker = [delegate respondsToSelector:@selector(mapView:didDragMarker:withEvent:)];
+    _delegateHasShouldDragMarker = [delegate respondsToSelector:@selector(mapView:shouldDragAnnotation:withEvent:)];
+    _delegateHasDidDragMarker = [delegate respondsToSelector:@selector(mapView:didDragAnnotation:withEvent:)];
 }
 
 - (id <RMMapViewDelegate>)delegate
@@ -410,7 +410,7 @@
     if (_delegateHasMapViewRegionDidChange) [delegate mapViewRegionDidChange:self];
 }
 
-- (void)moveBy:(CGSize)delta andCorrectAllSublayers:(BOOL)correctAllSublayers
+- (void)moveBy:(CGSize)delta andCorrectAllAnnotations:(BOOL)correctAllSublayers
 {
     RMProjectedPoint projectedCenter = [mercatorToScreenProjection projectedCenter];
     RMProjectedSize XYDelta = [mercatorToScreenProjection projectScreenSizeToProjectedSize:delta];
@@ -423,8 +423,7 @@
 	[mercatorToScreenProjection moveScreenBy:delta];
 	[imagesOnScreen moveBy:delta];
 	[tileLoader moveBy:delta];
-	[overlay moveBy:delta];
-	[overlay correctPositionOfAllSublayersIncludingInvisibleLayers:correctAllSublayers];
+	[self correctPositionOfAllAnnotationsIncludingInvisibles:correctAllSublayers];
 }
 
 - (void)moveToCoordinate:(CLLocationCoordinate2D)coordinate animated:(BOOL)animated
@@ -451,7 +450,7 @@
             RMLog(@"%d steps from (%f,%f) to final location (%f,%f)", steps, self.mapCenterCoordinate.longitude, self.mapCenterCoordinate.latitude, coordinate.longitude, coordinate.latitude);
 
             dispatch_sync(dispatch_get_main_queue(), ^{
-                [self moveBy:CGSizeMake(delta.x, delta.y) andCorrectAllSublayers:NO];
+                [self moveBy:CGSizeMake(delta.x, delta.y) andCorrectAllAnnotations:NO];
             });
         }
 
@@ -511,7 +510,7 @@
     }
 
     if (_delegateHasBeforeMapMove) [delegate beforeMapMove:self];
-    [self moveBy:delta andCorrectAllSublayers:!isAnimationStep];
+    [self moveBy:delta andCorrectAllAnnotations:!isAnimationStep];
     if (_delegateHasAfterMapMove) [delegate afterMapMove:self];
 }
 
@@ -615,8 +614,7 @@
         [mercatorToScreenProjection zoomScreenByFactor:zoomFactor near:pivot];
         [imagesOnScreen zoomByFactor:zoomFactor near:pivot];
         [tileLoader zoomByFactor:zoomFactor near:pivot];
-        [overlay zoomByFactor:zoomFactor near:pivot];
-        [overlay correctPositionOfAllSublayers];
+        [self correctPositionOfAllAnnotations];
     }
 }
 
@@ -672,8 +670,7 @@
             [mercatorToScreenProjection zoomScreenByFactor:zoomFactor near:pivot];
             [imagesOnScreen zoomByFactor:zoomFactor near:pivot];
             [tileLoader zoomByFactor:zoomFactor near:pivot];
-            [overlay zoomByFactor:zoomFactor near:pivot];
-            [overlay correctPositionOfAllSublayersIncludingInvisibleLayers:!isAnimationStep];
+            [self correctPositionOfAllAnnotationsIncludingInvisibles:!isAnimationStep];
         }
     }
     else
@@ -718,7 +715,7 @@
         if ([callback respondsToSelector:@selector(animationFinishedWithZoomFactor:near:)])
             [callback animationFinishedWithZoomFactor:[[userInfo objectForKey:@"factor"] floatValue] near:[[userInfo objectForKey:@"pivot"] CGPointValue]];
 
-        [overlay correctPositionOfAllSublayersIncludingInvisibleLayers:YES];
+        [self correctPositionOfAllAnnotationsIncludingInvisibles:YES];
     }
     else
     {
@@ -921,7 +918,7 @@
         [self zoomWithProjectedBounds:zoomRect];
     }
 
-    [self moveBy:CGSizeZero andCorrectAllSublayers:YES];
+    [self moveBy:CGSizeZero andCorrectAllAnnotations:YES];
 }
 
 - (void)zoomWithProjectedBounds:(RMProjectedRect)bounds
@@ -929,7 +926,7 @@
     [self setProjectedBounds:bounds];
     [tileLoader clearLoadedBounds];
     [tileLoader updateLoadedImages];
-    [overlay correctPositionOfAllSublayers];
+    [self correctPositionOfAllAnnotations];
 }
 
 #pragma mark -
@@ -1040,7 +1037,7 @@
     return [[background retain] autorelease];
 }
 
-- (void)setOverlay:(RMMarkerLayer *)aLayer
+- (void)setOverlay:(RMMapLayer *)aLayer
 {
     if (overlay == aLayer)
         return;
@@ -1055,6 +1052,7 @@
         return;
 
     overlay.frame = [self screenBounds];
+    overlay.masksToBounds = YES;
 
     if ([renderer layer] != nil)
         [self.layer insertSublayer:overlay above:[renderer layer]];
@@ -1064,7 +1062,7 @@
         [self.layer insertSublayer:[renderer layer] atIndex:0];
 }
 
-- (RMMarkerLayer *)overlay
+- (RMMapLayer *)overlay
 {
     return [[overlay retain] autorelease];
 }
@@ -1090,7 +1088,7 @@
         return;
 
     [mercatorToScreenProjection setProjectedCenter:projectedPoint];
-    [overlay correctPositionOfAllSublayers];
+    [self correctPositionOfAllAnnotations];
     [tileLoader reload];
     [overlay setNeedsDisplay];
 }
@@ -1131,8 +1129,7 @@
     [mercatorToScreenProjection setMetersPerPixel:newMPP];
     [imagesOnScreen zoomByFactor:zoomFactor near:pivot];
     [tileLoader zoomByFactor:zoomFactor near:pivot];
-    [overlay zoomByFactor:zoomFactor near:pivot];
-    [overlay correctPositionOfAllSublayers];
+    [self correctPositionOfAllAnnotations];
 }
 
 - (float)scaledMetersPerPixel
@@ -1298,6 +1295,134 @@
     return imagesOnScreen.fullyLoaded;
 }
 
+#pragma mark -
+#pragma mark Annotations
+
+- (void)correctScreenPosition:(RMAnnotation *)annotation
+{
+    annotation.position = [[self mercatorToScreenProjection] projectProjectedPoint:[annotation projectedLocation]];
+}
+
+- (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllAnnotations
+{
+    CGRect screenBounds = [[self mercatorToScreenProjection] screenBounds];
+    CALayer *lastLayer = nil;
+
+    @synchronized (annotations)
+    {
+        if (correctAllAnnotations)
+        {
+            for (RMAnnotation *annotation in annotations)
+            {
+                [self correctScreenPosition:annotation];
+                if ([annotation isAnnotationWithinBounds:screenBounds]) {
+                    if (annotation.layer == nil)
+                        annotation.layer = [delegate mapView:self layerForAnnotation:annotation];
+                    if (annotation.layer == nil)
+                        continue;
+
+                    if (![visibleAnnotations containsObject:annotation]) {
+                        if (!lastLayer)
+                            [overlay insertSublayer:annotation.layer atIndex:0];
+                        else
+                            [overlay insertSublayer:annotation.layer above:lastLayer];
+
+                        [visibleAnnotations addObject:annotation];
+                    }
+                } else {
+                    annotation.layer = nil;
+                    [visibleAnnotations removeObject:annotation];
+                }
+                lastLayer = annotation.layer;
+            }
+            RMLog(@"%d annotations on screen, %d total", [[overlay sublayers] count], [annotations count]);
+        } else {
+            for (RMAnnotation *annotation in visibleAnnotations)
+            {
+                [self correctScreenPosition:annotation];
+            }
+            RMLog(@"%d annotations corrected", [visibleAnnotations count]);
+        }
+    }
+}
+
+- (void)correctPositionOfAllAnnotations
+{
+    [self correctPositionOfAllAnnotationsIncludingInvisibles:YES];
+}
+
+- (NSArray *)annotations
+{
+    return annotations;
+}
+
+- (void)addAnnotation:(RMAnnotation *)annotation
+{
+    @synchronized (annotations) {
+        [annotations addObject:annotation];
+    }
+    [self correctScreenPosition:annotation];
+
+    if ([annotation isAnnotationOnScreen]) {
+        annotation.layer = [delegate mapView:self layerForAnnotation:annotation];
+        if (annotation.layer) {
+            [overlay addSublayer:annotation.layer];
+            [visibleAnnotations addObject:annotation];
+        }
+    }
+}
+
+- (void)addAnnotations:(NSArray *)newAnnotations
+{
+    @synchronized (annotations) {
+        for (RMAnnotation *annotation in newAnnotations)
+        {
+            [annotations addObject:annotation];
+        }
+    }
+    [self correctPositionOfAllAnnotationsIncludingInvisibles:YES];
+}
+
+- (void)removeAnnotation:(RMAnnotation *)annotation
+{
+    @synchronized (annotations) {
+        [annotations removeObject:annotation];
+        [visibleAnnotations removeObject:annotation];
+    }
+
+    // Remove the layer from the screen
+    annotation.layer = nil;
+}
+
+- (void)removeAnnotations:(NSArray *)newAnnotations
+{
+    for (RMAnnotation *annotation in newAnnotations)
+    {
+        [self removeAnnotation:annotation];
+    }
+}
+
+- (void)removeAllAnnotations
+{
+    @synchronized (annotations) {
+        for (RMAnnotation *annotation in annotations)
+        {
+            // Remove the layer from the screen
+            annotation.layer = nil;
+        }
+    }
+
+    [annotations removeAllObjects];
+    [visibleAnnotations removeAllObjects];
+}
+
+- (CGPoint)screenCoordinatesForAnnotation:(RMAnnotation *)annotation
+{
+    [self correctScreenPosition:annotation];
+    return annotation.position;
+}
+
+#pragma mark -
 #pragma mark Event handling
 
 - (RMGestureDetails)gestureDetails:(NSSet *)touches
@@ -1496,17 +1621,17 @@
                 CALayer *superlayer = [hit superlayer];
 
                 // See if tap was on a marker or marker label and send delegate protocol method
-                if ([hit isKindOfClass: [RMMarker class]]) {
+                if ([hit isKindOfClass:[RMMarker class]]) {
                     if (_delegateHasTapOnMarker) {
-                        [delegate tapOnMarker:(RMMarker *)hit onMap:self];
+                        [delegate tapOnAnnotation:((RMMarker *)hit).annotation onMap:self];
                     }
                 } else if (superlayer != nil && [superlayer isKindOfClass: [RMMarker class]]) {
                     if (_delegateHasTapOnLabelForMarker) {
-                        [delegate tapOnLabelForMarker:(RMMarker *)superlayer onMap:self];
+                        [delegate tapOnLabelForAnnotation:((RMMarker *)superlayer).annotation onMap:self];
                     }
                 } else if ([superlayer superlayer] != nil && [[superlayer superlayer] isKindOfClass:[RMMarker class]]) {
                     if (_delegateHasTapOnLabelForMarker) {
-                        [delegate tapOnLabelForMarker:(RMMarker *)[superlayer superlayer] onMap:self];
+                        [delegate tapOnLabelForAnnotation:((RMMarker *)[superlayer superlayer]).annotation onMap:self];
                     }
                 } else if (_delegateHasSingleTapOnMap) {
                     [delegate singleTapOnMap:self at:[touch locationInView:self]];
@@ -1551,9 +1676,10 @@
     if (hit != nil)
     {   
         if ([hit isKindOfClass: [RMMarker class]]) {
-            if (!_delegateHasShouldDragMarker || (_delegateHasShouldDragMarker && [delegate mapView:self shouldDragMarker:(RMMarker *)hit withEvent:event])) {
+            if (!_delegateHasShouldDragMarker || (_delegateHasShouldDragMarker && [delegate mapView:self shouldDragAnnotation:((RMMarker *)hit).annotation withEvent:event]))
+            {
                 if (_delegateHasDidDragMarker) {
-                    [delegate mapView:self didDragMarker:(RMMarker *)hit withEvent:event];
+                    [delegate mapView:self didDragAnnotation:((RMMarker *)hit).annotation withEvent:event];
                     return;
                 }
             }

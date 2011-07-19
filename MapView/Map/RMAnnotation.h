@@ -26,25 +26,54 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import <Foundation/Foundation.h>
+#import "RMFoundation.h"
+
+@class RMMapView, RMMapLayer;
 
 @interface RMAnnotation : NSObject
 {
-    // a type name for the annotation
-    NSString *annotationType;
-
     CLLocationCoordinate2D coordinate;
     NSString *title;
 
+    CGPoint position;
+    RMProjectedPoint projectedLocation;
+    RMProjectedRect  projectedBoundingBox;
+    BOOL hasBoundingBox;
+
+    RMMapLayer *layer;
+
     // provided for storage of arbitrary user data
     id userInfo;
+    NSString *annotationType;
+    UIImage  *annotationIcon;
+    CGPoint   anchorPoint;
 }
 
-@property (nonatomic, retain) NSString *annotationType;
 @property (nonatomic, assign) CLLocationCoordinate2D coordinate;
 @property (nonatomic, retain) NSString *title;
 @property (nonatomic, retain) id userInfo;
+@property (nonatomic, retain) NSString *annotationType;
+@property (nonatomic, retain) UIImage *annotationIcon;
+@property (nonatomic, assign) CGPoint anchorPoint;
 
-- (id)initForAnnotationType:(NSString *)anAnnotationType atCoordinate:(CLLocationCoordinate2D)aCoordinate andTitle:(NSString *)aTitle;
+// the location on screen. don't set this directly, use the coordinate property.
+@property (nonatomic, assign) CGPoint position;
+@property (nonatomic, assign) RMProjectedPoint projectedLocation; // in projected meters
+@property (nonatomic, assign) RMProjectedRect  projectedBoundingBox;
+@property (nonatomic, assign) BOOL hasBoundingBox;
+
+// RMMarker, RMPath, whatever you return in your delegate method mapView:layerForAnnotation:
+@property (nonatomic, retain) RMMapLayer *layer;
+
++ (id)annotationWithMapView:(RMMapView *)aMapView coordinate:(CLLocationCoordinate2D)aCoordinate andTitle:(NSString *)aTitle;
+- (id)initWithMapView:(RMMapView *)aMapView coordinate:(CLLocationCoordinate2D)aCoordinate andTitle:(NSString *)aTitle;
+
+- (void)setBoundingBoxCoordinatesSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast;
+
+- (BOOL)isAnnotationOnScreen;
+- (BOOL)isAnnotationWithinBounds:(CGRect)bounds;
+
+// Used internally
+@property (nonatomic, assign) RMMapView *mapView;
 
 @end

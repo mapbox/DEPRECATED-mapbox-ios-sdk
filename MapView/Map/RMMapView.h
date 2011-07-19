@@ -95,6 +95,7 @@ svn checkout http://route-me.googlecode.com/svn/trunk/ route-me-read-only
 #import "RMFoundation.h"
 #import "RMMapViewDelegate.h"
 #import "RMTile.h"
+#import "RMProjection.h"
 
 // iPhone-specific mapview stuff. Handles event handling, whatnot.
 typedef struct {
@@ -121,6 +122,7 @@ enum {
 @class RMMapLayer;
 @class RMMarkerLayer;
 @class RMMarker;
+@class RMAnnotation;
 @protocol RMMercatorToTileProjection;
 @protocol RMTileSource;
 
@@ -141,11 +143,13 @@ enum {
     id <RMMercatorToTileProjection> mercatorToTileProjection;
     RMMercatorToScreenProjection *mercatorToScreenProjection;
 
-    RMMarkerManager *markerManager;
-    RMMarkerLayer *overlay; /// subview for markers and paths
+    RMMapLayer *overlay; /// subview for markers and paths
     RMCoreAnimationRenderer *renderer;
     RMTileImageSet *imagesOnScreen;
     RMTileLoader *tileLoader;
+
+    NSMutableArray *annotations;
+    NSMutableSet   *visibleAnnotations;
 
     id <RMTileSource> tileSource;
     RMTileCache *tileCache; // Generic tile cache
@@ -191,31 +195,33 @@ enum {
 @property (nonatomic, assign) id <RMMapViewDelegate> delegate;
 
 // View properties
-@property (nonatomic, assign) BOOL enableDragging;
-@property (nonatomic, assign) BOOL enableZoom;
-@property (nonatomic, assign) BOOL deceleration;
-@property (nonatomic, assign) float decelerationFactor;
+@property (nonatomic, assign)   BOOL enableDragging;
+@property (nonatomic, assign)   BOOL enableZoom;
+@property (nonatomic, assign)   BOOL deceleration;
+@property (nonatomic, assign)   float decelerationFactor;
 @property (nonatomic, readonly) RMGestureDetails lastGesture;
 
-@property (nonatomic, assign) CLLocationCoordinate2D mapCenterCoordinate;
-@property (nonatomic, assign) RMProjectedPoint mapCenterProjectedPoint;
-@property (nonatomic, assign) RMProjectedRect projectedBounds;
+@property (nonatomic, assign)   CLLocationCoordinate2D mapCenterCoordinate;
+@property (nonatomic, assign)   RMProjectedPoint mapCenterProjectedPoint;
+@property (nonatomic, assign)   RMProjectedRect projectedBounds;
 @property (nonatomic, readonly) RMTileRect tileBounds;
 @property (nonatomic, readonly) CGRect screenBounds;
-@property (nonatomic, assign) float metersPerPixel;
+@property (nonatomic, assign)   float metersPerPixel;
 @property (nonatomic, readonly) float scaledMetersPerPixel;
 @property (nonatomic, readonly) double scaleDenominator; /// The denominator in a cartographic scale like 1/24000, 1/50000, 1/2000000.
 @property (nonatomic, readonly) float screenScale;
+@property (nonatomic, assign)   NSUInteger boundingMask;
 
 @property (nonatomic, assign) float zoom; /// zoom level is clamped to range (minZoom, maxZoom)
 @property (nonatomic, assign) float minZoom;
 @property (nonatomic, assign) float maxZoom;
 
 @property (nonatomic, readonly) RMMarkerManager *markerManager;
-@property (nonatomic, readonly) RMMarkerLayer *overlay;
+@property (nonatomic, readonly) RMMapLayer *overlay;
 
 @property (nonatomic, readonly) RMTileImageSet *imagesOnScreen;
 @property (nonatomic, readonly) RMTileLoader *tileLoader;
+@property (nonatomic, retain)   RMCoreAnimationRenderer *renderer;
 
 @property (nonatomic, readonly) RMProjection *projection;
 @property (nonatomic, readonly) id <RMMercatorToTileProjection> mercatorToTileProjection;
@@ -223,14 +229,12 @@ enum {
 
 @property (nonatomic, retain) id <RMTileSource> tileSource;
 @property (nonatomic, retain) RMTileCache *tileCache;
-@property (nonatomic, retain) RMCoreAnimationRenderer *renderer;
 
 @property (nonatomic, retain) CALayer *background;
 
-@property (nonatomic, assign) NSUInteger boundingMask;
-
 // tileDepth defaults to zero. if tiles have no alpha, set this higher, 3 or so, to make zooming smoother
 @property (nonatomic, assign) short tileDepth;
+
 @property (nonatomic, readonly) BOOL fullyLoaded;
 
 #pragma mark -
@@ -298,6 +302,20 @@ enum {
 
 - (BOOL)projectedBounds:(RMProjectedRect)bounds containsPoint:(RMProjectedPoint)point;
 - (BOOL)tileSourceBoundsContainProjectedPoint:(RMProjectedPoint)point;
+
+#pragma mark -
+#pragma mark Annotations
+
+- (NSArray *)annotations;
+
+- (void)addAnnotation:(RMAnnotation *)annotation;
+- (void)addAnnotations:(NSArray *)annotations;
+
+- (void)removeAnnotation:(RMAnnotation *)annotation;
+- (void)removeAnnotations:(NSArray *)annotations;
+- (void)removeAllAnnotations;
+
+- (CGPoint)screenCoordinatesForAnnotation:(RMAnnotation *)annotation;
 
 #pragma mark -
 #pragma mark Cache

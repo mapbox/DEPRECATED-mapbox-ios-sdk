@@ -34,12 +34,9 @@
 
 /*! \brief buggy, incomplete, untested; overlays paths/polygons on map
  */
-@interface RMPath : RMMapLayer <RMMovingMapLayer>
+@interface RMPath : RMMapLayer
 {
     BOOL isFirstPoint;
-
-    /// This is the first point.
-    RMProjectedPoint projectedLocation;
 
     /// The color of the line, or the outline if a polygon
     UIColor *lineColor;
@@ -66,7 +63,7 @@
     CGLineCap lineCap;
     CGLineJoin lineJoin;
 
-    //Line dash style
+    // Line dash style
     CGFloat *_lineDashLengths;
     CGFloat *_scaledLineDashLengths;
     size_t _lineDashCount;
@@ -74,9 +71,6 @@
 
     BOOL scaleLineWidth;
     BOOL scaleLineDash; // if YES line dashes will be scaled to keep a constant size if the layer is zoomed
-
-    BOOL enableDragging;
-    BOOL enableRotation;
 
     float renderedScale;
     RMMapView *mapView;
@@ -92,9 +86,6 @@
 @property (nonatomic, assign) BOOL scaleLineDash;
 @property (nonatomic, assign) float lineWidth;
 @property (nonatomic, assign) BOOL	scaleLineWidth;
-@property (nonatomic, assign) RMProjectedPoint projectedLocation;
-@property (nonatomic, assign) BOOL enableDragging;
-@property (nonatomic, assign) BOOL enableRotation;
 @property (nonatomic, retain) UIColor *lineColor;
 @property (nonatomic, retain) UIColor *fillColor;
 @property (nonatomic, readonly) CGRect pathBoundingBox;

@@ -28,47 +28,115 @@
 
 #import "RMAnnotation.h"
 #import "RMMapView.h"
+#import "RMMapLayer.h"
 #import "RMMercatorToScreenProjection.h"
-
-@interface RMAnnotation ()
-
-@property (nonatomic, assign) RMMapView *mapView;
-
-/// expressed in projected meters. The anchorPoint of the image is plotted here.
-@property (nonatomic, assign) CGPoint position;
-
-@end
-
-#pragma mark -
 
 @implementation RMAnnotation
 
-@synthesize annotationType;
 @synthesize coordinate;
 @synthesize title;
 @synthesize userInfo;
+@synthesize annotationType;
+@synthesize annotationIcon;
+@synthesize anchorPoint;
 
 @synthesize mapView;
+@synthesize projectedLocation;
+@synthesize projectedBoundingBox;
+@synthesize hasBoundingBox;
 @synthesize position;
+@synthesize layer;
 
-- (id)initForAnnotationType:(NSString *)anAnnotationType atCoordinate:(CLLocationCoordinate2D)aCoordinate andTitle:(NSString *)aTitle
++ (id)annotationWithMapView:(RMMapView *)aMapView coordinate:(CLLocationCoordinate2D)aCoordinate andTitle:(NSString *)aTitle
+{
+    return [[[self alloc] initWithMapView:aMapView coordinate:aCoordinate andTitle:aTitle] autorelease];
+}
+
+- (id)initWithMapView:(RMMapView *)aMapView coordinate:(CLLocationCoordinate2D)aCoordinate andTitle:(NSString *)aTitle
 {
     if (!(self = [super init]))
         return nil;
 
-    self.annotationType = annotationType;
-    self.coordinate     = aCoordinate;
-    self.title          = aTitle;
-    self.userInfo       = nil;
+    self.mapView    = aMapView;
+    self.coordinate = aCoordinate;
+    self.title      = aTitle;
+    self.userInfo   = nil;
+    self.layer      = nil;
+
+    self.annotationType = nil;
+    self.annotationIcon = nil;
+    self.anchorPoint    = CGPointZero;
+    self.hasBoundingBox = NO;
 
     return self;
+}
+
+- (void)dealloc
+{
+    self.title    = nil;
+    self.userInfo = nil;
+    self.mapView  = nil;
+    self.layer    = nil;
+    self.annotationType = nil;
+    self.annotationIcon = nil;
+
+    [super dealloc];
 }
 
 - (void)setCoordinate:(CLLocationCoordinate2D)aCoordinate
 {
     coordinate = aCoordinate;
+    self.projectedLocation = [[mapView projection] coordinateToProjectedPoint:aCoordinate];
+    self.position = [[mapView mercatorToScreenProjection] projectProjectedPoint:self.projectedLocation];
+}
 
-    // Callback
+- (void)setBoundingBoxCoordinatesSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast
+{
+    RMProjectedPoint first = [[mapView projection] coordinateToProjectedPoint:southWest];
+    RMProjectedPoint second = [[mapView projection] coordinateToProjectedPoint:northEast];
+    self.projectedBoundingBox = RMMakeProjectedRect(first.easting, first.northing, second.easting - first.easting, second.northing - first.northing);
+    self.hasBoundingBox = YES;
+}
+
+- (void)setMapView:(RMMapView *)aMapView
+{
+    mapView = aMapView;
+    if (!aMapView) {
+        self.layer = nil;
+    }
+}
+
+- (void)setPosition:(CGPoint)aPosition
+{
+    position = aPosition;
+    if (layer) {
+        layer.position = aPosition;
+    }
+}
+
+- (void)setLayer:(RMMapLayer *)aLayer
+{
+    if (layer == aLayer) return;
+    [layer removeFromSuperlayer]; [layer release];
+    layer = [aLayer retain];
+    layer.position = self.position;
+    layer.annotation = self;
+}
+
+- (BOOL)isAnnotationWithinBounds:(CGRect)bounds
+{
+    if (self.hasBoundingBox) {
+        RMProjectedRect projectedScreenBounds = [[mapView mercatorToScreenProjection] projectedBounds];
+        return RMProjectedRectInterectsProjectedRect(projectedScreenBounds, projectedBoundingBox);
+    } else {
+        return CGRectContainsPoint(bounds, self.position);
+    }
+}
+
+- (BOOL)isAnnotationOnScreen
+{
+    CGRect screenBounds = [[mapView mercatorToScreenProjection] screenBounds];
+    return [self isAnnotationWithinBounds:screenBounds];
 }
 
 @end

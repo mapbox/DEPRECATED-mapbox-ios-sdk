@@ -34,9 +34,6 @@
 @implementation RMPath
 
 @synthesize scaleLineWidth;
-@synthesize projectedLocation;
-@synthesize enableDragging;
-@synthesize enableRotation;
 @synthesize lineDashPhase;
 @synthesize scaleLineDash;
 @synthesize pathBoundingBox;
@@ -71,8 +68,6 @@
 
     scaleLineWidth = NO;
     scaleLineDash = NO;
-    enableDragging = YES;
-    enableRotation = YES;
     isFirstPoint = YES;
 
     if ([self respondsToSelector:@selector(setContentsScale:)])

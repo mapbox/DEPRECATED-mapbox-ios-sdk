@@ -28,35 +28,19 @@
 #import <UIKit/UIKit.h>
 #import "RMMapLayer.h"
 #import "RMFoundation.h"
-#ifdef DEBUG
-#import <CoreLocation/CoreLocation.h>
-#endif
 
 @class RMMarkerStyle;
 
 /// one marker drawn on the map. Note that RMMarker ultimately descends from CALayer, and has an image contents.
 /// RMMarker inherits "position" and "anchorPoint" from CALayer.
-@interface RMMarker : RMMapLayer <RMMovingMapLayer> {
-    /// expressed in projected meters. The anchorPoint of the image is plotted here.
-    RMProjectedPoint projectedLocation;
-
-    /// provided for storage of arbitrary user data
-    id data;
-
+@interface RMMarker : RMMapLayer
+{
     /// Text label, visible by default if it has content, but not required.
-    UIView *label;
+    UIView  *label;
     UIColor *textForegroundColor;
     UIColor *textBackgroundColor;
-
-    BOOL enableDragging;
-    BOOL enableRotation;
 }
 
-@property (nonatomic, assign) RMProjectedPoint projectedLocation;
-@property (nonatomic, assign) BOOL enableDragging;
-@property (nonatomic, assign) BOOL enableRotation;
-
-@property (nonatomic, retain) id       data;
 @property (nonatomic, retain) UIView  *label;
 @property (nonatomic, retain) UIColor *textForegroundColor;
 @property (nonatomic, retain) UIColor *textBackgroundColor;

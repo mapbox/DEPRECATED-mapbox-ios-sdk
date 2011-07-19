@@ -26,10 +26,14 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 @class RMMapView;
+@class RMMapLayer;
 @class RMMarker;
+@class RMAnnotation;
 
 /// Use this for notifications of map panning, zooming, and taps on the RMMapView.
 @protocol RMMapViewDelegate <NSObject>
+
+- (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation;
 
 @optional
 
@@ -53,10 +57,10 @@
 - (void)singleTapOnMap:(RMMapView *)map at:(CGPoint)point;
 - (void)longSingleTapOnMap:(RMMapView *)map at:(CGPoint)point;
 
-- (void)tapOnMarker:(RMMarker *)marker onMap:(RMMapView *)map;
-- (void)tapOnLabelForMarker:(RMMarker *)marker onMap:(RMMapView *)map;
-- (BOOL)mapView:(RMMapView *)map shouldDragMarker:(RMMarker *)marker withEvent:(UIEvent *)event;
-- (void)mapView:(RMMapView *)map didDragMarker:(RMMarker *)marker withEvent:(UIEvent *)event;
+- (void)tapOnAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map;
+- (void)tapOnLabelForAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map;
+- (BOOL)mapView:(RMMapView *)map shouldDragAnnotation:(RMAnnotation *)annotation withEvent:(UIEvent *)event;
+- (void)mapView:(RMMapView *)map didDragAnnotation:(RMAnnotation *)annotation withEvent:(UIEvent *)event;
 
 - (void)afterMapTouch:(RMMapView *)map;
 

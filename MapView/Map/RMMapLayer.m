@@ -30,10 +30,20 @@
 
 @implementation RMMapLayer
 
+@synthesize annotation;
+@synthesize projectedLocation;
+@synthesize enableDragging;
+@synthesize enableRotation;
+@synthesize userInfo;
+
 - (id)init
 {
 	if (!(self = [super init]))
 		return nil;
+
+    self.annotation = nil;
+    self.enableDragging = YES;
+    self.enableRotation = YES;
 
 	return self;
 }
@@ -42,6 +52,8 @@
 {
     if (!(self = [super initWithLayer:layer]))
         return nil;
+
+    self.annotation = nil;
 
     return self;
 }

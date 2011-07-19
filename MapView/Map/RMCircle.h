@@ -31,15 +31,12 @@
 
 @class RMMapView;
 
-@interface RMCircle : RMMapLayer <RMMovingMapLayer> {
-@private
+@interface RMCircle : RMMapLayer
+{
 	RMMapView *mapView;
 	CAShapeLayer *shapeLayer;
 
 	CLLocationCoordinate2D coordinate;
-	RMProjectedPoint projectedLocation;
-	BOOL enableDragging;
-	BOOL enableRotation;
 
 	UIColor *lineColor;
 	UIColor *fillColor;
@@ -51,9 +48,6 @@
 }
 
 @property (nonatomic, retain) CAShapeLayer *shapeLayer;
-@property (nonatomic, assign) RMProjectedPoint projectedLocation;
-@property (nonatomic, assign) BOOL enableDragging;
-@property (nonatomic, assign) BOOL enableRotation;
 @property (nonatomic, retain) UIColor *lineColor;
 @property (nonatomic, retain) UIColor *fillColor;
 @property (nonatomic, assign) CGFloat radiusInMeters;

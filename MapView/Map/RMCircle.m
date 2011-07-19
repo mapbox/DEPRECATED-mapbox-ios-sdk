@@ -41,9 +41,6 @@
 @implementation RMCircle
 
 @synthesize shapeLayer;
-@synthesize projectedLocation;
-@synthesize enableDragging;
-@synthesize enableRotation;
 @synthesize lineColor;
 @synthesize fillColor;
 @synthesize radiusInMeters;
