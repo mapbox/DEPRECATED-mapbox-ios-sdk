@@ -166,7 +166,6 @@
 
 - (void)moveToProjectedPoint:(RMProjectedPoint)aPoint
 {
-    /// \bug TODO: Test this. Does it work?
     [self correctPositionOfAllSublayers];
 }
 
@@ -177,8 +176,6 @@
         {
             if ([layer respondsToSelector:@selector(moveBy:)])
                 [layer moveBy:delta];
-
-            // if layer moves on and offscreen...
         }
     }
 }

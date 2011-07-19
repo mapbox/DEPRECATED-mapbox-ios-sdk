@@ -32,13 +32,6 @@
 @class RMMapRenderer;
 @class RMMapView;
 
-/*! Appears to be some sort of interface between RMMapContents and markers.
- 
- \bug lots of arbitrary-appearing \@synchronized blocks. Old mailing list traffic 
- claims they're needed, but no one seems to know why. If the #set ivar needs to be guarded,
- should be done by \@synchronized(self) and not \@synchronized(sublayers). Maybe the guarding
- is needed because of Core Animation thread interactions.
- */
 @interface RMLayerCollection : RMMapLayer
 {
     /// The actual collection of all sublayers, including those offscreen.
@@ -57,8 +50,7 @@
 - (void)removeSublayer:(CALayer *)layer;
 - (void)removeSublayers:(NSArray *)layers;
 
-/// (guess) recompute the screen coordinates for the sublayers (map markers, paths) 
-/// \deprecated name will change after 0.5
+/// recompute the screen coordinates for the sublayers (map markers, paths)
 - (void)correctPositionOfAllSublayers;
 - (void)correctPositionOfAllSublayersIncludingInvisibleLayers:(BOOL)correctAllLayers;
 - (BOOL)hasSubLayer:(CALayer *)layer;
