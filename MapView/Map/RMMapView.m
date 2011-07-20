@@ -52,9 +52,9 @@
 
 #pragma mark --- begin constants ----
 
-#define kDefaultDecelerationFactor .88f
+#define kDefaultDecelerationFactor .80f
 #define kMinDecelerationDelta 0.6f
-#define kDecelerationTimerInterval 0.02f
+#define kDecelerationTimerInterval 0.04f
 
 #define kZoomAnimationStepTime 0.03f
 #define kZoomAnimationAnimationTime 0.1f
@@ -420,10 +420,10 @@
     if (![self tileSourceBoundsContainProjectedPoint:projectedCenter])
         return;
 
-	[mercatorToScreenProjection moveScreenBy:delta];
-	[imagesOnScreen moveBy:delta];
-	[tileLoader moveBy:delta];
-	[self correctPositionOfAllAnnotationsIncludingInvisibles:correctAllSublayers];
+    [mercatorToScreenProjection moveScreenBy:delta];
+    [imagesOnScreen moveBy:delta];
+    [tileLoader moveBy:delta];
+    [self correctPositionOfAllAnnotationsIncludingInvisibles:correctAllSublayers];
 }
 
 - (void)moveToCoordinate:(CLLocationCoordinate2D)coordinate animated:(BOOL)animated
@@ -1088,9 +1088,8 @@
         return;
 
     [mercatorToScreenProjection setProjectedCenter:projectedPoint];
-    [self correctPositionOfAllAnnotations];
     [tileLoader reload];
-    [overlay setNeedsDisplay];
+    [self correctPositionOfAllAnnotations];
 }
 
 - (RMProjectedRect)projectedBounds
@@ -1101,6 +1100,8 @@
 - (void)setProjectedBounds:(RMProjectedRect)boundsRect
 {
     [mercatorToScreenProjection setProjectedBounds:boundsRect];
+    [tileLoader reload];
+    [self correctPositionOfAllAnnotations];
 }
 
 - (RMTileRect)tileBounds
@@ -1308,6 +1309,10 @@
     CGRect screenBounds = [[self mercatorToScreenProjection] screenBounds];
     CALayer *lastLayer = nil;
 
+    // Prevent blurry movements
+    [CATransaction begin];
+    [CATransaction setAnimationDuration:0];
+
     @synchronized (annotations)
     {
         if (correctAllAnnotations)
@@ -1329,21 +1334,23 @@
 
                         [visibleAnnotations addObject:annotation];
                     }
+                    lastLayer = annotation.layer;
                 } else {
                     annotation.layer = nil;
                     [visibleAnnotations removeObject:annotation];
                 }
-                lastLayer = annotation.layer;
             }
-            RMLog(@"%d annotations on screen, %d total", [[overlay sublayers] count], [annotations count]);
+//            RMLog(@"%d annotations on screen, %d total", [[overlay sublayers] count], [annotations count]);
         } else {
             for (RMAnnotation *annotation in visibleAnnotations)
             {
                 [self correctScreenPosition:annotation];
             }
-            RMLog(@"%d annotations corrected", [visibleAnnotations count]);
+//            RMLog(@"%d annotations corrected", [visibleAnnotations count]);
         }
     }
+
+    [CATransaction commit];
 }
 
 - (void)correctPositionOfAllAnnotations

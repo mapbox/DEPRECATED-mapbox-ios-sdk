@@ -242,7 +242,7 @@
     if (!scaleLineWidth) {
         scaledLineWidth *= renderedScale;
     }
-    //NSLog(@"line width = %f, content scale = %f", scaledLineWidth, renderedScale);
+    // NSLog(@"line width = %f, content scale = %f", scaledLineWidth, renderedScale);
 
     if (!scaleLineDash && _lineDashLengths) {
         dashLengths = _scaledLineDashLengths;

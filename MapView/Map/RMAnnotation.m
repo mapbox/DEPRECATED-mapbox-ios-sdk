@@ -116,11 +116,12 @@
 
 - (void)setLayer:(RMMapLayer *)aLayer
 {
-    if (layer == aLayer) return;
-    [layer removeFromSuperlayer]; [layer release];
-    layer = [aLayer retain];
+    if (layer != aLayer) {
+        [layer removeFromSuperlayer]; [layer release];
+        layer = [aLayer retain];
+        layer.annotation = self;
+    }
     layer.position = self.position;
-    layer.annotation = self;
 }
 
 - (BOOL)isAnnotationWithinBounds:(CGRect)bounds
@@ -137,6 +138,14 @@
 {
     CGRect screenBounds = [[mapView mercatorToScreenProjection] screenBounds];
     return [self isAnnotationWithinBounds:screenBounds];
+}
+
+- (NSString *)description
+{
+    if (self.hasBoundingBox)
+        return [NSString stringWithFormat:@"<%@: %@ @ (%.0f,%.0f) {(%.0f,%.0f) - (%.0f,%.0f)}>", NSStringFromClass([self class]), self.title, self.projectedLocation.easting, self.projectedLocation.northing, self.projectedBoundingBox.origin.easting, self.projectedBoundingBox.origin.northing, self.projectedBoundingBox.origin.easting + self.projectedBoundingBox.size.width, self.projectedBoundingBox.origin.northing + self.projectedBoundingBox.size.height];
+    else
+        return [NSString stringWithFormat:@"<%@: %@ @ (%.0f,%.0f)>", NSStringFromClass([self class]), self.title, self.projectedLocation.easting, self.projectedLocation.northing];
 }
 
 @end
