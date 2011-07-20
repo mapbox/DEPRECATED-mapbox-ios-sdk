@@ -97,7 +97,7 @@
 
 - (void)addCache:(id <RMTileCache>)cache
 {
-    @synchronized(caches) {
+    @synchronized (caches) {
         [caches addObject:cache];
     }
 }
@@ -113,7 +113,7 @@
     UIImage *image = [memoryCache cachedImage:tile withCacheKey:aCacheKey];
     if (image) return image;
 
-    @synchronized(caches) {
+    @synchronized (caches) {
         for (id <RMTileCache> cache in caches)
         {
             image = [cache cachedImage:tile withCacheKey:aCacheKey];
@@ -131,7 +131,7 @@
 {
     [memoryCache addImage:image forTile:tile withCacheKey:aCacheKey];
 
-    @synchronized(caches) {
+    @synchronized (caches) {
         for (id <RMTileCache> cache in caches)
         {	
             if ([cache respondsToSelector:@selector(addImage:forTile:withCacheKey:)]) {
@@ -146,7 +146,7 @@
 	LogMethod();
     [memoryCache didReceiveMemoryWarning];
 
-    @synchronized(caches) {
+    @synchronized (caches) {
         for (id<RMTileCache> cache in caches)
         {
             [cache didReceiveMemoryWarning];
@@ -158,7 +158,7 @@
 {
     [memoryCache removeAllCachedImages];
 
-    @synchronized(caches) {
+    @synchronized (caches) {
         for (id<RMTileCache> cache in caches)
         {
             [cache removeAllCachedImages];

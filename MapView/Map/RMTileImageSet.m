@@ -72,7 +72,7 @@
 
 @synthesize delegate, tileDepth, zoom;
 
-- (id)initWithDelegate:(id)_delegate
+- (id)initWithDelegate:(id)aDelegate
 {
     if (!(self = [super init]))
         return nil;
@@ -80,7 +80,7 @@
     tileSource = nil;
     tileCache = nil;
 
-    self.delegate = _delegate;
+    self.delegate = aDelegate;
     self.tileDepth = 0;
 
     images = [[NSMutableSet alloc] init];
@@ -247,7 +247,7 @@
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             UIImage *image = [tileCache cachedImage:tile withCacheKey:currentCacheKey];
             if (image) {
-                [tileImage updateWithImage:image andNotify:NO];
+                [tileImage updateWithImage:image andNotifyListeners:NO];
                 [self removeTilesWorseThan:tileImage];
                 return;
             }
@@ -257,7 +257,7 @@
             // Return nil if you want to load the image asynchronously or display your own error tile (see [RMTileImage errorTile]
             image = [tileSource imageForTileImage:tileImage addToCache:tileCache withCacheKey:currentCacheKey];
             if (image) {
-                [tileImage updateWithImage:image andNotify:YES];
+                [tileImage updateWithImage:image andNotifyListeners:YES];
             }
         });
     }

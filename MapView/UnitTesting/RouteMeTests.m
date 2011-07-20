@@ -82,7 +82,7 @@
 			markerPosition.longitude += columnSpacing;
 			RMMarker *newMarker = [[RMMarker alloc] initWithUIImage:markerImage];
 			STAssertNotNil(newMarker, @"testMarkerCreation marker creation failed");
-			[newMarker setData:[NSArray arrayWithObjects:[NSNumber numberWithDouble:markerPosition.longitude],[NSNumber numberWithDouble:markerPosition.latitude],nil]];
+			[newMarker setUserInfo:[NSArray arrayWithObjects:[NSNumber numberWithDouble:markerPosition.longitude],[NSNumber numberWithDouble:markerPosition.latitude],nil]];
 			[mapView.contents.markerManager addMarker:newMarker
 			 atLatLong:markerPosition];
 		}
@@ -110,7 +110,7 @@
 		markerPosition.longitude += columnSpacing;
 		RMMarker *newMarker = [[RMMarker alloc] initWithUIImage:markerImage];
 		[testMarkers addObject:newMarker];
-		[newMarker setData:[NSArray arrayWithObjects:[NSNumber numberWithDouble:markerPosition.longitude],[NSNumber numberWithDouble:markerPosition.latitude],nil]];
+		[newMarker setUserInfo:[NSArray arrayWithObjects:[NSNumber numberWithDouble:markerPosition.longitude],[NSNumber numberWithDouble:markerPosition.latitude],nil]];
 		[mapView.contents.markerManager addMarker:newMarker
 		 atLatLong:markerPosition];
 	}
@@ -131,10 +131,10 @@
 		CGPoint leftScreenPosition = [mangler screenCoordinatesForMarker:leftMarker];
 		CGPoint rightScreenPosition = [mangler screenCoordinatesForMarker:rightMarker];
 		CLLocationCoordinate2D leftMarkerCoordinate, rightMarkerCoordinate;
-		leftMarkerCoordinate.longitude = [[(NSArray *)leftMarker.data objectAtIndex:0] doubleValue];
-		leftMarkerCoordinate.latitude = [[(NSArray *)leftMarker.data objectAtIndex:1] doubleValue];
-		rightMarkerCoordinate.longitude = [[(NSArray *)rightMarker.data objectAtIndex:0] doubleValue];
-		rightMarkerCoordinate.latitude = [[(NSArray *)rightMarker.data objectAtIndex:1] doubleValue];
+		leftMarkerCoordinate.longitude = [[(NSArray *)leftMarker.userInfo objectAtIndex:0] doubleValue];
+		leftMarkerCoordinate.latitude = [[(NSArray *)leftMarker.userInfo objectAtIndex:1] doubleValue];
+		rightMarkerCoordinate.longitude = [[(NSArray *)rightMarker.userInfo objectAtIndex:0] doubleValue];
+		rightMarkerCoordinate.latitude = [[(NSArray *)rightMarker.userInfo objectAtIndex:1] doubleValue];
 		STAssertLessThan(leftScreenPosition.x, rightScreenPosition.x, 
 						 @"screen position calculation failed (markers %d, %d): left (%f, %f) right (%f, %f) mapped to left (%f, %f) right (%f, %f)",
 						 j-1, j,
@@ -174,7 +174,7 @@
 		markerPosition.longitude += columnSpacing;
 		RMMarker *newMarker = [[RMMarker alloc] initWithUIImage:markerImage];
 		[testMarkers addObject:newMarker];
-		[newMarker setData:[NSArray arrayWithObjects:[NSNumber numberWithDouble:markerPosition.longitude],[NSNumber numberWithDouble:markerPosition.latitude],nil]];
+		[newMarker setUserInfo:[NSArray arrayWithObjects:[NSNumber numberWithDouble:markerPosition.longitude],[NSNumber numberWithDouble:markerPosition.latitude],nil]];
 		[mapView.contents.markerManager addMarker:newMarker
 		 atLatLong:markerPosition];
 	}
@@ -195,10 +195,10 @@
 		CGPoint leftScreenPosition = [mangler screenCoordinatesForMarker:leftMarker];
 		CGPoint rightScreenPosition = [mangler screenCoordinatesForMarker:rightMarker];
 		CLLocationCoordinate2D leftMarkerCoordinate, rightMarkerCoordinate;
-		leftMarkerCoordinate.longitude = [[(NSArray *)leftMarker.data objectAtIndex:0] doubleValue];
-		leftMarkerCoordinate.latitude = [[(NSArray *)leftMarker.data objectAtIndex:1] doubleValue];
-		rightMarkerCoordinate.longitude = [[(NSArray *)rightMarker.data objectAtIndex:0] doubleValue];
-		rightMarkerCoordinate.latitude = [[(NSArray *)rightMarker.data objectAtIndex:1] doubleValue];
+		leftMarkerCoordinate.longitude = [[(NSArray *)leftMarker.userInfo objectAtIndex:0] doubleValue];
+		leftMarkerCoordinate.latitude = [[(NSArray *)leftMarker.userInfo objectAtIndex:1] doubleValue];
+		rightMarkerCoordinate.longitude = [[(NSArray *)rightMarker.userInfo objectAtIndex:0] doubleValue];
+		rightMarkerCoordinate.latitude = [[(NSArray *)rightMarker.userInfo objectAtIndex:1] doubleValue];
 		STAssertLessThan(leftScreenPosition.x, rightScreenPosition.x, 
 						 @"screen position calculation failed (markers %d, %d): left (%f, %f) right (%f, %f) mapped to left (%f, %f) right (%f, %f)",
 						 j-1, j,
@@ -221,15 +221,15 @@
 {
 	[[mapView contents] setZoom: 10];
 	CLLocationCoordinate2D coord = {45.5,-121};
-	[mapView moveToLatLong:coord];
+	[mapView moveToCoordinate:coord];
 	
-	CGPoint point1 = [mapView latLongToPixel:coord];
-	
-	coord.longitude -= .125;
-	CGPoint point2 = [mapView latLongToPixel:coord];
+	CGPoint point1 = [mapView coordinateToPixel:coord];
 	
 	coord.longitude -= .125;
-	CGPoint point3 = [mapView latLongToPixel:coord];
+	CGPoint point2 = [mapView coordinateToPixel:coord];
+	
+	coord.longitude -= .125;
+	CGPoint point3 = [mapView coordinateToPixel:coord];
 	
 	STAssertEqualsWithAccuracy(point1.y, point2.y, kAccuracyThresholdForPixelCoordinates,
 							   @"Y pixel values should be equal");
@@ -245,15 +245,15 @@
 {
 	[[mapView contents] setZoom: 10];
 	CLLocationCoordinate2D coord = {45.5,179.9};
-	[mapView moveToLatLong:coord];
+	[mapView moveToCoordinate:coord];
 	
-	CGPoint point1 = [mapView latLongToPixel:coord];
-	
-	coord.longitude += .125;
-	CGPoint point2 = [mapView latLongToPixel:coord];
+	CGPoint point1 = [mapView coordinateToPixel:coord];
 	
 	coord.longitude += .125;
-	CGPoint point3 = [mapView latLongToPixel:coord];
+	CGPoint point2 = [mapView coordinateToPixel:coord];
+	
+	coord.longitude += .125;
+	CGPoint point3 = [mapView coordinateToPixel:coord];
 	
 	STAssertEqualsWithAccuracy(point1.y, point2.y, kAccuracyThresholdForPixelCoordinates,
 							   @"Y pixel values should be equal");
@@ -269,15 +269,15 @@
 {
 	[[mapView contents] setZoom: 10];
 	CLLocationCoordinate2D coord = {45.5,-179.9};
-	[mapView moveToLatLong:coord];
+	[mapView moveToCoordinate:coord];
 	
-	CGPoint point1 = [mapView latLongToPixel:coord];
-	
-	coord.longitude -= .125;
-	CGPoint point2 = [mapView latLongToPixel:coord];
+	CGPoint point1 = [mapView coordinateToPixel:coord];
 	
 	coord.longitude -= .125;
-	CGPoint point3 = [mapView latLongToPixel:coord];
+	CGPoint point2 = [mapView coordinateToPixel:coord];
+	
+	coord.longitude -= .125;
+	CGPoint point3 = [mapView coordinateToPixel:coord];
 	
 	STAssertEqualsWithAccuracy(point1.y, point2.y, kAccuracyThresholdForPixelCoordinates,
 							   @"Y pixel values should be equal");

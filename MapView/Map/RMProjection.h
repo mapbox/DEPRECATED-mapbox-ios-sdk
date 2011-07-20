@@ -43,9 +43,9 @@
 	BOOL projectionWrapsHorizontally;
 }
 
-@property (readonly) void *internalProjection;
-@property (readonly) RMProjectedRect planetBounds;
-@property (readwrite) BOOL projectionWrapsHorizontally;
+@property (nonatomic, readonly) void *internalProjection;
+@property (nonatomic, readonly) RMProjectedRect planetBounds;
+@property (nonatomic, assign)   BOOL projectionWrapsHorizontally;
 
 /// If #projectionWrapsHorizontally, returns #aPoint with its easting adjusted modulo Earth's diameter to be within projection's planetBounds. if !#projectionWrapsHorizontally, returns #aPoint unchanged.
 - (RMProjectedPoint)wrapPointHorizontally:(RMProjectedPoint)aPoint;

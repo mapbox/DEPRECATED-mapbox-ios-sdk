@@ -33,7 +33,7 @@
 
 @interface RMDatabaseCache : NSObject <RMTileCache> {
     // Database
-	FMDatabase* db;
+	FMDatabase *db;
 	NSString *databasePath;
 
     NSUInteger tileCount;

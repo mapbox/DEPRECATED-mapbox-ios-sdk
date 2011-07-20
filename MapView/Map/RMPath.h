@@ -30,17 +30,13 @@
 #import "RMFoundation.h"
 #import "RMMapLayer.h"
 
-@class RMMapContents;
 @class RMMapView;
 
 /*! \brief buggy, incomplete, untested; overlays paths/polygons on map
  */
-@interface RMPath : RMMapLayer <RMMovingMapLayer>
+@interface RMPath : RMMapLayer
 {
     BOOL isFirstPoint;
-
-    /// This is the first point.
-    RMProjectedPoint projectedLocation;
 
     /// The color of the line, or the outline if a polygon
     UIColor *lineColor;
@@ -67,7 +63,7 @@
     CGLineCap lineCap;
     CGLineJoin lineJoin;
 
-    //Line dash style
+    // Line dash style
     CGFloat *_lineDashLengths;
     CGFloat *_scaledLineDashLengths;
     size_t _lineDashCount;
@@ -76,37 +72,31 @@
     BOOL scaleLineWidth;
     BOOL scaleLineDash; // if YES line dashes will be scaled to keep a constant size if the layer is zoomed
 
-    BOOL enableDragging;
-    BOOL enableRotation;
-
     float renderedScale;
-    RMMapContents *mapContents;
+    RMMapView *mapView;
 }
 
-- (id)initWithContents:(RMMapContents *)contents;
-- (id)initForMap:(RMMapView *)map;
+- (id)initWithView:(RMMapView *)aMapView;
 
-@property CGPathDrawingMode drawingMode;
-@property CGLineCap lineCap;
-@property CGLineJoin lineJoin;
-@property (nonatomic, readwrite, assign) NSArray *lineDashLengths;
-@property CGFloat lineDashPhase;
-@property BOOL scaleLineDash;
-@property float lineWidth;
-@property BOOL	scaleLineWidth;
-@property (nonatomic, assign) RMProjectedPoint projectedLocation;
-@property (assign) BOOL enableDragging;
-@property (assign) BOOL enableRotation;
-@property (readwrite, retain) UIColor *lineColor;
-@property (readwrite, retain) UIColor *fillColor;
+@property (nonatomic, assign) CGPathDrawingMode drawingMode;
+@property (nonatomic, assign) CGLineCap lineCap;
+@property (nonatomic, assign) CGLineJoin lineJoin;
+@property (nonatomic, assign) NSArray *lineDashLengths;
+@property (nonatomic, assign) CGFloat lineDashPhase;
+@property (nonatomic, assign) BOOL scaleLineDash;
+@property (nonatomic, assign) float lineWidth;
+@property (nonatomic, assign) BOOL	scaleLineWidth;
+@property (nonatomic, retain) UIColor *lineColor;
+@property (nonatomic, retain) UIColor *fillColor;
 @property (nonatomic, readonly) CGRect pathBoundingBox;
 
-- (void)moveToXY:(RMProjectedPoint)point;
+- (void)moveToProjectedPoint:(RMProjectedPoint)projectedPoint;
 - (void)moveToScreenPoint:(CGPoint)point;
-- (void)moveToLatLong:(CLLocationCoordinate2D)point;
-- (void)addLineToXY:(RMProjectedPoint)point;
+- (void)moveToCoordinate:(CLLocationCoordinate2D)coordinate;
+
+- (void)addLineToProjectedPoint:(RMProjectedPoint)projectedPoint;
 - (void)addLineToScreenPoint:(CGPoint)point;
-- (void)addLineToLatLong:(CLLocationCoordinate2D)point;
+- (void)addLineToCoordinate:(CLLocationCoordinate2D)coordinate;
 
 // Change the path without recalculating the geometry (performance!)
 - (void)performBatchOperations:(void (^)(RMPath *aPath))block;

@@ -50,10 +50,9 @@
 	float metersPerPixel;
 }
 
-@property (assign, readwrite) RMProjectedPoint origin;
-@property (nonatomic,readonly) RMProjection *projection;
-
-@property (assign, readwrite) float metersPerPixel;
+@property (nonatomic, assign)   RMProjectedPoint origin;
+@property (nonatomic, readonly) RMProjection *projection;
+@property (nonatomic, assign)   float metersPerPixel;
 
 - (id)initFromProjection:(RMProjection *)aProjection toScreenBounds:(CGRect)aScreenBounds;
 

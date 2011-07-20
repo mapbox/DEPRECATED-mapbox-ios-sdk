@@ -222,7 +222,7 @@
 - (RMProjectedRect)projectScreenRectToProjectedRect:(CGRect)aPixelRect
 {
 	RMProjectedRect aRect;
-	aRect.origin = [self projectScreenPointToProjectedPoint: aPixelRect.origin];
+	aRect.origin = [self projectScreenPointToProjectedPoint:aPixelRect.origin];
 	aRect.size.width = aPixelRect.size.width * metersPerPixel;
 	aRect.size.height = aPixelRect.size.height * metersPerPixel;
 	return aRect;

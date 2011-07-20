@@ -26,30 +26,26 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import "RMPath.h"
-#import "RMMapView.h"
-#import "RMMapContents.h"
 #import "RMMercatorToScreenProjection.h"
 #import "RMPixel.h"
 #import "RMProjection.h"
+#import "RMMapView.h"
 
 @implementation RMPath
 
 @synthesize scaleLineWidth;
-@synthesize projectedLocation;
-@synthesize enableDragging;
-@synthesize enableRotation;
 @synthesize lineDashPhase;
 @synthesize scaleLineDash;
 @synthesize pathBoundingBox;
 
 #define kDefaultLineWidth 2
 
-- (id)initWithContents:(RMMapContents *)contents
+- (id)initWithView:(RMMapView *)aMapView
 {
     if (!(self = [super init]))
         return nil;
 
-    mapContents = contents;
+    mapView = aMapView;
 
     path = CGPathCreateMutable();
     pathBoundingBox = CGRectZero;
@@ -72,8 +68,6 @@
 
     scaleLineWidth = NO;
     scaleLineDash = NO;
-    enableDragging = YES;
-    enableRotation = YES;
     isFirstPoint = YES;
 
     if ([self respondsToSelector:@selector(setContentsScale:)])
@@ -84,14 +78,9 @@
     return self;
 }
 
-- (id)initForMap:(RMMapView *)map
-{
-    return [self initWithContents:[map contents]];
-}
-
 - (void)dealloc
 {
-    mapContents = nil;
+    mapView = nil;
     CGPathRelease(path); path = NULL;
     [self setLineDashLengths:nil];
     [lineColor release]; lineColor = nil;
@@ -108,7 +97,7 @@
 {
     if (ignorePathUpdates) return;
 
-    RMMercatorToScreenProjection *projection = [mapContents mercatorToScreenProjection];
+    RMMercatorToScreenProjection *projection = [mapView mercatorToScreenProjection];
     CGPoint myPosition = [projection projectProjectedPoint:projectedLocation];
 
     float scale = [projection metersPerPixel];
@@ -121,7 +110,7 @@
     /// \bug if "bounds are actually in mercators", shouldn't be using a CGRect
     scaledLineWidth = lineWidth;
     if (!scaleLineWidth) {
-        renderedScale = [mapContents metersPerPixel];
+        renderedScale = [mapView metersPerPixel];
         scaledLineWidth *= renderedScale;
     }
 
@@ -132,7 +121,7 @@
 
     // Clip bound rect to screen bounds.
     // If bounds are not clipped, they won't display when you zoom in too much.
-    screenBounds = [mapContents screenBounds];
+    screenBounds = [mapView screenBounds];
 
     // Clip top
     offset = myPosition.y + pixelBounds.origin.y - screenBounds.origin.y + outset;
@@ -169,7 +158,7 @@
     [self setNeedsDisplay];
 }
 
-- (void)addPointToXY:(RMProjectedPoint)point withDrawing:(BOOL)isDrawing
+- (void)addPointToProjectedPoint:(RMProjectedPoint)point withDrawing:(BOOL)isDrawing
 {
     //	RMLog(@"addLineToXY %f %f", point.x, point.y);
 
@@ -178,7 +167,7 @@
         isFirstPoint = FALSE;
         projectedLocation = point;
 
-        self.position = [[mapContents mercatorToScreenProjection] projectProjectedPoint:projectedLocation];
+        self.position = [[mapView mercatorToScreenProjection] projectProjectedPoint:projectedLocation];
         // RMLog(@"screen position set to %f %f", self.position.x, self.position.y);
         CGPathMoveToPoint(path, NULL, 0.0f, 0.0f);
     }
@@ -200,38 +189,38 @@
     [self setNeedsDisplay];
 }
 
-- (void)moveToXY:(RMProjectedPoint)point
+- (void)moveToProjectedPoint:(RMProjectedPoint)projectedPoint
 {
-    [self addPointToXY:point withDrawing:FALSE];
+    [self addPointToProjectedPoint:projectedPoint withDrawing:NO];
 }
 
 - (void)moveToScreenPoint:(CGPoint)point
 {
-    RMProjectedPoint mercator = [[mapContents mercatorToScreenProjection] projectScreenPointToProjectedPoint:point];
-    [self moveToXY:mercator];
+    RMProjectedPoint mercator = [[mapView mercatorToScreenProjection] projectScreenPointToProjectedPoint:point];
+    [self moveToProjectedPoint:mercator];
 }
 
-- (void)moveToLatLong:(CLLocationCoordinate2D)point
+- (void)moveToCoordinate:(CLLocationCoordinate2D)coordinate
 {
-    RMProjectedPoint mercator = [[mapContents projection] coordinateToProjectedPoint:point];
-    [self moveToXY:mercator];
+    RMProjectedPoint mercator = [[mapView projection] coordinateToProjectedPoint:coordinate];
+    [self moveToProjectedPoint:mercator];
 }
 
-- (void)addLineToXY:(RMProjectedPoint)point
+- (void)addLineToProjectedPoint:(RMProjectedPoint)projectedPoint
 {
-    [self addPointToXY:point withDrawing:TRUE];
+    [self addPointToProjectedPoint:projectedPoint withDrawing:YES];
 }
 
 - (void)addLineToScreenPoint:(CGPoint)point
 {
-    RMProjectedPoint mercator = [[mapContents mercatorToScreenProjection] projectScreenPointToProjectedPoint:point];
-    [self addLineToXY:mercator];
+    RMProjectedPoint mercator = [[mapView mercatorToScreenProjection] projectScreenPointToProjectedPoint:point];
+    [self addLineToProjectedPoint:mercator];
 }
 
-- (void)addLineToLatLong:(CLLocationCoordinate2D)point
+- (void)addLineToCoordinate:(CLLocationCoordinate2D)coordinate
 {
-    RMProjectedPoint mercator = [[mapContents projection] coordinateToProjectedPoint:point];
-    [self addLineToXY:mercator];
+    RMProjectedPoint mercator = [[mapView projection] coordinateToProjectedPoint:coordinate];
+    [self addLineToProjectedPoint:mercator];
 }
 
 - (void)performBatchOperations:(void (^)(RMPath *aPath))block
@@ -244,16 +233,16 @@
 
 - (void)drawInContext:(CGContextRef)theContext
 {
-    renderedScale = [mapContents metersPerPixel];
+    renderedScale = [mapView metersPerPixel];
     CGFloat *dashLengths = _lineDashLengths;
 
-    float scale = 1.0f / [mapContents metersPerPixel];
+    float scale = 1.0f / [mapView metersPerPixel];
 
     float scaledLineWidth = lineWidth;
     if (!scaleLineWidth) {
         scaledLineWidth *= renderedScale;
     }
-    //NSLog(@"line width = %f, content scale = %f", scaledLineWidth, renderedScale);
+    // NSLog(@"line width = %f, content scale = %f", scaledLineWidth, renderedScale);
 
     if (!scaleLineDash && _lineDashLengths) {
         dashLengths = _scaledLineDashLengths;

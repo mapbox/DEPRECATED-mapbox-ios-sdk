@@ -30,10 +30,6 @@
 
 @implementation RMMarker
 
-@synthesize projectedLocation;
-@synthesize enableDragging;
-@synthesize enableRotation;
-@synthesize data;
 @synthesize label;
 @synthesize textForegroundColor;
 @synthesize textBackgroundColor;
@@ -54,8 +50,6 @@
     label = nil;
     textForegroundColor = [UIColor blackColor];
     textBackgroundColor = [UIColor clearColor];
-    enableDragging = YES;
-    enableRotation = YES;
 
     return self;
 }
@@ -82,7 +76,7 @@
 
 - (void)dealloc
 {
-    self.data = nil;
+    self.userInfo = nil;
     self.label = nil;
     self.textForegroundColor = nil;
     self.textBackgroundColor = nil;

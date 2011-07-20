@@ -65,7 +65,7 @@
 -(MercatorRect) bounds;
 */
 
-@property (assign, readwrite, nonatomic) float metersPerPixel;
-@property (readonly, nonatomic) CATiledLayer *layer;
+@property (nonatomic, assign) float metersPerPixel;
+@property (nonatomic, readonly) CATiledLayer *layer;
 
 @end

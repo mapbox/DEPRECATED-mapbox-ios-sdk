@@ -60,14 +60,14 @@
 - (void)didReceiveMemoryWarning
 {
 	LogMethod();
-    @synchronized(cache) {
+    @synchronized (cache) {
         [cache removeAllObjects];
     }
 }
 
 - (void)removeTile:(RMTile)tile
 {
-    @synchronized(cache) {
+    @synchronized (cache) {
         [cache removeObjectForKey:[RMTileCache tileHash:tile]];
     }
 }
@@ -79,7 +79,7 @@
     RMCacheObject *cachedObject = nil;
     NSNumber *tileHash = [RMTileCache tileHash:tile];
     
-    @synchronized(cache) {
+    @synchronized (cache) {
         cachedObject = [cache objectForKey:tileHash];
         if (!cachedObject)
             return nil;
@@ -100,7 +100,7 @@
 /// Remove the least-recently used image from cache, if cache is at or over capacity. Removes only 1 image.
 - (void)makeSpaceInCache
 {
-    @synchronized(cache) {
+    @synchronized (cache) {
         while ([cache count] >= capacity)
         {
             // Rather than scanning I would really like to be using a priority queue
@@ -137,7 +137,7 @@
 
 	[self makeSpaceInCache];
 
-    @synchronized(cache) {
+    @synchronized (cache) {
         [cache setObject:[RMCacheObject cacheObject:image forTile:tile withCacheKey:aCacheKey] forKey:[RMTileCache tileHash:tile]];
     }
 }
@@ -145,7 +145,7 @@
 - (void)removeAllCachedImages
 {
     LogMethod();
-    @synchronized(cache) {
+    @synchronized (cache) {
         [cache removeAllObjects];
     }
 }
