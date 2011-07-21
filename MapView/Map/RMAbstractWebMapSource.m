@@ -80,6 +80,8 @@
 
 - (void)finish
 {
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMTileRetrieved object:nil];
+
     [connection cancel]; [connection release]; connection = nil;
     
     [self willChangeValueForKey:@"isExecuting"];
@@ -99,6 +101,8 @@
         [self performSelectorOnMainThread:@selector(start) withObject:nil waitUntilDone:NO];
         return;
     }
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMTileRequested object:nil];
 
     if (tileImage.loadingCancelled) {
         [self finish];
@@ -181,7 +185,7 @@
 {
 	//RMLog(@"didFailWithError %@ %d %@", _connection, [error code], [error localizedDescription]);
 	BOOL retry = FALSE;
-    
+
 	switch ([error code])
 	{
         case NSURLErrorBadURL:                      // -1000
@@ -196,7 +200,7 @@
             retry = TRUE; 
             break;
 	}
-	    
+
 	if (retry) {
 		[self start];
 	}
