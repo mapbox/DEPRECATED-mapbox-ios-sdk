@@ -1395,7 +1395,7 @@
 
 - (NSArray *)annotations
 {
-    return annotations;
+    return [NSArray arrayWithArray:annotations];
 }
 
 - (void)addAnnotation:(RMAnnotation *)annotation
