@@ -7,30 +7,27 @@
 #import "RootViewController.h"
 #import "MainViewController.h"
 
-#import "RMPath.h"
-#import "RMMarker.h"
-#import "RMMarkerManager.h"
+#import "RMAnnotation.h"
 
 @implementation MapTestbedAppDelegate
-
 
 @synthesize window;
 @synthesize rootViewController;
 
--(RMMapContents *)mapContents
+- (RMMapView *)mapView
 {
-	return self.rootViewController.mainViewController.mapView.contents;
+    return [[[(MapTestbedAppDelegate *)[[UIApplication sharedApplication] delegate] rootViewController] mainViewController] mapView];
 }
+
 -(void)performTestPart2
 {
-	// a bug exists that offsets the path when we execute this moveToLatLong
+	// a bug exists that offsets the path when we execute this moveToCoordinate
 	CLLocationCoordinate2D pt;
 	pt.latitude = 48.86600492029781f;
 	pt.longitude = 2.3194026947021484f;
 	
-	[self.mapContents moveToLatLong: pt];
+	[[self mapView] moveToCoordinate:pt];
 }
-
 
 -(void)performTestPart3
 {
@@ -40,107 +37,126 @@
 	northeast.longitude = 2.338285446166992f;
 	southwest.latitude = 48.860406466081656f;
 	southwest.longitude = 2.2885894775390625;
-	
-	[self.mapContents zoomWithLatLngBoundsNorthEast:northeast SouthWest:southwest];
-}	
 
+	[[self mapView] zoomWithLatitudeLongitudeBoundsSouthWest:southwest northEast:northeast];
+}	
 
 - (void)performTest
 {
 	NSLog(@"testing paths");
-	RMMapContents *mapContents = [self mapContents];
+    RMMapView *mapView = [self mapView];
 
 	UIImage *xMarkerImage = [UIImage imageNamed:@"marker-X.png"];
-	
+
 	// if we zoom with bounds after the paths are created, nothing is displayed on the map
 	CLLocationCoordinate2D northeast, southwest;
 	northeast.latitude = 48.885875363989435f;
 	northeast.longitude = 2.338285446166992f;
 	southwest.latitude = 48.860406466081656f;
 	southwest.longitude = 2.2885894775390625;
-	[mapContents zoomWithLatLngBoundsNorthEast:northeast SouthWest:southwest];
-	
-	CLLocationCoordinate2D one, two, three, four;
-	one.latitude = 48.884238608729035f;
-	one.longitude = 2.297086715698242f;
-	two.latitude = 48.878481319827735f;
-	two.longitude = 2.294340133666992f;
-	three.latitude = 48.87351371451778f;
-	three.longitude = 2.2948551177978516f;
-	four.latitude = 48.86600492029781f;
-	four.longitude = 2.3194026947021484f;
-	
-	// draw a green path south down an avenue and southeast on Champs-Elysees
-	RMPath *testPath, *testRegion;
-	testPath = [[RMPath alloc] initWithContents:mapContents];
-	[testPath setLineColor:[UIColor greenColor]];
-	[testPath setFillColor:[UIColor clearColor]];
-	[testPath setLineWidth:40.0f];
-	[testPath setDrawingMode:kCGPathStroke];
-	[testPath addLineToLatLong:one];
-	[testPath addLineToLatLong:two];
-	[testPath addLineToLatLong:three];
-	[testPath addLineToLatLong:four];
-	[[mapContents overlay] addSublayer:testPath];
-	[testPath release];
+	[mapView zoomWithLatitudeLongitudeBoundsSouthWest:southwest northEast:northeast];
 
-	RMMarker *newMarker;
-	newMarker = [[RMMarker alloc] initWithUIImage:xMarkerImage anchorPoint:CGPointMake(0.5, 1.0)];
-	[mapContents.markerManager addMarker:[newMarker autorelease] AtLatLong:one];
-	newMarker = [[RMMarker alloc] initWithUIImage:xMarkerImage anchorPoint:CGPointMake(0.5, 1.0)];
-	[mapContents.markerManager addMarker:[newMarker autorelease] AtLatLong:two];
-	newMarker = [[RMMarker alloc] initWithUIImage:xMarkerImage anchorPoint:CGPointMake(0.5, 1.0)];
-	[mapContents.markerManager addMarker:[newMarker autorelease] AtLatLong:three];
-	newMarker = [[RMMarker alloc] initWithUIImage:xMarkerImage anchorPoint:CGPointMake(0.5, 1.0)];
-	[mapContents.markerManager addMarker:[newMarker autorelease] AtLatLong:four];
-	
-	CLLocationCoordinate2D r1, r2, r3, r4;
-	r1.latitude = 48.86637615203047f;
-	r1.longitude = 2.3236513137817383f;
-	r2.latitude = 48.86372241857954f;
-	r2.longitude = 2.321462631225586f;
-	r3.latitude = 48.86087090984738f;
-	r3.longitude = 2.330174446105957f;
-	r4.latitude = 48.86369418661614f;
-	r4.longitude = 2.332019805908203f;
-	
-	// draw a blue-filled rectangle on top of the Tuileries
-	testRegion = [[RMPath alloc] initWithContents:mapContents];
-	[testRegion setFillColor:[UIColor colorWithRed: 0.1 green:0.1 blue: 0.8 alpha: 0.5 ]];
-	[testRegion setLineColor:[UIColor blueColor]];
-	[testRegion setLineWidth:20.0f];
-	[testRegion setDrawingMode:kCGPathFillStroke];
-	[testRegion addLineToLatLong:r1];
-	[testRegion addLineToLatLong:r2];
-	[testRegion addLineToLatLong:r3];
-	[testRegion addLineToLatLong:r4];
-	[testRegion closePath];
-	[[mapContents overlay] addSublayer:testRegion];
-	[testRegion release];
-	newMarker = [[RMMarker alloc] initWithUIImage:xMarkerImage anchorPoint:CGPointMake(0.5, 1.0)];
-	[mapContents.markerManager addMarker:[newMarker autorelease] AtLatLong:r1];
-	newMarker = [[RMMarker alloc] initWithUIImage:xMarkerImage anchorPoint:CGPointMake(0.5, 1.0)];
-	[mapContents.markerManager addMarker:[newMarker autorelease] AtLatLong:r2];
-	newMarker = [[RMMarker alloc] initWithUIImage:xMarkerImage anchorPoint:CGPointMake(0.5, 1.0)];
-	[mapContents.markerManager addMarker:[newMarker autorelease] AtLatLong:r3];
-	newMarker = [[RMMarker alloc] initWithUIImage:xMarkerImage anchorPoint:CGPointMake(0.5, 1.0)];
-	[mapContents.markerManager addMarker:[newMarker autorelease] AtLatLong:r4];
-	
+	CLLocation *one, *two, *three, *four;
+    one = [[[CLLocation alloc] initWithLatitude:48.884238608729035f longitude:2.297086715698242f] autorelease];
+    two = [[[CLLocation alloc] initWithLatitude:48.878481319827735f longitude:2.294340133666992f] autorelease];
+    three = [[[CLLocation alloc] initWithLatitude:48.87351371451778f longitude:2.2948551177978516f] autorelease];
+    four = [[[CLLocation alloc] initWithLatitude:48.86600492029781f longitude:2.3194026947021484f] autorelease];
+    NSArray *linePoints = [NSArray arrayWithObjects:one, two, three, four, nil];
+    
+	// draw a green path south down an avenue and southeast on Champs-Elysees
+    RMAnnotation *pathAnnotation = [RMAnnotation annotationWithMapView:mapView coordinate:one.coordinate andTitle:nil];
+    pathAnnotation.annotationType = @"path";
+    pathAnnotation.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                               linePoints,@"linePoints",
+                               [UIColor greenColor],@"lineColor",
+                               [UIColor clearColor],@"fillColor",
+                               [NSNumber numberWithFloat:40.0f],@"lineWidth",
+                               nil];
+    [pathAnnotation setBoundingBoxFromLocations:linePoints];
+    [mapView addAnnotation:pathAnnotation];
+    
+    RMAnnotation *markerAnnotation = [RMAnnotation annotationWithMapView:mapView coordinate:one.coordinate andTitle:@"One"];
+    markerAnnotation.annotationType = @"marker";
+    markerAnnotation.annotationIcon = xMarkerImage;
+    markerAnnotation.anchorPoint = CGPointMake(0.5, 1.0);
+    [mapView addAnnotation:markerAnnotation];
+
+    markerAnnotation = [RMAnnotation annotationWithMapView:mapView coordinate:two.coordinate andTitle:@"Two"];
+    markerAnnotation.annotationType = @"marker";
+    markerAnnotation.annotationIcon = xMarkerImage;
+    markerAnnotation.anchorPoint = CGPointMake(0.5, 1.0);
+    [mapView addAnnotation:markerAnnotation];
+
+    markerAnnotation = [RMAnnotation annotationWithMapView:mapView coordinate:three.coordinate andTitle:@"Three"];
+    markerAnnotation.annotationType = @"marker";
+    markerAnnotation.annotationIcon = xMarkerImage;
+    markerAnnotation.anchorPoint = CGPointMake(0.5, 1.0);
+    [mapView addAnnotation:markerAnnotation];
+
+    markerAnnotation = [RMAnnotation annotationWithMapView:mapView coordinate:four.coordinate andTitle:@"Four"];
+    markerAnnotation.annotationType = @"marker";
+    markerAnnotation.annotationIcon = xMarkerImage;
+    markerAnnotation.anchorPoint = CGPointMake(0.5, 1.0);
+    [mapView addAnnotation:markerAnnotation];
+
+	CLLocation *r1, *r2, *r3, *r4;
+    r1 = [[[CLLocation alloc] initWithLatitude:48.86637615203047f longitude:2.3236513137817383f] autorelease];
+    r2 = [[[CLLocation alloc] initWithLatitude:48.86372241857954f longitude:2.321462631225586f] autorelease];
+    r3 = [[[CLLocation alloc] initWithLatitude:48.86087090984738f longitude:2.330174446105957f] autorelease];
+    r4 = [[[CLLocation alloc] initWithLatitude:48.86369418661614f longitude:2.332019805908203f] autorelease];
+    linePoints = [NSArray arrayWithObjects:r1, r2, r3, r4, nil];
+
+    pathAnnotation = [RMAnnotation annotationWithMapView:mapView coordinate:r1.coordinate andTitle:nil];
+    pathAnnotation.annotationType = @"path";
+    pathAnnotation.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                               linePoints,@"linePoints",
+                               [UIColor blueColor],@"lineColor",
+                               [UIColor colorWithRed:0.1 green:0.1 blue:0.8 alpha:0.5],@"fillColor",
+                               [NSNumber numberWithFloat:20.0f],@"lineWidth",
+                               [NSNumber numberWithInt:kCGPathFillStroke],@"pathDrawingMode",
+                               [NSNumber numberWithBool:YES],@"closePath",
+                               nil];
+    [pathAnnotation setBoundingBoxFromLocations:linePoints];
+    [mapView addAnnotation:pathAnnotation];
+
+    markerAnnotation = [RMAnnotation annotationWithMapView:mapView coordinate:r1.coordinate andTitle:@"r1"];
+    markerAnnotation.annotationType = @"marker";
+    markerAnnotation.annotationIcon = xMarkerImage;
+    markerAnnotation.anchorPoint = CGPointMake(0.5, 1.0);
+    [mapView addAnnotation:markerAnnotation];
+
+    markerAnnotation = [RMAnnotation annotationWithMapView:mapView coordinate:r2.coordinate andTitle:@"r2"];
+    markerAnnotation.annotationType = @"marker";
+    markerAnnotation.annotationIcon = xMarkerImage;
+    markerAnnotation.anchorPoint = CGPointMake(0.5, 1.0);
+    [mapView addAnnotation:markerAnnotation];
+
+    markerAnnotation = [RMAnnotation annotationWithMapView:mapView coordinate:r3.coordinate andTitle:@"r3"];
+    markerAnnotation.annotationType = @"marker";
+    markerAnnotation.annotationIcon = xMarkerImage;
+    markerAnnotation.anchorPoint = CGPointMake(0.5, 1.0);
+    [mapView addAnnotation:markerAnnotation];
+
+    markerAnnotation = [RMAnnotation annotationWithMapView:mapView coordinate:r4.coordinate andTitle:@"r4"];
+    markerAnnotation.annotationType = @"marker";
+    markerAnnotation.annotationIcon = xMarkerImage;
+    markerAnnotation.anchorPoint = CGPointMake(0.5, 1.0);
+    [mapView addAnnotation:markerAnnotation];
+
 	[self performSelector:@selector(performTestPart2) withObject:nil afterDelay:3.0f]; 
 	[self performSelector:@selector(performTestPart3) withObject:nil afterDelay:7.0f]; 
 }
 
-- (void)applicationDidFinishLaunching:(UIApplication *)application {
-    
+- (void)applicationDidFinishLaunching:(UIApplication *)application
+{
     [window addSubview:[rootViewController view]];
     [window makeKeyAndVisible];
-	
-	[self performSelector:@selector(performTest) withObject:nil afterDelay:0.25f]; 
 
+	[self performSelector:@selector(performTest) withObject:nil afterDelay:0.25f];
 }
 
-
-- (void)dealloc {
+- (void)dealloc
+{
     [rootViewController release];
     [window release];
     [super dealloc];

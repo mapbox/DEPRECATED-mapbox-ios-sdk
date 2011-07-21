@@ -28,13 +28,14 @@
 #import <UIKit/UIKit.h>
 #import "RMMapView.h"
 
-@interface MapViewViewController : UIViewController <RMMapViewDelegate> {
-	IBOutlet RMMapView * mapView;
+@interface MapViewViewController : UIViewController <RMMapViewDelegate>
+{
+	IBOutlet RMMapView *mapView;
 	BOOL tap;
 	NSInteger tapCount;
 }
 
-@property (nonatomic, retain) IBOutlet RMMapView * mapView;
+@property (nonatomic, retain) IBOutlet RMMapView *mapView;
 
 @end
 

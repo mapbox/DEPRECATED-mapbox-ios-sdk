@@ -8,9 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-#import "TileIssueViewController.h";
+#import "TileIssueViewController.h"
 
-@interface TileIssueAppDelegate : NSObject <UIApplicationDelegate> {
+@interface TileIssueAppDelegate : NSObject <UIApplicationDelegate>
+{
     UIWindow *window;
 	TileIssueViewController *tileIssueViewController;
 	UINavigationController *navController;

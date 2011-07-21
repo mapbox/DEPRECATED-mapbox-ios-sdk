@@ -9,22 +9,17 @@
 
 @implementation MarkerMurderAppDelegate
 
-
 @synthesize window;
 @synthesize rootViewController;
 
-- (void)applicationDidFinishLaunching:(UIApplication *)application {
-    
+- (void)applicationDidFinishLaunching:(UIApplication *)application
+{    
     [window addSubview:[rootViewController view]];
     [window makeKeyAndVisible];
 }
 
--(RMMapContents *)mapContents
+- (void)dealloc
 {
-	return self.rootViewController.mainViewController.mapView.contents;
-}
-
-- (void)dealloc {
     [rootViewController release];
     [window release];
     [super dealloc];

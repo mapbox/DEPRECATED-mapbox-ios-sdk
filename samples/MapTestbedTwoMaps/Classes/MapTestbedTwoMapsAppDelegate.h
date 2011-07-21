@@ -7,9 +7,9 @@
 #import "RMMapView.h"
 
 @class RootViewController;
-@class RMMapContents;
 
-@interface MapTestbedTwoMapsAppDelegate : NSObject <UIApplicationDelegate> {
+@interface MapTestbedTwoMapsAppDelegate : NSObject <UIApplicationDelegate>
+{
     UIWindow *window;
     RootViewController *rootViewController;
 }
@@ -18,4 +18,3 @@
 @property (nonatomic, retain) IBOutlet RootViewController *rootViewController;
 
 @end
-

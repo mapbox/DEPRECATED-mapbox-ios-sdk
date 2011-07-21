@@ -39,4 +39,3 @@
 @property (nonatomic, retain) IBOutlet MapViewViewController *viewController;
 
 @end
-

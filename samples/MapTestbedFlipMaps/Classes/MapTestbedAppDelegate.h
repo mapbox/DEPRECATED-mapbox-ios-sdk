@@ -7,9 +7,9 @@
 #import "RMMapView.h"
 
 @class RootViewController;
-@class RMMapContents;
 
-@interface MapTestbedAppDelegate : NSObject <UIApplicationDelegate> {
+@interface MapTestbedAppDelegate : NSObject <UIApplicationDelegate>
+{
     UIWindow *window;
     RootViewController *rootViewController;
 }

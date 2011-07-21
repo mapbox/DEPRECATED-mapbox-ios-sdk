@@ -27,71 +27,36 @@
 
 #import "MapViewViewController.h"
 
-#import "RMMapContents.h"
 #import "RMFoundation.h"
 #import "RMMarker.h"
-#import "RMMarkerManager.h"
+#import "RMAnnotation.h"
 
 @implementation MapViewViewController
 
 @synthesize mapView;
 @synthesize locationManager;
 @synthesize currentLocation;
-
-// Override initWithNibName:bundle: to load the view using a nib file then perform additional customization that is not appropriate for viewDidLoad.
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) 
-	{
-        // Custom initialization
-    }
-	
-    return self;
-}
+@synthesize tap;
+@synthesize tapCount;
 
 - (void)testMarkers
 {
-	RMMarkerManager *markerManager	= [mapView markerManager];
-	NSArray			*markers		= [markerManager markers];
-	
-	NSLog(@"Nb markers %d", [markers count]);
-	
-	NSEnumerator *markerEnumerator = [markers objectEnumerator];
-	RMMarker *aMarker;
-	
-	while (aMarker = (RMMarker *)[markerEnumerator nextObject])
-	{
-//		RMXYPoint point						= [aMarker location];
-//		CGPoint screenPoint					= [markerManager getMarkerScreenCoordinate: aMarker];
-//		CLLocationCoordinate2D coordinates	=  [markerManager getMarkerCoordinate2D: aMarker];
-		
-		[markerManager removeMarker:aMarker];
-	}
-	
-	// Put the marker back
-	RMMarker *marker = 
-	[[RMMarker alloc] initWithUIImage: [UIImage imageNamed:@"marker-blue.png"]];
-	[marker changeLabelUsingText:@"Hello"];
-	
-	[markerManager addMarker:marker 
-				   atLatLong:[[mapView contents] mapCenter]];
-	
-	[marker release];
-	markers  = [markerManager markersWithinScreenBounds];
-	
-	NSLog(@"Nb Markers in Screen: %d", [markers count]);
-	
-	//	[mapView getScreenCoordinateBounds];
-	
-	[markerManager hideAllMarkers];
-	[markerManager unhideAllMarkers];
-	
+	NSArray	*annotations = [mapView annotations];
 
+	NSLog(@"Nb markers %d", [annotations count]);
+
+	for (RMAnnotation *annotation in annotations)
+    {
+        [mapView removeAnnotation:annotation];
+    }
+
+	// Put the marker back
+    RMAnnotation *annotation = [RMAnnotation annotationWithMapView:mapView coordinate:[mapView mapCenterCoordinate] andTitle:@"Hello"];
+    annotation.annotationIcon = [UIImage imageNamed:@"marker-blue.png"];
+    [mapView addAnnotation:annotation];
 }
 
-- (BOOL)mapView:(RMMapView *)map 
-shouldDragMarker:(RMMarker *)marker
-	  withEvent:(UIEvent *)event
+- (BOOL)mapView:(RMMapView *)map shouldDragAnnotation:(RMAnnotation *)annotation withEvent:(UIEvent *)event
 {
    //If you do not implement this function, then all drags on markers will be sent to the didDragMarker function.
    //If you always return YES you will get the same result
@@ -99,61 +64,69 @@ shouldDragMarker:(RMMarker *)marker
    return YES;
 }
 
-- (void)mapView:(RMMapView *)map
-  didDragMarker:(RMMarker *)marker 
-	  withEvent:(UIEvent *)event 
+- (void)mapView:(RMMapView *)map didDragAnnotation:(RMAnnotation *)annotation withEvent:(UIEvent *)event
 {
-   CGPoint position = [[[event allTouches] anyObject] locationInView:mapView];
-   
-	RMMarkerManager *markerManager = [mapView markerManager];
-
-	NSLog(@"New location: east:%lf north:%lf", [marker projectedLocation].easting, [marker projectedLocation].northing);
-	CGRect rect = [marker bounds];
-	
-	[markerManager moveMarker:marker 
-						 atXY:CGPointMake(position.x,position.y +rect.size.height/3)];
-
+    if ([[event allTouches] count] == 1) 
+    {
+        UITouch *touch = [[event allTouches] anyObject];
+        if (touch.phase == UITouchPhaseMoved) 
+        {
+            CGPoint currentPosition = [touch locationInView:mapView];
+            CGPoint previousPosition = [touch previousLocationInView:mapView];
+            CGPoint screenPosition = annotation.position;
+            screenPosition.x += (currentPosition.x - previousPosition.x);
+            screenPosition.y += (currentPosition.y - previousPosition.y);
+            
+            CLLocationCoordinate2D newCoordinate = [mapView pixelToCoordinate:screenPosition];
+            NSLog(@"New location latitude:%lf longitude:%lf", newCoordinate.latitude, newCoordinate.longitude);
+            annotation.coordinate = newCoordinate;
+        }
+    }
 }
 
-- (void) singleTapOnMap: (RMMapView*) map 
-					 At: (CGPoint) point
+- (void)singleTapOnMap:(RMMapView *)map at:(CGPoint)point
 {
 	NSLog(@"Clicked on Map - New location: X:%lf Y:%lf", point.x, point.y);
 }
 
-- (void) tapOnMarker: (RMMarker*) marker 
-			   onMap: (RMMapView*) map
+- (void)tapOnAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map
 {
 	NSLog(@"MARKER TAPPED!");
-	RMMarkerManager *markerManager = [mapView markerManager];
+    
 	if (!tap)
 	{
-		[marker replaceUIImage:[UIImage imageNamed:@"marker-red.png"]
-				 anchorPoint:CGPointMake(0.5, 1.0)];
-		[marker changeLabelUsingText:@"World"];
-		tap=YES;
-		[markerManager moveMarker:marker 
-							 atXY:CGPointMake([marker position].x,[marker position].y + 20.0)];
-		[mapView setDeceleration:YES];
-	}
-	else
+        annotation.annotationIcon = [UIImage imageNamed:@"marker-red.png"];
+        [(RMMarker *)annotation.layer replaceUIImage:annotation.annotationIcon];
+		[(RMMarker *)annotation.layer changeLabelUsingText:@"World"];
+		tap = YES;
+        annotation.coordinate = [mapView pixelToCoordinate:CGPointMake(annotation.position.x,annotation.position.y + 20.0)];
+		mapView.deceleration = YES;
+	} else
 	{
-		[marker replaceUIImage:[UIImage imageNamed:@"marker-blue.png"]
-				   anchorPoint:CGPointMake(0.5, 1.0)];
-		[marker changeLabelUsingText:@"Hello"];
-		[markerManager moveMarker:marker 
-							 atXY:CGPointMake([marker position].x, [marker position].y - 20.0)];
+        annotation.annotationIcon = [UIImage imageNamed:@"marker-blue.png"];
+        annotation.anchorPoint = CGPointMake(0.5, 1.0);
+        [(RMMarker *)annotation.layer replaceUIImage:annotation.annotationIcon anchorPoint:annotation.anchorPoint];
+		[(RMMarker *)annotation.layer changeLabelUsingText:@"Hello"];
+        annotation.coordinate = [mapView pixelToCoordinate:CGPointMake(annotation.position.x,annotation.position.y - 20.0)];
 		tap = NO;
-		[mapView setDeceleration:NO];
+		mapView.deceleration = NO;
 	}
-
 }
 
-- (void) tapOnLabelForMarker:(RMMarker*) marker 
-					   onMap:(RMMapView*) map
+- (void)tapOnLabelForAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map
 {
-	NSLog(@"Label <0x%x, RC:%U> tapped for marker <0x%x, RC:%U>",  marker.label, [marker.label retainCount], marker, [marker retainCount]);
-	[marker changeLabelUsingText:[NSString stringWithFormat:@"Tapped! (%U)", ++tapCount]];
+	NSLog(@"Label <%@, RC:%d> tapped for marker <%@, RC:%d>",  ((RMMarker *)annotation.layer).label, [((RMMarker *)annotation.layer).label retainCount], (RMMarker *)annotation.layer, [(RMMarker *)annotation.layer retainCount]);
+	[(RMMarker *)annotation.layer changeLabelUsingText:[NSString stringWithFormat:@"Tapped! (%U)", ++tapCount]];
+}
+
+- (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
+{
+    RMMarker *marker = [[[RMMarker alloc] initWithUIImage:annotation.annotationIcon anchorPoint:annotation.anchorPoint] autorelease];
+    if (annotation.title)
+        [marker changeLabelUsingText:annotation.title];
+    if ([annotation.userInfo objectForKey:@"foregroundColor"])
+        [marker setTextForegroundColor:[annotation.userInfo objectForKey:@"foregroundColor"]];
+    return marker;
 }
 
 // Implement viewDidLoad to do additional setup after loading the view.
@@ -162,41 +135,40 @@ shouldDragMarker:(RMMarker *)marker
     [super viewDidLoad];
 
 	locationManager	= [[CLLocationManager alloc] init];
-	locationManager.delegate		= self;
+	locationManager.delegate = self;
 	locationManager.desiredAccuracy = kCLLocationAccuracyBest;
 	if (locationManager.locationServicesEnabled == NO)
 	{
 		NSLog(@"Services not enabled");
 		return;
 	}
-	
-	currentLocation. latitude = 33.413313;
+
+	currentLocation.latitude = 33.413313;
 	currentLocation.longitude = -111.907326;
-	
+
 	[locationManager startUpdatingLocation];
 
 	tap = NO;
-	RMMarkerManager *markerManager = [mapView markerManager];
 
-	[mapView setDelegate:self];
-	[mapView setBackgroundColor:[UIColor grayColor]];  //or clear etc 
+	mapView.delegate = self;
+	mapView.backgroundColor = [UIColor grayColor];  //or clear etc 
 
 	if (locationManager.location != nil)
 	{
 		currentLocation = locationManager.location.coordinate;
-		
 		NSLog(@"Location: Lat: %lf Lon: %lf", currentLocation.latitude, currentLocation.longitude);
 	}
-	
-	[mapView moveToLatLong:currentLocation]; 
+
+	[mapView moveToCoordinate:currentLocation]; 
 	[self.view addSubview:mapView]; 
 
-	RMMarker *marker = [[RMMarker alloc] initWithUIImage: [UIImage imageNamed:@"marker-blue.png"]];
-	[marker setTextForegroundColor:[UIColor blueColor]];
-	[marker changeLabelUsingText:@"Hello"];
-	[markerManager addMarker:marker 
-				   atLatLong:currentLocation];
-	[marker release];
+    RMAnnotation *annotation = [RMAnnotation annotationWithMapView:mapView coordinate:currentLocation andTitle:@"Hello"];
+    annotation.annotationIcon = [UIImage imageNamed:@"marker-blue.png"];
+    annotation.anchorPoint = CGPointMake(0.5, 1.0);
+    annotation.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                           [UIColor blueColor],@"foregroundColor",
+                           nil];
+    [mapView addAnnotation:annotation];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
@@ -204,61 +176,43 @@ shouldDragMarker:(RMMarker *)marker
     return YES;
 }
 
-
-- (void)didReceiveMemoryWarning 
-{
-	// due to a bug, RMMapView should never be released, as it causes the application to crash
-    //[super didReceiveMemoryWarning]; // Releases the view if it doesn't have a superview
-
-	[mapView.contents didReceiveMemoryWarning];
-}
-
-
 - (void)dealloc 
 {
 	[mapView release];
 	[locationManager stopUpdatingLocation];
 	[locationManager release];
-	
     [super dealloc];
 }
 
 #pragma mark --
 #pragma mark locationManagerDelegate Methods
 
-- (void)locationManager: (CLLocationManager *)manager 
-	didUpdateToLocation: (CLLocation *)newLocation
-		   fromLocation: (CLLocation *)oldLocation
+- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
 	NSLog(@"Moving from lat: %lf lon: %lf to lat: %lf lon: %lf", 
 		  oldLocation.coordinate.latitude, oldLocation.coordinate.longitude,
 		  newLocation.coordinate.latitude, newLocation.coordinate.longitude);
-	
+
 	currentLocation = newLocation.coordinate;
-	RMMarkerManager *markerManager = [mapView markerManager];
-	NSArray *markers = [markerManager markers];
-	for (NSInteger i = 0; i < [markers count]; ++i)
+
+	NSArray *annotations = [mapView annotations];
+    for (RMAnnotation *annotation in annotations)
 	{
-		RMMarker *marker = [markers objectAtIndex: i];
-		CLLocationCoordinate2D location = [markerManager latitudeLongitudeForMarker:marker];
+		CLLocationCoordinate2D location = annotation.coordinate;
 		if (location.latitude == oldLocation.coordinate.latitude &&
 			location.longitude == oldLocation.coordinate.longitude)
 		{
-			[markerManager moveMarker: marker
-							atLatLon: newLocation.coordinate];
+            annotation.coordinate = location;
 			break; // We're done. 
 		}
 	}
-	
-	[mapView moveToLatLong:currentLocation]; 
+
+	[mapView moveToCoordinate:currentLocation]; 
 }
 
-- (void)locationManager: (CLLocationManager *)manager
-	   didFailWithError: (NSError *)error
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
 	NSLog(@"Location Manager error: %@", [error localizedDescription]);
 }
 
-@synthesize tap;
-@synthesize tapCount;
 @end
