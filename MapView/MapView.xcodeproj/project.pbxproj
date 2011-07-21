@@ -33,6 +33,8 @@
 
 /* Begin PBXBuildFile section */
 		126693040EB76C0B00E002D5 /* RMConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 126692A00EB75C0A00E002D5 /* RMConfiguration.m */; };
+		1606C9FE13D86BA400547581 /* RMOpenCycleMapSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 1606C9FC13D86BA300547581 /* RMOpenCycleMapSource.h */; };
+		1606C9FF13D86BA400547581 /* RMOpenCycleMapSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1606C9FD13D86BA300547581 /* RMOpenCycleMapSource.m */; };
 		160EEDAF13D41DEC007C5501 /* RMAnnotation.h in Headers */ = {isa = PBXBuildFile; fileRef = 160EEDAD13D41DEC007C5501 /* RMAnnotation.h */; };
 		160EEDB013D41DEC007C5501 /* RMAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 160EEDAE13D41DEC007C5501 /* RMAnnotation.m */; };
 		16EC85D2133CA6C300219947 /* RMAbstractMercatorTileSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 16EC85CC133CA6C300219947 /* RMAbstractMercatorTileSource.h */; };
@@ -174,6 +176,8 @@
 		1266929F0EB75C0A00E002D5 /* RMConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMConfiguration.h; sourceTree = "<group>"; };
 		126692A00EB75C0A00E002D5 /* RMConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMConfiguration.m; sourceTree = "<group>"; };
 		12F2031E0EBB65E9003D7B6B /* RMMapViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMapViewDelegate.h; sourceTree = "<group>"; };
+		1606C9FC13D86BA300547581 /* RMOpenCycleMapSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMOpenCycleMapSource.h; sourceTree = "<group>"; };
+		1606C9FD13D86BA300547581 /* RMOpenCycleMapSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMOpenCycleMapSource.m; sourceTree = "<group>"; };
 		160EEDAD13D41DEC007C5501 /* RMAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMAnnotation.h; sourceTree = "<group>"; };
 		160EEDAE13D41DEC007C5501 /* RMAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMAnnotation.m; sourceTree = "<group>"; };
 		16EC85CC133CA6C300219947 /* RMAbstractMercatorTileSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMAbstractMercatorTileSource.h; sourceTree = "<group>"; };
@@ -333,6 +337,8 @@
 			children = (
 				D1437B33122869E400888DAE /* RMDBMapSource.h */,
 				D1437B32122869E400888DAE /* RMDBMapSource.m */,
+				1606C9FC13D86BA300547581 /* RMOpenCycleMapSource.h */,
+				1606C9FD13D86BA300547581 /* RMOpenCycleMapSource.m */,
 				B83E64ED0E80E73F001663B6 /* RMOpenStreetMapSource.h */,
 				B83E64EE0E80E73F001663B6 /* RMOpenStreetMapSource.m */,
 			);
@@ -664,6 +670,7 @@
 				16EC85D4133CA6C300219947 /* RMAbstractWebMapSource.h in Headers */,
 				16EC85D6133CA6C300219947 /* RMCacheObject.h in Headers */,
 				160EEDAF13D41DEC007C5501 /* RMAnnotation.h in Headers */,
+				1606C9FE13D86BA400547581 /* RMOpenCycleMapSource.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -880,6 +887,7 @@
 				16EC85D5133CA6C300219947 /* RMAbstractWebMapSource.m in Sources */,
 				16EC85D7133CA6C300219947 /* RMCacheObject.m in Sources */,
 				160EEDB013D41DEC007C5501 /* RMAnnotation.m in Sources */,
+				1606C9FF13D86BA400547581 /* RMOpenCycleMapSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
