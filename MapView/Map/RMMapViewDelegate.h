@@ -32,10 +32,9 @@
 
 /// Use this for notifications of map panning, zooming, and taps on the RMMapView.
 @protocol RMMapViewDelegate <NSObject>
+@optional
 
 - (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation;
-
-@optional
 
 - (void)beforeMapMove:(RMMapView *)map;
 - (void)afterMapMove:(RMMapView *)map ;

@@ -1321,7 +1321,7 @@
             {
                 [self correctScreenPosition:annotation];
                 if ([annotation isAnnotationWithinBounds:screenBounds]) {
-                    if (annotation.layer == nil)
+                    if (annotation.layer == nil && [delegate respondsToSelector:@selector(mapView:layerForAnnotation:)])
                         annotation.layer = [delegate mapView:self layerForAnnotation:annotation];
                     if (annotation.layer == nil)
                         continue;
@@ -1370,7 +1370,8 @@
     }
     [self correctScreenPosition:annotation];
 
-    if ([annotation isAnnotationOnScreen]) {
+    if ([annotation isAnnotationOnScreen] && [delegate respondsToSelector:@selector(mapView:layerForAnnotation:)])
+    {
         annotation.layer = [delegate mapView:self layerForAnnotation:annotation];
         if (annotation.layer) {
             [overlay addSublayer:annotation.layer];
