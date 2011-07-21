@@ -112,40 +112,13 @@
 #pragma mark -
 #pragma mark Initialization
 
-- (id)initWithFrame:(CGRect)frame
+- (void)performInitializationWithTilesource:(id <RMTileSource>)newTilesource
+                           centerCoordinate:(CLLocationCoordinate2D)initialCenterCoordinate
+                                  zoomLevel:(float)initialZoomLevel
+                               maxZoomLevel:(float)maxZoomLevel
+                               minZoomLevel:(float)minZoomLevel
+                            backgroundImage:(UIImage *)backgroundImage
 {
-	LogMethod();
-    return [self initWithFrame:frame andTilesource:[[RMOpenStreetMapSource new] autorelease]];
-}
-
-- (id)initWithFrame:(CGRect)frame andTilesource:(id <RMTileSource>)newTilesource
-{
-	LogMethod();
-	CLLocationCoordinate2D coordinate;
-	coordinate.latitude = kDefaultInitialLatitude;
-	coordinate.longitude = kDefaultInitialLongitude;
-
-	return [self initWithFrame:frame
-                 andTilesource:newTilesource
-              centerCoordinate:coordinate
-                     zoomLevel:kDefaultInitialZoomLevel
-                  maxZoomLevel:kDefaultMaximumZoomLevel
-                  minZoomLevel:kDefaultMinimumZoomLevel
-               backgroundImage:nil];
-}
-
-- (id)initWithFrame:(CGRect)frame
-      andTilesource:(id <RMTileSource>)newTilesource
-   centerCoordinate:(CLLocationCoordinate2D)initialCenterCoordinate
-          zoomLevel:(float)initialZoomLevel
-       maxZoomLevel:(float)maxZoomLevel
-       minZoomLevel:(float)minZoomLevel
-    backgroundImage:(UIImage *)backgroundImage
-{
-    LogMethod();
-    if (!(self = [super initWithFrame:frame]))
-        return nil;
-
     enableDragging = YES;
     enableZoom = YES;
     decelerationFactor = kDefaultDecelerationFactor;
@@ -194,7 +167,6 @@
 
     [tileLoader setSuppressLoading:NO];
 
-    /// \bug TODO: Make a nice background class
     [self setBackground:[[[CALayer alloc] init] autorelease]];
     [self setOverlay:[[[RMMapLayer alloc] init] autorelease]];
 
@@ -207,6 +179,69 @@
                                                object:nil];
 
     RMLog(@"Map initialised. tileSource:%@, renderer:%@, minZoom:%.0f, maxZoom:%.0f", tileSource, renderer, [self minZoom], [self maxZoom]);
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    LogMethod();
+    if (!(self = [super initWithCoder:aDecoder]))
+        return nil;
+
+	CLLocationCoordinate2D coordinate;
+	coordinate.latitude = kDefaultInitialLatitude;
+	coordinate.longitude = kDefaultInitialLongitude;
+
+    [self performInitializationWithTilesource:[[RMOpenStreetMapSource new] autorelease]
+                             centerCoordinate:coordinate
+                                    zoomLevel:kDefaultInitialZoomLevel
+                                 maxZoomLevel:kDefaultMaximumZoomLevel
+                                 minZoomLevel:kDefaultMinimumZoomLevel
+                              backgroundImage:nil];
+
+    return self;
+}
+
+- (id)initWithFrame:(CGRect)frame
+{
+    LogMethod();
+    return [self initWithFrame:frame andTilesource:[[RMOpenStreetMapSource new] autorelease]];
+}
+
+- (id)initWithFrame:(CGRect)frame andTilesource:(id <RMTileSource>)newTilesource
+{
+	LogMethod();
+	CLLocationCoordinate2D coordinate;
+	coordinate.latitude = kDefaultInitialLatitude;
+	coordinate.longitude = kDefaultInitialLongitude;
+
+	return [self initWithFrame:frame
+                 andTilesource:newTilesource
+              centerCoordinate:coordinate
+                     zoomLevel:kDefaultInitialZoomLevel
+                  maxZoomLevel:kDefaultMaximumZoomLevel
+                  minZoomLevel:kDefaultMinimumZoomLevel
+               backgroundImage:nil];
+}
+
+- (id)initWithFrame:(CGRect)frame
+      andTilesource:(id <RMTileSource>)newTilesource
+   centerCoordinate:(CLLocationCoordinate2D)initialCenterCoordinate
+          zoomLevel:(float)initialZoomLevel
+       maxZoomLevel:(float)maxZoomLevel
+       minZoomLevel:(float)minZoomLevel
+    backgroundImage:(UIImage *)backgroundImage
+{
+    LogMethod();
+    if (!(self = [super initWithFrame:frame]))
+        return nil;
+
+    [self performInitializationWithTilesource:newTilesource
+                             centerCoordinate:initialCenterCoordinate
+                                    zoomLevel:initialZoomLevel
+                                 maxZoomLevel:maxZoomLevel
+                                 minZoomLevel:minZoomLevel
+                              backgroundImage:backgroundImage];
+
     return self;
 }
 
