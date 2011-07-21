@@ -90,14 +90,6 @@
     self.position = [[mapView mercatorToScreenProjection] projectProjectedPoint:self.projectedLocation];
 }
 
-- (void)setBoundingBoxCoordinatesSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast
-{
-    RMProjectedPoint first = [[mapView projection] coordinateToProjectedPoint:southWest];
-    RMProjectedPoint second = [[mapView projection] coordinateToProjectedPoint:northEast];
-    self.projectedBoundingBox = RMMakeProjectedRect(first.easting, first.northing, second.easting - first.easting, second.northing - first.northing);
-    self.hasBoundingBox = YES;
-}
-
 - (void)setMapView:(RMMapView *)aMapView
 {
     mapView = aMapView;
@@ -139,6 +131,44 @@
     CGRect screenBounds = [[mapView mercatorToScreenProjection] screenBounds];
     return [self isAnnotationWithinBounds:screenBounds];
 }
+
+#pragma mark -
+
+- (void)setBoundingBoxCoordinatesSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast
+{
+    RMProjectedPoint first = [[mapView projection] coordinateToProjectedPoint:southWest];
+    RMProjectedPoint second = [[mapView projection] coordinateToProjectedPoint:northEast];
+    self.projectedBoundingBox = RMMakeProjectedRect(first.easting, first.northing, second.easting - first.easting, second.northing - first.northing);
+    self.hasBoundingBox = YES;
+}
+
+- (void)setBoundingBoxFromLocations:(NSArray *)locations
+{
+    CLLocationCoordinate2D min, max;
+	min.latitude = 90.0; min.longitude = 180.0;
+	max.latitude = -90.0; max.longitude = -180.0;
+
+    CLLocationDegrees currentLatitude, currentLongitude;
+	for (CLLocation *currentLocation in locations)
+    {
+        currentLatitude = currentLocation.coordinate.latitude;
+        currentLongitude = currentLocation.coordinate.longitude;
+
+        // POIs outside of the world...
+        if (currentLatitude < -90.0 || currentLatitude > 90.0 || currentLongitude < -180.0 || currentLongitude > 180.0) {
+            continue;
+        }
+
+		max.latitude  = fmax(currentLatitude, max.latitude);
+		max.longitude = fmax(currentLongitude, max.longitude);
+		min.latitude  = fmin(currentLatitude, min.latitude);
+		min.longitude = fmin(currentLongitude, min.longitude);
+	}
+
+    [self setBoundingBoxCoordinatesSouthWest:min northEast:max];
+}
+
+#pragma mark -
 
 - (NSString *)description
 {

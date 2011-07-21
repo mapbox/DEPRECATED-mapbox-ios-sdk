@@ -69,6 +69,7 @@
 - (id)initWithMapView:(RMMapView *)aMapView coordinate:(CLLocationCoordinate2D)aCoordinate andTitle:(NSString *)aTitle;
 
 - (void)setBoundingBoxCoordinatesSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast;
+- (void)setBoundingBoxFromLocations:(NSArray *)locations;
 
 - (BOOL)isAnnotationOnScreen;
 - (BOOL)isAnnotationWithinBounds:(CGRect)bounds;
