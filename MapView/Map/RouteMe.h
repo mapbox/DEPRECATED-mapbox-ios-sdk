@@ -30,11 +30,10 @@
 
 // P.S. The list isn't full. Need to add missing header files, when required
 
-#import "RMAbstractMercatorWebSource.h"
 #import "RMMapView.h"
-#import "RMMarkerManager.h"
 #import "RMProjection.h"
 #import "RMTileLoader.h"
 #import "RMTileSource.h"
+#import "RMAbstractMercatorWebSource.h"
 
 #import "NSUserDefaults+RouteMe.h"

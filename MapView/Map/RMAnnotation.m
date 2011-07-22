@@ -26,6 +26,9 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+#import <CoreLocation/CoreLocation.h>
+
+#import "RMGlobalConstants.h"
 #import "RMAnnotation.h"
 #import "RMMapView.h"
 #import "RMMapLayer.h"
@@ -145,8 +148,8 @@
 - (void)setBoundingBoxFromLocations:(NSArray *)locations
 {
     CLLocationCoordinate2D min, max;
-	min.latitude = 90.0; min.longitude = 180.0;
-	max.latitude = -90.0; max.longitude = -180.0;
+	min.latitude = kRMMaxLatitude; min.longitude = kRMMaxLongitude;
+	max.latitude = kRMMinLatitude; max.longitude = kRMMinLongitude;
 
     CLLocationDegrees currentLatitude, currentLongitude;
 	for (CLLocation *currentLocation in locations)
@@ -155,7 +158,7 @@
         currentLongitude = currentLocation.coordinate.longitude;
 
         // POIs outside of the world...
-        if (currentLatitude < -90.0 || currentLatitude > 90.0 || currentLongitude < -180.0 || currentLongitude > 180.0) {
+        if (currentLatitude < kRMMinLatitude || currentLatitude > kRMMaxLatitude || currentLongitude < kRMMinLongitude || currentLongitude > kRMMaxLongitude) {
             continue;
         }
 
