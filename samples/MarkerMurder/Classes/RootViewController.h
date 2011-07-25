@@ -8,8 +8,8 @@
 @class MainViewController;
 @class FlipsideViewController;
 
-@interface RootViewController : UIViewController {
-
+@interface RootViewController : UIViewController
+{
     UIButton *infoButton;
     MainViewController *mainViewController;
     FlipsideViewController *flipsideViewController;

@@ -33,22 +33,22 @@
 
 #define degreesToRadian(x) (M_PI * x / 180.0)
 
-@interface MapViewViewController : UIViewController 
-			<RMMapViewDelegate, CLLocationManagerDelegate> 
+@interface MapViewViewController : UIViewController <RMMapViewDelegate, CLLocationManagerDelegate> 
 {
-	IBOutlet RMMapView		*mapView;
+	IBOutlet RMMapView	   *mapView;
 	BOOL					tap;
 	NSInteger				tapCount;
-	CLLocationManager		*locationManager;
+	CLLocationManager	   *locationManager;
 	CLLocationCoordinate2D	currentLocation;
 }
 
-@property (nonatomic, retain)IBOutlet RMMapView		*mapView;
-@property (nonatomic, retain) CLLocationManager		*locationManager;
+@property (nonatomic, retain) IBOutlet RMMapView *mapView;
+@property (nonatomic, retain) CLLocationManager	 *locationManager;
 
-@property (nonatomic) CLLocationCoordinate2D		currentLocation;
+@property (nonatomic) CLLocationCoordinate2D currentLocation;
 
-@property BOOL				tap;
-@property NSInteger			tapCount;
+@property BOOL		tap;
+@property NSInteger	tapCount;
+
 @end
 

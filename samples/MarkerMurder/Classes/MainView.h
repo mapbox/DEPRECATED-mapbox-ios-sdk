@@ -5,8 +5,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface MainView : UIView {
-
+@interface MainView : UIView
+{
 }
 
 @end

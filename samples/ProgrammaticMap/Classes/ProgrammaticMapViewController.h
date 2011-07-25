@@ -9,13 +9,15 @@
 #import <UIKit/UIKit.h>
 
 @class RMMapView;
-@interface ProgrammaticMapViewController : UIViewController {
+
+@interface ProgrammaticMapViewController : UIViewController
+{
 	RMMapView *mapView;
 }
 
 @property(nonatomic,retain)RMMapView *mapView;
 
-- (IBAction) doTheTest:(id)sender;
+- (IBAction)doTheTest:(id)sender;
 
 @end
 

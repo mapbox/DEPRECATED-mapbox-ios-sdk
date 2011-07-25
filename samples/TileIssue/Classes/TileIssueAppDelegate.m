@@ -14,29 +14,23 @@
 @synthesize tileIssueViewController;
 @synthesize navController;
 
-- (void)applicationDidFinishLaunching:(UIApplication *)application {    
+- (void)applicationDidFinishLaunching:(UIApplication *)application
+{    
+	[self setTileIssueViewController:[[TileIssueViewController alloc] init]];
 
-    // Override point for customization after application launch
-	
-	[self setTileIssueViewController:[[TileIssueViewController alloc]init]];
-	
 	UINavigationController *aNavigationViewCtrl = [[UINavigationController alloc]initWithRootViewController:[self tileIssueViewController]];
 	[self setNavController:aNavigationViewCtrl];
 	[aNavigationViewCtrl release];
-	
-	[window setBackgroundColor:[UIColor blueColor]];
 
-	
+	[window setBackgroundColor:[UIColor blueColor]];
 	[window addSubview:[navController view]];
 	[window makeKeyAndVisible];
-
 }
 
-
-- (void)dealloc {
+- (void)dealloc
+{
     [window release];
     [super dealloc];
 }
-
 
 @end

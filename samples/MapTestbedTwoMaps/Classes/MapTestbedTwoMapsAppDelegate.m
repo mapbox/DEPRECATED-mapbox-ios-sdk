@@ -10,25 +10,23 @@
 
 @implementation MapTestbedTwoMapsAppDelegate
 
-
 @synthesize window;
 @synthesize rootViewController;
 
 - (void)performTest
-{
-  
+{  
 }
 
-- (void)applicationDidFinishLaunching:(UIApplication *)application {
-    
+- (void)applicationDidFinishLaunching:(UIApplication *)application
+{
     [window addSubview:[rootViewController view]];
     [window makeKeyAndVisible];
 
 	[self performSelector:@selector(performTest) withObject:nil afterDelay:1.0]; 
 }
 
-
-- (void)dealloc {
+- (void)dealloc
+{
 	[rootViewController release];
     [window release];
     [super dealloc];

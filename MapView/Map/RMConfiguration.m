@@ -36,7 +36,7 @@ static RMConfiguration *RMConfigurationSharedInstance = nil;
 	@synchronized (RMConfigurationSharedInstance) {
 		if (RMConfigurationSharedInstance != nil)
             return RMConfigurationSharedInstance;
-	
+
 		RMConfigurationSharedInstance = [[RMConfiguration alloc] initWithPath:[[NSBundle mainBundle] pathForResource:@"routeme" ofType:@"plist"]];
 		return RMConfigurationSharedInstance;
 	}
@@ -53,20 +53,20 @@ static RMConfiguration *RMConfigurationSharedInstance = nil;
 	NSString *error;
 	NSPropertyListFormat format;
 
-	if (path==nil) {
-		propList = nil;
+	if (path == nil) {
+		propertyList = nil;
 		return self;
 	}
-	
-	RMLog(@"reading configuration from %@", path);	
+
+	RMLog(@"reading configuration from %@", path);
 	plistData = [NSData dataWithContentsOfFile:path];
 
-	propList = [[NSPropertyListSerialization propertyListFromData:plistData
+	propertyList = [[NSPropertyListSerialization propertyListFromData:plistData
                                                  mutabilityOption:NSPropertyListImmutable
                                                            format:&format
                                                  errorDescription:&error] retain];
 
-	if (!propList) {
+	if (!propertyList) {
 		RMLog(@"problem reading from %@: %@", path, error);
 		[error release];
 	}
@@ -76,16 +76,16 @@ static RMConfiguration *RMConfigurationSharedInstance = nil;
 
 - (void)dealloc
 {
-	[propList release]; propList = nil;
+	[propertyList release]; propertyList = nil;
 	[super dealloc];
 }
 
 - (NSDictionary *)cacheConfiguration
 {
-	if (propList==nil)
+	if (propertyList == nil)
         return nil;
-    
-	return [propList objectForKey: @"caches"];
+
+	return [propertyList objectForKey:@"caches"];
 }
 
 @end

@@ -90,45 +90,80 @@ svn checkout http://route-me.googlecode.com/svn/trunk/ route-me-read-only
 #import <UIKit/UIKit.h>
 #import <CoreGraphics/CGGeometry.h>
 
+#import "RMGlobalConstants.h"
 #import "RMNotifications.h"
 #import "RMFoundation.h"
 #import "RMMapViewDelegate.h"
-#import "RMMapContents.h"
+#import "RMTile.h"
+#import "RMProjection.h"
 
-/*! 
- \struct RMGestureDetails
- iPhone-specific mapview stuff. Handles event handling, whatnot.
- */
+// iPhone-specific mapview stuff. Handles event handling, whatnot.
 typedef struct {
-	CGPoint center;
-	CGFloat angle;
-	float averageDistanceFromCenter;
-	int numTouches;
+    CGPoint center;
+    CGFloat angle;
+    float averageDistanceFromCenter;
+    int numTouches;
 } RMGestureDetails;
 
-@class RMMapContents;
+// constants for boundingMask
+enum {
+    RMMapNoMinBound		= 0, // Map can be zoomed out past view limits
+    RMMapMinHeightBound	= 1, // Minimum map height when zooming out restricted to view height
+    RMMapMinWidthBound	= 2  // Minimum map width when zooming out restricted to view width (default)
+};
 
-/*! 
- \brief Wrapper around RMMapContents for the iPhone.
- 
- It implements event handling; but that's about it. All the interesting map
- logic is done by RMMapContents. There is exactly one RMMapView instance for each RMMapContents instance.
- 
- A -forwardInvocation method exists for RMMap, and forwards all unhandled messages to the RMMapContents instance.
- 
- \bug No accessors for enableDragging, enableZoom, deceleration, decelerationFactor. Changing enableDragging does not change multitouchEnabled for the view.
- */
-@interface RMMapView : UIView <RMMapContentsFacade, RMMapContentsAnimationCallback>
+@class RMMarkerManager;
+@class RMProjection;
+@class RMMercatorToScreenProjection;
+@class RMTileCache;
+@class RMTileImageSet;
+@class RMTileLoader;
+@class RMCoreAnimationRenderer;
+@class RMMapLayer;
+@class RMMarkerLayer;
+@class RMMarker;
+@class RMAnnotation;
+@protocol RMMercatorToTileProjection;
+@protocol RMTileSource;
+
+@interface RMMapView : UIView
 {
-    RMMapContents *contents;
     id <RMMapViewDelegate> delegate;
+
     BOOL enableDragging;
     BOOL enableZoom;
-    BOOL enableRotate;
-    RMGestureDetails lastGesture;
-    float decelerationFactor;
     BOOL deceleration;
-    CGFloat rotation;
+    float decelerationFactor;
+
+    RMGestureDetails lastGesture;
+
+    /// projection objects to convert from latitude/longitude to meters,
+    /// from projected meters to tiles and screen coordinates
+    RMProjection *projection;
+    id <RMMercatorToTileProjection> mercatorToTileProjection;
+    RMMercatorToScreenProjection *mercatorToScreenProjection;
+
+    RMMapLayer *overlay; /// subview for markers and paths
+    RMCoreAnimationRenderer *renderer;
+    RMTileImageSet *imagesOnScreen;
+    RMTileLoader *tileLoader;
+
+    NSMutableArray *annotations;
+    NSMutableSet   *visibleAnnotations;
+
+    id <RMTileSource> tileSource;
+    RMTileCache *tileCache; // Generic tile cache
+
+    /// subview for the image displayed while tiles are loading. Set its contents by providing your own "loading.png".
+    CALayer *background;
+
+    /// minimum and maximum zoom number allowed for the view. #minZoom and #maxZoom must be within the limits of #tileSource but can be stricter; they are clamped to tilesource limits if needed.
+    float minZoom;
+    float maxZoom;
+    float screenScale;
+
+    NSUInteger boundingMask;
+    RMProjectedRect tileSourceProjectedBounds;
 
 @private
     BOOL _delegateHasBeforeMapMove;
@@ -151,51 +186,141 @@ typedef struct {
 
     NSTimer *_decelerationTimer;
     CGSize _decelerationDelta;
-
     CGPoint _longPressPosition;
 
     BOOL _constrainMovement;
-    RMProjectedPoint NEconstraint, SWconstraint;
-
-    BOOL _contentsIsSet; // "contents" must be set, but is initialized lazily to allow apps to override defaults in -awakeFromNib
+    RMProjectedPoint _northEastConstraint, _southWestConstraint;
 }
 
-/// Any other functionality you need to manipulate the map you can access through this
-/// property. The RMMapContents class holds the actual map bits.
-@property (nonatomic, retain) RMMapContents *contents;
+@property (nonatomic, assign) id <RMMapViewDelegate> delegate;
 
 // View properties
-@property (readwrite) BOOL enableDragging;
-@property (readwrite) BOOL enableZoom;
-@property (readwrite) BOOL enableRotate;
+@property (nonatomic, assign)   BOOL enableDragging;
+@property (nonatomic, assign)   BOOL enableZoom;
+@property (nonatomic, assign)   BOOL deceleration;
+@property (nonatomic, assign)   float decelerationFactor;
+@property (nonatomic, readonly) RMGestureDetails lastGesture;
 
-@property (nonatomic, retain, readonly) RMMarkerManager *markerManager;
+@property (nonatomic, assign)   CLLocationCoordinate2D mapCenterCoordinate;
+@property (nonatomic, assign)   RMProjectedPoint mapCenterProjectedPoint;
+@property (nonatomic, assign)   RMProjectedRect projectedBounds;
+@property (nonatomic, readonly) RMTileRect tileBounds;
+@property (nonatomic, readonly) CGRect screenBounds;
+@property (nonatomic, assign)   float metersPerPixel;
+@property (nonatomic, readonly) float scaledMetersPerPixel;
+@property (nonatomic, readonly) double scaleDenominator; /// The denominator in a cartographic scale like 1/24000, 1/50000, 1/2000000.
+@property (nonatomic, readonly) float screenScale;
+@property (nonatomic, assign)   NSUInteger boundingMask;
 
-// do not retain the delegate so you can let the corresponding controller implement the
-// delegate without circular references
-@property (assign) id <RMMapViewDelegate> delegate;
-@property (readwrite) float decelerationFactor;
-@property (readwrite) BOOL deceleration;
+@property (nonatomic, assign) float zoom; /// zoom level is clamped to range (minZoom, maxZoom)
+@property (nonatomic, assign) float minZoom;
+@property (nonatomic, assign) float maxZoom;
 
-@property (readonly) CGFloat rotation;
+@property (nonatomic, readonly) RMMarkerManager *markerManager;
+@property (nonatomic, readonly) RMMapLayer *overlay;
 
-/// recenter the map on #latlong, expressed as CLLocationCoordinate2D (latitude/longitude)
-- (void)moveToLatLong:(CLLocationCoordinate2D)latlong;
-- (void)moveToLatLong:(CLLocationCoordinate2D)latlong animated:(BOOL)animated;
+@property (nonatomic, readonly) RMTileImageSet *imagesOnScreen;
+@property (nonatomic, readonly) RMTileLoader *tileLoader;
+@property (nonatomic, retain)   RMCoreAnimationRenderer *renderer;
+
+@property (nonatomic, readonly) RMProjection *projection;
+@property (nonatomic, readonly) id <RMMercatorToTileProjection> mercatorToTileProjection;
+@property (nonatomic, readonly) RMMercatorToScreenProjection *mercatorToScreenProjection;
+
+@property (nonatomic, retain) id <RMTileSource> tileSource;
+@property (nonatomic, retain) RMTileCache *tileCache;
+
+@property (nonatomic, retain) CALayer *background;
+
+// tileDepth defaults to zero. if tiles have no alpha, set this higher, 3 or so, to make zooming smoother
+@property (nonatomic, assign) short tileDepth;
+
+@property (nonatomic, readonly) BOOL fullyLoaded;
+
+#pragma mark -
+#pragma mark Initializers
+
+- (id)initWithFrame:(CGRect)frame andTilesource:(id <RMTileSource>)newTilesource;
+
+/// designated initializer
+- (id)initWithFrame:(CGRect)frame
+      andTilesource:(id <RMTileSource>)newTilesource
+   centerCoordinate:(CLLocationCoordinate2D)initialCenterCoordinate
+          zoomLevel:(float)initialZoomLevel
+       maxZoomLevel:(float)maxZoomLevel
+       minZoomLevel:(float)minZoomLevel
+    backgroundImage:(UIImage *)backgroundImage;
+
+- (void)setFrame:(CGRect)frame;
+
+#pragma mark -
+#pragma mark Movement
+
+/// recenter the map on #coordinate, expressed as CLLocationCoordinate2D (latitude/longitude)
+- (void)moveToCoordinate:(CLLocationCoordinate2D)coordinate;
+- (void)moveToCoordinate:(CLLocationCoordinate2D)coordinate animated:(BOOL)animated;
 
 /// recenter the map on #aPoint, expressed in projected meters
 - (void)moveToProjectedPoint:(RMProjectedPoint)aPoint;
 
 - (void)moveBy:(CGSize)delta;
 
-- (void)setConstraintsSW:(CLLocationCoordinate2D)sw NE:(CLLocationCoordinate2D)ne;
-- (void)setProjectedConstraintsSW:(RMProjectedPoint)sw NE:(RMProjectedPoint)ne;
+- (void)setConstraintsSouthWest:(CLLocationCoordinate2D)sw northEeast:(CLLocationCoordinate2D)ne;
+- (void)setProjectedConstraintsSouthWest:(RMProjectedPoint)sw northEast:(RMProjectedPoint)ne;
+
+#pragma mark -
+#pragma mark Zoom
 
 - (void)zoomByFactor:(float)zoomFactor near:(CGPoint)aPoint;
-- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)aPoint animated:(BOOL)animated;
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center animated:(BOOL)animated;
 
-- (void)didReceiveMemoryWarning;
+- (void)zoomInToNextNativeZoomAt:(CGPoint)pivot;
+- (void)zoomInToNextNativeZoomAt:(CGPoint)pivot animated:(BOOL)animated;
+- (void)zoomOutToNextNativeZoomAt:(CGPoint)pivot;
+- (void)zoomOutToNextNativeZoomAt:(CGPoint)pivot animated:(BOOL)animated;
 
-- (void)setRotation:(CGFloat)angle;
+- (void)zoomWithLatitudeLongitudeBoundsSouthWest:(CLLocationCoordinate2D)sw northEast:(CLLocationCoordinate2D)ne;
+- (void)zoomWithProjectedBounds:(RMProjectedRect)bounds;
+
+- (float)nextNativeZoomFactor;
+- (float)previousNativeZoomFactor;
+- (float)adjustedZoomForCurrentBoundingMask:(float)zoomFactor;
+
+#pragma mark -
+#pragma mark Conversions
+
+- (CGPoint)coordinateToPixel:(CLLocationCoordinate2D)coordinate;
+- (CGPoint)coordinateToPixel:(CLLocationCoordinate2D)coordinate withMetersPerPixel:(float)aScale;
+- (RMTilePoint)coordinateToTilePoint:(CLLocationCoordinate2D)coordinate withMetersPerPixel:(float)aScale;
+- (CLLocationCoordinate2D)pixelToCoordinate:(CGPoint)aPixel;
+- (CLLocationCoordinate2D)pixelToCoordinate:(CGPoint)aPixel withMetersPerPixel:(float)aScale;
+
+/// returns the smallest bounding box containing the entire screen
+- (RMSphericalTrapezium)latitudeLongitudeBoundingBoxForScreen;
+/// returns the smallest bounding box containing a rectangular region of the screen
+- (RMSphericalTrapezium)latitudeLongitudeBoundingBoxFor:(CGRect) rect;
+
+- (BOOL)projectedBounds:(RMProjectedRect)bounds containsPoint:(RMProjectedPoint)point;
+- (BOOL)tileSourceBoundsContainProjectedPoint:(RMProjectedPoint)point;
+
+#pragma mark -
+#pragma mark Annotations
+
+- (NSArray *)annotations;
+
+- (void)addAnnotation:(RMAnnotation *)annotation;
+- (void)addAnnotations:(NSArray *)annotations;
+
+- (void)removeAnnotation:(RMAnnotation *)annotation;
+- (void)removeAnnotations:(NSArray *)annotations;
+- (void)removeAllAnnotations;
+
+- (CGPoint)screenCoordinatesForAnnotation:(RMAnnotation *)annotation;
+
+#pragma mark -
+#pragma mark Cache
+
+///  Clear all images from the #tileSource's caching system.
+-(void)removeAllCachedImages;
 
 @end

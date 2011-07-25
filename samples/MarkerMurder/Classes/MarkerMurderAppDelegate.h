@@ -8,14 +8,13 @@
 
 @class RootViewController;
 
-@interface MarkerMurderAppDelegate : NSObject <UIApplicationDelegate> {
+@interface MarkerMurderAppDelegate : NSObject <UIApplicationDelegate>
+{
     UIWindow *window;
     RootViewController *rootViewController;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 @property (nonatomic, retain) IBOutlet RootViewController *rootViewController;
-@property (nonatomic, readonly) RMMapContents *mapContents;
 
 @end
-

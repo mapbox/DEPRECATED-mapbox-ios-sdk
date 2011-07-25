@@ -41,8 +41,8 @@
     BOOL isExecuting, isFinished;
 }
 
-@property (readonly) BOOL isExecuting;
-@property (readonly) BOOL isFinished;
+@property (nonatomic, readonly) BOOL isExecuting;
+@property (nonatomic, readonly) BOOL isFinished;
 
 + (id)operationWithUrl:(NSURL *)anURL withTileImage:(RMTileImage *)aTileImage andTileCache:(RMTileCache *)aTileCache withCacheKey:(NSString *)aCacheKey;
 

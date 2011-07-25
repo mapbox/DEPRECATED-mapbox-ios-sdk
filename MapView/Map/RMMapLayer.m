@@ -30,10 +30,20 @@
 
 @implementation RMMapLayer
 
+@synthesize annotation;
+@synthesize projectedLocation;
+@synthesize enableDragging;
+@synthesize enableRotation;
+@synthesize userInfo;
+
 - (id)init
 {
 	if (!(self = [super init]))
 		return nil;
+
+    self.annotation = nil;
+    self.enableDragging = YES;
+    self.enableRotation = YES;
 
 	return self;
 }
@@ -43,10 +53,12 @@
     if (!(self = [super initWithLayer:layer]))
         return nil;
 
+    self.annotation = nil;
+
     return self;
 }
 
-/// \bug why return nil for the "position" and "bounds" actionForKey? Does this do anything besides block Core Animation?
+/// return nil for certain animation keys to block core animation
 - (id <CAAction>)actionForKey:(NSString *)key
 {
     if ([key isEqualToString:@"position"] || [key isEqualToString:@"bounds"])

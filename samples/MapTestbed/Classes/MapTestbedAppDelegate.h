@@ -9,14 +9,14 @@
 @class RootViewController;
 @class RMMapContents;
 
-@interface MapTestbedAppDelegate : NSObject <UIApplicationDelegate> {
+@interface MapTestbedAppDelegate : NSObject <UIApplicationDelegate>
+{
     UIWindow *window;
     RootViewController *rootViewController;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 @property (nonatomic, retain) IBOutlet RootViewController *rootViewController;
-@property (nonatomic, readonly) RMMapContents *mapContents;
 
 @end
 

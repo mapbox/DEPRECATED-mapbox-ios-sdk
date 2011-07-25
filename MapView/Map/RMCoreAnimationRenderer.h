@@ -27,13 +27,21 @@
 
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
-#import "RMMapRenderer.h"
 
-@class RMLayeredTileLoader;
+#import "RMTileImageSet.h"
 
-@interface RMCoreAnimationRenderer : RMMapRenderer {
+@class RMMapView;
+
+@interface RMCoreAnimationRenderer : NSObject <RMTileImageSetDelegate> {
+	RMMapView *mapView;
+
 	CALayer *layer;
 	NSMutableArray *tiles;
 }
+
+@property (nonatomic, readonly) CALayer *layer;
+@property (nonatomic, assign)   CGRect frame;
+
+- (id)initWithView:(RMMapView *)aMapView;
 
 @end

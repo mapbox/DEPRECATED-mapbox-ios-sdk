@@ -6,7 +6,8 @@
 #import <UIKit/UIKit.h>
 #import "RMMapView.h"
 
-@interface FlipsideViewController : UIViewController {
+@interface FlipsideViewController : UIViewController
+{
 	IBOutlet UITextField *centerLatitude;
 	IBOutlet UITextField *centerLongitude;
 	IBOutlet UITextField *zoomLevel;
@@ -20,8 +21,7 @@
 @property(nonatomic,retain) IBOutlet UITextField *minZoom;
 @property(nonatomic,retain) IBOutlet UITextField *maxZoom;
 
-- (RMMapContents *)contents;
-
 - (IBAction)clearSharedNSURLCache;
 - (IBAction)clearMapContentsCachedImages;
+
 @end

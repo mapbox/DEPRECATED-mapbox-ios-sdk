@@ -1,5 +1,5 @@
 //
-//  RMMapRenderer.m
+//  OpenCycleMapSource.m
 //
 // Copyright (c) 2008-2009, Route-Me Contributors
 // All rights reserved.
@@ -25,66 +25,53 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import "RMMapRenderer.h"
+#import "RMOpenCycleMapSource.h"
 
-#import "RMTileImage.h"
+@implementation RMOpenCycleMapSource
 
-@implementation RMMapRenderer
-
-// Designated initialiser
-- (id) initWithContent: (RMMapContents *)_contents
-{
+- (id)init
+{       
 	if (!(self = [super init]))
-		return nil;
-
-	content = _contents;
-	
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mapImageLoaded:) name:RMMapImageLoadedNotification object:nil];
-	
+        return nil;
+    
+    // http://wiki.openstreetmap.org/index.php/FAQ#What_is_the_map_scale_for_a_particular_zoom_level_of_the_map.3F 
+    [self setMaxZoom:15];
+    [self setMinZoom:1];
+    
 	return self;
+} 
+
+- (NSURL *)URLForTile:(RMTile)tile
+{
+	NSAssert4(((tile.zoom >= self.minZoom) && (tile.zoom <= self.maxZoom)),
+			  @"%@ tried to retrieve tile with zoomLevel %d, outside source's defined range %f to %f", 
+			  self, tile.zoom, self.minZoom, self.maxZoom);
+	return [NSURL URLWithString:[NSString stringWithFormat:@"http://andy.sandbox.cloudmade.com/tiles/cycle/%d/%d/%d.png", tile.zoom, tile.x, tile.y]];
 }
 
-- (void)dealloc
+- (NSString *)uniqueTilecacheKey
 {
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	[super dealloc];
+	return @"OpenCycleMap";
 }
 
-- (void)tileImageAdded:(RMTileImage *)image
+- (NSString *)shortName
 {
+	return @"Open Cycle Map";
 }
 
-- (void)tileImageRemoved:(RMTileImage *)tileImage
+- (NSString *)longDescription
 {
+	return @"Open Cycle Map, the free wiki world map, provides freely usable map data for all parts of the world, under the Creative Commons Attribution-Share Alike 2.0 license.";
 }
 
-// \bug no-op
-- (void) setNeedsDisplay
+- (NSString *)shortAttribution
 {
-	
+	return @"© OpenCycleMap CC-BY-SA";
 }
 
-// \bug calls a no-op
-- (void)mapImageLoaded:(NSNotification *)notification
+-(NSString *)longAttribution
 {
-	[self setNeedsDisplay];
-}
-
-// \bug no-op
-- (void)drawRect:(CGRect)rect
-{
-}
-
-// \bug no-op
-- (void)setFrame:(CGRect)frame
-{
-}
-
-
-/// \bug no-op
-- (CALayer *)layer
-{
-	return nil;
+	return @"Map data © OpenCycleMap, licensed under Creative Commons Share Alike By Attribution.";
 }
 
 @end

@@ -7,23 +7,22 @@
 
 @implementation MainView
 
+- (id)initWithFrame:(CGRect)frame
+{
+    if (!(self = [super initWithFrame:frame]))
+        return nil;
 
-- (id)initWithFrame:(CGRect)frame {
-    if (self = [super initWithFrame:frame]) {
-        // Initialization code
-    }
     return self;
 }
 
-
-- (void)drawRect:(CGRect)rect {
+- (void)drawRect:(CGRect)rect
+{
     // Drawing code
 }
 
-
-- (void)dealloc {
+- (void)dealloc
+{
     [super dealloc];
 }
-
 
 @end

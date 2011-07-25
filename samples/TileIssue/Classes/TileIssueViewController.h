@@ -10,7 +10,8 @@
 
 #import "RMMapView.h"
 
-@interface TileIssueViewController : UIViewController {
+@interface TileIssueViewController : UIViewController
+{
 	 RMMapView *mapView;
 }
 

@@ -5,9 +5,8 @@
 
 #import "MainViewController.h"
 #import "MapTestbedTwoMapsAppDelegate.h"
-#import "RMMapContents.h"
-#import "RMCloudMadeMapSource.h"
-#import "RMVirtualEarthSource.h"
+#import "RMOpenStreetMapSource.h"
+#import "RMOpenCycleMapSource.h"
 
 #import "MainView.h"
 
@@ -16,58 +15,50 @@
 @synthesize upperMapView;
 @synthesize lowerMapView;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
-        // Custom initialization
-    }
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    if (!(self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]))
+        return nil;
+
     return self;
 }
 
-
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
 	LogMethod();
     [super viewDidLoad];
-	
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tileNotification:) name:RMTileRequested object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tileNotification:) name:RMTileRetrieved object:nil];
+
 	CLLocationCoordinate2D center;
 	center.latitude = 47.592;
 	center.longitude = -122.333;
-	
-    [upperMapView setDelegate:self];
-    RMMapContents *upperMapContents = [[RMMapContents alloc] initWithView:upperMapView
-												tilesource:[[[RMVirtualEarthSource alloc] initWithHybridThemeUsingAccessKey:@"invalidKey"] autorelease]];
-	[upperMapView setNeedsLayout];
-	[upperMapView setNeedsDisplay];
-	[upperMapView moveToLatLong:center];
-	
-    [lowerMapView setDelegate:self];
-    RMMapContents *lowerMapContents =  [[RMMapContents alloc] initWithView:lowerMapView
-												 tilesource:[[[RMCloudMadeMapSource alloc] initWithAccessKey:@"0199bdee456e59ce950b0156029d6934" styleNumber:7] autorelease]];
-	[lowerMapView setNeedsDisplay];
-	[lowerMapView moveToLatLong:center];
 
-	NSLog(@"%@ %@", upperMapContents, lowerMapContents);
+    [upperMapView setDelegate:self];
+    upperMapView.tileSource = [[[RMOpenStreetMapSource alloc] init] autorelease];
+	[upperMapView moveToCoordinate:center];
+
+    [lowerMapView setDelegate:self];
+    lowerMapView.tileSource = [[[RMOpenCycleMapSource alloc] init] autorelease];
+	[lowerMapView moveToCoordinate:center];
+
+	NSLog(@"%@ %@", upperMapView, lowerMapView);
 }
 
-
-/*
- // Override to allow orientations other than the default portrait orientation.
- - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
- // Return YES for supported orientations
- return (interfaceOrientation == UIInterfaceOrientationPortrait);
- }
-*/
-
-
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning]; // Releases the view if it doesn't have a superview
     // Release anything that's not essential, such as cached data
 }
 
-- (void)viewDidAppear:(BOOL)animated {
+- (void)viewDidAppear:(BOOL)animated
+{
 }
 
-- (void)dealloc {
+- (void)dealloc
+{
     self.upperMapView = nil; 
     self.lowerMapView = nil; 
     [super dealloc];
@@ -76,11 +67,33 @@
 #pragma mark -
 #pragma mark Delegate methods
 
-- (void) afterMapMove: (RMMapView*) map {
+- (void)afterMapMove:(RMMapView *)map
+{
+    if (map == upperMapView)
+        [lowerMapView moveToCoordinate:upperMapView.mapCenterCoordinate];
 }
 
-- (void) afterMapZoom: (RMMapView*) map byFactor: (float) zoomFactor near:(CGPoint) center {
+- (void)afterMapZoom:(RMMapView *)map byFactor:(float)zoomFactor near:(CGPoint)center
+{
+    if (map == upperMapView) {
+        lowerMapView.zoom = upperMapView.zoom;
+        [lowerMapView moveToCoordinate:upperMapView.mapCenterCoordinate];
+    }
 }
 
+#pragma mark -
+#pragma mark Notification methods
+
+- (void)tileNotification:(NSNotification *)notification
+{
+	static int outstandingTiles = 0;
+    
+	if (notification.name == RMTileRequested)
+		outstandingTiles++;
+	else if(notification.name == RMTileRetrieved)
+		outstandingTiles--;
+    
+	[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:(outstandingTiles > 0)];
+}
 
 @end

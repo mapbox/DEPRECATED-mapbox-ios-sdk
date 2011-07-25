@@ -79,10 +79,11 @@
 {
     [db executeQuery:@"PRAGMA synchronous=OFF"];
     [db executeQuery:@"PRAGMA journal_mode=OFF"];
-	[db executeUpdate:@"CREATE TABLE IF NOT EXISTS ZCACHE (tile_hash INTEGER NOT NULL, cache_key VARCHAR(25) NOT NULL, last_used DOUBLE NOT NULL, data BLOB NOT NULL)"];
+    [db executeQuery:@"PRAGMA cache-size=100"];
+    [db executeQuery:@"PRAGMA count_changes=OFF"];
+    [db executeUpdate:@"CREATE TABLE IF NOT EXISTS ZCACHE (tile_hash INTEGER NOT NULL, cache_key VARCHAR(25) NOT NULL, last_used DOUBLE NOT NULL, data BLOB NOT NULL)"];
     [db executeUpdate:@"CREATE UNIQUE INDEX IF NOT EXISTS main_index ON ZCACHE(tile_hash, cache_key)"];
     [db executeUpdate:@"CREATE INDEX IF NOT EXISTS last_used_index ON ZCACHE(last_used)"];
-    [db executeQuery:@"VACUUM"];
 }
 
 - (id)initWithDatabase:(NSString *)path
@@ -252,7 +253,8 @@
     RMLog(@"purging %u old tiles from db cache", count);
 
     [writeQueueLock lock];
-    BOOL result = [db executeUpdate: @"DELETE FROM ZCACHE WHERE tile_hash IN (SELECT tile_hash FROM ZCACHE ORDER BY last_used LIMIT ?)", [NSNumber numberWithUnsignedInt:count]];
+    BOOL result = [db executeUpdate:@"DELETE FROM ZCACHE WHERE tile_hash IN (SELECT tile_hash FROM ZCACHE ORDER BY last_used LIMIT ?)", [NSNumber numberWithUnsignedInt:count]];
+    [db executeQuery:@"VACUUM"];
     tileCount = [self countTiles];
     [writeQueueLock unlock];
 
@@ -265,7 +267,7 @@
 {
     [writeQueue addOperationWithBlock:^{
         [writeQueueLock lock];
-        BOOL result = [db executeUpdate: @"DELETE FROM ZCACHE"];
+        BOOL result = [db executeUpdate:@"DELETE FROM ZCACHE"];
         [db executeQuery:@"VACUUM"];
         [writeQueueLock unlock];
 
@@ -281,7 +283,7 @@
 {
     [writeQueue addOperationWithBlock:^{
         [writeQueueLock lock];
-        BOOL result = [db executeUpdate: @"UPDATE ZCACHE SET last_used = ? WHERE tile_hash = ? AND cache_key = ?", [NSDate date], [RMTileCache tileHash:tile], cacheKey];
+        BOOL result = [db executeUpdate:@"UPDATE ZCACHE SET last_used = ? WHERE tile_hash = ? AND cache_key = ?", [NSDate date], [RMTileCache tileHash:tile], cacheKey];
         [writeQueueLock unlock];
 
         if (result == NO) {

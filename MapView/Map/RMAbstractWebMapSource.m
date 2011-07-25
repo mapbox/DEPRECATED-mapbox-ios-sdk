@@ -80,6 +80,8 @@
 
 - (void)finish
 {
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMTileRetrieved object:nil];
+
     [connection cancel]; [connection release]; connection = nil;
     
     [self willChangeValueForKey:@"isExecuting"];
@@ -100,6 +102,8 @@
         return;
     }
 
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMTileRequested object:nil];
+
     if (tileImage.loadingCancelled) {
         [self finish];
         return;
@@ -114,7 +118,7 @@
     [connection cancel]; [connection release]; connection = nil;
     connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
     if (!connection) {
-        [tileImage updateWithImage:[RMTileImage errorTile] andNotify:NO];
+        [tileImage updateWithImage:[RMTileImage errorTile] andNotifyListeners:NO];
         [self finish];
     }
 }
@@ -131,7 +135,7 @@
 	}
     else if (statusCode == 404) { // Not Found
         if (!tileImage.loadingCancelled)
-            [tileImage updateWithImage:[RMTileImage missingTile] andNotify:NO];
+            [tileImage updateWithImage:[RMTileImage missingTile] andNotifyListeners:NO];
 
         [self finish];
 	}
@@ -171,7 +175,7 @@
         }
 
         UIImage *image = [UIImage imageWithData:data];
-        [tileImage updateWithImage:image andNotify:YES];
+        [tileImage updateWithImage:image andNotifyListeners:YES];
         if (tileCache) [tileCache addImage:image forTile:tileImage.tile withCacheKey:cacheKey];
         [self finish];
 	}
@@ -181,7 +185,7 @@
 {
 	//RMLog(@"didFailWithError %@ %d %@", _connection, [error code], [error localizedDescription]);
 	BOOL retry = FALSE;
-    
+
 	switch ([error code])
 	{
         case NSURLErrorBadURL:                      // -1000
@@ -196,7 +200,7 @@
             retry = TRUE; 
             break;
 	}
-	    
+
 	if (retry) {
 		[self start];
 	}

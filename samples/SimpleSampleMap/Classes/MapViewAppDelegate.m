@@ -34,30 +34,25 @@
 @synthesize window;
 @synthesize viewController;
 
--(id)init
+- (id)init
 {
-	if (self = [super init]) 
-	{
-		//Notifications for tile requests.  This code allows for a class to 
-		//know when a tile is requested and retrieved
-		[[NSNotificationCenter defaultCenter] addObserver:self
-												 selector:@selector(tileRequested:)
-													 name:@"RMTileRequested" object:nil ];
-		[[NSNotificationCenter defaultCenter] addObserver:self
-												 selector:@selector(tileRetrieved:)
-													 name:@"RMTileRetrieved" object:nil ]; 
-	}
-	
-	NSLog(@"%@ init", self);
+	if (!(self = [super init]))
+        return nil;
+
+    //Notifications for tile requests.  This code allows for a class to 
+    //know when a tile is requested and retrieved
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tileRequested:) name:@"RMTileRequested" object:nil ];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tileRetrieved:) name:@"RMTileRetrieved" object:nil ]; 
+
 	return self;
 }
 
--(void)tileRequested:(NSNotification *)notification
+- (void)tileRequested:(NSNotification *)notification
 {
 	NSLog(@"Tile request started.");
 }
 
--(void)tileRetrieved:(NSNotification *)notification;
+- (void)tileRetrieved:(NSNotification *)notification
 {
 	NSLog(@"Tile request ended.");
 }
@@ -69,13 +64,11 @@
     [window makeKeyAndVisible];
 }
 
-
 - (void)dealloc 
 {
     [viewController release];
     [window release];
     [super dealloc];
 }
-
 
 @end

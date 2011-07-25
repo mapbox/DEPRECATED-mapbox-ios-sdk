@@ -32,16 +32,17 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		090FE3140ECD71A500035FBC /* RMTilesUpdateDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 090FE3130ECD71A500035FBC /* RMTilesUpdateDelegate.h */; };
 		126693040EB76C0B00E002D5 /* RMConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 126692A00EB75C0A00E002D5 /* RMConfiguration.m */; };
+		1606C9FE13D86BA400547581 /* RMOpenCycleMapSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 1606C9FC13D86BA300547581 /* RMOpenCycleMapSource.h */; };
+		1606C9FF13D86BA400547581 /* RMOpenCycleMapSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1606C9FD13D86BA300547581 /* RMOpenCycleMapSource.m */; };
+		160EEDAF13D41DEC007C5501 /* RMAnnotation.h in Headers */ = {isa = PBXBuildFile; fileRef = 160EEDAD13D41DEC007C5501 /* RMAnnotation.h */; };
+		160EEDB013D41DEC007C5501 /* RMAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 160EEDAE13D41DEC007C5501 /* RMAnnotation.m */; };
 		16EC85D2133CA6C300219947 /* RMAbstractMercatorTileSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 16EC85CC133CA6C300219947 /* RMAbstractMercatorTileSource.h */; };
 		16EC85D3133CA6C300219947 /* RMAbstractMercatorTileSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 16EC85CD133CA6C300219947 /* RMAbstractMercatorTileSource.m */; };
 		16EC85D4133CA6C300219947 /* RMAbstractWebMapSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 16EC85CE133CA6C300219947 /* RMAbstractWebMapSource.h */; };
 		16EC85D5133CA6C300219947 /* RMAbstractWebMapSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 16EC85CF133CA6C300219947 /* RMAbstractWebMapSource.m */; };
 		16EC85D6133CA6C300219947 /* RMCacheObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 16EC85D0133CA6C300219947 /* RMCacheObject.h */; };
 		16EC85D7133CA6C300219947 /* RMCacheObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 16EC85D1133CA6C300219947 /* RMCacheObject.m */; };
-		175701DE1323C2E900A5D314 /* NSUserDefaults+RouteMe.h in Headers */ = {isa = PBXBuildFile; fileRef = 175701DC1323C2E900A5D314 /* NSUserDefaults+RouteMe.h */; };
-		175701DF1323C2E900A5D314 /* NSUserDefaults+RouteMe.m in Sources */ = {isa = PBXBuildFile; fileRef = 175701DD1323C2E900A5D314 /* NSUserDefaults+RouteMe.m */; };
 		17F02BB11319BA4B00260C6B /* RouteMe.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F02BB01319BA4B00260C6B /* RouteMe.h */; };
 		23A0AAE90EB90A99003A4521 /* RMFoundation.c in Sources */ = {isa = PBXBuildFile; fileRef = 23A0AAE80EB90A99003A4521 /* RMFoundation.c */; };
 		23A0AAEB0EB90AA6003A4521 /* RMFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 23A0AAEA0EB90AA6003A4521 /* RMFoundation.h */; };
@@ -66,13 +67,9 @@
 		2BEC60350F8AC713008FB858 /* RMDatabaseCache.m in Sources */ = {isa = PBXBuildFile; fileRef = B8474B990EB40094006A0BC1 /* RMDatabaseCache.m */; };
 		2BEC60370F8AC718008FB858 /* RMFoundation.c in Sources */ = {isa = PBXBuildFile; fileRef = 23A0AAE80EB90A99003A4521 /* RMFoundation.c */; };
 		2BEC60380F8AC71A008FB858 /* RMFractalTileProjection.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64EA0E80E73F001663B6 /* RMFractalTileProjection.m */; };
-		2BEC603A0F8AC71D008FB858 /* RMLayerCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = B8FA92180E9315EC003A9FE6 /* RMLayerCollection.m */; };
-		2BEC603B0F8AC71E008FB858 /* RMMapContents.m in Sources */ = {isa = PBXBuildFile; fileRef = B8C974B70E8A280A007D16AD /* RMMapContents.m */; };
 		2BEC603C0F8AC71F008FB858 /* RMMapLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = B8F3FC600EA2B382004D8F85 /* RMMapLayer.m */; };
-		2BEC603D0F8AC722008FB858 /* RMMapRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64CB0E80E73F001663B6 /* RMMapRenderer.m */; };
 		2BEC603E0F8AC723008FB858 /* RMMapView.m in Sources */ = {isa = PBXBuildFile; fileRef = B8C9746A0E8A1A50007D16AD /* RMMapView.m */; };
 		2BEC603F0F8AC724008FB858 /* RMMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = B8F3FC630EA2E792004D8F85 /* RMMarker.m */; };
-		2BEC60400F8AC725008FB858 /* RMMarkerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 090C948C0EC23FCD003AEE25 /* RMMarkerManager.m */; };
 		2BEC60430F8AC729008FB858 /* RMMemoryCache.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64D30E80E73F001663B6 /* RMMemoryCache.m */; };
 		2BEC60440F8AC729008FB858 /* RMMercatorToScreenProjection.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64C90E80E73F001663B6 /* RMMercatorToScreenProjection.m */; };
 		2BEC60460F8AC72C008FB858 /* RMOpenStreetMapSource.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64EE0E80E73F001663B6 /* RMOpenStreetMapSource.m */; };
@@ -106,12 +103,9 @@
 		B8474BA40EB40094006A0BC1 /* RMDatabaseCache.h in Headers */ = {isa = PBXBuildFile; fileRef = B8474B980EB40094006A0BC1 /* RMDatabaseCache.h */; };
 		B8474BA50EB40094006A0BC1 /* RMDatabaseCache.m in Sources */ = {isa = PBXBuildFile; fileRef = B8474B990EB40094006A0BC1 /* RMDatabaseCache.m */; };
 		B8474BC10EB4019A006A0BC1 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B8474BC00EB4019A006A0BC1 /* libsqlite3.dylib */; };
-		B8800FF00EC3A237003E9CDD /* RMMarkerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 090C948C0EC23FCD003AEE25 /* RMMarkerManager.m */; };
-		B8800FF10EC3A237003E9CDD /* RMMarkerManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 090C948B0EC23FCD003AEE25 /* RMMarkerManager.h */; };
 		B8800FF20EC3A239003E9CDD /* RMMapViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 12F2031E0EBB65E9003D7B6B /* RMMapViewDelegate.h */; };
 		B8800FF30EC3A23D003E9CDD /* RMConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 1266929F0EB75C0A00E002D5 /* RMConfiguration.h */; };
 		B8C974170E8A19B2007D16AD /* RMMercatorToScreenProjection.h in Headers */ = {isa = PBXBuildFile; fileRef = B83E64C80E80E73F001663B6 /* RMMercatorToScreenProjection.h */; };
-		B8C974190E8A19B2007D16AD /* RMMapRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = B83E64CA0E80E73F001663B6 /* RMMapRenderer.h */; };
 		B8C9741D0E8A19B2007D16AD /* RMCoreAnimationRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = B83E64BD0E80E73F001663B6 /* RMCoreAnimationRenderer.h */; };
 		B8C974220E8A19B2007D16AD /* RMProjection.h in Headers */ = {isa = PBXBuildFile; fileRef = B83E64E30E80E73F001663B6 /* RMProjection.h */; };
 		B8C974230E8A19B2007D16AD /* RMTileCache.h in Headers */ = {isa = PBXBuildFile; fileRef = B83E64D00E80E73F001663B6 /* RMTileCache.h */; };
@@ -123,7 +117,6 @@
 		B8C9742D0E8A19B2007D16AD /* RMFractalTileProjection.h in Headers */ = {isa = PBXBuildFile; fileRef = B83E64E90E80E73F001663B6 /* RMFractalTileProjection.h */; };
 		B8C9742F0E8A19B2007D16AD /* RMMapLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = B86F26AC0E87442C007A3773 /* RMMapLayer.h */; };
 		B8C974350E8A19B2007D16AD /* RMMercatorToScreenProjection.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64C90E80E73F001663B6 /* RMMercatorToScreenProjection.m */; };
-		B8C974380E8A19B2007D16AD /* RMMapRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64CB0E80E73F001663B6 /* RMMapRenderer.m */; };
 		B8C9743A0E8A19B2007D16AD /* RMCoreAnimationRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64BE0E80E73F001663B6 /* RMCoreAnimationRenderer.m */; };
 		B8C9743F0E8A19B2007D16AD /* RMTileImage.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E64D90E80E73F001663B6 /* RMTileImage.m */; };
 		B8C974400E8A19B2007D16AD /* RMTile.c in Sources */ = {isa = PBXBuildFile; fileRef = B83E64D70E80E73F001663B6 /* RMTile.c */; };
@@ -146,15 +139,11 @@
 		B8C9746B0E8A1A50007D16AD /* RMMapView.h in Headers */ = {isa = PBXBuildFile; fileRef = B8C974690E8A1A50007D16AD /* RMMapView.h */; };
 		B8C9746C0E8A1A50007D16AD /* RMMapView.m in Sources */ = {isa = PBXBuildFile; fileRef = B8C9746A0E8A1A50007D16AD /* RMMapView.m */; };
 		B8C974B00E8A1F08007D16AD /* RMMercatorToTileProjection.h in Headers */ = {isa = PBXBuildFile; fileRef = B8C974AE0E8A1F08007D16AD /* RMMercatorToTileProjection.h */; };
-		B8C974B80E8A280A007D16AD /* RMMapContents.h in Headers */ = {isa = PBXBuildFile; fileRef = B8C974B60E8A280A007D16AD /* RMMapContents.h */; };
-		B8C974B90E8A280A007D16AD /* RMMapContents.m in Sources */ = {isa = PBXBuildFile; fileRef = B8C974B70E8A280A007D16AD /* RMMapContents.m */; };
 		B8CEB1C50ED5A3480014C431 /* RMPath.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CEB1C30ED5A3480014C431 /* RMPath.h */; };
 		B8CEB1C60ED5A3480014C431 /* RMPath.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CEB1C40ED5A3480014C431 /* RMPath.m */; };
 		B8F3FC610EA2B382004D8F85 /* RMMapLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = B8F3FC600EA2B382004D8F85 /* RMMapLayer.m */; };
 		B8F3FC640EA2E792004D8F85 /* RMMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = B8F3FC620EA2E792004D8F85 /* RMMarker.h */; };
 		B8F3FC650EA2E792004D8F85 /* RMMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = B8F3FC630EA2E792004D8F85 /* RMMarker.m */; };
-		B8FA92190E9315EC003A9FE6 /* RMLayerCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = B8FA92170E9315EC003A9FE6 /* RMLayerCollection.h */; };
-		B8FA921A0E9315EC003A9FE6 /* RMLayerCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = B8FA92180E9315EC003A9FE6 /* RMLayerCollection.m */; };
 		D1437B36122869E400888DAE /* RMDBMapSource.m in Sources */ = {isa = PBXBuildFile; fileRef = D1437B32122869E400888DAE /* RMDBMapSource.m */; };
 		D1437B37122869E400888DAE /* RMDBMapSource.h in Headers */ = {isa = PBXBuildFile; fileRef = D1437B33122869E400888DAE /* RMDBMapSource.h */; };
 /* End PBXBuildFile section */
@@ -184,20 +173,19 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		090C948B0EC23FCD003AEE25 /* RMMarkerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMarkerManager.h; sourceTree = "<group>"; };
-		090C948C0EC23FCD003AEE25 /* RMMarkerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMarkerManager.m; sourceTree = "<group>"; };
-		090FE3130ECD71A500035FBC /* RMTilesUpdateDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMTilesUpdateDelegate.h; sourceTree = "<group>"; };
 		1266929F0EB75C0A00E002D5 /* RMConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMConfiguration.h; sourceTree = "<group>"; };
 		126692A00EB75C0A00E002D5 /* RMConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMConfiguration.m; sourceTree = "<group>"; };
 		12F2031E0EBB65E9003D7B6B /* RMMapViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMapViewDelegate.h; sourceTree = "<group>"; };
+		1606C9FC13D86BA300547581 /* RMOpenCycleMapSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMOpenCycleMapSource.h; sourceTree = "<group>"; };
+		1606C9FD13D86BA300547581 /* RMOpenCycleMapSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMOpenCycleMapSource.m; sourceTree = "<group>"; };
+		160EEDAD13D41DEC007C5501 /* RMAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMAnnotation.h; sourceTree = "<group>"; };
+		160EEDAE13D41DEC007C5501 /* RMAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMAnnotation.m; sourceTree = "<group>"; };
 		16EC85CC133CA6C300219947 /* RMAbstractMercatorTileSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMAbstractMercatorTileSource.h; sourceTree = "<group>"; };
 		16EC85CD133CA6C300219947 /* RMAbstractMercatorTileSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMAbstractMercatorTileSource.m; sourceTree = "<group>"; };
 		16EC85CE133CA6C300219947 /* RMAbstractWebMapSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMAbstractWebMapSource.h; sourceTree = "<group>"; };
 		16EC85CF133CA6C300219947 /* RMAbstractWebMapSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMAbstractWebMapSource.m; sourceTree = "<group>"; };
 		16EC85D0133CA6C300219947 /* RMCacheObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMCacheObject.h; sourceTree = "<group>"; };
 		16EC85D1133CA6C300219947 /* RMCacheObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMCacheObject.m; sourceTree = "<group>"; };
-		175701DC1323C2E900A5D314 /* NSUserDefaults+RouteMe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSUserDefaults+RouteMe.h"; sourceTree = "<group>"; };
-		175701DD1323C2E900A5D314 /* NSUserDefaults+RouteMe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUserDefaults+RouteMe.m"; sourceTree = "<group>"; };
 		17F02BB01319BA4B00260C6B /* RouteMe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RouteMe.h; sourceTree = "<group>"; };
 		17F31EFA1331050A00122B16 /* libMapView.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMapView.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -251,8 +239,6 @@
 		B83E64C70E80E73F001663B6 /* RMTileLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMTileLoader.m; sourceTree = "<group>"; };
 		B83E64C80E80E73F001663B6 /* RMMercatorToScreenProjection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMercatorToScreenProjection.h; sourceTree = "<group>"; };
 		B83E64C90E80E73F001663B6 /* RMMercatorToScreenProjection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMercatorToScreenProjection.m; sourceTree = "<group>"; };
-		B83E64CA0E80E73F001663B6 /* RMMapRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMapRenderer.h; sourceTree = "<group>"; };
-		B83E64CB0E80E73F001663B6 /* RMMapRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMapRenderer.m; sourceTree = "<group>"; };
 		B83E64D00E80E73F001663B6 /* RMTileCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMTileCache.h; sourceTree = "<group>"; };
 		B83E64D10E80E73F001663B6 /* RMTileCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMTileCache.m; sourceTree = "<group>"; };
 		B83E64D20E80E73F001663B6 /* RMMemoryCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMemoryCache.h; sourceTree = "<group>"; };
@@ -295,15 +281,11 @@
 		B8C974690E8A1A50007D16AD /* RMMapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMapView.h; sourceTree = "<group>"; };
 		B8C9746A0E8A1A50007D16AD /* RMMapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMapView.m; sourceTree = "<group>"; };
 		B8C974AE0E8A1F08007D16AD /* RMMercatorToTileProjection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMercatorToTileProjection.h; sourceTree = "<group>"; };
-		B8C974B60E8A280A007D16AD /* RMMapContents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMapContents.h; sourceTree = "<group>"; };
-		B8C974B70E8A280A007D16AD /* RMMapContents.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMapContents.m; sourceTree = "<group>"; };
 		B8CEB1C30ED5A3480014C431 /* RMPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMPath.h; sourceTree = "<group>"; };
 		B8CEB1C40ED5A3480014C431 /* RMPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMPath.m; sourceTree = "<group>"; };
 		B8F3FC600EA2B382004D8F85 /* RMMapLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMapLayer.m; sourceTree = "<group>"; };
 		B8F3FC620EA2E792004D8F85 /* RMMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMarker.h; sourceTree = "<group>"; };
 		B8F3FC630EA2E792004D8F85 /* RMMarker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMarker.m; sourceTree = "<group>"; };
-		B8FA92170E9315EC003A9FE6 /* RMLayerCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMLayerCollection.h; sourceTree = "<group>"; };
-		B8FA92180E9315EC003A9FE6 /* RMLayerCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMLayerCollection.m; sourceTree = "<group>"; };
 		D1437B32122869E400888DAE /* RMDBMapSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMDBMapSource.m; sourceTree = "<group>"; };
 		D1437B33122869E400888DAE /* RMDBMapSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMDBMapSource.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -355,19 +337,12 @@
 			children = (
 				D1437B33122869E400888DAE /* RMDBMapSource.h */,
 				D1437B32122869E400888DAE /* RMDBMapSource.m */,
+				1606C9FC13D86BA300547581 /* RMOpenCycleMapSource.h */,
+				1606C9FD13D86BA300547581 /* RMOpenCycleMapSource.m */,
 				B83E64ED0E80E73F001663B6 /* RMOpenStreetMapSource.h */,
 				B83E64EE0E80E73F001663B6 /* RMOpenStreetMapSource.m */,
 			);
 			name = "Map sources";
-			sourceTree = "<group>";
-		};
-		175701DB1323C2CF00A5D314 /* iOS Additions */ = {
-			isa = PBXGroup;
-			children = (
-				175701DC1323C2E900A5D314 /* NSUserDefaults+RouteMe.h */,
-				175701DD1323C2E900A5D314 /* NSUserDefaults+RouteMe.m */,
-			);
-			name = "iOS Additions";
 			sourceTree = "<group>";
 		};
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
@@ -476,8 +451,6 @@
 		B83E64B80E80E73F001663B6 /* Renderers */ = {
 			isa = PBXGroup;
 			children = (
-				B83E64CA0E80E73F001663B6 /* RMMapRenderer.h */,
-				B83E64CB0E80E73F001663B6 /* RMMapRenderer.m */,
 				B83E64C30E80E73F001663B6 /* Tiled Layer Renderer */,
 				B83E64BC0E80E73F001663B6 /* Core Animation Renderer */,
 			);
@@ -597,12 +570,10 @@
 		B86F26A80E8742ED007A3773 /* Markers and other layers */ = {
 			isa = PBXGroup;
 			children = (
-				090C948B0EC23FCD003AEE25 /* RMMarkerManager.h */,
-				090C948C0EC23FCD003AEE25 /* RMMarkerManager.m */,
+				160EEDAD13D41DEC007C5501 /* RMAnnotation.h */,
+				160EEDAE13D41DEC007C5501 /* RMAnnotation.m */,
 				B86F26AC0E87442C007A3773 /* RMMapLayer.h */,
 				B8F3FC600EA2B382004D8F85 /* RMMapLayer.m */,
-				B8FA92170E9315EC003A9FE6 /* RMLayerCollection.h */,
-				B8FA92180E9315EC003A9FE6 /* RMLayerCollection.m */,
 				B8F3FC620EA2E792004D8F85 /* RMMarker.h */,
 				B8F3FC630EA2E792004D8F85 /* RMMarker.m */,
 				B8CEB1C30ED5A3480014C431 /* RMPath.h */,
@@ -616,15 +587,11 @@
 		B8C9740D0E8A196E007D16AD /* Map */ = {
 			isa = PBXGroup;
 			children = (
-				175701DB1323C2CF00A5D314 /* iOS Additions */,
 				17F02BB01319BA4B00260C6B /* RouteMe.h */,
 				96492C3F0FA8AD3400EBA6D2 /* RMGlobalConstants.h */,
 				B1EB26C510B5D8E6009F8658 /* RMNotifications.h */,
-				090FE3130ECD71A500035FBC /* RMTilesUpdateDelegate.h */,
 				B8C974690E8A1A50007D16AD /* RMMapView.h */,
 				B8C9746A0E8A1A50007D16AD /* RMMapView.m */,
-				B8C974B60E8A280A007D16AD /* RMMapContents.h */,
-				B8C974B70E8A280A007D16AD /* RMMapContents.m */,
 				12F2031E0EBB65E9003D7B6B /* RMMapViewDelegate.h */,
 				B8C974B30E8A23C5007D16AD /* Coordinate Systems */,
 				B83E64E20E80E73F001663B6 /* Projections */,
@@ -634,7 +601,6 @@
 				B83E64B80E80E73F001663B6 /* Renderers */,
 				B86F26A80E8742ED007A3773 /* Markers and other layers */,
 				1266929E0EB75BEA00E002D5 /* Configuration */,
-				175701DB1323C2CF00A5D314 /* iOS Additions */,
 				B8474B8C0EB40094006A0BC1 /* FMDB */,
 				B8474C610EB53A01006A0BC1 /* Resources */,
 			);
@@ -672,7 +638,6 @@
 			files = (
 				B8C974170E8A19B2007D16AD /* RMMercatorToScreenProjection.h in Headers */,
 				B8C974250E8A19B2007D16AD /* RMOpenStreetMapSource.h in Headers */,
-				B8C974190E8A19B2007D16AD /* RMMapRenderer.h in Headers */,
 				B8C9741D0E8A19B2007D16AD /* RMCoreAnimationRenderer.h in Headers */,
 				B8C974220E8A19B2007D16AD /* RMProjection.h in Headers */,
 				B8C974230E8A19B2007D16AD /* RMTileCache.h in Headers */,
@@ -687,28 +652,25 @@
 				B8C974620E8A19E8007D16AD /* RMTileSource.h in Headers */,
 				B8C9746B0E8A1A50007D16AD /* RMMapView.h in Headers */,
 				B8C974B00E8A1F08007D16AD /* RMMercatorToTileProjection.h in Headers */,
-				B8C974B80E8A280A007D16AD /* RMMapContents.h in Headers */,
-				B8FA92190E9315EC003A9FE6 /* RMLayerCollection.h in Headers */,
 				B8F3FC640EA2E792004D8F85 /* RMMarker.h in Headers */,
 				B8474B9A0EB40094006A0BC1 /* FMDatabase.h in Headers */,
 				B8474B9C0EB40094006A0BC1 /* FMDatabaseAdditions.h in Headers */,
 				B8474B9F0EB40094006A0BC1 /* FMResultSet.h in Headers */,
 				B8474BA40EB40094006A0BC1 /* RMDatabaseCache.h in Headers */,
 				23A0AAEB0EB90AA6003A4521 /* RMFoundation.h in Headers */,
-				B8800FF10EC3A237003E9CDD /* RMMarkerManager.h in Headers */,
 				B8800FF20EC3A239003E9CDD /* RMMapViewDelegate.h in Headers */,
 				B8800FF30EC3A23D003E9CDD /* RMConfiguration.h in Headers */,
-				090FE3140ECD71A500035FBC /* RMTilesUpdateDelegate.h in Headers */,
 				B8CEB1C50ED5A3480014C431 /* RMPath.h in Headers */,
 				96492C400FA8AD3400EBA6D2 /* RMGlobalConstants.h in Headers */,
 				B1EB26C610B5D8E6009F8658 /* RMNotifications.h in Headers */,
 				D1437B37122869E400888DAE /* RMDBMapSource.h in Headers */,
 				25757F4F1291C8640083D504 /* RMCircle.h in Headers */,
 				17F02BB11319BA4B00260C6B /* RouteMe.h in Headers */,
-				175701DE1323C2E900A5D314 /* NSUserDefaults+RouteMe.h in Headers */,
 				16EC85D2133CA6C300219947 /* RMAbstractMercatorTileSource.h in Headers */,
 				16EC85D4133CA6C300219947 /* RMAbstractWebMapSource.h in Headers */,
 				16EC85D6133CA6C300219947 /* RMCacheObject.h in Headers */,
+				160EEDAF13D41DEC007C5501 /* RMAnnotation.h in Headers */,
+				1606C9FE13D86BA400547581 /* RMOpenCycleMapSource.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -865,13 +827,9 @@
 				2BEC60350F8AC713008FB858 /* RMDatabaseCache.m in Sources */,
 				2BEC60370F8AC718008FB858 /* RMFoundation.c in Sources */,
 				2BEC60380F8AC71A008FB858 /* RMFractalTileProjection.m in Sources */,
-				2BEC603A0F8AC71D008FB858 /* RMLayerCollection.m in Sources */,
-				2BEC603B0F8AC71E008FB858 /* RMMapContents.m in Sources */,
 				2BEC603C0F8AC71F008FB858 /* RMMapLayer.m in Sources */,
-				2BEC603D0F8AC722008FB858 /* RMMapRenderer.m in Sources */,
 				2BEC603E0F8AC723008FB858 /* RMMapView.m in Sources */,
 				2BEC603F0F8AC724008FB858 /* RMMarker.m in Sources */,
-				2BEC60400F8AC725008FB858 /* RMMarkerManager.m in Sources */,
 				2BEC60430F8AC729008FB858 /* RMMemoryCache.m in Sources */,
 				2BEC60440F8AC729008FB858 /* RMMercatorToScreenProjection.m in Sources */,
 				2BEC60460F8AC72C008FB858 /* RMOpenStreetMapSource.m in Sources */,
@@ -902,7 +860,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B8C974350E8A19B2007D16AD /* RMMercatorToScreenProjection.m in Sources */,
-				B8C974380E8A19B2007D16AD /* RMMapRenderer.m in Sources */,
 				B8C9743A0E8A19B2007D16AD /* RMCoreAnimationRenderer.m in Sources */,
 				B8C9743F0E8A19B2007D16AD /* RMTileImage.m in Sources */,
 				B8C974400E8A19B2007D16AD /* RMTile.c in Sources */,
@@ -915,8 +872,6 @@
 				B8C9745D0E8A19E6007D16AD /* RMTileImageSet.m in Sources */,
 				B8C9745F0E8A19E7007D16AD /* RMTileLoader.m in Sources */,
 				B8C9746C0E8A1A50007D16AD /* RMMapView.m in Sources */,
-				B8C974B90E8A280A007D16AD /* RMMapContents.m in Sources */,
-				B8FA921A0E9315EC003A9FE6 /* RMLayerCollection.m in Sources */,
 				B8F3FC610EA2B382004D8F85 /* RMMapLayer.m in Sources */,
 				B8F3FC650EA2E792004D8F85 /* RMMarker.m in Sources */,
 				B8474B9B0EB40094006A0BC1 /* FMDatabase.m in Sources */,
@@ -925,14 +880,14 @@
 				B8474BA50EB40094006A0BC1 /* RMDatabaseCache.m in Sources */,
 				126693040EB76C0B00E002D5 /* RMConfiguration.m in Sources */,
 				23A0AAE90EB90A99003A4521 /* RMFoundation.c in Sources */,
-				B8800FF00EC3A237003E9CDD /* RMMarkerManager.m in Sources */,
 				B8CEB1C60ED5A3480014C431 /* RMPath.m in Sources */,
 				D1437B36122869E400888DAE /* RMDBMapSource.m in Sources */,
 				25757F501291C8640083D504 /* RMCircle.m in Sources */,
-				175701DF1323C2E900A5D314 /* NSUserDefaults+RouteMe.m in Sources */,
 				16EC85D3133CA6C300219947 /* RMAbstractMercatorTileSource.m in Sources */,
 				16EC85D5133CA6C300219947 /* RMAbstractWebMapSource.m in Sources */,
 				16EC85D7133CA6C300219947 /* RMCacheObject.m in Sources */,
+				160EEDB013D41DEC007C5501 /* RMAnnotation.m in Sources */,
+				1606C9FF13D86BA400547581 /* RMOpenCycleMapSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

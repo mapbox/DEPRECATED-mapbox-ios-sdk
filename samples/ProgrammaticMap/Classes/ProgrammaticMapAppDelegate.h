@@ -10,7 +10,8 @@
 
 @class ProgrammaticMapViewController;
 
-@interface ProgrammaticMapAppDelegate : NSObject <UIApplicationDelegate> {
+@interface ProgrammaticMapAppDelegate : NSObject <UIApplicationDelegate>
+{
     UIWindow *window;
     ProgrammaticMapViewController *viewController;
 }

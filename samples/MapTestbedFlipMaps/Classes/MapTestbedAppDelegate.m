@@ -6,23 +6,19 @@
 #import "MapTestbedAppDelegate.h"
 #import "RootViewController.h"
 
-#import "RMPath.h"
-
 @implementation MapTestbedAppDelegate
-
 
 @synthesize window;
 @synthesize rootViewController;
 
-
-- (void)applicationDidFinishLaunching:(UIApplication *)application {
-    
+- (void)applicationDidFinishLaunching:(UIApplication *)application
+{    
     [window addSubview:[rootViewController view]];
     [window makeKeyAndVisible];
 }
 
-
-- (void)dealloc {
+- (void)dealloc
+{
     self.rootViewController = nil;
 	self.window = nil;
     [window release];
