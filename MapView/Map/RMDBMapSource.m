@@ -97,7 +97,7 @@
 #define kLongAttributionKey @"map.longAttribution"
 
 
-@interface RMDBMapSource(PrivateMethods)
+@interface RMDBMapSource (Preferences)
 
 - (NSString *)getPreferenceAsString:(NSString *)name;
 - (float)getPreferenceAsFloat:(NSString *)name;
