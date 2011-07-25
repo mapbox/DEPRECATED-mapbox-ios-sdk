@@ -54,3 +54,18 @@ To report bugs and help fix them, please use the [issue tracker][tracker]
 [list]: http://groups.google.com/group/route-me-map
 [tracker]: http://github.com/route-me/route-me/issues
 
+
+Changes in this clone (Alpstein/route-me)
+-----------------------------------------
+
+* RMMapView and RMMapContents have been merged into one file
+
+* Tile cache refactoring
+
+* Tile source refactoring (asynchronous tile downloads)
+
+* Numerous performance improvements
+
+* Markers have been refactored into a MKMapView-like system, with annotations and on-demand markers
+
+* Requires at least iOS 4.0
