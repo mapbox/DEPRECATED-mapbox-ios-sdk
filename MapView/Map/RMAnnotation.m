@@ -32,6 +32,7 @@
 #import "RMAnnotation.h"
 #import "RMMapView.h"
 #import "RMMapLayer.h"
+#import "RMQuadTree.h"
 #import "RMMercatorToScreenProjection.h"
 
 @implementation RMAnnotation
@@ -49,6 +50,7 @@
 @synthesize hasBoundingBox;
 @synthesize position;
 @synthesize layer;
+@synthesize quadTreeNode;
 
 + (id)annotationWithMapView:(RMMapView *)aMapView coordinate:(CLLocationCoordinate2D)aCoordinate andTitle:(NSString *)aTitle
 {
@@ -60,11 +62,12 @@
     if (!(self = [super init]))
         return nil;
 
-    self.mapView    = aMapView;
-    self.coordinate = aCoordinate;
-    self.title      = aTitle;
-    self.userInfo   = nil;
-    self.layer      = nil;
+    self.mapView      = aMapView;
+    self.coordinate   = aCoordinate;
+    self.title        = aTitle;
+    self.userInfo     = nil;
+    self.layer        = nil;
+    self.quadTreeNode = nil;
 
     self.annotationType = nil;
     self.annotationIcon = nil;
@@ -76,10 +79,13 @@
 
 - (void)dealloc
 {
-    self.title    = nil;
-    self.userInfo = nil;
-    self.mapView  = nil;
-    self.layer    = nil;
+    [[self.mapView quadTree] removeAnnotation:self];
+    self.title        = nil;
+    self.userInfo     = nil;
+    self.mapView      = nil;
+    self.layer        = nil;
+    self.quadTreeNode = nil;
+
     self.annotationType = nil;
     self.annotationIcon = nil;
 
@@ -91,6 +97,11 @@
     coordinate = aCoordinate;
     self.projectedLocation = [[mapView projection] coordinateToProjectedPoint:aCoordinate];
     self.position = [[mapView mercatorToScreenProjection] projectProjectedPoint:self.projectedLocation];
+
+    if (!self.hasBoundingBox)
+        self.projectedBoundingBox = RMMakeProjectedRect(self.projectedLocation.easting, self.projectedLocation.northing, 1.0, 1.0);
+
+    [self.quadTreeNode performSelector:@selector(annotationDidChangeBoundingBox:) withObject:self];
 }
 
 - (void)setMapView:(RMMapView *)aMapView

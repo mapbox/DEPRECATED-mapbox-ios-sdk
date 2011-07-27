@@ -38,6 +38,7 @@
 #import "RMMarker.h"
 #import "RMPath.h"
 #import "RMAnnotation.h"
+#import "RMQuadTree.h"
 
 #import "RMMercatorToScreenProjection.h"
 #import "RMMercatorToTileProjection.h"
@@ -108,6 +109,7 @@
 @synthesize markerManager;
 @synthesize imagesOnScreen;
 @synthesize tileCache;
+@synthesize quadTree;
 
 #pragma mark -
 #pragma mark Initialization
@@ -172,6 +174,7 @@
 
     annotations = [NSMutableArray new];
     visibleAnnotations = [NSMutableSet new];
+    [self setQuadTree:[[[RMQuadTree alloc] init] autorelease]];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleMemoryWarningNotification:)
@@ -281,6 +284,7 @@
     [self setBackground:nil];
     [annotations release]; annotations = nil;
     [visibleAnnotations release]; visibleAnnotations = nil;
+    self.quadTree = nil;
     [super dealloc];
 }
 
@@ -1341,47 +1345,87 @@
 
 - (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllAnnotations
 {
-    CGRect screenBounds = [[self mercatorToScreenProjection] screenBounds];
     CALayer *lastLayer = nil;
 
     // Prevent blurry movements
     [CATransaction begin];
     [CATransaction setAnimationDuration:0];
 
-    @synchronized (annotations)
+    if (self.quadTree)
     {
-        if (correctAllAnnotations)
+        RMProjectedRect boundingBox = [[self mercatorToScreenProjection] projectedBounds];
+
+        NSArray *annotationsToCorrect = [quadTree annotationsInProjectedRect:boundingBox];
+        NSMutableSet *previousVisibleAnnotations = [NSMutableSet setWithSet:visibleAnnotations];
+
+        for (RMAnnotation *annotation in annotationsToCorrect)
         {
-            for (RMAnnotation *annotation in annotations)
+            [self correctScreenPosition:annotation];
+
+            if (annotation.layer == nil && [delegate respondsToSelector:@selector(mapView:layerForAnnotation:)])
+                annotation.layer = [delegate mapView:self layerForAnnotation:annotation];
+            if (annotation.layer == nil)
+                continue;
+
+            if (![visibleAnnotations containsObject:annotation]) {
+                if (!lastLayer)
+                    [overlay insertSublayer:annotation.layer atIndex:0];
+                else
+                    [overlay insertSublayer:annotation.layer above:lastLayer];
+
+                [visibleAnnotations addObject:annotation];
+            }
+            lastLayer = annotation.layer;
+            [previousVisibleAnnotations removeObject:annotation];
+        }
+
+        for (RMAnnotation *annotation in previousVisibleAnnotations)
+        {
+            annotation.layer = nil;
+            [visibleAnnotations removeObject:annotation];
+        }
+
+//        RMLog(@"%d annotations on screen, %d total", [[overlay sublayers] count], [annotations count]);
+
+    } else
+    {
+        CGRect screenBounds = [[self mercatorToScreenProjection] screenBounds];
+
+        @synchronized (annotations)
+        {
+            if (correctAllAnnotations)
             {
-                [self correctScreenPosition:annotation];
-                if ([annotation isAnnotationWithinBounds:screenBounds]) {
-                    if (annotation.layer == nil && [delegate respondsToSelector:@selector(mapView:layerForAnnotation:)])
-                        annotation.layer = [delegate mapView:self layerForAnnotation:annotation];
-                    if (annotation.layer == nil)
-                        continue;
+                for (RMAnnotation *annotation in annotations)
+                {
+                    [self correctScreenPosition:annotation];
+                    if ([annotation isAnnotationWithinBounds:screenBounds]) {
+                        if (annotation.layer == nil && [delegate respondsToSelector:@selector(mapView:layerForAnnotation:)])
+                            annotation.layer = [delegate mapView:self layerForAnnotation:annotation];
+                        if (annotation.layer == nil)
+                            continue;
 
-                    if (![visibleAnnotations containsObject:annotation]) {
-                        if (!lastLayer)
-                            [overlay insertSublayer:annotation.layer atIndex:0];
-                        else
-                            [overlay insertSublayer:annotation.layer above:lastLayer];
+                        if (![visibleAnnotations containsObject:annotation]) {
+                            if (!lastLayer)
+                                [overlay insertSublayer:annotation.layer atIndex:0];
+                            else
+                                [overlay insertSublayer:annotation.layer above:lastLayer];
 
-                        [visibleAnnotations addObject:annotation];
+                            [visibleAnnotations addObject:annotation];
+                        }
+                        lastLayer = annotation.layer;
+                    } else {
+                        annotation.layer = nil;
+                        [visibleAnnotations removeObject:annotation];
                     }
-                    lastLayer = annotation.layer;
-                } else {
-                    annotation.layer = nil;
-                    [visibleAnnotations removeObject:annotation];
                 }
+                //            RMLog(@"%d annotations on screen, %d total", [[overlay sublayers] count], [annotations count]);
+            } else {
+                for (RMAnnotation *annotation in visibleAnnotations)
+                {
+                    [self correctScreenPosition:annotation];
+                }
+                //            RMLog(@"%d annotations corrected", [visibleAnnotations count]);
             }
-//            RMLog(@"%d annotations on screen, %d total", [[overlay sublayers] count], [annotations count]);
-        } else {
-            for (RMAnnotation *annotation in visibleAnnotations)
-            {
-                [self correctScreenPosition:annotation];
-            }
-//            RMLog(@"%d annotations corrected", [visibleAnnotations count]);
         }
     }
 
@@ -1403,6 +1447,7 @@
     @synchronized (annotations) {
         [annotations addObject:annotation];
     }
+    [self.quadTree addAnnotation:annotation];
     [self correctScreenPosition:annotation];
 
     if ([annotation isAnnotationOnScreen] && [delegate respondsToSelector:@selector(mapView:layerForAnnotation:)])
@@ -1421,6 +1466,7 @@
         for (RMAnnotation *annotation in newAnnotations)
         {
             [annotations addObject:annotation];
+            [self.quadTree addAnnotation:annotation];
         }
     }
     [self correctPositionOfAllAnnotationsIncludingInvisibles:YES];
@@ -1432,6 +1478,7 @@
         [annotations removeObject:annotation];
         [visibleAnnotations removeObject:annotation];
     }
+    [self.quadTree removeAnnotation:annotation];
 
     // Remove the layer from the screen
     annotation.layer = nil;
@@ -1457,6 +1504,7 @@
 
     [annotations removeAllObjects];
     [visibleAnnotations removeAllObjects];
+    [quadTree removeAllObjects];
 }
 
 - (CGPoint)screenCoordinatesForAnnotation:(RMAnnotation *)annotation

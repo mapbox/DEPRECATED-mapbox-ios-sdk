@@ -48,6 +48,21 @@ bool RMProjectedRectInterectsProjectedRect(RMProjectedRect rect1, RMProjectedRec
 		&& ((minNorthing1 <= minNorthing2 && minNorthing2 <= maxNorthing1) || (minNorthing2 <= minNorthing1 && minNorthing1 <= maxNorthing2));
 }
 
+bool RMProjectedRectContainsProjectedRect(RMProjectedRect rect1, RMProjectedRect rect2)
+{
+	double minEasting1 = rect1.origin.easting;
+	double maxEasting1 = rect1.origin.easting + rect1.size.width;
+	double minNorthing1 = rect1.origin.northing;
+	double maxNorthing1 = rect1.origin.northing + rect1.size.height;
+
+	double minEasting2 = rect2.origin.easting;
+	double maxEasting2 = rect2.origin.easting + rect2.size.width;
+	double minNorthing2 = rect2.origin.northing;
+	double maxNorthing2 = rect2.origin.northing + rect2.size.height;
+
+    return ((minEasting2 >= minEasting1 && maxEasting2 <= maxEasting1) && (minNorthing2 >= minNorthing1 && maxNorthing2 <= maxNorthing1));
+}
+
 RMProjectedPoint RMScaleProjectedPointAboutPoint(RMProjectedPoint point, float factor, RMProjectedPoint pivot)
 {
 	point.easting = (point.easting - pivot.easting) * factor + pivot.easting;
@@ -89,4 +104,9 @@ RMProjectedRect RMMakeProjectedRect(double easting, double northing, double widt
 		{width, height}
 	};
 	return rect;
+}
+
+RMProjectedRect RMProjectedRectZero()
+{
+    return RMMakeProjectedRect(0.0, 0.0, 0.0, 0.0);
 }

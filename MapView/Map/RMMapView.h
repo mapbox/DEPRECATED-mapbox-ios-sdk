@@ -123,6 +123,7 @@ enum {
 @class RMMarkerLayer;
 @class RMMarker;
 @class RMAnnotation;
+@class RMQuadTree;
 @protocol RMMercatorToTileProjection;
 @protocol RMTileSource;
 
@@ -150,6 +151,7 @@ enum {
 
     NSMutableArray *annotations;
     NSMutableSet   *visibleAnnotations;
+    RMQuadTree     *quadTree;
 
     id <RMTileSource> tileSource;
     RMTileCache *tileCache; // Generic tile cache
@@ -218,6 +220,7 @@ enum {
 
 @property (nonatomic, readonly) RMMarkerManager *markerManager;
 @property (nonatomic, readonly) RMMapLayer *overlay;
+@property (nonatomic, retain)   RMQuadTree *quadTree;
 
 @property (nonatomic, readonly) RMTileImageSet *imagesOnScreen;
 @property (nonatomic, readonly) RMTileLoader *tileLoader;

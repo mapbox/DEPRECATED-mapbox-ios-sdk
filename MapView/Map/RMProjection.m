@@ -149,7 +149,7 @@ static RMProjection *_latlong = nil;
 		RMProjectedRect theBounds = RMMakeProjectedRect(-20037508.34, -20037508.34, 20037508.34 * 2, 20037508.34 * 2);
 
 		_google = [[RMProjection alloc] initWithString:@"+title= Google Mercator EPSG:900913 +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs"
-											  inBounds: theBounds];
+											  inBounds:theBounds];
 		return _google;
 	}
 }
@@ -162,7 +162,8 @@ static RMProjection *_latlong = nil;
 	else {
 		RMProjectedRect theBounds = RMMakeProjectedRect(-kMaxLong, -kMaxLat, 360, kMaxLong);
 
-		_latlong = [[RMProjection alloc] initWithString:@"+proj=latlong +ellps=WGS84" inBounds:theBounds];
+		_latlong = [[RMProjection alloc] initWithString:@"+proj=latlong +ellps=WGS84"
+                                               inBounds:theBounds];
 		return _latlong;
 	}
 }
