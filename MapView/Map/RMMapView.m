@@ -1616,8 +1616,6 @@
     // Calculate the gesture.
     lastGesture = [self gestureDetails:[event allTouches]];
 
-    BOOL decelerating = NO;
-
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(handleLongPress) object:nil];
 
     if (touch.tapCount >= 2)
@@ -1648,7 +1646,6 @@
             CGPoint currLocation = [touch locationInView:self];
             CGSize touchDelta = CGSizeMake(currLocation.x - prevLocation.x, currLocation.y - prevLocation.y);
             [self startDecelerationWithDelta:touchDelta];
-            decelerating = YES;
         }
     }
 
