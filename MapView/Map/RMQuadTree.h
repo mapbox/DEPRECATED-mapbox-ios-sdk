@@ -8,7 +8,7 @@
 
 #import "RMFoundation.h"
 
-@class RMAnnotation;
+@class RMAnnotation, RMMapView;
 
 typedef enum {
     nodeTypeLeaf,
@@ -24,6 +24,8 @@ typedef enum {
     NSMutableArray *annotations;
     RMQuadTreeNode *parentNode, *northWest, *northEast, *southWest, *southEast;
     RMQuadTreeNodeType nodeType;
+    RMMapView *mapView;
+    RMAnnotation *cachedClusterAnnotation;
 }
 
 @property (nonatomic, readonly) NSArray *annotations;
@@ -41,6 +43,10 @@ typedef enum {
 @property (nonatomic, readonly) RMQuadTreeNode *southWest;
 @property (nonatomic, readonly) RMQuadTreeNode *southEast;
 
+// Operations on this node and all subnodes
+@property (nonatomic, readonly) NSArray *enclosedAnnotations;
+@property (nonatomic, readonly) NSUInteger countEnclosedAnnotations;
+
 @end
 
 #pragma mark -
@@ -49,7 +55,10 @@ typedef enum {
 @interface RMQuadTree : NSObject
 {
     RMQuadTreeNode *rootNode;
+    RMMapView *mapView;
 }
+
+- (id)initWithMapView:(RMMapView *)aMapView;
 
 - (void)addAnnotation:(RMAnnotation *)annotation;
 - (void)removeAnnotation:(RMAnnotation *)annotation;
@@ -58,5 +67,6 @@ typedef enum {
 
 // Returns all annotations that are either inside of or intersect with boundingBox
 - (NSArray *)annotationsInProjectedRect:(RMProjectedRect)boundingBox;
+- (NSArray *)annotationsInProjectedRect:(RMProjectedRect)boundingBox createClusterAnnotations:(BOOL)createClusterAnnotations withClusterSize:(RMProjectedSize)clusterSize findGravityCenter:(BOOL)findGravityCenter;
 
 @end

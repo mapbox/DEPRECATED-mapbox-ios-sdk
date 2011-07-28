@@ -152,6 +152,8 @@ enum {
     NSMutableArray *annotations;
     NSMutableSet   *visibleAnnotations;
     RMQuadTree     *quadTree;
+    BOOL            enableClustering, positionClusterMarkersAtTheGravityCenter;
+    CGSize          clusterMarkerSize;
 
     id <RMTileSource> tileSource;
     RMTileCache *tileCache; // Generic tile cache
@@ -221,6 +223,9 @@ enum {
 @property (nonatomic, readonly) RMMarkerManager *markerManager;
 @property (nonatomic, readonly) RMMapLayer *overlay;
 @property (nonatomic, retain)   RMQuadTree *quadTree;
+@property (nonatomic, assign)   BOOL enableClustering;
+@property (nonatomic, assign)   BOOL positionClusterMarkersAtTheGravityCenter;
+@property (nonatomic, assign)   CGSize clusterMarkerSize;
 
 @property (nonatomic, readonly) RMTileImageSet *imagesOnScreen;
 @property (nonatomic, readonly) RMTileLoader *tileLoader;
