@@ -63,6 +63,7 @@ bool RMProjectedRectContainsProjectedRect(RMProjectedRect rect1, RMProjectedRect
 
 RMProjectedPoint RMMakeProjectedPoint(double easting, double northing);
 RMProjectedRect  RMMakeProjectedRect(double easting, double northing, double width, double height);
+RMProjectedSize  RMMakeProjectedSize(double width, double heigth);
 
 RMProjectedRect RMProjectedRectZero();
 

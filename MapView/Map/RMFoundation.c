@@ -106,6 +106,14 @@ RMProjectedRect RMMakeProjectedRect(double easting, double northing, double widt
 	return rect;
 }
 
+RMProjectedSize  RMMakeProjectedSize(double width, double heigth)
+{
+    RMProjectedSize size = {
+        width, heigth
+    };
+    return size;
+}
+
 RMProjectedRect RMProjectedRectZero()
 {
     return RMMakeProjectedRect(0.0, 0.0, 0.0, 0.0);
