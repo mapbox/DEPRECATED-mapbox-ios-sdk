@@ -29,6 +29,10 @@
 
 @implementation RMQuadTreeNode
 
+@synthesize nodeType;
+@synthesize boundingBox, northWestBoundingBox, northEastBoundingBox, southWestBoundingBox, southEastBoundingBox;
+@synthesize parentNode, northWest, northEast, southWest, southEast;
+
 - (id)initWithParent:(RMQuadTreeNode *)aParentNode forBoundingBox:(RMProjectedRect)aBoundingBox
 {
     if (!(self = [super init]))
@@ -71,14 +75,15 @@
     [super dealloc];
 }
 
-- (RMProjectedRect)boundingBox
+- (NSArray *)annotations
 {
-    return boundingBox;
-}
+    NSArray *immutableAnnotations = nil;
 
-- (RMQuadTreeNode *)parentNode
-{
-    return parentNode;
+    @synchronized (annotations) {
+        immutableAnnotations = [NSArray arrayWithArray:annotations];
+    }
+
+    return immutableAnnotations;
 }
 
 - (void)addAnnotationToChildNodes:(RMAnnotation *)annotation
@@ -101,7 +106,9 @@
         [southEast addAnnotation:annotation];
 
     } else {
-        [annotations addObject:annotation];
+        @synchronized (annotations) {
+            [annotations addObject:annotation];
+        }
         annotation.quadTreeNode = self;
     }
 }
@@ -120,12 +127,18 @@
 
         nodeType = nodeTypeNode;
 
+        // problem: all annotations that cross two quadrants will always be readded here, which
+        // will be a problem depending on kMaxAnnotationsPerLeaf
+
+        NSArray *immutableAnnotations = nil;
         @synchronized (annotations) {
-            for (RMAnnotation *annotationToMove in annotations)
-            {
-                [self addAnnotationToChildNodes:annotationToMove];
-            }
+            immutableAnnotations = [NSArray arrayWithArray:annotations];
             [annotations removeAllObjects];
+        }
+
+        for (RMAnnotation *annotationToMove in immutableAnnotations)
+        {
+            [self addAnnotationToChildNodes:annotationToMove];
         }
 
         return;

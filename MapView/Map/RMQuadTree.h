@@ -15,6 +15,9 @@ typedef enum {
     nodeTypeNode
 } RMQuadTreeNodeType;
 
+#pragma mark -
+#pragma mark RMQuadTree nodes
+
 @interface RMQuadTreeNode : NSObject
 {
     RMProjectedRect boundingBox, northWestBoundingBox, northEastBoundingBox, southWestBoundingBox, southEastBoundingBox;
@@ -23,10 +26,25 @@ typedef enum {
     RMQuadTreeNodeType nodeType;
 }
 
+@property (nonatomic, readonly) NSArray *annotations;
+@property (nonatomic, readonly) RMQuadTreeNodeType nodeType;
+
 @property (nonatomic, readonly) RMProjectedRect boundingBox;
+@property (nonatomic, readonly) RMProjectedRect northWestBoundingBox;
+@property (nonatomic, readonly) RMProjectedRect northEastBoundingBox;
+@property (nonatomic, readonly) RMProjectedRect southWestBoundingBox;
+@property (nonatomic, readonly) RMProjectedRect southEastBoundingBox;
+
 @property (nonatomic, readonly) RMQuadTreeNode *parentNode;
+@property (nonatomic, readonly) RMQuadTreeNode *northWest;
+@property (nonatomic, readonly) RMQuadTreeNode *northEast;
+@property (nonatomic, readonly) RMQuadTreeNode *southWest;
+@property (nonatomic, readonly) RMQuadTreeNode *southEast;
 
 @end
+
+#pragma mark -
+#pragma mark RMQuadTree
 
 @interface RMQuadTree : NSObject
 {
@@ -38,8 +56,7 @@ typedef enum {
 
 - (void)removeAllObjects;
 
-#pragma mark -
-
+// Returns all annotations that are either inside of or intersect with boundingBox
 - (NSArray *)annotationsInProjectedRect:(RMProjectedRect)boundingBox;
 
 @end
