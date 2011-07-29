@@ -256,6 +256,7 @@
         [mercatorToScreenProjection setScreenBounds:bounds];
         background.frame = bounds;
         overlay.frame = bounds;
+        [renderer setFrame:bounds];
         [tileLoader clearLoadedBounds];
         [tileLoader updateLoadedImages];
         [self correctPositionOfAllAnnotations];
