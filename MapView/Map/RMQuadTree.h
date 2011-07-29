@@ -15,6 +15,8 @@ typedef enum {
     nodeTypeNode
 } RMQuadTreeNodeType;
 
+#define kRMClusterAnnotationTypeName @"RMClusterAnnotation"
+
 #pragma mark -
 #pragma mark RMQuadTree nodes
 

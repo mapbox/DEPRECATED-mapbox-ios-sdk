@@ -255,7 +255,7 @@
                 }
 
                 cachedClusterAnnotation = [[RMAnnotation alloc] initWithMapView:mapView coordinate:[[mapView projection] projectedPointToCoordinate:clusterMarkerPosition] andTitle:[NSString stringWithFormat:@"%d", enclosedAnnotationsCount]];
-                cachedClusterAnnotation.annotationType = @"RMClusterMarker";
+                cachedClusterAnnotation.annotationType = kRMClusterAnnotationTypeName;
                 cachedClusterAnnotation.userInfo = self;
             }
 
