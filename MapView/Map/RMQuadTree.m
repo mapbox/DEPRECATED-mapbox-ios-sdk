@@ -44,7 +44,7 @@
 //    RMLog(@"New quadtree node at {(%.0f,%.0f),(%.0f,%.0f)}", aBoundingBox.origin.easting, aBoundingBox.origin.northing, aBoundingBox.size.width, aBoundingBox.size.height);
 
     mapView = aMapView;
-    parentNode = aParentNode;
+    parentNode = [aParentNode retain];
     northWest = northEast = southWest = southEast = nil;
     annotations = [NSMutableArray new];
     boundingBox = aBoundingBox;
@@ -76,7 +76,7 @@
     [northEast release]; northEast = nil;
     [southWest release]; southWest = nil;
     [southEast release]; southEast = nil;
-    parentNode = nil;
+    [parentNode release]; parentNode = nil;
 
     [super dealloc];
 }
