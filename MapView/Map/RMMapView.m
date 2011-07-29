@@ -62,8 +62,8 @@
 #define kiPhoneMilimeteresPerPixel .1543
 #define kZoomRectPixelBuffer 50
 
-#define kMoveAnimationDuration 0.25f
-#define kMoveAnimationStepDuration 0.02f
+#define kMoveAnimationDuration 0.5f
+#define kMoveAnimationStepDuration 0.04f
 
 #define kDefaultInitialLatitude -33.858771
 #define kDefaultInitialLongitude 151.201596
@@ -82,6 +82,7 @@
 - (void)startDecelerationWithDelta:(CGSize)delta;
 - (void)incrementDeceleration:(NSTimer *)timer;
 - (void)stopDeceleration;
+- (void)stopMoveAnimation;
 
 - (void)animationFinishedWithZoomFactor:(float)zoomFactor near:(CGPoint)p;
 - (void)animationStepped;
@@ -442,7 +443,13 @@
 
 - (void)moveToCoordinate:(CLLocationCoordinate2D)coordinate
 {
-    if (_delegateHasBeforeMapMove) [delegate beforeMapMove:self];
+    [self stopDeceleration];
+    if (_moveAnimationTimer != nil) {
+        [_moveAnimationTimer invalidate]; _moveAnimationTimer = nil;
+    } else {
+        if (_delegateHasBeforeMapMove) [delegate beforeMapMove:self];
+    }
+
 	RMProjectedPoint projectedPoint = [[self projection] coordinateToProjectedPoint:coordinate];
 	[self setMapCenterProjectedPoint:projectedPoint];
     if (_delegateHasAfterMapMove) [delegate afterMapMove:self];
@@ -465,41 +472,89 @@
     [self correctPositionOfAllAnnotationsIncludingInvisibles:correctAllSublayers];
 }
 
+// from http://iphonedevelopment.blogspot.com/2010/12/more-animation-curves-than-you-can.html
+double CubicEaseInOut(double t, double start, double end)
+{
+    if (t <= 0.0) return start;
+    else if (t >= 1.0) return end;
+
+    t *= 2.0;
+    if (t < 1.0) return ((end / 2.0) * t * t * t) + start - 1.0;
+    t -= 2.0;
+    return (end / 2.0) * (t * t * t + 2.0) + start - 1.0;
+}
+
+double CubicEaseOut(double t, double start, double end)
+{
+    if (t <= 0.0) return start;
+    else if (t >= 1.0) return end;
+
+    t--;
+    return end * (t * t * t + 1.0) + start - 1.0;
+}
+
+- (void)stopMoveAnimation
+{
+    if (_moveAnimationTimer != nil) {
+        [_moveAnimationTimer invalidate]; _moveAnimationTimer = nil;
+
+        if (_delegateHasAfterMapMove) [delegate afterMapMove:self];
+        if (_delegateHasAfterMapMoveDeceleration) [delegate afterMapMoveDeceleration:self];
+        if (_delegateHasMapViewRegionDidChange) [delegate mapViewRegionDidChange:self];
+    }
+}
+
+- (void)moveAnimationStep:(NSTimer *)timer
+{
+    if (++_moveAnimationCurrentStep > _moveAnimationSteps) {
+        [self moveToProjectedPoint:_moveAnimationEndPoint];
+        [self stopMoveAnimation];
+        return;
+    }
+
+    double t = _moveAnimationCurrentStep / _moveAnimationSteps;
+
+    RMProjectedPoint nextPoint = RMMakeProjectedPoint(_moveAnimationStartPoint.easting + CubicEaseInOut(t, 0, _moveAnimationEndPoint.easting - _moveAnimationStartPoint.easting), _moveAnimationStartPoint.northing + CubicEaseInOut(t, 0, _moveAnimationEndPoint.northing - _moveAnimationStartPoint.northing));
+
+    if (fabs(nextPoint.easting - _moveAnimationEndPoint.easting) < 10.0 && fabs(nextPoint.northing - _moveAnimationEndPoint.northing) < 10.0) {
+        [self moveToProjectedPoint:_moveAnimationEndPoint];
+        [self stopMoveAnimation];
+        return;
+    }
+
+    // RMLog(@"Time t=%.2f: (%f,%f) < (%f,%f) < (%f,%f)", t, _moveAnimationStartPoint.easting, _moveAnimationStartPoint.northing, nextPoint.easting, nextPoint.northing, _moveAnimationEndPoint.easting, _moveAnimationEndPoint.northing);
+
+    [mercatorToScreenProjection setProjectedCenter:nextPoint];
+    [tileLoader reload];
+    [self correctPositionOfAllAnnotationsIncludingInvisibles:NO];
+}
+
 - (void)moveToCoordinate:(CLLocationCoordinate2D)coordinate animated:(BOOL)animated
 {
+    [self stopDeceleration];
+    [self stopMoveAnimation];
+
     if (!animated) {
         [self moveToCoordinate:coordinate];
         return;
     }
 
+    _moveAnimationStartPoint = [mercatorToScreenProjection projectedCenter];
+    _moveAnimationEndPoint = [[self projection] coordinateToProjectedPoint:coordinate];
+
+    if (![self tileSourceBoundsContainProjectedPoint:_moveAnimationEndPoint])
+        return;
+
+    _moveAnimationSteps = roundf(kMoveAnimationDuration / kMoveAnimationStepDuration);
+    _moveAnimationCurrentStep = 0.0;
+
     if (_delegateHasBeforeMapMove) [delegate beforeMapMove:self];
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        long int steps = lroundf(kMoveAnimationDuration / kMoveAnimationStepDuration);
-
-        while (--steps > 0)
-        {
-            [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:kMoveAnimationStepDuration]];
-
-            CGPoint startPoint = [self coordinateToPixel:self.mapCenterCoordinate];
-            CGPoint endPoint   = [self coordinateToPixel:coordinate];
-            CGPoint delta = CGPointMake((startPoint.x - endPoint.x) / steps, (startPoint.y - endPoint.y) / steps);
-            if (delta.x == 0.0 && delta.y == 0.0) return;
-
-            RMLog(@"%d steps from (%f,%f) to final location (%f,%f)", steps, self.mapCenterCoordinate.longitude, self.mapCenterCoordinate.latitude, coordinate.longitude, coordinate.latitude);
-
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                [self moveBy:CGSizeMake(delta.x, delta.y) andCorrectAllAnnotations:NO];
-            });
-        }
-
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self moveToCoordinate:coordinate];
-            if (_delegateHasAfterMapMove) [delegate afterMapMove:self];
-            if (_delegateHasAfterMapMoveDeceleration) [delegate afterMapMoveDeceleration:self];
-            if (_delegateHasMapViewRegionDidChange) [delegate mapViewRegionDidChange:self];
-        });
-    });
+    _moveAnimationTimer = [NSTimer scheduledTimerWithTimeInterval:kMoveAnimationStepDuration
+                                                           target:self
+                                                         selector:@selector(moveAnimationStep:)
+                                                         userInfo:nil
+                                                          repeats:YES];
 }
 
 - (void)moveBy:(CGSize)delta isAnimationStep:(BOOL)isAnimationStep

@@ -192,6 +192,10 @@ enum {
     CGSize _decelerationDelta;
     CGPoint _longPressPosition;
 
+    NSTimer *_moveAnimationTimer;
+    RMProjectedPoint _moveAnimationStartPoint, _moveAnimationEndPoint;
+    double _moveAnimationCurrentStep, _moveAnimationSteps;
+
     BOOL _constrainMovement;
     RMProjectedPoint _northEastConstraint, _southWestConstraint;
 }
