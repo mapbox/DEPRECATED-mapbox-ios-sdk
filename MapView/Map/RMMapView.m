@@ -1295,6 +1295,12 @@ double CubicEaseOut(double t, double start, double end)
     return [[mercatorToScreenProjection retain] autorelease];
 }
 
+- (void)setEnableClustering:(BOOL)doEnableClustering
+{
+    enableClustering = doEnableClustering;
+    [self correctPositionOfAllAnnotations];
+}
+
 #pragma mark -
 #pragma mark LatLng/Pixel translation functions
 
