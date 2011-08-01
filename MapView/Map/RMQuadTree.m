@@ -324,18 +324,24 @@
 
 - (void)addAnnotation:(RMAnnotation *)annotation
 {
-    [rootNode addAnnotation:annotation];
+    @synchronized (self) {
+        [rootNode addAnnotation:annotation];
+    }
 }
 
 - (void)removeAnnotation:(RMAnnotation *)annotation
 {
-    [annotation.quadTreeNode removeAnnotation:annotation];
+    @synchronized (self) {
+        [annotation.quadTreeNode removeAnnotation:annotation];
+    }
 }
 
 - (void)removeAllObjects
 {
-    [rootNode release];
-    rootNode = [[RMQuadTreeNode alloc] initWithMapView:mapView forParent:nil inBoundingBox:[[RMProjection googleProjection] planetBounds]];
+    @synchronized (self) {
+        [rootNode release];
+        rootNode = [[RMQuadTreeNode alloc] initWithMapView:mapView forParent:nil inBoundingBox:[[RMProjection googleProjection] planetBounds]];
+    }
 }
 
 #pragma mark -
@@ -348,7 +354,11 @@
 - (NSArray *)annotationsInProjectedRect:(RMProjectedRect)boundingBox createClusterAnnotations:(BOOL)createClusterAnnotations withClusterSize:(RMProjectedSize)clusterSize findGravityCenter:(BOOL)findGravityCenter
 {
     NSMutableArray *annotations = [NSMutableArray array];
-    [rootNode addAnnotationsInBoundingBox:boundingBox toMutableArray:annotations createClusterAnnotations:createClusterAnnotations withClusterSize:clusterSize findGravityCenter:findGravityCenter];
+
+    @synchronized (self) {
+        [rootNode addAnnotationsInBoundingBox:boundingBox toMutableArray:annotations createClusterAnnotations:createClusterAnnotations withClusterSize:clusterSize findGravityCenter:findGravityCenter];
+    }
+
     return annotations;
 }
 
