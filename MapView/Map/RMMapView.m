@@ -1401,8 +1401,6 @@ double CubicEaseOut(double t, double start, double end)
 
 - (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllAnnotations
 {
-    CALayer *lastLayer = nil;
-
     // Prevent blurry movements
     [CATransaction begin];
     [CATransaction setAnimationDuration:0];
@@ -1434,15 +1432,11 @@ double CubicEaseOut(double t, double start, double end)
             if (annotation.layer == nil)
                 continue;
 
+            // Use the zPosition property to order the layer hierarchy
             if (![visibleAnnotations containsObject:annotation]) {
-                if (!lastLayer)
-                    [overlay insertSublayer:annotation.layer atIndex:0];
-                else
-                    [overlay insertSublayer:annotation.layer above:lastLayer];
-
+                [overlay addSublayer:annotation.layer];
                 [visibleAnnotations addObject:annotation];
             }
-            lastLayer = annotation.layer;
             [previousVisibleAnnotations removeObject:annotation];
         }
 
@@ -1456,6 +1450,7 @@ double CubicEaseOut(double t, double start, double end)
 
     } else
     {
+        CALayer *lastLayer = nil;
         CGRect screenBounds = [[self mercatorToScreenProjection] screenBounds];
 
         @synchronized (annotations)
@@ -1681,7 +1676,7 @@ double CubicEaseOut(double t, double start, double end)
     //Check if the touch hit a RMMarker subclass and if so, forward the touch event on
     //so it can be handled there
     id furthestLayerDown = [self.overlay hitTest:[touch locationInView:self]];
-    if ([[furthestLayerDown class]isSubclassOfClass: [RMMarker class]]) {
+    if ([[furthestLayerDown class] isSubclassOfClass:[RMMarker class]]) {
         if ([furthestLayerDown respondsToSelector:@selector(touchesBegan:withEvent:)]) {
             [furthestLayerDown performSelector:@selector(touchesBegan:withEvent:) withObject:touches withObject:event];
             return;
