@@ -173,14 +173,14 @@
     }
     else
     {
-        point.easting = point.easting - projectedLocation.easting;
-        point.northing = point.northing - projectedLocation.northing;
+        point.x = point.x - projectedLocation.x;
+        point.y = point.y - projectedLocation.y;
 
         if (isDrawing)
         {
-            CGPathAddLineToPoint(path, NULL, point.easting, -point.northing);
+            CGPathAddLineToPoint(path, NULL, point.x, -point.y);
         } else {
-            CGPathMoveToPoint(path, NULL, point.easting, -point.northing);
+            CGPathMoveToPoint(path, NULL, point.x, -point.y);
         }
 
         [self recalculateGeometry];

@@ -57,7 +57,7 @@
 - (id)initWithString:(NSString *)params
 {
 	RMProjectedRect theBounds;
-	theBounds = RMMakeProjectedRect(0, 0, 0, 0);
+	theBounds = RMProjectedRectMake(0, 0, 0, 0);
 	return [self initWithString:params inBounds:theBounds];
 }
 
@@ -79,11 +79,11 @@
 	if (!projectionWrapsHorizontally || planetBounds.size.width == 0.0f || planetBounds.size.height == 0.0f)
 		return aPoint;
 
-	while (aPoint.easting < planetBounds.origin.easting)
-		aPoint.easting += planetBounds.size.width;
+	while (aPoint.x < planetBounds.origin.x)
+		aPoint.x += planetBounds.size.width;
 
-	while (aPoint.easting > (planetBounds.origin.easting + planetBounds.size.width))
-		aPoint.easting -= planetBounds.size.width;
+	while (aPoint.x > (planetBounds.origin.x + planetBounds.size.width))
+		aPoint.x -= planetBounds.size.width;
 
 	return aPoint;
 }
@@ -95,10 +95,10 @@
 
 	[self wrapPointHorizontally:aPoint];
 
-	if (aPoint.northing < planetBounds.origin.northing)
-		aPoint.northing = planetBounds.origin.northing;
-	else if (aPoint.northing > (planetBounds.origin.northing + planetBounds.size.height))
-		aPoint.northing = planetBounds.origin.northing + planetBounds.size.height;
+	if (aPoint.y < planetBounds.origin.y)
+		aPoint.y = planetBounds.origin.y;
+	else if (aPoint.y > (planetBounds.origin.y + planetBounds.size.height))
+		aPoint.y = planetBounds.origin.y + planetBounds.size.height;
 
 	return aPoint;
 }
@@ -123,8 +123,8 @@
 - (CLLocationCoordinate2D)projectedPointToCoordinate:(RMProjectedPoint)aPoint
 {
 	projUV uv = {
-		aPoint.easting,
-		aPoint.northing,
+		aPoint.x,
+		aPoint.y,
 	};
 
 	projUV result = pj_inv(uv, internalProjection);
@@ -146,7 +146,7 @@ static RMProjection *_latlong = nil;
 		return _google;
 	}
 	else {
-		RMProjectedRect theBounds = RMMakeProjectedRect(-20037508.34, -20037508.34, 20037508.34 * 2, 20037508.34 * 2);
+		RMProjectedRect theBounds = RMProjectedRectMake(-20037508.34, -20037508.34, 20037508.34 * 2, 20037508.34 * 2);
 
 		_google = [[RMProjection alloc] initWithString:@"+title= Google Mercator EPSG:900913 +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs"
 											  inBounds:theBounds];
@@ -160,7 +160,7 @@ static RMProjection *_latlong = nil;
 		return _latlong;
 	}
 	else {
-		RMProjectedRect theBounds = RMMakeProjectedRect(-kMaxLong, -kMaxLat, 360, kMaxLong);
+		RMProjectedRect theBounds = RMProjectedRectMake(-kMaxLong, -kMaxLat, 360, kMaxLong);
 
 		_latlong = [[RMProjection alloc] initWithString:@"+proj=latlong +ellps=WGS84"
                                                inBounds:theBounds];

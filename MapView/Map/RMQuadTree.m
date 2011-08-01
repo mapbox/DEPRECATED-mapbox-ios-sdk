@@ -12,7 +12,7 @@
 #import "RMMapView.h"
 
 #pragma mark -
-#pragma mark RMQuadTreeElement implementation
+#pragma mark RMQuadTreeNode implementation
 
 #define kMinimumQuadTreeElementWidth 200.0 // projected meters
 #define kMaxAnnotationsPerLeaf 4
@@ -51,10 +51,10 @@
     cachedClusterAnnotation = nil;
 
     double halfWidth = boundingBox.size.width / 2.0, halfHeight = boundingBox.size.height / 2.0;
-    northWestBoundingBox = RMMakeProjectedRect(boundingBox.origin.easting, boundingBox.origin.northing + halfHeight, halfWidth, halfHeight);
-    northEastBoundingBox = RMMakeProjectedRect(boundingBox.origin.easting + halfWidth, boundingBox.origin.northing + halfHeight, halfWidth, halfHeight);
-    southWestBoundingBox = RMMakeProjectedRect(boundingBox.origin.easting, boundingBox.origin.northing, halfWidth, halfHeight);
-    southEastBoundingBox = RMMakeProjectedRect(boundingBox.origin.easting + halfWidth, boundingBox.origin.northing, halfWidth, halfHeight);
+    northWestBoundingBox = RMProjectedRectMake(boundingBox.origin.x, boundingBox.origin.y + halfHeight, halfWidth, halfHeight);
+    northEastBoundingBox = RMProjectedRectMake(boundingBox.origin.x + halfWidth, boundingBox.origin.y + halfHeight, halfWidth, halfHeight);
+    southWestBoundingBox = RMProjectedRectMake(boundingBox.origin.x, boundingBox.origin.y, halfWidth, halfHeight);
+    southEastBoundingBox = RMProjectedRectMake(boundingBox.origin.x + halfWidth, boundingBox.origin.y, halfWidth, halfHeight);
 
     nodeType = nodeTypeLeaf;
 
@@ -231,27 +231,27 @@
                 RMProjectedPoint clusterMarkerPosition;
                 if (findGravityCenter)
                 {
-                    double averageEasting = 0.0, averageNorthing = 0.0;
+                    double averageX = 0.0, averageY = 0.0;
                     for (RMAnnotation *annotation in enclosedAnnotations)
                     {
-                        averageEasting += annotation.projectedLocation.easting;
-                        averageNorthing += annotation.projectedLocation.northing;
+                        averageX += annotation.projectedLocation.x;
+                        averageY += annotation.projectedLocation.y;
                     }
-                    averageEasting /= (double)enclosedAnnotationsCount;
-                    averageNorthing /= (double) enclosedAnnotationsCount;
+                    averageX /= (double)enclosedAnnotationsCount;
+                    averageY /= (double) enclosedAnnotationsCount;
 
                     double halfClusterWidth = clusterSize.width / 2.0, halfClusterHeight = clusterSize.height / 2.0;
-                    if (averageEasting - halfClusterWidth < boundingBox.origin.easting) averageEasting = boundingBox.origin.easting + halfClusterWidth;
-                    if (averageEasting + halfClusterWidth > boundingBox.origin.easting + boundingBox.size.width) averageEasting = boundingBox.origin.easting + boundingBox.size.width - halfClusterWidth;
-                    if (averageNorthing - halfClusterHeight < boundingBox.origin.northing) averageNorthing = boundingBox.origin.northing + halfClusterHeight;
-                    if (averageNorthing + halfClusterHeight > boundingBox.origin.northing + boundingBox.size.height) averageNorthing = boundingBox.origin.northing + boundingBox.size.height - halfClusterHeight;
+                    if (averageX - halfClusterWidth < boundingBox.origin.x) averageX = boundingBox.origin.x + halfClusterWidth;
+                    if (averageX + halfClusterWidth > boundingBox.origin.x + boundingBox.size.width) averageX = boundingBox.origin.x + boundingBox.size.width - halfClusterWidth;
+                    if (averageY - halfClusterHeight < boundingBox.origin.y) averageY = boundingBox.origin.y + halfClusterHeight;
+                    if (averageY + halfClusterHeight > boundingBox.origin.y + boundingBox.size.height) averageY = boundingBox.origin.y + boundingBox.size.height - halfClusterHeight;
 
                     // TODO: anchorPoint
-                    clusterMarkerPosition = RMMakeProjectedPoint(averageEasting, averageNorthing);
+                    clusterMarkerPosition = RMProjectedPointMake(averageX, averageY);
 
                 } else
                 {
-                    clusterMarkerPosition = RMMakeProjectedPoint(boundingBox.origin.easting + halfWidth, boundingBox.origin.northing + (boundingBox.size.height / 2.0));
+                    clusterMarkerPosition = RMProjectedPointMake(boundingBox.origin.x + halfWidth, boundingBox.origin.y + (boundingBox.size.height / 2.0));
                 }
 
                 cachedClusterAnnotation = [[RMAnnotation alloc] initWithMapView:mapView coordinate:[[mapView projection] projectedPointToCoordinate:clusterMarkerPosition] andTitle:[NSString stringWithFormat:@"%d", enclosedAnnotationsCount]];
@@ -342,7 +342,7 @@
 
 - (NSArray *)annotationsInProjectedRect:(RMProjectedRect)boundingBox
 {
-    return [self annotationsInProjectedRect:boundingBox createClusterAnnotations:NO withClusterSize:RMMakeProjectedSize(0.0, 0.0) findGravityCenter:NO];
+    return [self annotationsInProjectedRect:boundingBox createClusterAnnotations:NO withClusterSize:RMProjectedSizeMake(0.0, 0.0) findGravityCenter:NO];
 }
 
 - (NSArray *)annotationsInProjectedRect:(RMProjectedRect)boundingBox createClusterAnnotations:(BOOL)createClusterAnnotations withClusterSize:(RMProjectedSize)clusterSize findGravityCenter:(BOOL)findGravityCenter

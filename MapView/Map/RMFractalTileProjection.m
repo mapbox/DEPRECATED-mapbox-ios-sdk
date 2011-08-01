@@ -116,11 +116,11 @@
 
 - (RMProjectedPoint)constrainPointHorizontally:(RMProjectedPoint)aPoint
 {
-	while (aPoint.easting < planetBounds.origin.easting)
-		aPoint.easting += planetBounds.size.width;
+	while (aPoint.x < planetBounds.origin.x)
+		aPoint.x += planetBounds.size.width;
 
-	while (aPoint.easting > (planetBounds.origin.easting + planetBounds.size.width))
-		aPoint.easting -= planetBounds.size.width;
+	while (aPoint.x > (planetBounds.origin.x + planetBounds.size.width))
+		aPoint.x -= planetBounds.size.width;
 
 	return aPoint;
 }
@@ -130,10 +130,10 @@
 	RMTilePoint tile;
 	RMProjectedPoint newPoint = [self constrainPointHorizontally:aPoint];
 
-	double x = (newPoint.easting - planetBounds.origin.easting) / planetBounds.size.width * limit;
+	double x = (newPoint.x - planetBounds.origin.x) / planetBounds.size.width * limit;
     
 	// Unfortunately, y is indexed from the bottom left.. hence we have to translate it.
-	double y = (double)limit * ((planetBounds.origin.northing - newPoint.northing) / planetBounds.size.height + 1);
+	double y = (double)limit * ((planetBounds.origin.y - newPoint.y) / planetBounds.size.height + 1);
 
 	tile.tile.x = (uint32_t)x;
 	tile.tile.y = (uint32_t)y;
@@ -160,7 +160,7 @@
 	RMTileRect tileRect;
 	// The origin for projectInternal will have to be the top left instead of the bottom left.
 	RMProjectedPoint topLeft = aRect.origin;
-	topLeft.northing += aRect.size.height;
+	topLeft.y += aRect.size.height;
 	tileRect.origin = [self projectInternal:topLeft normalisedZoom:normalised_zoom limit:limit];
 
 	tileRect.size.width = aRect.size.width / planetBounds.size.width * limit;

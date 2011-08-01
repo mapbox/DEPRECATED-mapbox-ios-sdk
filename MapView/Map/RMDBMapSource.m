@@ -73,7 +73,7 @@
 #import "RMTileCache.h"
 #import "RMFractalTileProjection.h"
 
-#define kDefaultLatLonBoundingBox ((RMSphericalTrapezium){.northeast = {.latitude = 90, .longitude = 180}, .southwest = {.latitude = -90, .longitude = -180}})
+#define kDefaultLatLonBoundingBox ((RMSphericalTrapezium){.northEast = {.latitude = 90, .longitude = 180}, .southWest = {.latitude = -90, .longitude = -180}})
 
 #define FMDBErrorCheck(db) { if ([db hadError]) { NSLog(@"DB error %d on line %d: %@", [db lastErrorCode], __LINE__, [db lastErrorMessage]); } }
 
@@ -220,15 +220,15 @@
 
 - (RMSphericalTrapezium)latitudeLongitudeBoundingBox
 {
-    CLLocationCoordinate2D southwest, northeast;
-    southwest.latitude = bottomRight.latitude;
-    southwest.longitude = topLeft.longitude;
-    northeast.latitude = topLeft.latitude;
-    northeast.longitude = bottomRight.longitude;
+    CLLocationCoordinate2D southWest, northEast;
+    southWest.latitude = bottomRight.latitude;
+    southWest.longitude = topLeft.longitude;
+    northEast.latitude = topLeft.latitude;
+    northEast.longitude = bottomRight.longitude;
 
     RMSphericalTrapezium bbox;
-    bbox.southwest = southwest;
-    bbox.northeast = northeast;
+    bbox.southWest = southWest;
+    bbox.northEast = northEast;
 
     return bbox;
 }

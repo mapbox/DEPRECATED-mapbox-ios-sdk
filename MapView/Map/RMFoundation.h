@@ -33,7 +33,7 @@
 /*! \struct RMProjectedPoint 
  \brief coordinates, in projected meters, paralleling CGPoint */
 typedef struct {
-	double easting, northing;
+	double x, y;
 } RMProjectedPoint;
 
 /*! \struct RMProjectedSize 
@@ -61,9 +61,9 @@ bool RMProjectedRectInterectsProjectedRect(RMProjectedRect rect1, RMProjectedRec
 /// \brief The function returns true if rect1 contains rect2
 bool RMProjectedRectContainsProjectedRect(RMProjectedRect rect1, RMProjectedRect rect2);
 
-RMProjectedPoint RMMakeProjectedPoint(double easting, double northing);
-RMProjectedRect  RMMakeProjectedRect(double easting, double northing, double width, double height);
-RMProjectedSize  RMMakeProjectedSize(double width, double heigth);
+RMProjectedPoint RMProjectedPointMake(double x, double y);
+RMProjectedRect  RMProjectedRectMake(double x, double y, double width, double height);
+RMProjectedSize  RMProjectedSizeMake(double width, double heigth);
 
 RMProjectedRect RMProjectedRectZero();
 

@@ -356,10 +356,10 @@
 
 - (BOOL)projectedBounds:(RMProjectedRect)bounds containsPoint:(RMProjectedPoint)point
 {
-    if (bounds.origin.easting > point.easting ||
-        bounds.origin.easting + bounds.size.width < point.easting ||
-        bounds.origin.northing > point.northing ||
-        bounds.origin.northing + bounds.size.height < point.northing)
+    if (bounds.origin.x > point.x ||
+        bounds.origin.x + bounds.size.width < point.x ||
+        bounds.origin.y > point.y ||
+        bounds.origin.y + bounds.size.height < point.y)
     {
         return NO;
     }
@@ -369,8 +369,8 @@
 
 - (RMProjectedRect)projectedRectFromLatitudeLongitudeBounds:(RMSphericalTrapezium)bounds
 {
-    CLLocationCoordinate2D ne = bounds.northeast;
-    CLLocationCoordinate2D sw = bounds.southwest;
+    CLLocationCoordinate2D ne = bounds.northEast;
+    CLLocationCoordinate2D sw = bounds.southWest;
     float pixelBuffer = kZoomRectPixelBuffer;
     CLLocationCoordinate2D midpoint = {
         .latitude = (ne.latitude + sw.latitude) / 2,
@@ -379,7 +379,7 @@
     RMProjectedPoint myOrigin = [projection coordinateToProjectedPoint:midpoint];
     RMProjectedPoint nePoint = [projection coordinateToProjectedPoint:ne];
     RMProjectedPoint swPoint = [projection coordinateToProjectedPoint:sw];
-    RMProjectedPoint myPoint = {.easting = nePoint.easting - swPoint.easting, .northing = nePoint.northing - swPoint.northing};
+    RMProjectedPoint myPoint = {.x = nePoint.x - swPoint.x, .y = nePoint.y - swPoint.y};
 
     // Create the new zoom layout
     RMProjectedRect zoomRect;
@@ -387,24 +387,24 @@
     //Default is with scale = 2.0 mercators/pixel
     zoomRect.size.width = [self screenBounds].size.width * 2.0;
     zoomRect.size.height = [self screenBounds].size.height * 2.0;
-    if ((myPoint.easting / [self screenBounds].size.width) < (myPoint.northing / [self screenBounds].size.height))
+    if ((myPoint.x / [self screenBounds].size.width) < (myPoint.y / [self screenBounds].size.height))
     {
-        if ((myPoint.northing / ([self screenBounds].size.height - pixelBuffer)) > 1)
+        if ((myPoint.y / ([self screenBounds].size.height - pixelBuffer)) > 1)
         {
-            zoomRect.size.width = [self screenBounds].size.width * (myPoint.northing / ([self screenBounds].size.height - pixelBuffer));
-            zoomRect.size.height = [self screenBounds].size.height * (myPoint.northing / ([self screenBounds].size.height - pixelBuffer));
+            zoomRect.size.width = [self screenBounds].size.width * (myPoint.y / ([self screenBounds].size.height - pixelBuffer));
+            zoomRect.size.height = [self screenBounds].size.height * (myPoint.y / ([self screenBounds].size.height - pixelBuffer));
         }
     }
     else
     {
-        if ((myPoint.easting / ([self screenBounds].size.width - pixelBuffer)) > 1)
+        if ((myPoint.x / ([self screenBounds].size.width - pixelBuffer)) > 1)
         {
-            zoomRect.size.width = [self screenBounds].size.width * (myPoint.easting / ([self screenBounds].size.width - pixelBuffer));
-            zoomRect.size.height = [self screenBounds].size.height * (myPoint.easting / ([self screenBounds].size.width - pixelBuffer));
+            zoomRect.size.width = [self screenBounds].size.width * (myPoint.x / ([self screenBounds].size.width - pixelBuffer));
+            zoomRect.size.height = [self screenBounds].size.height * (myPoint.x / ([self screenBounds].size.width - pixelBuffer));
         }
     }
-    myOrigin.easting = myOrigin.easting - (zoomRect.size.width / 2);
-    myOrigin.northing = myOrigin.northing - (zoomRect.size.height / 2);
+    myOrigin.x = myOrigin.x - (zoomRect.size.width / 2);
+    myOrigin.y = myOrigin.y - (zoomRect.size.height / 2);
 
     RMLog(@"Origin is calculated at: %f, %f", [projection projectedPointToCoordinate:myOrigin].latitude, [projection projectedPointToCoordinate:myOrigin].longitude);
 
@@ -418,8 +418,8 @@
 - (BOOL)tileSourceBoundsContainProjectedPoint:(RMProjectedPoint)point
 {
     RMSphericalTrapezium bounds = [self.tileSource latitudeLongitudeBoundingBox];
-    if (bounds.northeast.latitude == 90 && bounds.northeast.longitude == 180 &&
-        bounds.southwest.latitude == -90 && bounds.southwest.longitude == -180) {
+    if (bounds.northEast.latitude == 90 && bounds.northEast.longitude == 180 &&
+        bounds.southWest.latitude == -90 && bounds.southWest.longitude == -180) {
         return YES;
     }
     return [self projectedBounds:tileSourceProjectedBounds containsPoint:point];
@@ -461,8 +461,8 @@
 {
     RMProjectedPoint projectedCenter = [mercatorToScreenProjection projectedCenter];
     RMProjectedSize XYDelta = [mercatorToScreenProjection projectScreenSizeToProjectedSize:delta];
-    projectedCenter.easting = projectedCenter.easting - XYDelta.width;
-    projectedCenter.northing = projectedCenter.northing - XYDelta.height;
+    projectedCenter.x = projectedCenter.x - XYDelta.width;
+    projectedCenter.y = projectedCenter.y - XYDelta.height;
 
     if (![self tileSourceBoundsContainProjectedPoint:projectedCenter])
         return;
@@ -515,9 +515,9 @@ double CubicEaseOut(double t, double start, double end)
 
     double t = _moveAnimationCurrentStep / _moveAnimationSteps;
 
-    RMProjectedPoint nextPoint = RMMakeProjectedPoint(_moveAnimationStartPoint.easting + CubicEaseInOut(t, 0, _moveAnimationEndPoint.easting - _moveAnimationStartPoint.easting), _moveAnimationStartPoint.northing + CubicEaseInOut(t, 0, _moveAnimationEndPoint.northing - _moveAnimationStartPoint.northing));
+    RMProjectedPoint nextPoint = RMProjectedPointMake(_moveAnimationStartPoint.x + CubicEaseInOut(t, 0, _moveAnimationEndPoint.x - _moveAnimationStartPoint.x), _moveAnimationStartPoint.y + CubicEaseInOut(t, 0, _moveAnimationEndPoint.y - _moveAnimationStartPoint.y));
 
-    if (fabs(nextPoint.easting - _moveAnimationEndPoint.easting) < 10.0 && fabs(nextPoint.northing - _moveAnimationEndPoint.northing) < 10.0) {
+    if (fabs(nextPoint.x - _moveAnimationEndPoint.x) < 10.0 && fabs(nextPoint.y - _moveAnimationEndPoint.y) < 10.0) {
         [self moveToProjectedPoint:_moveAnimationEndPoint];
         [self stopMoveAnimation];
         return;
@@ -572,33 +572,33 @@ double CubicEaseOut(double t, double start, double end)
         RMProjectedRect newBounds = pBounds;
 
         // move the rect by delta
-        newBounds.origin.northing -= XYDelta.height;
-        newBounds.origin.easting -= XYDelta.width;
+        newBounds.origin.x -= XYDelta.width;
+        newBounds.origin.y -= XYDelta.height;
 
         // see if new bounds are within constrained bounds, and constrain if necessary
         BOOL constrained = NO;
-        if (newBounds.origin.northing < _southWestConstraint.northing) {
-            newBounds.origin.northing = _southWestConstraint.northing;
+        if (newBounds.origin.y < _southWestConstraint.y) {
+            newBounds.origin.y = _southWestConstraint.y;
             constrained = YES;
         }
-        if (newBounds.origin.northing + newBounds.size.height > _northEastConstraint.northing) {
-            newBounds.origin.northing = _northEastConstraint.northing - newBounds.size.height;
+        if (newBounds.origin.y + newBounds.size.height > _northEastConstraint.y) {
+            newBounds.origin.y = _northEastConstraint.y - newBounds.size.height;
             constrained = YES;
         }
-        if (newBounds.origin.easting < _southWestConstraint.easting) {
-            newBounds.origin.easting = _southWestConstraint.easting;
+        if (newBounds.origin.x < _southWestConstraint.x) {
+            newBounds.origin.x = _southWestConstraint.x;
             constrained = YES;
         }
-        if (newBounds.origin.easting + newBounds.size.width > _northEastConstraint.easting) {
-            newBounds.origin.easting = _northEastConstraint.easting - newBounds.size.width;
+        if (newBounds.origin.x + newBounds.size.width > _northEastConstraint.x) {
+            newBounds.origin.x = _northEastConstraint.x - newBounds.size.width;
             constrained = YES;
         }
 
         if (constrained)
         {
             // Adjust delta to match constraint
-            XYDelta.height = pBounds.origin.northing - newBounds.origin.northing;
-            XYDelta.width = pBounds.origin.easting - newBounds.origin.easting;
+            XYDelta.height = pBounds.origin.y - newBounds.origin.y;
+            XYDelta.width = pBounds.origin.x - newBounds.origin.x;
             delta = CGSizeMake(((sizeRatio.width == 0) ? 0 : XYDelta.width / sizeRatio.width), 
                                ((sizeRatio.height == 0) ? 0 : XYDelta.height / sizeRatio.height));
         }
@@ -907,15 +907,15 @@ double CubicEaseOut(double t, double start, double end)
 
             // this is copied from [RMMercatorToScreenBounds zoomScreenByFactor]
             // First we move the origin to the pivot...
-            origin.easting += center.x * metersPerPixel;
-            origin.northing += (screenBounds.size.height - center.y) * metersPerPixel;
+            origin.x += center.x * metersPerPixel;
+            origin.y += (screenBounds.size.height - center.y) * metersPerPixel;
 
             // Then scale by 1/factor
             metersPerPixel /= _zoomFactor;
 
             // Then translate back
-            origin.easting -= center.x * metersPerPixel;
-            origin.northing -= (screenBounds.size.height - center.y) * metersPerPixel;
+            origin.x -= center.x * metersPerPixel;
+            origin.y -= (screenBounds.size.height - center.y) * metersPerPixel;
 
             origin = [mtsp.projection wrapPointHorizontally:origin];
 
@@ -926,8 +926,8 @@ double CubicEaseOut(double t, double start, double end)
             zRect.size.height = screenBounds.size.height * metersPerPixel;
 
             // can zoom only if within bounds
-            canZoom = !(zRect.origin.northing < _southWestConstraint.northing || zRect.origin.northing+zRect.size.height > _northEastConstraint.northing ||
-                        zRect.origin.easting < _southWestConstraint.easting || zRect.origin.easting+zRect.size.width > _northEastConstraint.easting);
+            canZoom = !(zRect.origin.y < _southWestConstraint.y || zRect.origin.y+zRect.size.height > _northEastConstraint.y ||
+                        zRect.origin.x < _southWestConstraint.x || zRect.origin.x+zRect.size.width > _northEastConstraint.x);
         }
 
         if (!canZoom) {
@@ -962,8 +962,8 @@ double CubicEaseOut(double t, double start, double end)
         // Default is with scale = 2.0 mercators/pixel
         zoomRect.size.width = [self screenBounds].size.width * 2.0;
         zoomRect.size.height = [self screenBounds].size.height * 2.0;
-        myOrigin.easting = myOrigin.easting - (zoomRect.size.width / 2);
-        myOrigin.northing = myOrigin.northing - (zoomRect.size.height / 2);
+        myOrigin.x = myOrigin.x - (zoomRect.size.width / 2);
+        myOrigin.y = myOrigin.y - (zoomRect.size.height / 2);
         zoomRect.origin = myOrigin;
         [self zoomWithProjectedBounds:zoomRect];
     }
@@ -979,8 +979,8 @@ double CubicEaseOut(double t, double start, double end)
         RMProjectedPoint nePoint = [projection coordinateToProjectedPoint:ne];
         RMProjectedPoint swPoint = [projection coordinateToProjectedPoint:sw];
         RMProjectedPoint myPoint = {
-            .easting = nePoint.easting - swPoint.easting,
-            .northing = nePoint.northing - swPoint.northing
+            .x = nePoint.x - swPoint.x,
+            .y = nePoint.y - swPoint.y
         };
 
 		// Create the new zoom layout
@@ -989,24 +989,24 @@ double CubicEaseOut(double t, double start, double end)
         // Default is with scale = 2.0 mercators/pixel
         zoomRect.size.width = [self screenBounds].size.width * 2.0;
         zoomRect.size.height = [self screenBounds].size.height * 2.0;
-        if ((myPoint.easting / [self screenBounds].size.width) < (myPoint.northing / [self screenBounds].size.height))
+        if ((myPoint.x / [self screenBounds].size.width) < (myPoint.y / [self screenBounds].size.height))
         {
-            if ((myPoint.northing / ([self screenBounds].size.height - pixelBuffer)) > 1)
+            if ((myPoint.y / ([self screenBounds].size.height - pixelBuffer)) > 1)
             {
-                zoomRect.size.width = [self screenBounds].size.width * (myPoint.northing / ([self screenBounds].size.height - pixelBuffer));
-                zoomRect.size.height = [self screenBounds].size.height * (myPoint.northing / ([self screenBounds].size.height - pixelBuffer));
+                zoomRect.size.width = [self screenBounds].size.width * (myPoint.y / ([self screenBounds].size.height - pixelBuffer));
+                zoomRect.size.height = [self screenBounds].size.height * (myPoint.y / ([self screenBounds].size.height - pixelBuffer));
             }
         }
         else
         {
-            if ((myPoint.easting / ([self screenBounds].size.width - pixelBuffer)) > 1)
+            if ((myPoint.x / ([self screenBounds].size.width - pixelBuffer)) > 1)
             {
-                zoomRect.size.width = [self screenBounds].size.width * (myPoint.easting / ([self screenBounds].size.width - pixelBuffer));
-                zoomRect.size.height = [self screenBounds].size.height * (myPoint.easting / ([self screenBounds].size.width - pixelBuffer));
+                zoomRect.size.width = [self screenBounds].size.width * (myPoint.x / ([self screenBounds].size.width - pixelBuffer));
+                zoomRect.size.height = [self screenBounds].size.height * (myPoint.x / ([self screenBounds].size.width - pixelBuffer));
             }
         }
-        myOrigin.easting = myOrigin.easting - (zoomRect.size.width / 2);
-        myOrigin.northing = myOrigin.northing - (zoomRect.size.height / 2);
+        myOrigin.x = myOrigin.x - (zoomRect.size.width / 2);
+        myOrigin.y = myOrigin.y - (zoomRect.size.height / 2);
         RMLog(@"Origin is calculated at: %f, %f", [projection projectedPointToCoordinate:myOrigin].latitude, [projection projectedPointToCoordinate:myOrigin].longitude);
 
         zoomRect.origin = myOrigin;
@@ -1352,21 +1352,21 @@ double CubicEaseOut(double t, double start, double end)
     southeastLL = [self pixelToCoordinate:southeastScreen];
     southwestLL = [self pixelToCoordinate:southwestScreen];
 
-    boundingBox.northeast.latitude = fmax(northeastLL.latitude, northwestLL.latitude);
-    boundingBox.southwest.latitude = fmin(southeastLL.latitude, southwestLL.latitude);
+    boundingBox.northEast.latitude = fmax(northeastLL.latitude, northwestLL.latitude);
+    boundingBox.southWest.latitude = fmin(southeastLL.latitude, southwestLL.latitude);
 
     // westerly computations:
     // -179, -178 -> -179 (min)
     // -179, 179  -> 179 (max)
     if (fabs(northwestLL.longitude - southwestLL.longitude) <= kMaxLong)
-        boundingBox.southwest.longitude = fmin(northwestLL.longitude, southwestLL.longitude);
+        boundingBox.southWest.longitude = fmin(northwestLL.longitude, southwestLL.longitude);
     else
-        boundingBox.southwest.longitude = fmax(northwestLL.longitude, southwestLL.longitude);
+        boundingBox.southWest.longitude = fmax(northwestLL.longitude, southwestLL.longitude);
 
     if (fabs(northeastLL.longitude - southeastLL.longitude) <= kMaxLong)
-        boundingBox.northeast.longitude = fmax(northeastLL.longitude, southeastLL.longitude);
+        boundingBox.northEast.longitude = fmax(northeastLL.longitude, southeastLL.longitude);
     else
-        boundingBox.northeast.longitude = fmin(northeastLL.longitude, southeastLL.longitude);
+        boundingBox.northEast.longitude = fmin(northeastLL.longitude, southeastLL.longitude);
 
     return boundingBox;
 }
@@ -1420,7 +1420,7 @@ double CubicEaseOut(double t, double start, double end)
         RMProjectedRect boundingBox = [[self mercatorToScreenProjection] projectedBounds];
         float metersPerPixel = self.metersPerPixel;
 
-        NSArray *annotationsToCorrect = [quadTree annotationsInProjectedRect:boundingBox createClusterAnnotations:self.enableClustering withClusterSize:RMMakeProjectedSize(self.clusterMarkerSize.width * metersPerPixel, self.clusterMarkerSize.height * metersPerPixel) findGravityCenter:self.positionClusterMarkersAtTheGravityCenter];
+        NSArray *annotationsToCorrect = [quadTree annotationsInProjectedRect:boundingBox createClusterAnnotations:self.enableClustering withClusterSize:RMProjectedSizeMake(self.clusterMarkerSize.width * metersPerPixel, self.clusterMarkerSize.height * metersPerPixel) findGravityCenter:self.positionClusterMarkersAtTheGravityCenter];
         NSMutableSet *previousVisibleAnnotations = [NSMutableSet setWithSet:visibleAnnotations];
 
         for (RMAnnotation *annotation in annotationsToCorrect)

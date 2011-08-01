@@ -29,44 +29,44 @@
 
 bool RMProjectedPointEqualToProjectedPoint(RMProjectedPoint point1, RMProjectedPoint point2)
 {
-	return point1.easting == point2.easting && point2.northing == point2.northing;
+	return point1.x == point2.x && point2.y == point2.y;
 }
 
 bool RMProjectedRectInterectsProjectedRect(RMProjectedRect rect1, RMProjectedRect rect2)
 {
-	double minEasting1 = rect1.origin.easting;
-	double maxEasting1 = rect1.origin.easting + rect1.size.width;
-	double minNorthing1 = rect1.origin.northing;
-	double maxNorthing1 = rect1.origin.northing + rect1.size.height;
+	double minX1 = rect1.origin.x;
+	double maxX1 = rect1.origin.x + rect1.size.width;
+	double minY1 = rect1.origin.y;
+	double maxY1 = rect1.origin.y + rect1.size.height;
 
-	double minEasting2 = rect2.origin.easting;
-	double maxEasting2 = rect2.origin.easting + rect2.size.width;
-	double minNorthing2 = rect2.origin.northing;
-	double maxNorthing2 = rect2.origin.northing + rect2.size.height;
+	double minX2 = rect2.origin.x;
+	double maxX2 = rect2.origin.x + rect2.size.width;
+	double minY2 = rect2.origin.y;
+	double maxY2 = rect2.origin.y + rect2.size.height;
 
-	return ((minEasting1 <= minEasting2 && minEasting2 <= maxEasting1) || (minEasting2 <= minEasting1 && minEasting1 <= maxEasting2))
-		&& ((minNorthing1 <= minNorthing2 && minNorthing2 <= maxNorthing1) || (minNorthing2 <= minNorthing1 && minNorthing1 <= maxNorthing2));
+	return ((minX1 <= minX2 && minX2 <= maxX1) || (minX2 <= minX1 && minX1 <= maxX2))
+		&& ((minY1 <= minY2 && minY2 <= maxY1) || (minY2 <= minY1 && minY1 <= maxY2));
 }
 
 bool RMProjectedRectContainsProjectedRect(RMProjectedRect rect1, RMProjectedRect rect2)
 {
-	double minEasting1 = rect1.origin.easting;
-	double maxEasting1 = rect1.origin.easting + rect1.size.width;
-	double minNorthing1 = rect1.origin.northing;
-	double maxNorthing1 = rect1.origin.northing + rect1.size.height;
+	double minX1 = rect1.origin.x;
+	double maxX1 = rect1.origin.x + rect1.size.width;
+	double minY1 = rect1.origin.y;
+	double maxY1 = rect1.origin.y + rect1.size.height;
 
-	double minEasting2 = rect2.origin.easting;
-	double maxEasting2 = rect2.origin.easting + rect2.size.width;
-	double minNorthing2 = rect2.origin.northing;
-	double maxNorthing2 = rect2.origin.northing + rect2.size.height;
+	double minX2 = rect2.origin.x;
+	double maxX2 = rect2.origin.x + rect2.size.width;
+	double minY2 = rect2.origin.y;
+	double maxY2 = rect2.origin.y + rect2.size.height;
 
-    return ((minEasting2 >= minEasting1 && maxEasting2 <= maxEasting1) && (minNorthing2 >= minNorthing1 && maxNorthing2 <= maxNorthing1));
+    return ((minX2 >= minX1 && maxX2 <= maxX1) && (minY2 >= minY1 && maxY2 <= maxY1));
 }
 
 RMProjectedPoint RMScaleProjectedPointAboutPoint(RMProjectedPoint point, float factor, RMProjectedPoint pivot)
 {
-	point.easting = (point.easting - pivot.easting) * factor + pivot.easting;
-	point.northing = (point.northing - pivot.northing) * factor + pivot.northing;
+	point.x = (point.x - pivot.x) * factor + pivot.x;
+	point.y = (point.y - pivot.y) * factor + pivot.y;
 	return point;
 }
 
@@ -80,8 +80,8 @@ RMProjectedRect RMScaleProjectedRectAboutPoint(RMProjectedRect rect, float facto
 
 RMProjectedPoint RMTranslateProjectedPointBy(RMProjectedPoint point, RMProjectedSize delta)
 {
-	point.easting += delta.width;
-	point.northing += delta.height;
+	point.x += delta.width;
+	point.y += delta.height;
 	return point;
 }
 
@@ -91,22 +91,22 @@ RMProjectedRect RMTranslateProjectedRectBy(RMProjectedRect rect,  RMProjectedSiz
 	return rect;
 }
 
-RMProjectedPoint  RMMakeProjectedPoint(double easting, double northing)
+RMProjectedPoint RMProjectedPointMake(double x, double y)
 {
-	RMProjectedPoint point = { easting, northing };
+	RMProjectedPoint point = { x, y };
 	return point;
 }
 
-RMProjectedRect RMMakeProjectedRect(double easting, double northing, double width, double height)
+RMProjectedRect RMProjectedRectMake(double x, double y, double width, double height)
 {
 	RMProjectedRect rect = {
-		{easting, northing},
+		{x, y},
 		{width, height}
 	};
 	return rect;
 }
 
-RMProjectedSize  RMMakeProjectedSize(double width, double heigth)
+RMProjectedSize RMProjectedSizeMake(double width, double heigth)
 {
     RMProjectedSize size = {
         width, heigth
@@ -116,5 +116,5 @@ RMProjectedSize  RMMakeProjectedSize(double width, double heigth)
 
 RMProjectedRect RMProjectedRectZero()
 {
-    return RMMakeProjectedRect(0.0, 0.0, 0.0, 0.0);
+    return RMProjectedRectMake(0.0, 0.0, 0.0, 0.0);
 }

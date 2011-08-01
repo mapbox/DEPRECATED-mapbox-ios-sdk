@@ -16,8 +16,8 @@
 #define kMaxLat 90
 
 typedef struct {
-	CLLocationCoordinate2D northeast;
-	CLLocationCoordinate2D southwest;
+	CLLocationCoordinate2D southWest;
+	CLLocationCoordinate2D northEast;
 } RMSphericalTrapezium;
 
 static const double kRMMinLatitude = -kMaxLat;
