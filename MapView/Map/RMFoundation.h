@@ -57,7 +57,7 @@ RMProjectedRect  RMTranslateProjectedRectBy(RMProjectedRect rect, RMProjectedSiz
 /// \brief The function checks whether two passed projected points are equal.
 bool RMProjectedPointEqualToProjectedPoint(RMProjectedPoint point1, RMProjectedPoint point2);
 /// \brief The function returs true if the passed rects intersect each other.
-bool RMProjectedRectInterectsProjectedRect(RMProjectedRect rect1, RMProjectedRect rect2);
+bool RMProjectedRectIntersectsProjectedRect(RMProjectedRect rect1, RMProjectedRect rect2);
 /// \brief The function returns true if rect1 contains rect2
 bool RMProjectedRectContainsProjectedRect(RMProjectedRect rect1, RMProjectedRect rect2);
 

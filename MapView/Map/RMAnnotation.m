@@ -134,7 +134,7 @@
 {
     if (self.hasBoundingBox) {
         RMProjectedRect projectedScreenBounds = [[mapView mercatorToScreenProjection] projectedBounds];
-        return RMProjectedRectInterectsProjectedRect(projectedScreenBounds, projectedBoundingBox);
+        return RMProjectedRectIntersectsProjectedRect(projectedScreenBounds, projectedBoundingBox);
     } else {
         return CGRectContainsPoint(bounds, self.position);
     }

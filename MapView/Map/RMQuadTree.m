@@ -280,19 +280,19 @@
         }
     }
 
-    if (RMProjectedRectInterectsProjectedRect(aBoundingBox, northWestBoundingBox))
+    if (RMProjectedRectIntersectsProjectedRect(aBoundingBox, northWestBoundingBox))
         [northWest addAnnotationsInBoundingBox:aBoundingBox toMutableArray:someArray createClusterAnnotations:createClusterAnnotations withClusterSize:clusterSize findGravityCenter:findGravityCenter];
-    if (RMProjectedRectInterectsProjectedRect(aBoundingBox, northEastBoundingBox))
+    if (RMProjectedRectIntersectsProjectedRect(aBoundingBox, northEastBoundingBox))
         [northEast addAnnotationsInBoundingBox:aBoundingBox toMutableArray:someArray createClusterAnnotations:createClusterAnnotations withClusterSize:clusterSize findGravityCenter:findGravityCenter];
-    if (RMProjectedRectInterectsProjectedRect(aBoundingBox, southWestBoundingBox))
+    if (RMProjectedRectIntersectsProjectedRect(aBoundingBox, southWestBoundingBox))
         [southWest addAnnotationsInBoundingBox:aBoundingBox toMutableArray:someArray createClusterAnnotations:createClusterAnnotations withClusterSize:clusterSize findGravityCenter:findGravityCenter];
-    if (RMProjectedRectInterectsProjectedRect(aBoundingBox, southEastBoundingBox))
+    if (RMProjectedRectIntersectsProjectedRect(aBoundingBox, southEastBoundingBox))
         [southEast addAnnotationsInBoundingBox:aBoundingBox toMutableArray:someArray createClusterAnnotations:createClusterAnnotations withClusterSize:clusterSize findGravityCenter:findGravityCenter];
 
     @synchronized (annotations) {
         for (RMAnnotation *annotation in annotations)
         {
-            if (RMProjectedRectInterectsProjectedRect(aBoundingBox, annotation.projectedBoundingBox))
+            if (RMProjectedRectIntersectsProjectedRect(aBoundingBox, annotation.projectedBoundingBox))
                 [someArray addObject:annotation];
         }
     }

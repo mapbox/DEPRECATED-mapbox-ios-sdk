@@ -32,7 +32,7 @@ bool RMProjectedPointEqualToProjectedPoint(RMProjectedPoint point1, RMProjectedP
 	return point1.x == point2.x && point2.y == point2.y;
 }
 
-bool RMProjectedRectInterectsProjectedRect(RMProjectedRect rect1, RMProjectedRect rect2)
+bool RMProjectedRectIntersectsProjectedRect(RMProjectedRect rect1, RMProjectedRect rect2)
 {
 	double minX1 = rect1.origin.x;
 	double maxX1 = rect1.origin.x + rect1.size.width;
