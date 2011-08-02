@@ -344,6 +344,10 @@
 
     _delegateHasShouldDragMarker = [delegate respondsToSelector:@selector(mapView:shouldDragAnnotation:withEvent:)];
     _delegateHasDidDragMarker = [delegate respondsToSelector:@selector(mapView:didDragAnnotation:withEvent:)];
+
+    _delegateHasLayerForAnnotation = [delegate respondsToSelector:@selector(mapView:layerForAnnotation:)];
+    _delegateHasWillHideLayerForAnnotation = [delegate respondsToSelector:@selector(mapView:willHideLayerForAnnotation:)];
+    _delegateHasDidHideLayerForAnnotation = [delegate respondsToSelector:@selector(mapView:didHideLayerForAnnotation:)];
 }
 
 - (id <RMMapViewDelegate>)delegate
@@ -1433,7 +1437,7 @@ double CubicEaseOut(double t, double start, double end)
         {
             [self correctScreenPosition:annotation];
 
-            if (annotation.layer == nil && [delegate respondsToSelector:@selector(mapView:layerForAnnotation:)])
+            if (annotation.layer == nil && _delegateHasLayerForAnnotation)
                 annotation.layer = [delegate mapView:self layerForAnnotation:annotation];
             if (annotation.layer == nil)
                 continue;
@@ -1448,8 +1452,10 @@ double CubicEaseOut(double t, double start, double end)
 
         for (RMAnnotation *annotation in previousVisibleAnnotations)
         {
+            if (_delegateHasWillHideLayerForAnnotation) [delegate mapView:self willHideLayerForAnnotation:annotation];
             annotation.layer = nil;
             [visibleAnnotations removeObject:annotation];
+            if (_delegateHasDidHideLayerForAnnotation) [delegate mapView:self didHideLayerForAnnotation:annotation];
         }
 
         // RMLog(@"%d annotations on screen, %d total", [[overlay sublayers] count], [annotations count]);
@@ -1467,7 +1473,7 @@ double CubicEaseOut(double t, double start, double end)
                 {
                     [self correctScreenPosition:annotation];
                     if ([annotation isAnnotationWithinBounds:screenBounds]) {
-                        if (annotation.layer == nil && [delegate respondsToSelector:@selector(mapView:layerForAnnotation:)])
+                        if (annotation.layer == nil && _delegateHasLayerForAnnotation)
                             annotation.layer = [delegate mapView:self layerForAnnotation:annotation];
                         if (annotation.layer == nil)
                             continue;
@@ -1482,8 +1488,10 @@ double CubicEaseOut(double t, double start, double end)
                         }
                         lastLayer = annotation.layer;
                     } else {
+                        if (_delegateHasWillHideLayerForAnnotation) [delegate mapView:self willHideLayerForAnnotation:annotation];
                         annotation.layer = nil;
                         [visibleAnnotations removeObject:annotation];
+                        if (_delegateHasDidHideLayerForAnnotation) [delegate mapView:self didHideLayerForAnnotation:annotation];
                     }
                 }
                 // RMLog(@"%d annotations on screen, %d total", [[overlay sublayers] count], [annotations count]);

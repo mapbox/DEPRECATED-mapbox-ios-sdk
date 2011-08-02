@@ -187,6 +187,9 @@ enum {
     BOOL _delegateHasAfterMapTouch;
     BOOL _delegateHasShouldDragMarker;
     BOOL _delegateHasDidDragMarker;
+    BOOL _delegateHasLayerForAnnotation;
+    BOOL _delegateHasWillHideLayerForAnnotation;
+    BOOL _delegateHasDidHideLayerForAnnotation;
 
     NSTimer *_decelerationTimer;
     CGSize _decelerationDelta;
