@@ -79,7 +79,7 @@
         return;
 
     self.position = RMScaleCGPointAboutPoint(self.position, zoomFactor, pivot);
-    self.bounds = RMScaleCGRectAboutPoint(self.bounds, zoomFactor, self.anchorPoint);
+    self.bounds = RMScaleCGRectAboutPoint(self.bounds, zoomFactor, pivot);
 }
 
 @end
