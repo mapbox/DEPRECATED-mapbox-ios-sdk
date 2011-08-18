@@ -68,4 +68,6 @@ Changes in this clone (Alpstein/route-me)
 
 * Markers have been refactored into a MKMapView-like system, with annotations and on-demand markers
 
+* Automatic annotation clustering
+
 * Requires at least iOS 4.0

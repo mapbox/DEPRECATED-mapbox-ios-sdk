@@ -35,9 +35,11 @@
 @optional
 
 - (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation;
+- (void)mapView:(RMMapView *)mapView willHideLayerForAnnotation:(RMAnnotation *)annotation;
+- (void)mapView:(RMMapView *)mapView didHideLayerForAnnotation:(RMAnnotation *)annotation;
 
 - (void)beforeMapMove:(RMMapView *)map;
-- (void)afterMapMove:(RMMapView *)map ;
+- (void)afterMapMove:(RMMapView *)map;
 - (void)afterMapMoveDeceleration:(RMMapView *)map;
 
 - (void)beforeMapZoom:(RMMapView *)map byFactor:(float)zoomFactor near:(CGPoint)center;

@@ -28,7 +28,7 @@
 
 #import "RMFoundation.h"
 
-@class RMMapView, RMMapLayer;
+@class RMMapView, RMMapLayer, RMQuadTreeNode;
 
 @interface RMAnnotation : NSObject
 {
@@ -41,6 +41,7 @@
     BOOL hasBoundingBox;
 
     RMMapLayer *layer;
+    RMQuadTreeNode *quadTreeNode;
 
     // provided for storage of arbitrary user data
     id userInfo;
@@ -64,6 +65,9 @@
 
 // RMMarker, RMPath, whatever you return in your delegate method mapView:layerForAnnotation:
 @property (nonatomic, retain) RMMapLayer *layer;
+
+// This is for the QuadTree. Don't mess this up.
+@property (nonatomic, assign) RMQuadTreeNode *quadTreeNode;
 
 + (id)annotationWithMapView:(RMMapView *)aMapView coordinate:(CLLocationCoordinate2D)aCoordinate andTitle:(NSString *)aTitle;
 - (id)initWithMapView:(RMMapView *)aMapView coordinate:(CLLocationCoordinate2D)aCoordinate andTitle:(NSString *)aTitle;

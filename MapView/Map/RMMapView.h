@@ -123,6 +123,7 @@ enum {
 @class RMMarkerLayer;
 @class RMMarker;
 @class RMAnnotation;
+@class RMQuadTree;
 @protocol RMMercatorToTileProjection;
 @protocol RMTileSource;
 
@@ -150,6 +151,9 @@ enum {
 
     NSMutableArray *annotations;
     NSMutableSet   *visibleAnnotations;
+    RMQuadTree     *quadTree;
+    BOOL            enableClustering, positionClusterMarkersAtTheGravityCenter;
+    CGSize          clusterMarkerSize;
 
     id <RMTileSource> tileSource;
     RMTileCache *tileCache; // Generic tile cache
@@ -183,10 +187,17 @@ enum {
     BOOL _delegateHasAfterMapTouch;
     BOOL _delegateHasShouldDragMarker;
     BOOL _delegateHasDidDragMarker;
+    BOOL _delegateHasLayerForAnnotation;
+    BOOL _delegateHasWillHideLayerForAnnotation;
+    BOOL _delegateHasDidHideLayerForAnnotation;
 
     NSTimer *_decelerationTimer;
     CGSize _decelerationDelta;
     CGPoint _longPressPosition;
+
+    NSTimer *_moveAnimationTimer;
+    RMProjectedPoint _moveAnimationStartPoint, _moveAnimationEndPoint;
+    double _moveAnimationCurrentStep, _moveAnimationSteps;
 
     BOOL _constrainMovement;
     RMProjectedPoint _northEastConstraint, _southWestConstraint;
@@ -218,6 +229,10 @@ enum {
 
 @property (nonatomic, readonly) RMMarkerManager *markerManager;
 @property (nonatomic, readonly) RMMapLayer *overlay;
+@property (nonatomic, retain)   RMQuadTree *quadTree;
+@property (nonatomic, assign)   BOOL enableClustering;
+@property (nonatomic, assign)   BOOL positionClusterMarkersAtTheGravityCenter;
+@property (nonatomic, assign)   CGSize clusterMarkerSize;
 
 @property (nonatomic, readonly) RMTileImageSet *imagesOnScreen;
 @property (nonatomic, readonly) RMTileLoader *tileLoader;

@@ -38,6 +38,7 @@
 #import "RMMarker.h"
 #import "RMPath.h"
 #import "RMAnnotation.h"
+#import "RMQuadTree.h"
 
 #import "RMMercatorToScreenProjection.h"
 #import "RMMercatorToTileProjection.h"
@@ -61,8 +62,8 @@
 #define kiPhoneMilimeteresPerPixel .1543
 #define kZoomRectPixelBuffer 50
 
-#define kMoveAnimationDuration 0.25f
-#define kMoveAnimationStepDuration 0.02f
+#define kMoveAnimationDuration 0.5f
+#define kMoveAnimationStepDuration 0.04f
 
 #define kDefaultInitialLatitude -33.858771
 #define kDefaultInitialLongitude 151.201596
@@ -81,6 +82,7 @@
 - (void)startDecelerationWithDelta:(CGSize)delta;
 - (void)incrementDeceleration:(NSTimer *)timer;
 - (void)stopDeceleration;
+- (void)stopMoveAnimation;
 
 - (void)animationFinishedWithZoomFactor:(float)zoomFactor near:(CGPoint)p;
 - (void)animationStepped;
@@ -94,20 +96,19 @@
 
 @implementation RMMapView
 
-@synthesize decelerationFactor;
-@synthesize deceleration;
+@synthesize decelerationFactor, deceleration;
 
-@synthesize enableDragging;
-@synthesize enableZoom;
+@synthesize enableDragging, enableZoom;
 @synthesize lastGesture;
 
 @synthesize boundingMask;
-@synthesize minZoom;
-@synthesize maxZoom;
+@synthesize minZoom, maxZoom;
 @synthesize screenScale;
 @synthesize markerManager;
 @synthesize imagesOnScreen;
 @synthesize tileCache;
+@synthesize quadTree;
+@synthesize enableClustering, positionClusterMarkersAtTheGravityCenter, clusterMarkerSize;
 
 #pragma mark -
 #pragma mark Initialization
@@ -148,6 +149,12 @@
 
     mercatorToScreenProjection = [[RMMercatorToScreenProjection alloc] initFromProjection:[newTilesource projection] toScreenBounds:[self bounds]];
 
+    annotations = [NSMutableArray new];
+    visibleAnnotations = [NSMutableSet new];
+    [self setQuadTree:[[[RMQuadTree alloc] initWithMapView:self] autorelease]];
+    enableClustering = positionClusterMarkersAtTheGravityCenter = NO;
+    clusterMarkerSize = CGSizeMake(100.0, 100.0);
+
     [self setTileCache:[[[RMTileCache alloc] init] autorelease]];
     [self setTileSource:newTilesource];
     [self setRenderer:[[[RMCoreAnimationRenderer alloc] initWithView:self] autorelease]];
@@ -169,9 +176,6 @@
 
     [self setBackground:[[[CALayer alloc] init] autorelease]];
     [self setOverlay:[[[RMMapLayer alloc] init] autorelease]];
-
-    annotations = [NSMutableArray new];
-    visibleAnnotations = [NSMutableSet new];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleMemoryWarningNotification:)
@@ -250,8 +254,8 @@
     CGRect r = self.frame;
     [super setFrame:frame];
 
-    // only change if the frame changes
-    if (!CGRectEqualToRect(r, frame)) {
+    // only change if the frame changes and not during initialization
+    if (tileLoader && !CGRectEqualToRect(r, frame)) {
         CGRect bounds = CGRectMake(0, 0, frame.size.width, frame.size.height);
         [mercatorToScreenProjection setScreenBounds:bounds];
         background.frame = bounds;
@@ -282,6 +286,7 @@
     [self setBackground:nil];
     [annotations release]; annotations = nil;
     [visibleAnnotations release]; visibleAnnotations = nil;
+    self.quadTree = nil;
     [super dealloc];
 }
 
@@ -339,6 +344,10 @@
 
     _delegateHasShouldDragMarker = [delegate respondsToSelector:@selector(mapView:shouldDragAnnotation:withEvent:)];
     _delegateHasDidDragMarker = [delegate respondsToSelector:@selector(mapView:didDragAnnotation:withEvent:)];
+
+    _delegateHasLayerForAnnotation = [delegate respondsToSelector:@selector(mapView:layerForAnnotation:)];
+    _delegateHasWillHideLayerForAnnotation = [delegate respondsToSelector:@selector(mapView:willHideLayerForAnnotation:)];
+    _delegateHasDidHideLayerForAnnotation = [delegate respondsToSelector:@selector(mapView:didHideLayerForAnnotation:)];
 }
 
 - (id <RMMapViewDelegate>)delegate
@@ -351,10 +360,10 @@
 
 - (BOOL)projectedBounds:(RMProjectedRect)bounds containsPoint:(RMProjectedPoint)point
 {
-    if (bounds.origin.easting > point.easting ||
-        bounds.origin.easting + bounds.size.width < point.easting ||
-        bounds.origin.northing > point.northing ||
-        bounds.origin.northing + bounds.size.height < point.northing)
+    if (bounds.origin.x > point.x ||
+        bounds.origin.x + bounds.size.width < point.x ||
+        bounds.origin.y > point.y ||
+        bounds.origin.y + bounds.size.height < point.y)
     {
         return NO;
     }
@@ -364,8 +373,8 @@
 
 - (RMProjectedRect)projectedRectFromLatitudeLongitudeBounds:(RMSphericalTrapezium)bounds
 {
-    CLLocationCoordinate2D ne = bounds.northeast;
-    CLLocationCoordinate2D sw = bounds.southwest;
+    CLLocationCoordinate2D ne = bounds.northEast;
+    CLLocationCoordinate2D sw = bounds.southWest;
     float pixelBuffer = kZoomRectPixelBuffer;
     CLLocationCoordinate2D midpoint = {
         .latitude = (ne.latitude + sw.latitude) / 2,
@@ -374,7 +383,7 @@
     RMProjectedPoint myOrigin = [projection coordinateToProjectedPoint:midpoint];
     RMProjectedPoint nePoint = [projection coordinateToProjectedPoint:ne];
     RMProjectedPoint swPoint = [projection coordinateToProjectedPoint:sw];
-    RMProjectedPoint myPoint = {.easting = nePoint.easting - swPoint.easting, .northing = nePoint.northing - swPoint.northing};
+    RMProjectedPoint myPoint = {.x = nePoint.x - swPoint.x, .y = nePoint.y - swPoint.y};
 
     // Create the new zoom layout
     RMProjectedRect zoomRect;
@@ -382,24 +391,24 @@
     //Default is with scale = 2.0 mercators/pixel
     zoomRect.size.width = [self screenBounds].size.width * 2.0;
     zoomRect.size.height = [self screenBounds].size.height * 2.0;
-    if ((myPoint.easting / [self screenBounds].size.width) < (myPoint.northing / [self screenBounds].size.height))
+    if ((myPoint.x / [self screenBounds].size.width) < (myPoint.y / [self screenBounds].size.height))
     {
-        if ((myPoint.northing / ([self screenBounds].size.height - pixelBuffer)) > 1)
+        if ((myPoint.y / ([self screenBounds].size.height - pixelBuffer)) > 1)
         {
-            zoomRect.size.width = [self screenBounds].size.width * (myPoint.northing / ([self screenBounds].size.height - pixelBuffer));
-            zoomRect.size.height = [self screenBounds].size.height * (myPoint.northing / ([self screenBounds].size.height - pixelBuffer));
+            zoomRect.size.width = [self screenBounds].size.width * (myPoint.y / ([self screenBounds].size.height - pixelBuffer));
+            zoomRect.size.height = [self screenBounds].size.height * (myPoint.y / ([self screenBounds].size.height - pixelBuffer));
         }
     }
     else
     {
-        if ((myPoint.easting / ([self screenBounds].size.width - pixelBuffer)) > 1)
+        if ((myPoint.x / ([self screenBounds].size.width - pixelBuffer)) > 1)
         {
-            zoomRect.size.width = [self screenBounds].size.width * (myPoint.easting / ([self screenBounds].size.width - pixelBuffer));
-            zoomRect.size.height = [self screenBounds].size.height * (myPoint.easting / ([self screenBounds].size.width - pixelBuffer));
+            zoomRect.size.width = [self screenBounds].size.width * (myPoint.x / ([self screenBounds].size.width - pixelBuffer));
+            zoomRect.size.height = [self screenBounds].size.height * (myPoint.x / ([self screenBounds].size.width - pixelBuffer));
         }
     }
-    myOrigin.easting = myOrigin.easting - (zoomRect.size.width / 2);
-    myOrigin.northing = myOrigin.northing - (zoomRect.size.height / 2);
+    myOrigin.x = myOrigin.x - (zoomRect.size.width / 2);
+    myOrigin.y = myOrigin.y - (zoomRect.size.height / 2);
 
     RMLog(@"Origin is calculated at: %f, %f", [projection projectedPointToCoordinate:myOrigin].latitude, [projection projectedPointToCoordinate:myOrigin].longitude);
 
@@ -413,8 +422,8 @@
 - (BOOL)tileSourceBoundsContainProjectedPoint:(RMProjectedPoint)point
 {
     RMSphericalTrapezium bounds = [self.tileSource latitudeLongitudeBoundingBox];
-    if (bounds.northeast.latitude == 90 && bounds.northeast.longitude == 180 &&
-        bounds.southwest.latitude == -90 && bounds.southwest.longitude == -180) {
+    if (bounds.northEast.latitude == 90 && bounds.northEast.longitude == 180 &&
+        bounds.southWest.latitude == -90 && bounds.southWest.longitude == -180) {
         return YES;
     }
     return [self projectedBounds:tileSourceProjectedBounds containsPoint:point];
@@ -439,7 +448,13 @@
 
 - (void)moveToCoordinate:(CLLocationCoordinate2D)coordinate
 {
-    if (_delegateHasBeforeMapMove) [delegate beforeMapMove:self];
+    [self stopDeceleration];
+    if (_moveAnimationTimer != nil) {
+        [_moveAnimationTimer invalidate]; _moveAnimationTimer = nil;
+    } else {
+        if (_delegateHasBeforeMapMove) [delegate beforeMapMove:self];
+    }
+
 	RMProjectedPoint projectedPoint = [[self projection] coordinateToProjectedPoint:coordinate];
 	[self setMapCenterProjectedPoint:projectedPoint];
     if (_delegateHasAfterMapMove) [delegate afterMapMove:self];
@@ -450,8 +465,8 @@
 {
     RMProjectedPoint projectedCenter = [mercatorToScreenProjection projectedCenter];
     RMProjectedSize XYDelta = [mercatorToScreenProjection projectScreenSizeToProjectedSize:delta];
-    projectedCenter.easting = projectedCenter.easting - XYDelta.width;
-    projectedCenter.northing = projectedCenter.northing - XYDelta.height;
+    projectedCenter.x = projectedCenter.x - XYDelta.width;
+    projectedCenter.y = projectedCenter.y - XYDelta.height;
 
     if (![self tileSourceBoundsContainProjectedPoint:projectedCenter])
         return;
@@ -462,41 +477,89 @@
     [self correctPositionOfAllAnnotationsIncludingInvisibles:correctAllSublayers];
 }
 
+// from http://iphonedevelopment.blogspot.com/2010/12/more-animation-curves-than-you-can.html
+double CubicEaseInOut(double t, double start, double end)
+{
+    if (t <= 0.0) return start;
+    else if (t >= 1.0) return end;
+
+    t *= 2.0;
+    if (t < 1.0) return ((end / 2.0) * t * t * t) + start - 1.0;
+    t -= 2.0;
+    return (end / 2.0) * (t * t * t + 2.0) + start - 1.0;
+}
+
+double CubicEaseOut(double t, double start, double end)
+{
+    if (t <= 0.0) return start;
+    else if (t >= 1.0) return end;
+
+    t--;
+    return end * (t * t * t + 1.0) + start - 1.0;
+}
+
+- (void)stopMoveAnimation
+{
+    if (_moveAnimationTimer != nil) {
+        [_moveAnimationTimer invalidate]; _moveAnimationTimer = nil;
+
+        if (_delegateHasAfterMapMove) [delegate afterMapMove:self];
+        if (_delegateHasAfterMapMoveDeceleration) [delegate afterMapMoveDeceleration:self];
+        if (_delegateHasMapViewRegionDidChange) [delegate mapViewRegionDidChange:self];
+    }
+}
+
+- (void)moveAnimationStep:(NSTimer *)timer
+{
+    if (++_moveAnimationCurrentStep > _moveAnimationSteps) {
+        [self moveToProjectedPoint:_moveAnimationEndPoint];
+        [self stopMoveAnimation];
+        return;
+    }
+
+    double t = _moveAnimationCurrentStep / _moveAnimationSteps;
+
+    RMProjectedPoint nextPoint = RMProjectedPointMake(_moveAnimationStartPoint.x + CubicEaseInOut(t, 0, _moveAnimationEndPoint.x - _moveAnimationStartPoint.x), _moveAnimationStartPoint.y + CubicEaseInOut(t, 0, _moveAnimationEndPoint.y - _moveAnimationStartPoint.y));
+
+    if (fabs(nextPoint.x - _moveAnimationEndPoint.x) < 10.0 && fabs(nextPoint.y - _moveAnimationEndPoint.y) < 10.0) {
+        [self moveToProjectedPoint:_moveAnimationEndPoint];
+        [self stopMoveAnimation];
+        return;
+    }
+
+    // RMLog(@"Time t=%.2f: (%f,%f) < (%f,%f) < (%f,%f)", t, _moveAnimationStartPoint.easting, _moveAnimationStartPoint.northing, nextPoint.easting, nextPoint.northing, _moveAnimationEndPoint.easting, _moveAnimationEndPoint.northing);
+
+    [mercatorToScreenProjection setProjectedCenter:nextPoint];
+    [tileLoader reload];
+    [self correctPositionOfAllAnnotationsIncludingInvisibles:NO];
+}
+
 - (void)moveToCoordinate:(CLLocationCoordinate2D)coordinate animated:(BOOL)animated
 {
+    [self stopDeceleration];
+    [self stopMoveAnimation];
+
     if (!animated) {
         [self moveToCoordinate:coordinate];
         return;
     }
 
+    _moveAnimationStartPoint = [mercatorToScreenProjection projectedCenter];
+    _moveAnimationEndPoint = [[self projection] coordinateToProjectedPoint:coordinate];
+
+    if (![self tileSourceBoundsContainProjectedPoint:_moveAnimationEndPoint])
+        return;
+
+    _moveAnimationSteps = roundf(kMoveAnimationDuration / kMoveAnimationStepDuration);
+    _moveAnimationCurrentStep = 0.0;
+
     if (_delegateHasBeforeMapMove) [delegate beforeMapMove:self];
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        long int steps = lroundf(kMoveAnimationDuration / kMoveAnimationStepDuration);
-
-        while (--steps > 0)
-        {
-            [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:kMoveAnimationStepDuration]];
-
-            CGPoint startPoint = [self coordinateToPixel:self.mapCenterCoordinate];
-            CGPoint endPoint   = [self coordinateToPixel:coordinate];
-            CGPoint delta = CGPointMake((startPoint.x - endPoint.x) / steps, (startPoint.y - endPoint.y) / steps);
-            if (delta.x == 0.0 && delta.y == 0.0) return;
-
-            RMLog(@"%d steps from (%f,%f) to final location (%f,%f)", steps, self.mapCenterCoordinate.longitude, self.mapCenterCoordinate.latitude, coordinate.longitude, coordinate.latitude);
-
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                [self moveBy:CGSizeMake(delta.x, delta.y) andCorrectAllAnnotations:NO];
-            });
-        }
-
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self moveToCoordinate:coordinate];
-            if (_delegateHasAfterMapMove) [delegate afterMapMove:self];
-            if (_delegateHasAfterMapMoveDeceleration) [delegate afterMapMoveDeceleration:self];
-            if (_delegateHasMapViewRegionDidChange) [delegate mapViewRegionDidChange:self];
-        });
-    });
+    _moveAnimationTimer = [NSTimer scheduledTimerWithTimeInterval:kMoveAnimationStepDuration
+                                                           target:self
+                                                         selector:@selector(moveAnimationStep:)
+                                                         userInfo:nil
+                                                          repeats:YES];
 }
 
 - (void)moveBy:(CGSize)delta isAnimationStep:(BOOL)isAnimationStep
@@ -513,33 +576,33 @@
         RMProjectedRect newBounds = pBounds;
 
         // move the rect by delta
-        newBounds.origin.northing -= XYDelta.height;
-        newBounds.origin.easting -= XYDelta.width;
+        newBounds.origin.x -= XYDelta.width;
+        newBounds.origin.y -= XYDelta.height;
 
         // see if new bounds are within constrained bounds, and constrain if necessary
         BOOL constrained = NO;
-        if (newBounds.origin.northing < _southWestConstraint.northing) {
-            newBounds.origin.northing = _southWestConstraint.northing;
+        if (newBounds.origin.y < _southWestConstraint.y) {
+            newBounds.origin.y = _southWestConstraint.y;
             constrained = YES;
         }
-        if (newBounds.origin.northing + newBounds.size.height > _northEastConstraint.northing) {
-            newBounds.origin.northing = _northEastConstraint.northing - newBounds.size.height;
+        if (newBounds.origin.y + newBounds.size.height > _northEastConstraint.y) {
+            newBounds.origin.y = _northEastConstraint.y - newBounds.size.height;
             constrained = YES;
         }
-        if (newBounds.origin.easting < _southWestConstraint.easting) {
-            newBounds.origin.easting = _southWestConstraint.easting;
+        if (newBounds.origin.x < _southWestConstraint.x) {
+            newBounds.origin.x = _southWestConstraint.x;
             constrained = YES;
         }
-        if (newBounds.origin.easting + newBounds.size.width > _northEastConstraint.easting) {
-            newBounds.origin.easting = _northEastConstraint.easting - newBounds.size.width;
+        if (newBounds.origin.x + newBounds.size.width > _northEastConstraint.x) {
+            newBounds.origin.x = _northEastConstraint.x - newBounds.size.width;
             constrained = YES;
         }
 
         if (constrained)
         {
             // Adjust delta to match constraint
-            XYDelta.height = pBounds.origin.northing - newBounds.origin.northing;
-            XYDelta.width = pBounds.origin.easting - newBounds.origin.easting;
+            XYDelta.height = pBounds.origin.y - newBounds.origin.y;
+            XYDelta.width = pBounds.origin.x - newBounds.origin.x;
             delta = CGSizeMake(((sizeRatio.width == 0) ? 0 : XYDelta.width / sizeRatio.width), 
                                ((sizeRatio.height == 0) ? 0 : XYDelta.height / sizeRatio.height));
         }
@@ -848,15 +911,15 @@
 
             // this is copied from [RMMercatorToScreenBounds zoomScreenByFactor]
             // First we move the origin to the pivot...
-            origin.easting += center.x * metersPerPixel;
-            origin.northing += (screenBounds.size.height - center.y) * metersPerPixel;
+            origin.x += center.x * metersPerPixel;
+            origin.y += (screenBounds.size.height - center.y) * metersPerPixel;
 
             // Then scale by 1/factor
             metersPerPixel /= _zoomFactor;
 
             // Then translate back
-            origin.easting -= center.x * metersPerPixel;
-            origin.northing -= (screenBounds.size.height - center.y) * metersPerPixel;
+            origin.x -= center.x * metersPerPixel;
+            origin.y -= (screenBounds.size.height - center.y) * metersPerPixel;
 
             origin = [mtsp.projection wrapPointHorizontally:origin];
 
@@ -867,8 +930,8 @@
             zRect.size.height = screenBounds.size.height * metersPerPixel;
 
             // can zoom only if within bounds
-            canZoom = !(zRect.origin.northing < _southWestConstraint.northing || zRect.origin.northing+zRect.size.height > _northEastConstraint.northing ||
-                        zRect.origin.easting < _southWestConstraint.easting || zRect.origin.easting+zRect.size.width > _northEastConstraint.easting);
+            canZoom = !(zRect.origin.y < _southWestConstraint.y || zRect.origin.y+zRect.size.height > _northEastConstraint.y ||
+                        zRect.origin.x < _southWestConstraint.x || zRect.origin.x+zRect.size.width > _northEastConstraint.x);
         }
 
         if (!canZoom) {
@@ -903,8 +966,8 @@
         // Default is with scale = 2.0 mercators/pixel
         zoomRect.size.width = [self screenBounds].size.width * 2.0;
         zoomRect.size.height = [self screenBounds].size.height * 2.0;
-        myOrigin.easting = myOrigin.easting - (zoomRect.size.width / 2);
-        myOrigin.northing = myOrigin.northing - (zoomRect.size.height / 2);
+        myOrigin.x = myOrigin.x - (zoomRect.size.width / 2);
+        myOrigin.y = myOrigin.y - (zoomRect.size.height / 2);
         zoomRect.origin = myOrigin;
         [self zoomWithProjectedBounds:zoomRect];
     }
@@ -920,8 +983,8 @@
         RMProjectedPoint nePoint = [projection coordinateToProjectedPoint:ne];
         RMProjectedPoint swPoint = [projection coordinateToProjectedPoint:sw];
         RMProjectedPoint myPoint = {
-            .easting = nePoint.easting - swPoint.easting,
-            .northing = nePoint.northing - swPoint.northing
+            .x = nePoint.x - swPoint.x,
+            .y = nePoint.y - swPoint.y
         };
 
 		// Create the new zoom layout
@@ -930,24 +993,24 @@
         // Default is with scale = 2.0 mercators/pixel
         zoomRect.size.width = [self screenBounds].size.width * 2.0;
         zoomRect.size.height = [self screenBounds].size.height * 2.0;
-        if ((myPoint.easting / [self screenBounds].size.width) < (myPoint.northing / [self screenBounds].size.height))
+        if ((myPoint.x / [self screenBounds].size.width) < (myPoint.y / [self screenBounds].size.height))
         {
-            if ((myPoint.northing / ([self screenBounds].size.height - pixelBuffer)) > 1)
+            if ((myPoint.y / ([self screenBounds].size.height - pixelBuffer)) > 1)
             {
-                zoomRect.size.width = [self screenBounds].size.width * (myPoint.northing / ([self screenBounds].size.height - pixelBuffer));
-                zoomRect.size.height = [self screenBounds].size.height * (myPoint.northing / ([self screenBounds].size.height - pixelBuffer));
+                zoomRect.size.width = [self screenBounds].size.width * (myPoint.y / ([self screenBounds].size.height - pixelBuffer));
+                zoomRect.size.height = [self screenBounds].size.height * (myPoint.y / ([self screenBounds].size.height - pixelBuffer));
             }
         }
         else
         {
-            if ((myPoint.easting / ([self screenBounds].size.width - pixelBuffer)) > 1)
+            if ((myPoint.x / ([self screenBounds].size.width - pixelBuffer)) > 1)
             {
-                zoomRect.size.width = [self screenBounds].size.width * (myPoint.easting / ([self screenBounds].size.width - pixelBuffer));
-                zoomRect.size.height = [self screenBounds].size.height * (myPoint.easting / ([self screenBounds].size.width - pixelBuffer));
+                zoomRect.size.width = [self screenBounds].size.width * (myPoint.x / ([self screenBounds].size.width - pixelBuffer));
+                zoomRect.size.height = [self screenBounds].size.height * (myPoint.x / ([self screenBounds].size.width - pixelBuffer));
             }
         }
-        myOrigin.easting = myOrigin.easting - (zoomRect.size.width / 2);
-        myOrigin.northing = myOrigin.northing - (zoomRect.size.height / 2);
+        myOrigin.x = myOrigin.x - (zoomRect.size.width / 2);
+        myOrigin.y = myOrigin.y - (zoomRect.size.height / 2);
         RMLog(@"Origin is calculated at: %f, %f", [projection projectedPointToCoordinate:myOrigin].latitude, [projection projectedPointToCoordinate:myOrigin].longitude);
 
         zoomRect.origin = myOrigin;
@@ -1236,6 +1299,12 @@
     return [[mercatorToScreenProjection retain] autorelease];
 }
 
+- (void)setEnableClustering:(BOOL)doEnableClustering
+{
+    enableClustering = doEnableClustering;
+    [self correctPositionOfAllAnnotations];
+}
+
 #pragma mark -
 #pragma mark LatLng/Pixel translation functions
 
@@ -1293,21 +1362,21 @@
     southeastLL = [self pixelToCoordinate:southeastScreen];
     southwestLL = [self pixelToCoordinate:southwestScreen];
 
-    boundingBox.northeast.latitude = fmax(northeastLL.latitude, northwestLL.latitude);
-    boundingBox.southwest.latitude = fmin(southeastLL.latitude, southwestLL.latitude);
+    boundingBox.northEast.latitude = fmax(northeastLL.latitude, northwestLL.latitude);
+    boundingBox.southWest.latitude = fmin(southeastLL.latitude, southwestLL.latitude);
 
     // westerly computations:
     // -179, -178 -> -179 (min)
     // -179, 179  -> 179 (max)
     if (fabs(northwestLL.longitude - southwestLL.longitude) <= kMaxLong)
-        boundingBox.southwest.longitude = fmin(northwestLL.longitude, southwestLL.longitude);
+        boundingBox.southWest.longitude = fmin(northwestLL.longitude, southwestLL.longitude);
     else
-        boundingBox.southwest.longitude = fmax(northwestLL.longitude, southwestLL.longitude);
+        boundingBox.southWest.longitude = fmax(northwestLL.longitude, southwestLL.longitude);
 
     if (fabs(northeastLL.longitude - southeastLL.longitude) <= kMaxLong)
-        boundingBox.northeast.longitude = fmax(northeastLL.longitude, southeastLL.longitude);
+        boundingBox.northEast.longitude = fmax(northeastLL.longitude, southeastLL.longitude);
     else
-        boundingBox.northeast.longitude = fmin(northeastLL.longitude, southeastLL.longitude);
+        boundingBox.northEast.longitude = fmin(northeastLL.longitude, southeastLL.longitude);
 
     return boundingBox;
 }
@@ -1342,47 +1411,97 @@
 
 - (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllAnnotations
 {
-    CGRect screenBounds = [[self mercatorToScreenProjection] screenBounds];
-    CALayer *lastLayer = nil;
-
     // Prevent blurry movements
     [CATransaction begin];
     [CATransaction setAnimationDuration:0];
 
-    @synchronized (annotations)
+    if (self.quadTree)
     {
-        if (correctAllAnnotations)
-        {
-            for (RMAnnotation *annotation in annotations)
-            {
-                [self correctScreenPosition:annotation];
-                if ([annotation isAnnotationWithinBounds:screenBounds]) {
-                    if (annotation.layer == nil && [delegate respondsToSelector:@selector(mapView:layerForAnnotation:)])
-                        annotation.layer = [delegate mapView:self layerForAnnotation:annotation];
-                    if (annotation.layer == nil)
-                        continue;
-
-                    if (![visibleAnnotations containsObject:annotation]) {
-                        if (!lastLayer)
-                            [overlay insertSublayer:annotation.layer atIndex:0];
-                        else
-                            [overlay insertSublayer:annotation.layer above:lastLayer];
-
-                        [visibleAnnotations addObject:annotation];
-                    }
-                    lastLayer = annotation.layer;
-                } else {
-                    annotation.layer = nil;
-                    [visibleAnnotations removeObject:annotation];
-                }
-            }
-//            RMLog(@"%d annotations on screen, %d total", [[overlay sublayers] count], [annotations count]);
-        } else {
+        if (!correctAllAnnotations) {
             for (RMAnnotation *annotation in visibleAnnotations)
             {
                 [self correctScreenPosition:annotation];
             }
-//            RMLog(@"%d annotations corrected", [visibleAnnotations count]);
+            // RMLog(@"%d annotations corrected", [visibleAnnotations count]);
+
+            return;
+        }
+
+        RMProjectedRect boundingBox = [[self mercatorToScreenProjection] projectedBounds];
+        float metersPerPixel = self.metersPerPixel;
+
+        NSArray *annotationsToCorrect = [quadTree annotationsInProjectedRect:boundingBox createClusterAnnotations:self.enableClustering withClusterSize:RMProjectedSizeMake(self.clusterMarkerSize.width * metersPerPixel, self.clusterMarkerSize.height * metersPerPixel) findGravityCenter:self.positionClusterMarkersAtTheGravityCenter];
+        NSMutableSet *previousVisibleAnnotations = [NSMutableSet setWithSet:visibleAnnotations];
+
+        for (RMAnnotation *annotation in annotationsToCorrect)
+        {
+            [self correctScreenPosition:annotation];
+
+            if (annotation.layer == nil && _delegateHasLayerForAnnotation)
+                annotation.layer = [delegate mapView:self layerForAnnotation:annotation];
+            if (annotation.layer == nil)
+                continue;
+
+            // Use the zPosition property to order the layer hierarchy
+            if (![visibleAnnotations containsObject:annotation]) {
+                [overlay addSublayer:annotation.layer];
+                [visibleAnnotations addObject:annotation];
+            }
+            [previousVisibleAnnotations removeObject:annotation];
+        }
+
+        for (RMAnnotation *annotation in previousVisibleAnnotations)
+        {
+            if (_delegateHasWillHideLayerForAnnotation) [delegate mapView:self willHideLayerForAnnotation:annotation];
+            annotation.layer = nil;
+            [visibleAnnotations removeObject:annotation];
+            if (_delegateHasDidHideLayerForAnnotation) [delegate mapView:self didHideLayerForAnnotation:annotation];
+        }
+
+        // RMLog(@"%d annotations on screen, %d total", [[overlay sublayers] count], [annotations count]);
+
+    } else
+    {
+        CALayer *lastLayer = nil;
+        CGRect screenBounds = [[self mercatorToScreenProjection] screenBounds];
+
+        @synchronized (annotations)
+        {
+            if (correctAllAnnotations)
+            {
+                for (RMAnnotation *annotation in annotations)
+                {
+                    [self correctScreenPosition:annotation];
+                    if ([annotation isAnnotationWithinBounds:screenBounds]) {
+                        if (annotation.layer == nil && _delegateHasLayerForAnnotation)
+                            annotation.layer = [delegate mapView:self layerForAnnotation:annotation];
+                        if (annotation.layer == nil)
+                            continue;
+
+                        if (![visibleAnnotations containsObject:annotation]) {
+                            if (!lastLayer)
+                                [overlay insertSublayer:annotation.layer atIndex:0];
+                            else
+                                [overlay insertSublayer:annotation.layer above:lastLayer];
+
+                            [visibleAnnotations addObject:annotation];
+                        }
+                        lastLayer = annotation.layer;
+                    } else {
+                        if (_delegateHasWillHideLayerForAnnotation) [delegate mapView:self willHideLayerForAnnotation:annotation];
+                        annotation.layer = nil;
+                        [visibleAnnotations removeObject:annotation];
+                        if (_delegateHasDidHideLayerForAnnotation) [delegate mapView:self didHideLayerForAnnotation:annotation];
+                    }
+                }
+                // RMLog(@"%d annotations on screen, %d total", [[overlay sublayers] count], [annotations count]);
+            } else {
+                for (RMAnnotation *annotation in visibleAnnotations)
+                {
+                    [self correctScreenPosition:annotation];
+                }
+                // RMLog(@"%d annotations corrected", [visibleAnnotations count]);
+            }
         }
     }
 
@@ -1403,15 +1522,22 @@
 {
     @synchronized (annotations) {
         [annotations addObject:annotation];
+        [self.quadTree addAnnotation:annotation];
     }
-    [self correctScreenPosition:annotation];
 
-    if ([annotation isAnnotationOnScreen] && [delegate respondsToSelector:@selector(mapView:layerForAnnotation:)])
-    {
-        annotation.layer = [delegate mapView:self layerForAnnotation:annotation];
-        if (annotation.layer) {
-            [overlay addSublayer:annotation.layer];
-            [visibleAnnotations addObject:annotation];
+    if (enableClustering) {
+        [self correctPositionOfAllAnnotations];
+
+    } else {
+        [self correctScreenPosition:annotation];
+
+        if ([annotation isAnnotationOnScreen] && [delegate respondsToSelector:@selector(mapView:layerForAnnotation:)])
+        {
+            annotation.layer = [delegate mapView:self layerForAnnotation:annotation];
+            if (annotation.layer) {
+                [overlay addSublayer:annotation.layer];
+                [visibleAnnotations addObject:annotation];
+            }
         }
     }
 }
@@ -1422,6 +1548,7 @@
         for (RMAnnotation *annotation in newAnnotations)
         {
             [annotations addObject:annotation];
+            [self.quadTree addAnnotation:annotation];
         }
     }
     [self correctPositionOfAllAnnotationsIncludingInvisibles:YES];
@@ -1433,17 +1560,25 @@
         [annotations removeObject:annotation];
         [visibleAnnotations removeObject:annotation];
     }
+    [self.quadTree removeAnnotation:annotation];
 
     // Remove the layer from the screen
     annotation.layer = nil;
 }
 
-- (void)removeAnnotations:(NSArray *)newAnnotations
+- (void)removeAnnotations:(NSArray *)annotationsToRemove
 {
-    for (RMAnnotation *annotation in newAnnotations)
-    {
-        [self removeAnnotation:annotation];
+    @synchronized (annotations) {
+        for (RMAnnotation *annotation in annotationsToRemove)
+        {
+            [annotations removeObject:annotation];
+            [visibleAnnotations removeObject:annotation];
+            [self.quadTree removeAnnotation:annotation];
+            annotation.layer = nil;
+       }
     }
+
+    [self correctPositionOfAllAnnotations];
 }
 
 - (void)removeAllAnnotations
@@ -1458,6 +1593,8 @@
 
     [annotations removeAllObjects];
     [visibleAnnotations removeAllObjects];
+    [quadTree removeAllObjects];
+    [self correctPositionOfAllAnnotations];
 }
 
 - (CGPoint)screenCoordinatesForAnnotation:(RMAnnotation *)annotation
@@ -1553,7 +1690,7 @@
     //Check if the touch hit a RMMarker subclass and if so, forward the touch event on
     //so it can be handled there
     id furthestLayerDown = [self.overlay hitTest:[touch locationInView:self]];
-    if ([[furthestLayerDown class]isSubclassOfClass: [RMMarker class]]) {
+    if ([[furthestLayerDown class] isSubclassOfClass:[RMMarker class]]) {
         if ([furthestLayerDown respondsToSelector:@selector(touchesBegan:withEvent:)]) {
             [furthestLayerDown performSelector:@selector(touchesBegan:withEvent:) withObject:touches withObject:event];
             return;

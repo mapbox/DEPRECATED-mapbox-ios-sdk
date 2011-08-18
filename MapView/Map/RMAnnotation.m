@@ -32,6 +32,7 @@
 #import "RMAnnotation.h"
 #import "RMMapView.h"
 #import "RMMapLayer.h"
+#import "RMQuadTree.h"
 #import "RMMercatorToScreenProjection.h"
 
 @implementation RMAnnotation
@@ -49,6 +50,7 @@
 @synthesize hasBoundingBox;
 @synthesize position;
 @synthesize layer;
+@synthesize quadTreeNode;
 
 + (id)annotationWithMapView:(RMMapView *)aMapView coordinate:(CLLocationCoordinate2D)aCoordinate andTitle:(NSString *)aTitle
 {
@@ -60,11 +62,12 @@
     if (!(self = [super init]))
         return nil;
 
-    self.mapView    = aMapView;
-    self.coordinate = aCoordinate;
-    self.title      = aTitle;
-    self.userInfo   = nil;
-    self.layer      = nil;
+    self.mapView      = aMapView;
+    self.coordinate   = aCoordinate;
+    self.title        = aTitle;
+    self.userInfo     = nil;
+    self.layer        = nil;
+    self.quadTreeNode = nil;
 
     self.annotationType = nil;
     self.annotationIcon = nil;
@@ -76,10 +79,13 @@
 
 - (void)dealloc
 {
-    self.title    = nil;
-    self.userInfo = nil;
-    self.mapView  = nil;
-    self.layer    = nil;
+    [[self.mapView quadTree] removeAnnotation:self];
+    self.title        = nil;
+    self.userInfo     = nil;
+    self.mapView      = nil;
+    self.layer        = nil;
+    self.quadTreeNode = nil;
+
     self.annotationType = nil;
     self.annotationIcon = nil;
 
@@ -91,6 +97,11 @@
     coordinate = aCoordinate;
     self.projectedLocation = [[mapView projection] coordinateToProjectedPoint:aCoordinate];
     self.position = [[mapView mercatorToScreenProjection] projectProjectedPoint:self.projectedLocation];
+
+    if (!self.hasBoundingBox)
+        self.projectedBoundingBox = RMProjectedRectMake(self.projectedLocation.x, self.projectedLocation.y, 1.0, 1.0);
+
+    [self.quadTreeNode performSelector:@selector(annotationDidChangeBoundingBox:) withObject:self];
 }
 
 - (void)setMapView:(RMMapView *)aMapView
@@ -123,7 +134,7 @@
 {
     if (self.hasBoundingBox) {
         RMProjectedRect projectedScreenBounds = [[mapView mercatorToScreenProjection] projectedBounds];
-        return RMProjectedRectInterectsProjectedRect(projectedScreenBounds, projectedBoundingBox);
+        return RMProjectedRectIntersectsProjectedRect(projectedScreenBounds, projectedBoundingBox);
     } else {
         return CGRectContainsPoint(bounds, self.position);
     }
@@ -141,7 +152,7 @@
 {
     RMProjectedPoint first = [[mapView projection] coordinateToProjectedPoint:southWest];
     RMProjectedPoint second = [[mapView projection] coordinateToProjectedPoint:northEast];
-    self.projectedBoundingBox = RMMakeProjectedRect(first.easting, first.northing, second.easting - first.easting, second.northing - first.northing);
+    self.projectedBoundingBox = RMProjectedRectMake(first.x, first.y, second.x - first.x, second.y - first.y);
     self.hasBoundingBox = YES;
 }
 
@@ -176,9 +187,9 @@
 - (NSString *)description
 {
     if (self.hasBoundingBox)
-        return [NSString stringWithFormat:@"<%@: %@ @ (%.0f,%.0f) {(%.0f,%.0f) - (%.0f,%.0f)}>", NSStringFromClass([self class]), self.title, self.projectedLocation.easting, self.projectedLocation.northing, self.projectedBoundingBox.origin.easting, self.projectedBoundingBox.origin.northing, self.projectedBoundingBox.origin.easting + self.projectedBoundingBox.size.width, self.projectedBoundingBox.origin.northing + self.projectedBoundingBox.size.height];
+        return [NSString stringWithFormat:@"<%@: %@ @ (%.0f,%.0f) {(%.0f,%.0f) - (%.0f,%.0f)}>", NSStringFromClass([self class]), (self.title ? self.title : self.annotationType), self.projectedLocation.x, self.projectedLocation.y, self.projectedBoundingBox.origin.x, self.projectedBoundingBox.origin.y, self.projectedBoundingBox.origin.x + self.projectedBoundingBox.size.width, self.projectedBoundingBox.origin.y + self.projectedBoundingBox.size.height];
     else
-        return [NSString stringWithFormat:@"<%@: %@ @ (%.0f,%.0f)>", NSStringFromClass([self class]), self.title, self.projectedLocation.easting, self.projectedLocation.northing];
+        return [NSString stringWithFormat:@"<%@: %@ @ (%.0f,%.0f)>", NSStringFromClass([self class]), (self.title ? self.title : self.annotationType), self.projectedLocation.x, self.projectedLocation.y];
 }
 
 @end

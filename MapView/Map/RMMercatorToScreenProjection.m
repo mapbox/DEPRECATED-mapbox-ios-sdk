@@ -65,8 +65,8 @@
 - (RMProjectedPoint)moveProjectedPoint:(RMProjectedPoint)aPoint by:(CGSize)delta
 {
 	RMProjectedSize XYDelta = [self projectScreenSizeToProjectedSize:delta];
-	aPoint.easting += XYDelta.width;
-	aPoint.northing += XYDelta.height;
+	aPoint.x += XYDelta.width;
+	aPoint.y += XYDelta.height;
 	aPoint = [projection wrapPointHorizontally:aPoint];
 	return aPoint;
 }
@@ -109,15 +109,15 @@
 	//RMMercatorPoint test = [self zoomPoint:origin ByFactor:1.0f / factor Near:pivot];
 
 	// First we move the origin to the pivot...
-	origin.easting += aPixelPoint.x * metersPerPixel;
-	origin.northing += (screenBounds.size.height - aPixelPoint.y) * metersPerPixel;
+	origin.x += aPixelPoint.x * metersPerPixel;
+	origin.y += (screenBounds.size.height - aPixelPoint.y) * metersPerPixel;
 
 	// Then scale by 1/factor
 	metersPerPixel /= factor;
 
 	// Then translate back
-	origin.easting -= aPixelPoint.x * metersPerPixel;
-	origin.northing -= (screenBounds.size.height - aPixelPoint.y) * metersPerPixel;
+	origin.x -= aPixelPoint.x * metersPerPixel;
+	origin.y -= (screenBounds.size.height - aPixelPoint.y) * metersPerPixel;
 
 	origin = [projection wrapPointHorizontally:origin];
 }
@@ -149,41 +149,41 @@
 
 	RMProjectedRect planetBounds = [projection planetBounds];
 	RMProjectedPoint planetEndPoint = {
-        planetBounds.origin.easting + planetBounds.size.width,
-		planetBounds.origin.northing + planetBounds.size.height
+        planetBounds.origin.x + planetBounds.size.width,
+		planetBounds.origin.y + planetBounds.size.height
     };
 
 	// Normalize coordinate system so there is no negative values
 	RMProjectedRect normalizedProjectedScreenBounds;
-	normalizedProjectedScreenBounds.origin.easting = projectedScreenBounds.origin.easting + planetEndPoint.easting;
-	normalizedProjectedScreenBounds.origin.northing = projectedScreenBounds.origin.northing + planetEndPoint.northing;
+	normalizedProjectedScreenBounds.origin.x = projectedScreenBounds.origin.x + planetEndPoint.x;
+	normalizedProjectedScreenBounds.origin.y = projectedScreenBounds.origin.y + planetEndPoint.y;
 	normalizedProjectedScreenBounds.size = projectedScreenBounds.size;
 
 	RMProjectedPoint normalizedProjectedPoint;
-	normalizedProjectedPoint.easting = aPoint.easting + planetEndPoint.easting;
-	normalizedProjectedPoint.northing = aPoint.northing + planetEndPoint.northing;
+	normalizedProjectedPoint.x = aPoint.x + planetEndPoint.x;
+	normalizedProjectedPoint.y = aPoint.y + planetEndPoint.y;
 
 	double rightMostViewableEasting;
 
 	// check if world wrap divider is contained in view
-	if ((normalizedProjectedScreenBounds.origin.easting + normalizedProjectedScreenBounds.size.width) > planetBounds.size.width)
+	if ((normalizedProjectedScreenBounds.origin.x + normalizedProjectedScreenBounds.size.width) > planetBounds.size.width)
     {
-		rightMostViewableEasting = projectedScreenBounds.size.width - (planetBounds.size.width - normalizedProjectedScreenBounds.origin.easting);
+		rightMostViewableEasting = projectedScreenBounds.size.width - (planetBounds.size.width - normalizedProjectedScreenBounds.origin.x);
 
 		// Check if Right of divider but on screen still
-		if (normalizedProjectedPoint.easting <= rightMostViewableEasting) {
-			aPixelPoint.x = (planetBounds.size.width + normalizedProjectedPoint.easting - normalizedProjectedScreenBounds.origin.easting) / aScale;
+		if (normalizedProjectedPoint.x <= rightMostViewableEasting) {
+			aPixelPoint.x = (planetBounds.size.width + normalizedProjectedPoint.x - normalizedProjectedScreenBounds.origin.x) / aScale;
 		} else {
 			// everywhere else is left of divider
-			aPixelPoint.x = (normalizedProjectedPoint.easting - normalizedProjectedScreenBounds.origin.easting) / aScale;
+			aPixelPoint.x = (normalizedProjectedPoint.x - normalizedProjectedScreenBounds.origin.x) / aScale;
 		}
 	}
 	else {
 		// Divider not contained in view
-		aPixelPoint.x = (normalizedProjectedPoint.easting - normalizedProjectedScreenBounds.origin.easting) / aScale;
+		aPixelPoint.x = (normalizedProjectedPoint.x - normalizedProjectedScreenBounds.origin.x) / aScale;
 	}
 
-	aPixelPoint.y = screenBounds.size.height - (normalizedProjectedPoint.northing - normalizedProjectedScreenBounds.origin.northing) / aScale;
+	aPixelPoint.y = screenBounds.size.height - (normalizedProjectedPoint.y - normalizedProjectedScreenBounds.origin.y) / aScale;
 
 	return aPixelPoint;
 }
@@ -205,8 +205,8 @@
 - (RMProjectedPoint)projectScreenPointToProjectedPoint:(CGPoint)aPixelPoint withMetersPerPixel:(float)aScale
 {
 	RMProjectedPoint aPoint;
-	aPoint.easting = origin.easting + aPixelPoint.x * aScale;
-	aPoint.northing = origin.northing + (screenBounds.size.height - aPixelPoint.y) * aScale;
+	aPoint.x = origin.x + aPixelPoint.x * aScale;
+	aPoint.y = origin.y + (screenBounds.size.height - aPixelPoint.y) * aScale;
 
 	origin = [projection wrapPointHorizontally:origin];
 
@@ -258,8 +258,8 @@
 - (RMProjectedPoint)projectedCenter
 {
 	RMProjectedPoint aPoint;
-	aPoint.easting = origin.easting + screenBounds.size.width * metersPerPixel / 2;
-	aPoint.northing = origin.northing + screenBounds.size.height * metersPerPixel / 2;
+	aPoint.x = origin.x + screenBounds.size.width * metersPerPixel / 2;
+	aPoint.y = origin.y + screenBounds.size.height * metersPerPixel / 2;
 	aPoint = [projection wrapPointHorizontally:aPoint];
 	return aPoint;
 }
@@ -267,8 +267,8 @@
 - (void)setProjectedCenter:(RMProjectedPoint)aPoint
 {
 	origin = [projection wrapPointHorizontally:aPoint];
-	origin.easting -= screenBounds.size.width * metersPerPixel / 2;
-	origin.northing -= screenBounds.size.height * metersPerPixel / 2;
+	origin.x -= screenBounds.size.width * metersPerPixel / 2;
+	origin.y -= screenBounds.size.height * metersPerPixel / 2;
 }
 
 - (void)setScreenBounds:(CGRect)rect
