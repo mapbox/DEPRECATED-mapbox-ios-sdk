@@ -28,8 +28,6 @@
 {
     [super viewDidLoad];
     mapView.delegate = self;
-    mapView.tileDepth = 1;
-    mapView.deceleration = YES;
 
     /* -- Uncomment to constrain view
     [mapView setConstraintsSW:((CLLocationCoordinate2D){-33.942221,150.996094}) 

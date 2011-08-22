@@ -28,32 +28,7 @@
 #import "RMAbstractMercatorTileSource.h"
 #import "RMProjection.h"
 
-@interface RMWebDownloadOperation : NSOperation {
-    RMTileImage *tileImage;
-    RMTileCache *tileCache;
-    NSString *cacheKey;
-    NSMutableData *data;
-    
-    NSURL *tileURL;
-    NSURLConnection *connection;
-    NSUInteger retries;
-
-    BOOL isExecuting, isFinished;
-}
-
-@property (nonatomic, readonly) BOOL isExecuting;
-@property (nonatomic, readonly) BOOL isFinished;
-
-+ (id)operationWithUrl:(NSURL *)anURL withTileImage:(RMTileImage *)aTileImage andTileCache:(RMTileCache *)aTileCache withCacheKey:(NSString *)aCacheKey;
-
-- (id)initWithUrl:(NSURL *)anURL withTileImage:(RMTileImage *)aTileImage andTileCache:(RMTileCache *)aTileCache withCacheKey:(NSString *)aCacheKey;
-
-@end
-
-#pragma mark -
-
 @interface RMAbstractWebMapSource : RMAbstractMercatorTileSource {
-    NSOperationQueue *requestQueue;
 }
 
 - (NSURL *)URLForTile:(RMTile)tile;

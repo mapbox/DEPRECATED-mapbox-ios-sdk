@@ -97,14 +97,6 @@ svn checkout http://route-me.googlecode.com/svn/trunk/ route-me-read-only
 #import "RMTile.h"
 #import "RMProjection.h"
 
-// iPhone-specific mapview stuff. Handles event handling, whatnot.
-typedef struct {
-    CGPoint center;
-    CGFloat angle;
-    float averageDistanceFromCenter;
-    int numTouches;
-} RMGestureDetails;
-
 // constants for boundingMask
 enum {
     RMMapNoMinBound		= 0, // Map can be zoomed out past view limits
@@ -112,18 +104,14 @@ enum {
     RMMapMinWidthBound	= 2  // Minimum map width when zooming out restricted to view width (default)
 };
 
-@class RMMarkerManager;
 @class RMProjection;
 @class RMMercatorToScreenProjection;
 @class RMTileCache;
-@class RMTileImageSet;
-@class RMTileLoader;
-@class RMCoreAnimationRenderer;
 @class RMMapLayer;
-@class RMMarkerLayer;
 @class RMMarker;
 @class RMAnnotation;
 @class RMQuadTree;
+@class RMMapBaseView;
 @protocol RMMercatorToTileProjection;
 @protocol RMTileSource;
 
@@ -133,10 +121,6 @@ enum {
 
     BOOL enableDragging;
     BOOL enableZoom;
-    BOOL deceleration;
-    float decelerationFactor;
-
-    RMGestureDetails lastGesture;
 
     /// projection objects to convert from latitude/longitude to meters,
     /// from projected meters to tiles and screen coordinates
@@ -145,9 +129,7 @@ enum {
     RMMercatorToScreenProjection *mercatorToScreenProjection;
 
     RMMapLayer *overlay; /// subview for markers and paths
-    RMCoreAnimationRenderer *renderer;
-    RMTileImageSet *imagesOnScreen;
-    RMTileLoader *tileLoader;
+    RMMapBaseView *mapBaseView;
 
     NSMutableArray *annotations;
     NSMutableSet   *visibleAnnotations;
@@ -159,7 +141,7 @@ enum {
     RMTileCache *tileCache; // Generic tile cache
 
     /// subview for the image displayed while tiles are loading. Set its contents by providing your own "loading.png".
-    CALayer *background;
+    UIView *backgroundView;
 
     /// minimum and maximum zoom number allowed for the view. #minZoom and #maxZoom must be within the limits of #tileSource but can be stricter; they are clamped to tilesource limits if needed.
     float minZoom;
@@ -191,10 +173,6 @@ enum {
     BOOL _delegateHasWillHideLayerForAnnotation;
     BOOL _delegateHasDidHideLayerForAnnotation;
 
-    NSTimer *_decelerationTimer;
-    CGSize _decelerationDelta;
-    CGPoint _longPressPosition;
-
     NSTimer *_moveAnimationTimer;
     RMProjectedPoint _moveAnimationStartPoint, _moveAnimationEndPoint;
     double _moveAnimationCurrentStep, _moveAnimationSteps;
@@ -208,9 +186,6 @@ enum {
 // View properties
 @property (nonatomic, assign)   BOOL enableDragging;
 @property (nonatomic, assign)   BOOL enableZoom;
-@property (nonatomic, assign)   BOOL deceleration;
-@property (nonatomic, assign)   float decelerationFactor;
-@property (nonatomic, readonly) RMGestureDetails lastGesture;
 
 @property (nonatomic, assign)   CLLocationCoordinate2D mapCenterCoordinate;
 @property (nonatomic, assign)   RMProjectedPoint mapCenterProjectedPoint;
@@ -227,16 +202,13 @@ enum {
 @property (nonatomic, assign) float minZoom;
 @property (nonatomic, assign) float maxZoom;
 
-@property (nonatomic, readonly) RMMarkerManager *markerManager;
 @property (nonatomic, readonly) RMMapLayer *overlay;
 @property (nonatomic, retain)   RMQuadTree *quadTree;
 @property (nonatomic, assign)   BOOL enableClustering;
 @property (nonatomic, assign)   BOOL positionClusterMarkersAtTheGravityCenter;
 @property (nonatomic, assign)   CGSize clusterMarkerSize;
 
-@property (nonatomic, readonly) RMTileImageSet *imagesOnScreen;
-@property (nonatomic, readonly) RMTileLoader *tileLoader;
-@property (nonatomic, retain)   RMCoreAnimationRenderer *renderer;
+@property (nonatomic, retain)   RMMapBaseView *mapBaseView;
 
 @property (nonatomic, readonly) RMProjection *projection;
 @property (nonatomic, readonly) id <RMMercatorToTileProjection> mercatorToTileProjection;
@@ -245,12 +217,7 @@ enum {
 @property (nonatomic, retain) id <RMTileSource> tileSource;
 @property (nonatomic, retain) RMTileCache *tileCache;
 
-@property (nonatomic, retain) CALayer *background;
-
-// tileDepth defaults to zero. if tiles have no alpha, set this higher, 3 or so, to make zooming smoother
-@property (nonatomic, assign) short tileDepth;
-
-@property (nonatomic, readonly) BOOL fullyLoaded;
+@property (nonatomic, retain) UIView *backgroundView;
 
 #pragma mark -
 #pragma mark Initializers

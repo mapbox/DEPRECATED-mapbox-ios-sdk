@@ -25,45 +25,12 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import <TargetConditionals.h>
-#import <UIKit/UIKit.h>
-
-#import "RMFoundation.h"
-#import "RMNotifications.h"
-#import "RMTile.h"
-#import "FMDatabase.h"
-
-@interface RMTileImage : NSObject {
-    // I know this is a bit nasty.
-    RMTile tile;
-    CGRect screenLocation;
-
-    // Only used when appropriate
-    CALayer *layer;
-
-    BOOL loadingCancelled;
-}
-
-@property (nonatomic, assign) CGRect screenLocation;
-@property (nonatomic, readonly) RMTile tile;
-@property (nonatomic, readonly) CALayer *layer;
-@property (nonatomic, readonly) BOOL loadingCancelled;
+@interface RMTileImage : NSObject
 
 + (UIImage *)errorTile;
 + (UIImage *)missingTile;
 
-+ (RMTileImage *)tileImageWithTile:(RMTile)tile;
-
-- (id)initWithTile:(RMTile)tile;
-
-- (void)moveBy:(CGSize)delta;
-- (void)zoomByFactor:(float)zoomFactor near:(CGPoint) center;
-
-- (BOOL)isLoaded;
-- (void)cancelLoading;
-
-- (void)updateWithImage:(UIImage *)image andNotifyListeners:(BOOL)notifyListeners;
-
-- (void)makeLayer;
++ (void)setErrorTile:(UIImage *)newErrorTile;
++ (void)setMissingTile:(UIImage *)newMissingTile;
 
 @end

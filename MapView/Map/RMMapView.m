@@ -29,10 +29,7 @@
 #import "RMMapViewDelegate.h"
 #import "RMPixel.h"
 
-#import "RMTileLoader.h"
-
 #import "RMMercatorToScreenProjection.h"
-#import "RMMarker.h"
 #import "RMFoundation.h"
 #import "RMProjection.h"
 #import "RMMarker.h"
@@ -46,10 +43,7 @@
 
 #import "RMTileCache.h"
 #import "RMTileSource.h"
-#import "RMTileLoader.h"
-#import "RMTileImageSet.h"
-
-#import "RMCoreAnimationRenderer.h"
+#import "RMMapBaseView.h"
 
 #pragma mark --- begin constants ----
 
@@ -96,16 +90,11 @@
 
 @implementation RMMapView
 
-@synthesize decelerationFactor, deceleration;
-
 @synthesize enableDragging, enableZoom;
-@synthesize lastGesture;
 
 @synthesize boundingMask;
 @synthesize minZoom, maxZoom;
 @synthesize screenScale;
-@synthesize markerManager;
-@synthesize imagesOnScreen;
 @synthesize tileCache;
 @synthesize quadTree;
 @synthesize enableClustering, positionClusterMarkersAtTheGravityCenter, clusterMarkerSize;
@@ -122,8 +111,6 @@
 {
     enableDragging = YES;
     enableZoom = YES;
-    decelerationFactor = kDefaultDecelerationFactor;
-    deceleration = NO;
 
     if (enableZoom)
         [self setMultipleTouchEnabled:TRUE];
@@ -135,10 +122,8 @@
     tileSource = nil;
     projection = nil;
     mercatorToTileProjection = nil;
-    renderer = nil;
-    imagesOnScreen = nil;
-    tileLoader = nil;
-
+    mapBaseView = nil;
+    
     screenScale = 1.0;
     if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
     {
@@ -155,34 +140,30 @@
     enableClustering = positionClusterMarkersAtTheGravityCenter = NO;
     clusterMarkerSize = CGSizeMake(100.0, 100.0);
 
-    [self setTileCache:[[[RMTileCache alloc] init] autorelease]];
-    [self setTileSource:newTilesource];
-    [self setRenderer:[[[RMCoreAnimationRenderer alloc] initWithView:self] autorelease]];
-
-    imagesOnScreen = [[RMTileImageSet alloc] initWithDelegate:renderer];
-    [imagesOnScreen setTileSource:tileSource];
-    [imagesOnScreen setTileCache:tileCache];
-    [imagesOnScreen setCurrentCacheKey:[newTilesource uniqueTilecacheKey]];
-
-    tileLoader = [[RMTileLoader alloc] initWithView:self];
-    [tileLoader setSuppressLoading:YES];
-
     [self setMinZoom:minZoomLevel];
     [self setMaxZoom:maxZoomLevel];
     [self setZoom:initialZoomLevel];
-    [self moveToCoordinate:initialCenterCoordinate];
 
-    [tileLoader setSuppressLoading:NO];
+    [self setTileCache:[[[RMTileCache alloc] init] autorelease]];
+    [self setTileSource:newTilesource];
+    
+	RMProjectedPoint initialProjectedCenter = [[self projection] coordinateToProjectedPoint:initialCenterCoordinate];
+    [self setMapCenterProjectedPoint:initialProjectedCenter];
+    [self setMapBaseView:[[[RMMapBaseView alloc] initWithFrame:[self screenBounds] mapView:self initialProjectedCenter:initialProjectedCenter] autorelease]];
 
-    [self setBackground:[[[CALayer alloc] init] autorelease]];
-    [self setOverlay:[[[RMMapLayer alloc] init] autorelease]];
+    [self setBackgroundView:[[[UIView alloc] initWithFrame:[self screenBounds]] autorelease]];
+    if (backgroundImage)
+        self.backgroundView.layer.contents = (id)backgroundImage.CGImage;
+
+    // Not as a property?
+//    [self setOverlay:[[[RMMapLayer alloc] init] autorelease]];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleMemoryWarningNotification:)
                                                  name:UIApplicationDidReceiveMemoryWarningNotification
                                                object:nil];
 
-    RMLog(@"Map initialised. tileSource:%@, renderer:%@, minZoom:%.0f, maxZoom:%.0f", tileSource, renderer, [self minZoom], [self maxZoom]);
+    RMLog(@"Map initialised. tileSource:%@, minZoom:%.0f, maxZoom:%.0f", tileSource, [self minZoom], [self maxZoom]);
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -255,14 +236,12 @@
     [super setFrame:frame];
 
     // only change if the frame changes and not during initialization
-    if (tileLoader && !CGRectEqualToRect(r, frame)) {
+    if (!CGRectEqualToRect(r, frame)) {
         CGRect bounds = CGRectMake(0, 0, frame.size.width, frame.size.height);
         [mercatorToScreenProjection setScreenBounds:bounds];
-        background.frame = bounds;
+        backgroundView.frame = bounds;
         overlay.frame = bounds;
-        [renderer setFrame:bounds];
-        [tileLoader clearLoadedBounds];
-        [tileLoader updateLoadedImages];
+        [mapBaseView setFrame:bounds];
         [self correctPositionOfAllAnnotations];
     }
 }
@@ -273,17 +252,14 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self setDelegate:nil];
     [self stopDeceleration];
-    [imagesOnScreen cancelLoading];
-    [self setRenderer:nil];
+    [self setMapBaseView:nil];
     [self setTileCache:nil];
-    [imagesOnScreen release]; imagesOnScreen = nil;
-    [tileLoader release]; tileLoader = nil;
     [projection release]; projection = nil;
     [mercatorToTileProjection release]; mercatorToTileProjection = nil;
     [mercatorToScreenProjection release]; mercatorToScreenProjection = nil;
     [tileSource release]; tileSource = nil;
     [self setOverlay:nil];
-    [self setBackground:nil];
+    [self setBackgroundView:nil];
     [annotations release]; annotations = nil;
     [visibleAnnotations release]; visibleAnnotations = nil;
     self.quadTree = nil;
@@ -472,8 +448,6 @@
         return;
 
     [mercatorToScreenProjection moveScreenBy:delta];
-    [imagesOnScreen moveBy:delta];
-    [tileLoader moveBy:delta];
     [self correctPositionOfAllAnnotationsIncludingInvisibles:correctAllSublayers];
 }
 
@@ -530,7 +504,6 @@ double CubicEaseOut(double t, double start, double end)
     // RMLog(@"Time t=%.2f: (%f,%f) < (%f,%f) < (%f,%f)", t, _moveAnimationStartPoint.easting, _moveAnimationStartPoint.northing, nextPoint.easting, nextPoint.northing, _moveAnimationEndPoint.easting, _moveAnimationEndPoint.northing);
 
     [mercatorToScreenProjection setProjectedCenter:nextPoint];
-    [tileLoader reload];
     [self correctPositionOfAllAnnotationsIncludingInvisibles:NO];
 }
 
@@ -711,8 +684,6 @@ double CubicEaseOut(double t, double start, double end)
     if ((newZoom > minZoom) && (newZoom < maxZoom))
     {
         [mercatorToScreenProjection zoomScreenByFactor:zoomFactor near:pivot];
-        [imagesOnScreen zoomByFactor:zoomFactor near:pivot];
-        [tileLoader zoomByFactor:zoomFactor near:pivot];
         [self correctPositionOfAllAnnotations];
     }
 }
@@ -767,8 +738,6 @@ double CubicEaseOut(double t, double start, double end)
         else
         {
             [mercatorToScreenProjection zoomScreenByFactor:zoomFactor near:pivot];
-            [imagesOnScreen zoomByFactor:zoomFactor near:pivot];
-            [tileLoader zoomByFactor:zoomFactor near:pivot];
             [self correctPositionOfAllAnnotationsIncludingInvisibles:!isAnimationStep];
         }
     }
@@ -1023,8 +992,6 @@ double CubicEaseOut(double t, double start, double end)
 - (void)zoomWithProjectedBounds:(RMProjectedRect)bounds
 {
     [self setProjectedBounds:bounds];
-    [tileLoader clearLoadedBounds];
-    [tileLoader updateLoadedImages];
     [self correctPositionOfAllAnnotations];
 }
 
@@ -1039,13 +1006,18 @@ double CubicEaseOut(double t, double start, double end)
 #pragma mark -
 #pragma mark Properties
 
+- (id <RMTileSource>)tileSource
+{
+    return [[tileSource retain] autorelease];
+}
+
 - (void)setTileSource:(id <RMTileSource>)newTileSource
 {
     if (tileSource == newTileSource)
         return;
 
     minZoom = newTileSource.minZoom;
-    maxZoom = newTileSource.maxZoom + 1;
+    maxZoom = newTileSource.maxZoom;
 
     [self setZoom:[self zoom]]; // setZoom clamps zoom level to min/max limits
 
@@ -1062,78 +1034,55 @@ double CubicEaseOut(double t, double start, double end)
     [mercatorToTileProjection release];
     mercatorToTileProjection = [[tileSource mercatorToTileProjection] retain];
     tileSourceProjectedBounds = (RMProjectedRect)[self projectedRectFromLatitudeLongitudeBounds:[tileSource latitudeLongitudeBoundingBox]];
-
-    [imagesOnScreen setTileCache:tileCache];
-    [imagesOnScreen setTileSource:tileSource];
-    [imagesOnScreen setCurrentCacheKey:[newTileSource uniqueTilecacheKey]];
-
-    [tileLoader reset];
-    [tileLoader reload];
 }
 
-- (id <RMTileSource>)tileSource
+- (RMMapBaseView *)mapBaseView
 {
-    return [[tileSource retain] autorelease];
+    return [[mapBaseView retain] autorelease];
 }
 
-- (void)setRenderer:(RMCoreAnimationRenderer *)newRenderer
+- (void)setMapBaseView:(RMMapBaseView *)newMapBaseView
 {
-    if (renderer == newRenderer)
+    if (mapBaseView == newMapBaseView)
         return;
 
-    [imagesOnScreen setDelegate:newRenderer];
+    [mapBaseView removeFromSuperview];
+    [mapBaseView release];
 
-    [[renderer layer] removeFromSuperlayer];
-    [renderer release];
-
-    renderer = [newRenderer retain];
-    if (renderer == nil)
+    mapBaseView = [newMapBaseView retain];
+    if (mapBaseView == nil)
         return;
 
-    //	CGRect rect = [self screenBounds];
-    //	RMLog(@"%f %f %f %f", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-    [[renderer layer] setFrame:[self screenBounds]];
+    [mapBaseView setFrame:[self screenBounds]];
 
-    if (background != nil)
-        [self.layer insertSublayer:[renderer layer] above:background];
-    else if (overlay != nil)
-        [self.layer insertSublayer:[renderer layer] below:overlay];
+    if (backgroundView)
+        [self insertSubview:mapBaseView aboveSubview:backgroundView];
     else
-        [self.layer insertSublayer:[renderer layer] atIndex: 0];
+        [self insertSubview:mapBaseView atIndex:0];
 }
 
-- (RMCoreAnimationRenderer *)renderer
+- (UIView *)backgroundView
 {
-    return [[renderer retain] autorelease];
+    return [[backgroundView retain] autorelease];
 }
 
-- (void)setBackground:(CALayer *)aLayer
+- (void)setBackgroundView:(UIView *)aView
 {
-    if (background == aLayer)
+    if (backgroundView == aView)
         return;
 
-    if (background != nil) {
-        [background release];
-        [background removeFromSuperlayer];
+    if (backgroundView != nil) {
+        [backgroundView removeFromSuperview];
+        [backgroundView release];
     }
 
-    background = [aLayer retain];
-    if (background == nil)
+    backgroundView = [aView retain];
+    if (backgroundView == nil)
         return;
 
-    background.frame = [self screenBounds];
+    backgroundView.frame = [self screenBounds];
 
-    if ([renderer layer] != nil)
-        [self.layer insertSublayer:background below:[renderer layer]];
-    else if (overlay != nil)
-        [self.layer insertSublayer:background below:overlay];
-    else
-        [self.layer insertSublayer:[renderer layer] atIndex:0];
-}
-
-- (CALayer *)background
-{
-    return [[background retain] autorelease];
+    [self insertSubview:backgroundView atIndex:0];
 }
 
 - (void)setOverlay:(RMMapLayer *)aLayer
@@ -1153,12 +1102,10 @@ double CubicEaseOut(double t, double start, double end)
     overlay.frame = [self screenBounds];
     overlay.masksToBounds = YES;
 
-    if ([renderer layer] != nil)
-        [self.layer insertSublayer:overlay above:[renderer layer]];
-    else if (background != nil)
-        [self.layer insertSublayer:overlay above:background];
-    else
-        [self.layer insertSublayer:[renderer layer] atIndex:0];
+//    if (backgroundView != nil)
+//        [self.layer insertSublayer:overlay above:background];
+//    else
+        [self.layer insertSublayer:overlay atIndex:0];
 }
 
 - (RMMapLayer *)overlay
@@ -1187,7 +1134,7 @@ double CubicEaseOut(double t, double start, double end)
         return;
 
     [mercatorToScreenProjection setProjectedCenter:projectedPoint];
-    [tileLoader reload];
+    [mapBaseView setProjectedCenter:projectedPoint];
     [self correctPositionOfAllAnnotations];
 }
 
@@ -1199,7 +1146,6 @@ double CubicEaseOut(double t, double start, double end)
 - (void)setProjectedBounds:(RMProjectedRect)boundsRect
 {
     [mercatorToScreenProjection setProjectedBounds:boundsRect];
-    [tileLoader reload];
     [self correctPositionOfAllAnnotations];
 }
 
@@ -1227,8 +1173,6 @@ double CubicEaseOut(double t, double start, double end)
     CGPoint pivot = CGPointZero;
 
     [mercatorToScreenProjection setMetersPerPixel:newMPP];
-    [imagesOnScreen zoomByFactor:zoomFactor near:pivot];
-    [tileLoader zoomByFactor:zoomFactor near:pivot];
     [self correctPositionOfAllAnnotations];
 }
 
@@ -1272,16 +1216,6 @@ double CubicEaseOut(double t, double start, double end)
 
     float scale = [mercatorToTileProjection calculateScaleFromZoom:zoom];
     [self setMetersPerPixel:scale];
-}
-
-- (RMTileImageSet *)imagesOnScreen
-{
-    return [[imagesOnScreen retain] autorelease];
-}
-
-- (RMTileLoader *)tileLoader
-{
-    return [[tileLoader retain] autorelease];
 }
 
 - (RMProjection *)projection
@@ -1379,26 +1313,6 @@ double CubicEaseOut(double t, double start, double end)
         boundingBox.northEast.longitude = fmin(northeastLL.longitude, southeastLL.longitude);
 
     return boundingBox;
-}
-
-- (void)printDebuggingInformation
-{
-    [imagesOnScreen printDebuggingInformation];
-}
-
-- (short)tileDepth
-{
-    return imagesOnScreen.tileDepth;
-}
-
-- (void)setTileDepth:(short)value
-{
-    imagesOnScreen.tileDepth = value;
-}
-
-- (BOOL)fullyLoaded
-{
-    return imagesOnScreen.fullyLoaded;
 }
 
 #pragma mark -
@@ -1603,338 +1517,293 @@ double CubicEaseOut(double t, double start, double end)
     return annotation.position;
 }
 
-#pragma mark -
-#pragma mark Event handling
-
-- (RMGestureDetails)gestureDetails:(NSSet *)touches
-{
-    RMGestureDetails gesture;
-    gesture.center.x = gesture.center.y = 0;
-    gesture.averageDistanceFromCenter = 0;
-    gesture.angle = 0.0;
-
-    int interestingTouches = 0;
-
-    for (UITouch *touch in touches)
-    {
-        if ([touch phase] != UITouchPhaseBegan
-            && [touch phase] != UITouchPhaseMoved
-            && [touch phase] != UITouchPhaseStationary)
-            continue;
-        // RMLog(@"phase = %d", [touch phase]);
-
-        interestingTouches++;
-
-        CGPoint location = [touch locationInView: self];
-
-        gesture.center.x += location.x;
-        gesture.center.y += location.y;
-    }
-
-    if (interestingTouches == 0)
-    {
-        gesture.center = lastGesture.center;
-        gesture.numTouches = 0;
-        gesture.averageDistanceFromCenter = 0.0f;
-        return gesture;
-    }
-
-    //	RMLog(@"interestingTouches = %d", interestingTouches);
-
-    gesture.center.x /= interestingTouches;
-    gesture.center.y /= interestingTouches;
-
-    for (UITouch *touch in touches)
-    {
-        if ([touch phase] != UITouchPhaseBegan
-            && [touch phase] != UITouchPhaseMoved
-            && [touch phase] != UITouchPhaseStationary)
-            continue;
-
-        CGPoint location = [touch locationInView: self];
-
-        //		RMLog(@"For touch at %.0f, %.0f:", location.x, location.y);
-        float dx = location.x - gesture.center.x;
-        float dy = location.y - gesture.center.y;
-        //		RMLog(@"delta = %.0f, %.0f  distance = %f", dx, dy, sqrtf((dx*dx) + (dy*dy)));
-        gesture.averageDistanceFromCenter += sqrtf((dx*dx) + (dy*dy));
-    }
-
-    gesture.averageDistanceFromCenter /= interestingTouches;
-    gesture.numTouches = interestingTouches;
-
-    if ([touches count] == 2)
-    {
-        CGPoint first = [[[touches allObjects] objectAtIndex:0] locationInView:[self superview]];
-        CGPoint second = [[[touches allObjects] objectAtIndex:1] locationInView:[self superview]];
-        CGFloat height = second.y - first.y;
-        CGFloat width = first.x - second.x;
-        gesture.angle = atan2(height,width);
-    }
-
-    return gesture;
-}
-
-- (void)handleLongPress
-{
-    if (deceleration && _decelerationTimer != nil)
-        return;
-
-    if (_delegateHasLongSingleTapOnMap)
-        [delegate longSingleTapOnMap:self at:_longPressPosition];
-}
-
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    UITouch *touch = [[touches allObjects] objectAtIndex:0];
-    //Check if the touch hit a RMMarker subclass and if so, forward the touch event on
-    //so it can be handled there
-    id furthestLayerDown = [self.overlay hitTest:[touch locationInView:self]];
-    if ([[furthestLayerDown class] isSubclassOfClass:[RMMarker class]]) {
-        if ([furthestLayerDown respondsToSelector:@selector(touchesBegan:withEvent:)]) {
-            [furthestLayerDown performSelector:@selector(touchesBegan:withEvent:) withObject:touches withObject:event];
-            return;
-        }
-    }
-
-    //	RMLog(@"touchesBegan %d", [[event allTouches] count]);
-    lastGesture = [self gestureDetails:[event allTouches]];
-
-    if (deceleration && _decelerationTimer != nil) {
-        [self stopDeceleration];
-    }
-
-    _longPressPosition = lastGesture.center;
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(handleLongPress) object:nil];
-
-    if (lastGesture.numTouches == 1) {
-        CALayer* hit = [self.overlay hitTest:[touch locationInView:self]];
-        if (!hit || ![hit isKindOfClass: [RMMarker class]]) {            
-            [self performSelector:@selector(handleLongPress) withObject:nil afterDelay:0.5];
-        }
-    }
-}
-
-// \bug touchesCancelled should clean up, not pass event to markers
-- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    UITouch *touch = [[touches allObjects] objectAtIndex:0];
-
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(handleLongPress) object:nil];
-
-    // Check if the touch hit a RMMarker subclass and if so, forward the touch event on
-    // so it can be handled there
-    id furthestLayerDown = [self.overlay hitTest:[touch locationInView:self]];
-    if ([[furthestLayerDown class]isSubclassOfClass: [RMMarker class]]) {
-        if ([furthestLayerDown respondsToSelector:@selector(touchesCancelled:withEvent:)]) {
-            [furthestLayerDown performSelector:@selector(touchesCancelled:withEvent:) withObject:touches withObject:event];
-            return;
-        }
-    }
-
-    // I don't understand what the difference between this and touchesEnded is.
-    [self touchesEnded:touches withEvent:event];
-}
-
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    UITouch *touch = [[touches allObjects] objectAtIndex:0];
-
-    //Check if the touch hit a RMMarker subclass and if so, forward the touch event on
-    //so it can be handled there
-    id furthestLayerDown = [self.overlay hitTest:[touch locationInView:self]];
-    if ([[furthestLayerDown class]isSubclassOfClass: [RMMarker class]]) {
-        if ([furthestLayerDown respondsToSelector:@selector(touchesEnded:withEvent:)]) {
-            [furthestLayerDown performSelector:@selector(touchesEnded:withEvent:) withObject:touches withObject:event];
-            return;
-        }
-    }
-    NSInteger lastTouches = lastGesture.numTouches;
-
-    // Calculate the gesture.
-    lastGesture = [self gestureDetails:[event allTouches]];
-
-    BOOL decelerating = NO;
-
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(handleLongPress) object:nil];
-
-    if (touch.tapCount >= 2)
-    {
-        BOOL twoFingerTap = [touches count] >= 2;
-        if (_delegateHasDoubleTapOnMap) {
-            if (twoFingerTap) {
-                if (_delegateHasDoubleTapTwoFingersOnMap) [delegate doubleTapTwoFingersOnMap:self at:lastGesture.center];
-            } else {
-                if (_delegateHasDoubleTapOnMap) [delegate doubleTapOnMap: self at:lastGesture.center];
-            }
-        } else {
-            // Default behaviour matches built in maps.app
-            float nextZoomFactor = 0;
-            if (twoFingerTap) {
-                nextZoomFactor = [self previousNativeZoomFactor];
-            } else {
-                nextZoomFactor = [self nextNativeZoomFactor];
-            }
-            if (nextZoomFactor != 0)
-                [self zoomByFactor:nextZoomFactor near:[touch locationInView:self] animated:YES];
-        }
-    } else if (lastTouches == 1 && touch.tapCount != 1) {
-        // deceleration
-        if (deceleration && enableDragging)
-        {
-            CGPoint prevLocation = [touch previousLocationInView:self];
-            CGPoint currLocation = [touch locationInView:self];
-            CGSize touchDelta = CGSizeMake(currLocation.x - prevLocation.x, currLocation.y - prevLocation.y);
-            [self startDecelerationWithDelta:touchDelta];
-            decelerating = YES;
-        }
-    }
-
-    if (touch.tapCount == 1) 
-    {
-        if (lastGesture.numTouches == 0)
-        {
-            CALayer *hit = [self.overlay hitTest:[touch locationInView:self]];
-            // RMLog(@"LAYER of type %@",[hit description]);
-
-            if (hit != nil)
-            {
-                CALayer *superlayer = [hit superlayer];
-
-                // See if tap was on a marker or marker label and send delegate protocol method
-                if ([hit isKindOfClass:[RMMarker class]]) {
-                    if (_delegateHasTapOnMarker) {
-                        [delegate tapOnAnnotation:((RMMarker *)hit).annotation onMap:self];
-                    }
-                } else if (superlayer != nil && [superlayer isKindOfClass: [RMMarker class]]) {
-                    if (_delegateHasTapOnLabelForMarker) {
-                        [delegate tapOnLabelForAnnotation:((RMMarker *)superlayer).annotation onMap:self];
-                    }
-                } else if ([superlayer superlayer] != nil && [[superlayer superlayer] isKindOfClass:[RMMarker class]]) {
-                    if (_delegateHasTapOnLabelForMarker) {
-                        [delegate tapOnLabelForAnnotation:((RMMarker *)[superlayer superlayer]).annotation onMap:self];
-                    }
-                } else if (_delegateHasSingleTapOnMap) {
-                    [delegate singleTapOnMap:self at:[touch locationInView:self]];
-                }
-            }
-        }
-        else if (!enableDragging && (lastGesture.numTouches == 1))
-        {
-            float prevZoomFactor = [self previousNativeZoomFactor];
-            if (prevZoomFactor != 0)
-                [self zoomByFactor:prevZoomFactor near:[touch locationInView:self] animated:YES];
-        }
-    }
-
-    if (_delegateHasAfterMapTouch) [delegate afterMapTouch:self];
-}
-
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    UITouch *touch = [[touches allObjects] objectAtIndex:0];
-
-    //Check if the touch hit a RMMarker subclass and if so, forward the touch event on
-    //so it can be handled there
-    id furthestLayerDown = [self.overlay hitTest:[touch locationInView:self]];
-    if ([[furthestLayerDown class]isSubclassOfClass: [RMMarker class]]) {
-        if ([furthestLayerDown respondsToSelector:@selector(touchesMoved:withEvent:)]) {
-            [furthestLayerDown performSelector:@selector(touchesMoved:withEvent:) withObject:touches withObject:event];
-            return;
-        }
-    }
-
-    RMGestureDetails newGesture = [self gestureDetails:[event allTouches]];
-    CGPoint newLongPressPosition = newGesture.center;
-    CGFloat dx = newLongPressPosition.x - _longPressPosition.x;
-    CGFloat dy = newLongPressPosition.y - _longPressPosition.y;
-    if (sqrt(dx*dx + dy*dy) > 5.0)
-        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(handleLongPress) object:nil];
-
-    CALayer *hit = [self.overlay hitTest:[touch locationInView:self]];
-//	RMLog(@"LAYER of type %@",[hit description]);
-
-    if (hit != nil)
-    {   
-        if ([hit isKindOfClass: [RMMarker class]]) {
-            if (!_delegateHasShouldDragMarker || (_delegateHasShouldDragMarker && [delegate mapView:self shouldDragAnnotation:((RMMarker *)hit).annotation withEvent:event]))
-            {
-                if (_delegateHasDidDragMarker) {
-                    [delegate mapView:self didDragAnnotation:((RMMarker *)hit).annotation withEvent:event];
-                    return;
-                }
-            }
-        }
-    }
-
-    if (newGesture.numTouches == lastGesture.numTouches)
-    {
-        CGSize delta;
-        delta.width = newGesture.center.x - lastGesture.center.x;
-        delta.height = newGesture.center.y - lastGesture.center.y;
-
-        if (enableZoom && newGesture.numTouches > 1)
-        {
-            NSAssert (lastGesture.averageDistanceFromCenter > 0.0f && newGesture.averageDistanceFromCenter > 0.0f,
-                      @"Distance from center is zero despite >1 touches on the screen");
-
-            double zoomFactor = newGesture.averageDistanceFromCenter / lastGesture.averageDistanceFromCenter;
-
-            [self moveBy:delta];
-            [self zoomByFactor:zoomFactor near:newGesture.center];
-        }
-        else if (enableDragging)
-        {
-            [self moveBy:delta];
-        }
-    }
-
-    lastGesture = newGesture;
-}
-
-#pragma mark Deceleration
-
-- (void)startDecelerationWithDelta:(CGSize)delta
-{
-    if (fabsf(delta.width) >= 1.0f && fabsf(delta.height) >= 1.0f)
-    {
-        _decelerationDelta = delta;
-        if ( !_decelerationTimer ) {
-            _decelerationTimer = [NSTimer scheduledTimerWithTimeInterval:kDecelerationTimerInterval
-                                                                  target:self
-                                                                selector:@selector(incrementDeceleration:) 
-                                                                userInfo:nil 
-                                                                 repeats:YES];
-        }
-    }
-}
-
-- (void)incrementDeceleration:(NSTimer *)timer
-{
-    if (fabsf(_decelerationDelta.width) < kMinDecelerationDelta && fabsf(_decelerationDelta.height) < kMinDecelerationDelta) {
-        [self stopDeceleration];
-        return;
-    }
-
-    // avoid calling delegate methods? design call here
-    [self moveBy:_decelerationDelta isAnimationStep:YES];
-
-    _decelerationDelta.width *= self.decelerationFactor;
-    _decelerationDelta.height *= self.decelerationFactor;
-}
-
-- (void)stopDeceleration
-{
-    if (_decelerationTimer != nil) {
-        [_decelerationTimer invalidate]; _decelerationTimer = nil;
-        _decelerationDelta = CGSizeZero;
-
-        // call delegate methods; design call (see above)
-        [self moveBy:CGSizeZero];
-    }
-
-    if (_delegateHasAfterMapMoveDeceleration)
-        [delegate afterMapMoveDeceleration:self];
-}
+//#pragma mark -
+//#pragma mark Event handling
+//
+//- (RMGestureDetails)gestureDetails:(NSSet *)touches
+//{
+//    RMGestureDetails gesture;
+//    gesture.center.x = gesture.center.y = 0;
+//    gesture.averageDistanceFromCenter = 0;
+//    gesture.angle = 0.0;
+//
+//    int interestingTouches = 0;
+//
+//    for (UITouch *touch in touches)
+//    {
+//        if ([touch phase] != UITouchPhaseBegan
+//            && [touch phase] != UITouchPhaseMoved
+//            && [touch phase] != UITouchPhaseStationary)
+//            continue;
+//        // RMLog(@"phase = %d", [touch phase]);
+//
+//        interestingTouches++;
+//
+//        CGPoint location = [touch locationInView: self];
+//
+//        gesture.center.x += location.x;
+//        gesture.center.y += location.y;
+//    }
+//
+//    if (interestingTouches == 0)
+//    {
+//        gesture.center = lastGesture.center;
+//        gesture.numTouches = 0;
+//        gesture.averageDistanceFromCenter = 0.0f;
+//        return gesture;
+//    }
+//
+//    //	RMLog(@"interestingTouches = %d", interestingTouches);
+//
+//    gesture.center.x /= interestingTouches;
+//    gesture.center.y /= interestingTouches;
+//
+//    for (UITouch *touch in touches)
+//    {
+//        if ([touch phase] != UITouchPhaseBegan
+//            && [touch phase] != UITouchPhaseMoved
+//            && [touch phase] != UITouchPhaseStationary)
+//            continue;
+//
+//        CGPoint location = [touch locationInView: self];
+//
+//        //		RMLog(@"For touch at %.0f, %.0f:", location.x, location.y);
+//        float dx = location.x - gesture.center.x;
+//        float dy = location.y - gesture.center.y;
+//        //		RMLog(@"delta = %.0f, %.0f  distance = %f", dx, dy, sqrtf((dx*dx) + (dy*dy)));
+//        gesture.averageDistanceFromCenter += sqrtf((dx*dx) + (dy*dy));
+//    }
+//
+//    gesture.averageDistanceFromCenter /= interestingTouches;
+//    gesture.numTouches = interestingTouches;
+//
+//    if ([touches count] == 2)
+//    {
+//        CGPoint first = [[[touches allObjects] objectAtIndex:0] locationInView:[self superview]];
+//        CGPoint second = [[[touches allObjects] objectAtIndex:1] locationInView:[self superview]];
+//        CGFloat height = second.y - first.y;
+//        CGFloat width = first.x - second.x;
+//        gesture.angle = atan2(height,width);
+//    }
+//
+//    return gesture;
+//}
+//
+//- (void)handleLongPress
+//{
+//    if (deceleration && _decelerationTimer != nil)
+//        return;
+//
+//    if (_delegateHasLongSingleTapOnMap)
+//        [delegate longSingleTapOnMap:self at:_longPressPosition];
+//}
+//
+//- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+//{
+//    UITouch *touch = [[touches allObjects] objectAtIndex:0];
+//    //Check if the touch hit a RMMarker subclass and if so, forward the touch event on
+//    //so it can be handled there
+//    id furthestLayerDown = [self.overlay hitTest:[touch locationInView:self]];
+//    if ([[furthestLayerDown class] isSubclassOfClass:[RMMarker class]]) {
+//        if ([furthestLayerDown respondsToSelector:@selector(touchesBegan:withEvent:)]) {
+//            [furthestLayerDown performSelector:@selector(touchesBegan:withEvent:) withObject:touches withObject:event];
+//            return;
+//        }
+//    }
+//
+//    //	RMLog(@"touchesBegan %d", [[event allTouches] count]);
+//    lastGesture = [self gestureDetails:[event allTouches]];
+//
+//    if (deceleration && _decelerationTimer != nil) {
+//        [self stopDeceleration];
+//    }
+//
+//    _longPressPosition = lastGesture.center;
+//    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(handleLongPress) object:nil];
+//
+//    if (lastGesture.numTouches == 1) {
+//        CALayer* hit = [self.overlay hitTest:[touch locationInView:self]];
+//        if (!hit || ![hit isKindOfClass: [RMMarker class]]) {            
+//            [self performSelector:@selector(handleLongPress) withObject:nil afterDelay:0.5];
+//        }
+//    }
+//}
+//
+//// \bug touchesCancelled should clean up, not pass event to markers
+//- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
+//{
+//    UITouch *touch = [[touches allObjects] objectAtIndex:0];
+//
+//    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(handleLongPress) object:nil];
+//
+//    // Check if the touch hit a RMMarker subclass and if so, forward the touch event on
+//    // so it can be handled there
+//    id furthestLayerDown = [self.overlay hitTest:[touch locationInView:self]];
+//    if ([[furthestLayerDown class]isSubclassOfClass: [RMMarker class]]) {
+//        if ([furthestLayerDown respondsToSelector:@selector(touchesCancelled:withEvent:)]) {
+//            [furthestLayerDown performSelector:@selector(touchesCancelled:withEvent:) withObject:touches withObject:event];
+//            return;
+//        }
+//    }
+//
+//    // I don't understand what the difference between this and touchesEnded is.
+//    [self touchesEnded:touches withEvent:event];
+//}
+//
+//- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+//{
+//    UITouch *touch = [[touches allObjects] objectAtIndex:0];
+//
+//    //Check if the touch hit a RMMarker subclass and if so, forward the touch event on
+//    //so it can be handled there
+//    id furthestLayerDown = [self.overlay hitTest:[touch locationInView:self]];
+//    if ([[furthestLayerDown class]isSubclassOfClass: [RMMarker class]]) {
+//        if ([furthestLayerDown respondsToSelector:@selector(touchesEnded:withEvent:)]) {
+//            [furthestLayerDown performSelector:@selector(touchesEnded:withEvent:) withObject:touches withObject:event];
+//            return;
+//        }
+//    }
+//    NSInteger lastTouches = lastGesture.numTouches;
+//
+//    // Calculate the gesture.
+//    lastGesture = [self gestureDetails:[event allTouches]];
+//
+//    BOOL decelerating = NO;
+//
+//    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(handleLongPress) object:nil];
+//
+//    if (touch.tapCount >= 2)
+//    {
+//        BOOL twoFingerTap = [touches count] >= 2;
+//        if (_delegateHasDoubleTapOnMap) {
+//            if (twoFingerTap) {
+//                if (_delegateHasDoubleTapTwoFingersOnMap) [delegate doubleTapTwoFingersOnMap:self at:lastGesture.center];
+//            } else {
+//                if (_delegateHasDoubleTapOnMap) [delegate doubleTapOnMap: self at:lastGesture.center];
+//            }
+//        } else {
+//            // Default behaviour matches built in maps.app
+//            float nextZoomFactor = 0;
+//            if (twoFingerTap) {
+//                nextZoomFactor = [self previousNativeZoomFactor];
+//            } else {
+//                nextZoomFactor = [self nextNativeZoomFactor];
+//            }
+//            if (nextZoomFactor != 0)
+//                [self zoomByFactor:nextZoomFactor near:[touch locationInView:self] animated:YES];
+//        }
+//    } else if (lastTouches == 1 && touch.tapCount != 1) {
+//        // deceleration
+//        if (deceleration && enableDragging)
+//        {
+//            CGPoint prevLocation = [touch previousLocationInView:self];
+//            CGPoint currLocation = [touch locationInView:self];
+//            CGSize touchDelta = CGSizeMake(currLocation.x - prevLocation.x, currLocation.y - prevLocation.y);
+//            [self startDecelerationWithDelta:touchDelta];
+//            decelerating = YES;
+//        }
+//    }
+//
+//    if (touch.tapCount == 1) 
+//    {
+//        if (lastGesture.numTouches == 0)
+//        {
+//            CALayer *hit = [self.overlay hitTest:[touch locationInView:self]];
+//            // RMLog(@"LAYER of type %@",[hit description]);
+//
+//            if (hit != nil)
+//            {
+//                CALayer *superlayer = [hit superlayer];
+//
+//                // See if tap was on a marker or marker label and send delegate protocol method
+//                if ([hit isKindOfClass:[RMMarker class]]) {
+//                    if (_delegateHasTapOnMarker) {
+//                        [delegate tapOnAnnotation:((RMMarker *)hit).annotation onMap:self];
+//                    }
+//                } else if (superlayer != nil && [superlayer isKindOfClass: [RMMarker class]]) {
+//                    if (_delegateHasTapOnLabelForMarker) {
+//                        [delegate tapOnLabelForAnnotation:((RMMarker *)superlayer).annotation onMap:self];
+//                    }
+//                } else if ([superlayer superlayer] != nil && [[superlayer superlayer] isKindOfClass:[RMMarker class]]) {
+//                    if (_delegateHasTapOnLabelForMarker) {
+//                        [delegate tapOnLabelForAnnotation:((RMMarker *)[superlayer superlayer]).annotation onMap:self];
+//                    }
+//                } else if (_delegateHasSingleTapOnMap) {
+//                    [delegate singleTapOnMap:self at:[touch locationInView:self]];
+//                }
+//            }
+//        }
+//        else if (!enableDragging && (lastGesture.numTouches == 1))
+//        {
+//            float prevZoomFactor = [self previousNativeZoomFactor];
+//            if (prevZoomFactor != 0)
+//                [self zoomByFactor:prevZoomFactor near:[touch locationInView:self] animated:YES];
+//        }
+//    }
+//
+//    if (_delegateHasAfterMapTouch) [delegate afterMapTouch:self];
+//}
+//
+//- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+//{
+//    UITouch *touch = [[touches allObjects] objectAtIndex:0];
+//
+//    //Check if the touch hit a RMMarker subclass and if so, forward the touch event on
+//    //so it can be handled there
+//    id furthestLayerDown = [self.overlay hitTest:[touch locationInView:self]];
+//    if ([[furthestLayerDown class]isSubclassOfClass: [RMMarker class]]) {
+//        if ([furthestLayerDown respondsToSelector:@selector(touchesMoved:withEvent:)]) {
+//            [furthestLayerDown performSelector:@selector(touchesMoved:withEvent:) withObject:touches withObject:event];
+//            return;
+//        }
+//    }
+//
+//    RMGestureDetails newGesture = [self gestureDetails:[event allTouches]];
+//    CGPoint newLongPressPosition = newGesture.center;
+//    CGFloat dx = newLongPressPosition.x - _longPressPosition.x;
+//    CGFloat dy = newLongPressPosition.y - _longPressPosition.y;
+//    if (sqrt(dx*dx + dy*dy) > 5.0)
+//        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(handleLongPress) object:nil];
+//
+//    CALayer *hit = [self.overlay hitTest:[touch locationInView:self]];
+////	RMLog(@"LAYER of type %@",[hit description]);
+//
+//    if (hit != nil)
+//    {   
+//        if ([hit isKindOfClass: [RMMarker class]]) {
+//            if (!_delegateHasShouldDragMarker || (_delegateHasShouldDragMarker && [delegate mapView:self shouldDragAnnotation:((RMMarker *)hit).annotation withEvent:event]))
+//            {
+//                if (_delegateHasDidDragMarker) {
+//                    [delegate mapView:self didDragAnnotation:((RMMarker *)hit).annotation withEvent:event];
+//                    return;
+//                }
+//            }
+//        }
+//    }
+//
+//    if (newGesture.numTouches == lastGesture.numTouches)
+//    {
+//        CGSize delta;
+//        delta.width = newGesture.center.x - lastGesture.center.x;
+//        delta.height = newGesture.center.y - lastGesture.center.y;
+//
+//        if (enableZoom && newGesture.numTouches > 1)
+//        {
+//            NSAssert (lastGesture.averageDistanceFromCenter > 0.0f && newGesture.averageDistanceFromCenter > 0.0f,
+//                      @"Distance from center is zero despite >1 touches on the screen");
+//
+//            double zoomFactor = newGesture.averageDistanceFromCenter / lastGesture.averageDistanceFromCenter;
+//
+//            [self moveBy:delta];
+//            [self zoomByFactor:zoomFactor near:newGesture.center];
+//        }
+//        else if (enableDragging)
+//        {
+//            [self moveBy:delta];
+//        }
+//    }
+//
+//    lastGesture = newGesture;
+//}
 
 @end
