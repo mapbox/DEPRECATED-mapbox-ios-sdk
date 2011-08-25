@@ -142,6 +142,7 @@
 
 - (BOOL)isAnnotationOnScreen
 {
+    return YES;
     CGRect screenBounds = [[mapView mercatorToScreenProjection] screenBounds];
     return [self isAnnotationWithinBounds:screenBounds];
 }

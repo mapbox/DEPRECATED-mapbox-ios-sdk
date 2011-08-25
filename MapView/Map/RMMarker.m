@@ -183,18 +183,4 @@
     }
 }
 
-- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center
-{
-    if (enableDragging) {
-        self.position = RMScaleCGPointAboutPoint(self.position, zoomFactor, center);
-    }
-}
-
-- (void)moveBy:(CGSize)delta
-{
-    if (enableDragging) {
-        [super moveBy:delta];
-    }
-}
-
 @end

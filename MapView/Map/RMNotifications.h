@@ -27,6 +27,3 @@
 
 static NSString* const RMSuspendNetworkOperations = @"RMSuspendNetworkOperations";
 static NSString* const RMResumeNetworkOperations = @"RMResumeNetworkOperations";
-static NSString* const RMMapImageRemovedFromScreenNotification = @"RMMapImageRemovedFromScreen";
-static NSString* const RMMapImageLoadedNotification = @"RMMapImageLoaded";
-static NSString* const RMMapImageLoadingCancelledNotification = @"RMMapImageLoadingCancelled";

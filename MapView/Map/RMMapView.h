@@ -91,11 +91,11 @@ svn checkout http://route-me.googlecode.com/svn/trunk/ route-me-read-only
 #import <CoreGraphics/CGGeometry.h>
 
 #import "RMGlobalConstants.h"
-#import "RMNotifications.h"
 #import "RMFoundation.h"
 #import "RMMapViewDelegate.h"
 #import "RMTile.h"
 #import "RMProjection.h"
+#import "RMMapTiledLayerView.h"
 
 // constants for boundingMask
 enum {
@@ -105,22 +105,22 @@ enum {
 };
 
 @class RMProjection;
-@class RMMercatorToScreenProjection;
 @class RMTileCache;
 @class RMMapLayer;
+@class RMMapTiledLayerView;
 @class RMMarker;
 @class RMAnnotation;
 @class RMQuadTree;
-@class RMMapBaseView;
+@class RMMercatorToScreenProjection;
 @protocol RMMercatorToTileProjection;
 @protocol RMTileSource;
+@protocol RMMapTiledLayerViewDelegate;
 
-@interface RMMapView : UIView
+@interface RMMapView : UIView <UIScrollViewDelegate, RMMapTiledLayerViewDelegate>
 {
     id <RMMapViewDelegate> delegate;
 
     BOOL enableDragging;
-    BOOL enableZoom;
 
     /// projection objects to convert from latitude/longitude to meters,
     /// from projected meters to tiles and screen coordinates
@@ -128,8 +128,12 @@ enum {
     id <RMMercatorToTileProjection> mercatorToTileProjection;
     RMMercatorToScreenProjection *mercatorToScreenProjection;
 
+    /// subview for the background image displayed while tiles are loading. Set its contents by providing your own "loading.png".
+    UIView *backgroundView;
+    UIScrollView *mapView;
+    RMMapTiledLayerView *tiledLayerView;
+    
     RMMapLayer *overlay; /// subview for markers and paths
-    RMMapBaseView *mapBaseView;
 
     NSMutableArray *annotations;
     NSMutableSet   *visibleAnnotations;
@@ -139,9 +143,6 @@ enum {
 
     id <RMTileSource> tileSource;
     RMTileCache *tileCache; // Generic tile cache
-
-    /// subview for the image displayed while tiles are loading. Set its contents by providing your own "loading.png".
-    UIView *backgroundView;
 
     /// minimum and maximum zoom number allowed for the view. #minZoom and #maxZoom must be within the limits of #tileSource but can be stricter; they are clamped to tilesource limits if needed.
     float minZoom;
@@ -173,10 +174,6 @@ enum {
     BOOL _delegateHasWillHideLayerForAnnotation;
     BOOL _delegateHasDidHideLayerForAnnotation;
 
-    NSTimer *_moveAnimationTimer;
-    RMProjectedPoint _moveAnimationStartPoint, _moveAnimationEndPoint;
-    double _moveAnimationCurrentStep, _moveAnimationSteps;
-
     BOOL _constrainMovement;
     RMProjectedPoint _northEastConstraint, _southWestConstraint;
 }
@@ -185,7 +182,6 @@ enum {
 
 // View properties
 @property (nonatomic, assign)   BOOL enableDragging;
-@property (nonatomic, assign)   BOOL enableZoom;
 
 @property (nonatomic, assign)   CLLocationCoordinate2D mapCenterCoordinate;
 @property (nonatomic, assign)   RMProjectedPoint mapCenterProjectedPoint;
@@ -207,8 +203,6 @@ enum {
 @property (nonatomic, assign)   BOOL enableClustering;
 @property (nonatomic, assign)   BOOL positionClusterMarkersAtTheGravityCenter;
 @property (nonatomic, assign)   CGSize clusterMarkerSize;
-
-@property (nonatomic, retain)   RMMapBaseView *mapBaseView;
 
 @property (nonatomic, readonly) RMProjection *projection;
 @property (nonatomic, readonly) id <RMMercatorToTileProjection> mercatorToTileProjection;

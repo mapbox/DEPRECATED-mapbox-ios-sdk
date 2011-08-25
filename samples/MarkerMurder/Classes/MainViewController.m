@@ -32,7 +32,7 @@
 {
 #define kNumberRows 1
 #define kNumberColumns 9
-#define kSpacing 2.0
+#define kSpacing 0.1
 
 	CLLocationCoordinate2D markerPosition;
 
@@ -48,7 +48,7 @@
 		for (j = 0; j < kNumberColumns; j++)
         {
 			markerPosition.longitude += kSpacing;
-			NSLog(@"%f %f", markerPosition.latitude, markerPosition.longitude);
+			NSLog(@"Add marker @ {%f,%f}", markerPosition.longitude, markerPosition.latitude);
 
             RMAnnotation *annotation = [RMAnnotation annotationWithMapView:mapView coordinate:markerPosition andTitle:[NSString stringWithFormat:@"%4.1f", markerPosition.longitude]];
             if ((markerPosition.longitude < -180) ||(markerPosition.longitude > 0)) {
@@ -76,14 +76,14 @@
     [mapView setDelegate:self];
 	mapView.tileSource = [[[RMOpenStreetMapSource alloc] init] autorelease];
 
-	center.latitude = 66.44;
-	center.longitude = -179.0;
+	center.latitude = 47.5635;
+	center.longitude = 10.20981;
 
+	[mapView setZoom:8.0];
 	[mapView moveToCoordinate:center];
-	[mapView setZoom:6.0];
-	[mapView moveBy:CGSizeMake(-5.0, 0.0)];
+//	[mapView moveBy:CGSizeMake(-5.0, 0.0)];
 	[self updateInfo];
-	[self performSelector:@selector(addMarkers) withObject:nil afterDelay:1.0];
+	[self performSelector:@selector(addMarkers) withObject:nil afterDelay:0.5];
 }
 
 - (void)didReceiveMemoryWarning
@@ -110,10 +110,10 @@
 {
     CLLocationCoordinate2D mapCenter = [mapView mapCenterCoordinate];
 
-    [infoTextView setText:[NSString stringWithFormat:@"Latitude : %f\nLongitude : %f\nZoom level : %.2f\n%@", 
-                           mapCenter.latitude, 
-                           mapCenter.longitude, 
-                           mapView.zoom, 
+    [infoTextView setText:[NSString stringWithFormat:@"Longitude : %f\nLatitude : %f\nZoom level : %.2f\n%@", 
+                           mapCenter.longitude,
+                           mapCenter.latitude,
+                           mapView.zoom,
 						   [[mapView tileSource] shortAttribution]
 						   ]];
 }

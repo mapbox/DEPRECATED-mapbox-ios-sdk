@@ -5,6 +5,8 @@
 
 #import "FlipsideViewController.h"
 #import "MarkerMurderAppDelegate.h"
+#import "MainViewController.h"
+#import "RootViewController.h"
 
 @implementation FlipsideViewController
 

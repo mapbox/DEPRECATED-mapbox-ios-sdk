@@ -54,6 +54,7 @@
     image = [tileCache cachedImage:tile withCacheKey:[self uniqueTilecacheKey]];
     if (image) return image;
 
+#warning TODO: Notifications
     NSData *tileData = [NSData dataWithContentsOfURL:[self URLForTile:tile]];
     if (!tileData) return [RMTileImage errorTile];
 

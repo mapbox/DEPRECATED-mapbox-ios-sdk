@@ -43,24 +43,16 @@
 
 #import "RMTileCache.h"
 #import "RMTileSource.h"
-#import "RMMapBaseView.h"
+
+#import "RMMapTiledLayerView.h"
 
 #pragma mark --- begin constants ----
 
-#define kDefaultDecelerationFactor .80f
-#define kMinDecelerationDelta 0.6f
-#define kDecelerationTimerInterval 0.04f
-
-#define kZoomAnimationStepTime 0.03f
-#define kZoomAnimationAnimationTime 0.1f
 #define kiPhoneMilimeteresPerPixel .1543
 #define kZoomRectPixelBuffer 50
 
-#define kMoveAnimationDuration 0.5f
-#define kMoveAnimationStepDuration 0.04f
-
-#define kDefaultInitialLatitude -33.858771
-#define kDefaultInitialLongitude 151.201596
+#define kDefaultInitialLatitude 47.56
+#define kDefaultInitialLongitude 10.22
 
 #define kDefaultMinimumZoomLevel 0.0
 #define kDefaultMaximumZoomLevel 25.0
@@ -72,14 +64,7 @@
 
 @property (nonatomic, retain) RMMapLayer *overlay;
 
-// methods for post-touch deceleration
-- (void)startDecelerationWithDelta:(CGSize)delta;
-- (void)incrementDeceleration:(NSTimer *)timer;
-- (void)stopDeceleration;
-- (void)stopMoveAnimation;
-
-- (void)animationFinishedWithZoomFactor:(float)zoomFactor near:(CGPoint)p;
-- (void)animationStepped;
+- (void)recreateMapView;
 
 - (void)correctPositionOfAllAnnotations;
 - (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllLayers;
@@ -90,7 +75,7 @@
 
 @implementation RMMapView
 
-@synthesize enableDragging, enableZoom;
+@synthesize enableDragging;
 
 @synthesize boundingMask;
 @synthesize minZoom, maxZoom;
@@ -110,19 +95,15 @@
                             backgroundImage:(UIImage *)backgroundImage
 {
     enableDragging = YES;
-    enableZoom = YES;
-
-    if (enableZoom)
-        [self setMultipleTouchEnabled:TRUE];
+	_constrainMovement = NO;
 
     self.backgroundColor = [UIColor grayColor];
-
-	_constrainMovement = NO;
 
     tileSource = nil;
     projection = nil;
     mercatorToTileProjection = nil;
-    mapBaseView = nil;
+    mapView = nil;
+    tiledLayerView = nil;
     
     screenScale = 1.0;
     if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
@@ -131,7 +112,6 @@
     }
 
     boundingMask = RMMapMinWidthBound;
-
     mercatorToScreenProjection = [[RMMercatorToScreenProjection alloc] initFromProjection:[newTilesource projection] toScreenBounds:[self bounds]];
 
     annotations = [NSMutableArray new];
@@ -140,30 +120,29 @@
     enableClustering = positionClusterMarkersAtTheGravityCenter = NO;
     clusterMarkerSize = CGSizeMake(100.0, 100.0);
 
-    [self setMinZoom:minZoomLevel];
-    [self setMaxZoom:maxZoomLevel];
-    [self setZoom:initialZoomLevel];
-
     [self setTileCache:[[[RMTileCache alloc] init] autorelease]];
     [self setTileSource:newTilesource];
-    
-	RMProjectedPoint initialProjectedCenter = [[self projection] coordinateToProjectedPoint:initialCenterCoordinate];
-    [self setMapCenterProjectedPoint:initialProjectedCenter];
-    [self setMapBaseView:[[[RMMapBaseView alloc] initWithFrame:[self screenBounds] mapView:self initialProjectedCenter:initialProjectedCenter] autorelease]];
 
     [self setBackgroundView:[[[UIView alloc] initWithFrame:[self screenBounds]] autorelease]];
     if (backgroundImage)
         self.backgroundView.layer.contents = (id)backgroundImage.CGImage;
 
-    // Not as a property?
-//    [self setOverlay:[[[RMMapLayer alloc] init] autorelease]];
+    if (minZoomLevel < newTilesource.minZoom) minZoomLevel = newTilesource.minZoom;
+    if (maxZoomLevel > newTilesource.maxZoom) maxZoomLevel = newTilesource.maxZoom;
+    [self setMinZoom:minZoomLevel];
+    [self setMaxZoom:maxZoomLevel];
+    [self setZoom:initialZoomLevel];
+
+    RMProjectedPoint initialProjectedCenter = [[self projection] coordinateToProjectedPoint:initialCenterCoordinate];
+    [self setMapCenterProjectedPoint:initialProjectedCenter];
+    [self recreateMapView];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleMemoryWarningNotification:)
                                                  name:UIApplicationDidReceiveMemoryWarningNotification
                                                object:nil];
 
-    RMLog(@"Map initialised. tileSource:%@, minZoom:%.0f, maxZoom:%.0f", tileSource, [self minZoom], [self maxZoom]);
+    RMLog(@"Map initialised. tileSource:%@, minZoom:%.0f, maxZoom:%.0f, zoom:%.0f", tileSource, [self minZoom], [self maxZoom], [self zoom]);
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -238,10 +217,9 @@
     // only change if the frame changes and not during initialization
     if (!CGRectEqualToRect(r, frame)) {
         CGRect bounds = CGRectMake(0, 0, frame.size.width, frame.size.height);
-        [mercatorToScreenProjection setScreenBounds:bounds];
         backgroundView.frame = bounds;
+        mapView.frame = bounds;
         overlay.frame = bounds;
-        [mapBaseView setFrame:bounds];
         [self correctPositionOfAllAnnotations];
     }
 }
@@ -251,8 +229,8 @@
     LogMethod();
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self setDelegate:nil];
-    [self stopDeceleration];
-    [self setMapBaseView:nil];
+    [mapView release]; mapView = nil;
+    [tiledLayerView release]; tiledLayerView = nil;
     [self setTileCache:nil];
     [projection release]; projection = nil;
     [mercatorToTileProjection release]; mercatorToTileProjection = nil;
@@ -414,128 +392,88 @@
 #pragma mark -
 #pragma mark Movement
 
-- (void)moveToProjectedPoint:(RMProjectedPoint)aPoint
+- (CLLocationCoordinate2D)mapCenterCoordinate
+{
+    return [[self projection] projectedPointToCoordinate:[self mapCenterProjectedPoint]];
+}
+
+- (void)setMapCenterCoordinate:(CLLocationCoordinate2D)centerCoordinate
+{
+    [self setMapCenterProjectedPoint:[[self projection] coordinateToProjectedPoint:centerCoordinate]];
+}
+
+// ===
+
+- (RMProjectedPoint)mapCenterProjectedPoint
+{
+    RMProjectedRect planetBounds = [RMProjection googleProjection].planetBounds;
+    double metersPerPixel = planetBounds.size.width / mapView.contentSize.width;
+
+    CGPoint center = CGPointMake(mapView.contentOffset.x + mapView.bounds.size.width/2.0, mapView.contentSize.height - (mapView.contentOffset.y + mapView.bounds.size.height/2.0));
+
+    RMProjectedPoint normalizedProjectedPoint;
+    normalizedProjectedPoint.x = (center.x * metersPerPixel) - fabs(planetBounds.origin.x);
+    normalizedProjectedPoint.y = (center.y * metersPerPixel) - fabs(planetBounds.origin.y);
+
+    NSLog(@"centerProjectedPoint: {%f,%f}", normalizedProjectedPoint.x, normalizedProjectedPoint.y);
+
+    return normalizedProjectedPoint;
+}
+
+- (void)setMapCenterProjectedPoint:(RMProjectedPoint)centerProjectedPoint animated:(BOOL)animated
+{
+    if (![self tileSourceBoundsContainProjectedPoint:centerProjectedPoint])
+        return;
+
+    NSLog(@"Current contentSize: {%.0f,%.0f}, zoom: %f", mapView.contentSize.width, mapView.contentSize.height, self.zoom);
+    
+    RMProjectedRect planetBounds = [RMProjection googleProjection].planetBounds;
+    double metersPerPixel = planetBounds.size.width / mapView.contentSize.width;
+    
+	RMProjectedPoint normalizedProjectedPoint;
+	normalizedProjectedPoint.x = centerProjectedPoint.x + fabs(planetBounds.origin.x);
+	normalizedProjectedPoint.y = centerProjectedPoint.y + fabs(planetBounds.origin.y);
+    
+    [mapView setContentOffset:CGPointMake(normalizedProjectedPoint.x / metersPerPixel - mapView.bounds.size.width/2.0, mapView.contentSize.height - ((normalizedProjectedPoint.y / metersPerPixel) + mapView.bounds.size.height/2.0)) animated:animated];
+    
+    NSLog(@"setMapCenterProjectedPoint: {%f,%f} -> {%.0f,%.0f}", centerProjectedPoint.x, centerProjectedPoint.y, mapView.contentOffset.x, mapView.contentOffset.y);
+
+    [self correctPositionOfAllAnnotations];
+}
+
+- (void)setMapCenterProjectedPoint:(RMProjectedPoint)centerProjectedPoint
+{
+    [self setMapCenterProjectedPoint:centerProjectedPoint animated:NO];
+}
+
+// ===
+
+- (void)moveToProjectedPoint:(RMProjectedPoint)aPoint animated:(BOOL)animated
 {
     if (_delegateHasBeforeMapMove) [delegate beforeMapMove:self];
-    [self setMapCenterProjectedPoint:aPoint];
+    [self setMapCenterProjectedPoint:aPoint animated:animated];
     if (_delegateHasAfterMapMove) [delegate afterMapMove:self];
     if (_delegateHasMapViewRegionDidChange) [delegate mapViewRegionDidChange:self];
+}
+
+- (void)moveToProjectedPoint:(RMProjectedPoint)aPoint
+{
+    [self moveToProjectedPoint:aPoint animated:NO];
 }
 
 - (void)moveToCoordinate:(CLLocationCoordinate2D)coordinate
 {
-    [self stopDeceleration];
-    if (_moveAnimationTimer != nil) {
-        [_moveAnimationTimer invalidate]; _moveAnimationTimer = nil;
-    } else {
-        if (_delegateHasBeforeMapMove) [delegate beforeMapMove:self];
-    }
-
-	RMProjectedPoint projectedPoint = [[self projection] coordinateToProjectedPoint:coordinate];
-	[self setMapCenterProjectedPoint:projectedPoint];
-    if (_delegateHasAfterMapMove) [delegate afterMapMove:self];
-    if (_delegateHasMapViewRegionDidChange) [delegate mapViewRegionDidChange:self];
-}
-
-- (void)moveBy:(CGSize)delta andCorrectAllAnnotations:(BOOL)correctAllSublayers
-{
-    RMProjectedPoint projectedCenter = [mercatorToScreenProjection projectedCenter];
-    RMProjectedSize XYDelta = [mercatorToScreenProjection projectScreenSizeToProjectedSize:delta];
-    projectedCenter.x = projectedCenter.x - XYDelta.width;
-    projectedCenter.y = projectedCenter.y - XYDelta.height;
-
-    if (![self tileSourceBoundsContainProjectedPoint:projectedCenter])
-        return;
-
-    [mercatorToScreenProjection moveScreenBy:delta];
-    [self correctPositionOfAllAnnotationsIncludingInvisibles:correctAllSublayers];
-}
-
-// from http://iphonedevelopment.blogspot.com/2010/12/more-animation-curves-than-you-can.html
-double CubicEaseInOut(double t, double start, double end)
-{
-    if (t <= 0.0) return start;
-    else if (t >= 1.0) return end;
-
-    t *= 2.0;
-    if (t < 1.0) return ((end / 2.0) * t * t * t) + start - 1.0;
-    t -= 2.0;
-    return (end / 2.0) * (t * t * t + 2.0) + start - 1.0;
-}
-
-double CubicEaseOut(double t, double start, double end)
-{
-    if (t <= 0.0) return start;
-    else if (t >= 1.0) return end;
-
-    t--;
-    return end * (t * t * t + 1.0) + start - 1.0;
-}
-
-- (void)stopMoveAnimation
-{
-    if (_moveAnimationTimer != nil) {
-        [_moveAnimationTimer invalidate]; _moveAnimationTimer = nil;
-
-        if (_delegateHasAfterMapMove) [delegate afterMapMove:self];
-        if (_delegateHasAfterMapMoveDeceleration) [delegate afterMapMoveDeceleration:self];
-        if (_delegateHasMapViewRegionDidChange) [delegate mapViewRegionDidChange:self];
-    }
-}
-
-- (void)moveAnimationStep:(NSTimer *)timer
-{
-    if (++_moveAnimationCurrentStep > _moveAnimationSteps) {
-        [self moveToProjectedPoint:_moveAnimationEndPoint];
-        [self stopMoveAnimation];
-        return;
-    }
-
-    double t = _moveAnimationCurrentStep / _moveAnimationSteps;
-
-    RMProjectedPoint nextPoint = RMProjectedPointMake(_moveAnimationStartPoint.x + CubicEaseInOut(t, 0, _moveAnimationEndPoint.x - _moveAnimationStartPoint.x), _moveAnimationStartPoint.y + CubicEaseInOut(t, 0, _moveAnimationEndPoint.y - _moveAnimationStartPoint.y));
-
-    if (fabs(nextPoint.x - _moveAnimationEndPoint.x) < 10.0 && fabs(nextPoint.y - _moveAnimationEndPoint.y) < 10.0) {
-        [self moveToProjectedPoint:_moveAnimationEndPoint];
-        [self stopMoveAnimation];
-        return;
-    }
-
-    // RMLog(@"Time t=%.2f: (%f,%f) < (%f,%f) < (%f,%f)", t, _moveAnimationStartPoint.easting, _moveAnimationStartPoint.northing, nextPoint.easting, nextPoint.northing, _moveAnimationEndPoint.easting, _moveAnimationEndPoint.northing);
-
-    [mercatorToScreenProjection setProjectedCenter:nextPoint];
-    [self correctPositionOfAllAnnotationsIncludingInvisibles:NO];
+    [self moveToProjectedPoint:[[self projection] coordinateToProjectedPoint:coordinate]];
 }
 
 - (void)moveToCoordinate:(CLLocationCoordinate2D)coordinate animated:(BOOL)animated
 {
-    [self stopDeceleration];
-    [self stopMoveAnimation];
-
-    if (!animated) {
-        [self moveToCoordinate:coordinate];
-        return;
-    }
-
-    _moveAnimationStartPoint = [mercatorToScreenProjection projectedCenter];
-    _moveAnimationEndPoint = [[self projection] coordinateToProjectedPoint:coordinate];
-
-    if (![self tileSourceBoundsContainProjectedPoint:_moveAnimationEndPoint])
-        return;
-
-    _moveAnimationSteps = roundf(kMoveAnimationDuration / kMoveAnimationStepDuration);
-    _moveAnimationCurrentStep = 0.0;
-
-    if (_delegateHasBeforeMapMove) [delegate beforeMapMove:self];
-
-    _moveAnimationTimer = [NSTimer scheduledTimerWithTimeInterval:kMoveAnimationStepDuration
-                                                           target:self
-                                                         selector:@selector(moveAnimationStep:)
-                                                         userInfo:nil
-                                                          repeats:YES];
+    [self moveToProjectedPoint:[[self projection] coordinateToProjectedPoint:coordinate] animated:animated];
 }
 
-- (void)moveBy:(CGSize)delta isAnimationStep:(BOOL)isAnimationStep
+// ===
+
+- (void)moveBy:(CGSize)delta
 {
     if (_constrainMovement)
     {
@@ -582,14 +520,11 @@ double CubicEaseOut(double t, double start, double end)
     }
 
     if (_delegateHasBeforeMapMove) [delegate beforeMapMove:self];
-    [self moveBy:delta andCorrectAllAnnotations:!isAnimationStep];
+//    [self moveBy:delta andCorrectAllAnnotations:!isAnimationStep];
     if (_delegateHasAfterMapMove) [delegate afterMapMove:self];
 }
 
-- (void)moveBy:(CGSize)delta
-{
-    [self moveBy:delta isAnimationStep:NO];
-}
+// ===
 
 - (void)setConstraintsSouthWest:(CLLocationCoordinate2D)sw northEeast:(CLLocationCoordinate2D)ne
 {
@@ -716,30 +651,6 @@ double CubicEaseOut(double t, double start, double end)
 
     if ([self shouldZoomToTargetZoom:targetZoom withZoomFactor:zoomFactor])
     {
-        if (animated)
-        {
-            // goal is to complete the animation in animTime seconds
-            double nSteps = round(kZoomAnimationAnimationTime / kZoomAnimationStepTime);
-            double zoomIncr = zoomDelta / nSteps;
-
-            NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                                      [NSNumber numberWithDouble:zoomIncr], @"zoomIncr",
-                                      [NSNumber numberWithDouble:targetZoom], @"targetZoom",
-                                      [NSValue valueWithCGPoint:pivot], @"pivot",
-                                      [NSNumber numberWithFloat:zoomFactor], @"factor",
-                                      callback, @"callback",
-                                      nil];
-            [NSTimer scheduledTimerWithTimeInterval:kZoomAnimationStepTime
-                                             target:self
-                                           selector:@selector(animatedZoomStep:)
-                                           userInfo:userInfo
-                                            repeats:YES];
-        }
-        else
-        {
-            [mercatorToScreenProjection zoomScreenByFactor:zoomFactor near:pivot];
-            [self correctPositionOfAllAnnotationsIncludingInvisibles:!isAnimationStep];
-        }
     }
     else
     {
@@ -753,45 +664,6 @@ double CubicEaseOut(double t, double start, double end)
 - (void)zoomContentByFactor:(float)zoomFactor near:(CGPoint)pivot animated:(BOOL)animated
 {
     [self zoomContentByFactor:zoomFactor near:pivot animated:animated withCallback:nil isAnimationStep:NO];
-}
-
-- (void)animationStepped
-{
-    if (_delegateHasMapViewRegionDidChange) [delegate mapViewRegionDidChange:self];
-}
-
-- (void)animationFinishedWithZoomFactor:(float)zoomFactor near:(CGPoint)p
-{
-    if (_delegateHasAfterMapZoomByFactor)
-        [delegate afterMapZoom:self byFactor:zoomFactor near:p];
-}
-
-- (void)animatedZoomStep:(NSTimer *)timer
-{
-    double zoomIncr = [[[timer userInfo] objectForKey:@"zoomIncr"] doubleValue];
-    double targetZoom = [[[timer userInfo] objectForKey:@"targetZoom"] doubleValue];
-
-    NSDictionary *userInfo = [[[timer userInfo] retain] autorelease];
-    RMMapView *callback = [userInfo objectForKey:@"callback"];
-
-    if ((zoomIncr > 0 && [self zoom] >= targetZoom-1.0e-6) || (zoomIncr < 0 && [self zoom] <= targetZoom+1.0e-6))
-    {
-        if ([self zoom] != targetZoom)
-            [self setZoom:targetZoom];
-
-        [timer invalidate];	// ASAP
-        if ([callback respondsToSelector:@selector(animationFinishedWithZoomFactor:near:)])
-            [callback animationFinishedWithZoomFactor:[[userInfo objectForKey:@"factor"] floatValue] near:[[userInfo objectForKey:@"pivot"] CGPointValue]];
-
-        [self correctPositionOfAllAnnotationsIncludingInvisibles:YES];
-    }
-    else
-    {
-        float zoomFactorStep = exp2f(zoomIncr);
-        [self zoomContentByFactor:zoomFactorStep near:[[[timer userInfo] objectForKey:@"pivot"] CGPointValue] animated:NO withCallback:nil isAnimationStep:YES];
-        if ([callback respondsToSelector:@selector(animationStepped)])
-            [callback animationStepped];
-    }
 }
 
 - (float)nextNativeZoomFactor
@@ -986,7 +858,7 @@ double CubicEaseOut(double t, double start, double end)
         [self zoomWithProjectedBounds:zoomRect];
     }
 
-    [self moveBy:CGSizeZero andCorrectAllAnnotations:YES];
+    [self moveBy:CGSizeZero];
 }
 
 - (void)zoomWithProjectedBounds:(RMProjectedRect)bounds
@@ -1004,6 +876,63 @@ double CubicEaseOut(double t, double start, double end)
 }
 
 #pragma mark -
+#pragma mark MapView (ScrollView)
+
+- (void)recreateMapView
+{
+    [mapView removeFromSuperview];
+    [mapView release]; mapView = nil;
+    [tiledLayerView release]; tiledLayerView = nil;
+
+    int tileSideLength = [[self tileSource] tileSideLength];
+    CGSize contentSize = CGSizeMake(2.0*tileSideLength, 2.0*tileSideLength); // zoom level 1
+    
+    mapView = [[UIScrollView alloc] initWithFrame:[self screenBounds]];
+    mapView.delegate = self;
+    mapView.backgroundColor = [UIColor clearColor];
+    mapView.showsVerticalScrollIndicator = NO;
+    mapView.showsHorizontalScrollIndicator = NO;
+    mapView.scrollsToTop = NO;
+//    mapView.delaysContentTouches = NO;
+    mapView.contentSize = contentSize;
+    mapView.minimumZoomScale = [self minZoom];
+    mapView.maximumZoomScale = 1 << (int)[self maxZoom];
+    mapView.zoomScale = [self zoom];
+    mapView.contentOffset = CGPointMake(0.0, 0.0);
+
+    tiledLayerView = [[RMMapTiledLayerView alloc] initWithFrame:CGRectMake(0.0, 0.0, contentSize.width, contentSize.height) mapView:self];
+    tiledLayerView.delegate = self;
+    ((CATiledLayer *)tiledLayerView.layer).tileSize = CGSizeMake(tileSideLength, tileSideLength);
+    [mapView addSubview:tiledLayerView];
+
+    NSLog(@"Initialization contentSize: {%.0f,%.0f}, zoom: %f", mapView.contentSize.width, mapView.contentSize.height, self.zoom);
+
+    if (backgroundView)
+        [self insertSubview:mapView aboveSubview:backgroundView];
+    else
+        [self insertSubview:mapView atIndex:0];
+}
+
+- (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
+{
+    return tiledLayerView;
+}
+
+- (void)tiledLayerView:(RMMapTiledLayerView *)aTiledLayerView singleTapAtPoint:(CGPoint)aPoint
+{
+}
+
+- (void)tiledLayerView:(RMMapTiledLayerView *)aTiledLayerView doubleTapAtPoint:(CGPoint)aPoint
+{
+    [self zoomInToNextNativeZoomAt:aPoint animated:YES];
+}
+
+- (void)tiledLayerView:(RMMapTiledLayerView *)aTiledLayerView twoFingerTapAtPoint:(CGPoint)aPoint
+{
+    [self zoomOutToNextNativeZoomAt:aPoint animated:YES];
+}
+
+#pragma mark -
 #pragma mark Properties
 
 - (id <RMTileSource>)tileSource
@@ -1016,17 +945,12 @@ double CubicEaseOut(double t, double start, double end)
     if (tileSource == newTileSource)
         return;
 
-    minZoom = newTileSource.minZoom;
-    maxZoom = newTileSource.maxZoom;
-
+    [self setMinZoom:newTileSource.minZoom];
+    [self setMaxZoom:newTileSource.maxZoom];
     [self setZoom:[self zoom]]; // setZoom clamps zoom level to min/max limits
 
     [tileSource autorelease];
     tileSource = [newTileSource retain];
-
-    if (([tileSource minZoom] - minZoom) <= 1.0) {
-        RMLog(@"Graphics & memory are overly taxed if [contents minZoom] is more than 1.5 smaller than [tileSource minZoom]");
-    }
 
     [projection release];
     projection = [[tileSource projection] retain];
@@ -1036,30 +960,6 @@ double CubicEaseOut(double t, double start, double end)
     tileSourceProjectedBounds = (RMProjectedRect)[self projectedRectFromLatitudeLongitudeBounds:[tileSource latitudeLongitudeBoundingBox]];
 }
 
-- (RMMapBaseView *)mapBaseView
-{
-    return [[mapBaseView retain] autorelease];
-}
-
-- (void)setMapBaseView:(RMMapBaseView *)newMapBaseView
-{
-    if (mapBaseView == newMapBaseView)
-        return;
-
-    [mapBaseView removeFromSuperview];
-    [mapBaseView release];
-
-    mapBaseView = [newMapBaseView retain];
-    if (mapBaseView == nil)
-        return;
-
-    [mapBaseView setFrame:[self screenBounds]];
-
-    if (backgroundView)
-        [self insertSubview:mapBaseView aboveSubview:backgroundView];
-    else
-        [self insertSubview:mapBaseView atIndex:0];
-}
 
 - (UIView *)backgroundView
 {
@@ -1105,37 +1005,12 @@ double CubicEaseOut(double t, double start, double end)
 //    if (backgroundView != nil)
 //        [self.layer insertSublayer:overlay above:background];
 //    else
-        [self.layer insertSublayer:overlay atIndex:0];
+//        [self.layer insertSublayer:overlay atIndex:0];
 }
 
 - (RMMapLayer *)overlay
 {
     return [[overlay retain] autorelease];
-}
-
-- (CLLocationCoordinate2D)mapCenterCoordinate
-{
-    return [projection projectedPointToCoordinate:[mercatorToScreenProjection projectedCenter]];
-}
-
-- (void)setMapCenterCoordinate:(CLLocationCoordinate2D)center
-{
-    [self moveToCoordinate:center];
-}
-
-- (RMProjectedPoint)mapCenterProjectedPoint
-{
-    return [mercatorToScreenProjection projectedCenter];
-}
-
-- (void)setMapCenterProjectedPoint:(RMProjectedPoint)projectedPoint
-{
-    if (![self tileSourceBoundsContainProjectedPoint:projectedPoint])
-        return;
-
-    [mercatorToScreenProjection setProjectedCenter:projectedPoint];
-    [mapBaseView setProjectedCenter:projectedPoint];
-    [self correctPositionOfAllAnnotations];
 }
 
 - (RMProjectedRect)projectedBounds
@@ -1169,9 +1044,6 @@ double CubicEaseOut(double t, double start, double end)
 
 - (void)setMetersPerPixel:(float)newMPP
 {
-    float zoomFactor = self.metersPerPixel / newMPP;
-    CGPoint pivot = CGPointZero;
-
     [mercatorToScreenProjection setMetersPerPixel:newMPP];
     [self correctPositionOfAllAnnotations];
 }
@@ -1189,23 +1061,31 @@ double CubicEaseOut(double t, double start, double end)
     return truescaleDenominator;
 }
 
-- (void)setMaxZoom:(float)newMaxZoom
+- (float)minZoom
 {
-    maxZoom = newMaxZoom;
+    return minZoom;
 }
 
 - (void)setMinZoom:(float)newMinZoom
 {
     minZoom = newMinZoom;
+    mapView.minimumZoomScale = 1<<(int)(newMinZoom - 1.0);
+}
 
-    if (!tileSource || (([tileSource minZoom] - minZoom) <= 1.0)) {
-        RMLog(@"Graphics & memory are overly taxed if [contents minZoom] is more than 1.5 smaller than [tileSource minZoom]");
-    }
+- (float)maxZoom
+{
+    return maxZoom;
+}
+
+- (void)setMaxZoom:(float)newMaxZoom
+{
+    maxZoom = newMaxZoom;
+    mapView.maximumZoomScale = 1<<(int)(newMaxZoom - 1.0);
 }
 
 - (float)zoom
 {
-    return [mercatorToTileProjection calculateZoomFromScale:[mercatorToScreenProjection metersPerPixel]];
+    return log2f(mapView.zoomScale) + 1.0;
 }
 
 // if #zoom is outside of range #minZoom to #maxZoom, zoom level is clamped to that range.
@@ -1214,8 +1094,10 @@ double CubicEaseOut(double t, double start, double end)
     zoom = (zoom > maxZoom) ? maxZoom : zoom;
     zoom = (zoom < minZoom) ? minZoom : zoom;
 
-    float scale = [mercatorToTileProjection calculateScaleFromZoom:zoom];
-    [self setMetersPerPixel:scale];
+    mapView.zoomScale = 1<<(int)(zoom - 1.0);
+
+//    float scale = [mercatorToTileProjection calculateScaleFromZoom:zoom];
+//    [self setMetersPerPixel:scale];
 }
 
 - (RMProjection *)projection
@@ -1320,7 +1202,16 @@ double CubicEaseOut(double t, double start, double end)
 
 - (void)correctScreenPosition:(RMAnnotation *)annotation
 {
-    annotation.position = [[self mercatorToScreenProjection] projectProjectedPoint:[annotation projectedLocation]];
+    RMProjectedRect planetBounds = [RMProjection googleProjection].planetBounds;
+    double metersPerPixel = planetBounds.size.width / mapView.contentSize.width;
+
+	RMProjectedPoint normalizedProjectedPoint;
+	normalizedProjectedPoint.x = annotation.projectedLocation.x + fabs(planetBounds.origin.x);
+	normalizedProjectedPoint.y = annotation.projectedLocation.y + fabs(planetBounds.origin.y);
+
+    annotation.position = CGPointMake(normalizedProjectedPoint.x / metersPerPixel, mapView.contentSize.height - (normalizedProjectedPoint.y / metersPerPixel));
+    annotation.layer.transform = CATransform3DMakeScale(100.0, 100.0, 1.0);
+    NSLog(@"Add annotation at {%f,%f} in mapView {%f,%f}", annotation.position.x, annotation.position.y, mapView.contentSize.width, mapView.contentSize.height);
 }
 
 - (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllAnnotations
@@ -1449,7 +1340,7 @@ double CubicEaseOut(double t, double start, double end)
         {
             annotation.layer = [delegate mapView:self layerForAnnotation:annotation];
             if (annotation.layer) {
-                [overlay addSublayer:annotation.layer];
+                [tiledLayerView.layer addSublayer:annotation.layer];
                 [visibleAnnotations addObject:annotation];
             }
         }

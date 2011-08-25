@@ -157,18 +157,18 @@
 
 #pragma mark Map Movement and Scaling
 
-- (void)moveBy:(CGSize)delta
-{
-    if (enableDragging) {
-        [super moveBy:delta];
-    }
-}
-
-- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center
-{
-    [super zoomByFactor:zoomFactor near:center];
-    [self updateCirclePath];
-}
+//- (void)moveBy:(CGSize)delta
+//{
+//    if (enableDragging) {
+//        [super moveBy:delta];
+//    }
+//}
+//
+//- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center
+//{
+//    [super zoomByFactor:zoomFactor near:center];
+//    [self updateCirclePath];
+//}
 
 - (void)moveToCoordinate:(CLLocationCoordinate2D)newCoordinate
 {
