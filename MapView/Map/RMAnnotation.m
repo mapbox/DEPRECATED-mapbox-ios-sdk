@@ -96,7 +96,7 @@
 {
     coordinate = aCoordinate;
     self.projectedLocation = [[mapView projection] coordinateToProjectedPoint:aCoordinate];
-    self.position = [[mapView mercatorToScreenProjection] projectProjectedPoint:self.projectedLocation];
+    self.position = [mapView projectedPointToPixel:self.projectedLocation];
 
     if (!self.hasBoundingBox)
         self.projectedBoundingBox = RMProjectedRectMake(self.projectedLocation.x, self.projectedLocation.y, 1.0, 1.0);
@@ -133,7 +133,7 @@
 - (BOOL)isAnnotationWithinBounds:(CGRect)bounds
 {
     if (self.hasBoundingBox) {
-        RMProjectedRect projectedScreenBounds = [[mapView mercatorToScreenProjection] projectedBounds];
+        RMProjectedRect projectedScreenBounds = [mapView projectedBounds];
         return RMProjectedRectIntersectsProjectedRect(projectedScreenBounds, projectedBoundingBox);
     } else {
         return CGRectContainsPoint(bounds, self.position);
@@ -142,7 +142,7 @@
 
 - (BOOL)isAnnotationOnScreen
 {
-    CGRect screenBounds = [[mapView mercatorToScreenProjection] screenBounds];
+    CGRect screenBounds = [mapView bounds];
     return [self isAnnotationWithinBounds:screenBounds];
 }
 

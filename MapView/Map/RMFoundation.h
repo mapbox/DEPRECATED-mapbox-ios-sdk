@@ -30,6 +30,10 @@
 
 #include <stdbool.h>
 
+#if __OBJC__
+#import <CoreLocation/CoreLocation.h>
+#endif
+
 /*! \struct RMProjectedPoint 
  \brief coordinates, in projected meters, paralleling CGPoint */
 typedef struct {
@@ -48,6 +52,15 @@ typedef struct {
 	RMProjectedPoint origin;
 	RMProjectedSize size;
 } RMProjectedRect;
+
+#if __OBJC__
+/*! \struct RMSphericalTrapezium
+ \brief a rectangle, specified by two corner coordinates */
+typedef struct {
+	CLLocationCoordinate2D southWest;
+	CLLocationCoordinate2D northEast;
+} RMSphericalTrapezium;
+#endif
 
 RMProjectedPoint RMScaleProjectedPointAboutPoint(RMProjectedPoint point, float factor, RMProjectedPoint pivot);
 RMProjectedRect  RMScaleProjectedRectAboutPoint(RMProjectedRect rect, float factor, RMProjectedPoint pivot);

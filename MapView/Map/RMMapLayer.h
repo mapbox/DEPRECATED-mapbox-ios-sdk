@@ -52,7 +52,4 @@
 @property (nonatomic, assign) BOOL enableRotation;
 @property (nonatomic, retain) id userInfo;
 
-- (void)moveBy:(CGSize)delta;
-- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center;
-
 @end

@@ -40,7 +40,7 @@
 
 @protocol RMTileSource <NSObject>
 
-- (UIImage *)imageForTileImage:(RMTileImage *)tileImage addToCache:(RMTileCache *)tileCache withCacheKey:(NSString *)aCacheKey;
+- (UIImage *)imageForTile:(RMTile)tile inCache:(RMTileCache *)tileCache;
 
 - (id <RMMercatorToTileProjection>)mercatorToTileProjection;
 - (RMProjection *)projection;

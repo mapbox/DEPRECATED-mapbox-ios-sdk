@@ -40,10 +40,9 @@
 
 - (void)beforeMapMove:(RMMapView *)map;
 - (void)afterMapMove:(RMMapView *)map;
-- (void)afterMapMoveDeceleration:(RMMapView *)map;
 
-- (void)beforeMapZoom:(RMMapView *)map byFactor:(float)zoomFactor near:(CGPoint)center;
-- (void)afterMapZoom:(RMMapView *)map byFactor:(float)zoomFactor near:(CGPoint)center;
+- (void)beforeMapZoom:(RMMapView *)map;
+- (void)afterMapZoom:(RMMapView *)map;
 
 /*
  \brief Tells the delegate that the region displayed by the map view just changed.
@@ -62,7 +61,5 @@
 - (void)tapOnLabelForAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map;
 - (BOOL)mapView:(RMMapView *)map shouldDragAnnotation:(RMAnnotation *)annotation withEvent:(UIEvent *)event;
 - (void)mapView:(RMMapView *)map didDragAnnotation:(RMAnnotation *)annotation withEvent:(UIEvent *)event;
-
-- (void)afterMapTouch:(RMMapView *)map;
 
 @end

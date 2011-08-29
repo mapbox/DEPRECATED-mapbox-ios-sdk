@@ -25,13 +25,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import <QuartzCore/QuartzCore.h>
-
-#import "RMGlobalConstants.h"
 #import "RMTileImage.h"
-#import "RMTileLoader.h"
-#import "RMTileCache.h"
-#import "RMPixel.h"
 
 static BOOL _didLoadErrorTile = NO;
 static BOOL _didLoadMissingTile = NO;
@@ -39,10 +33,6 @@ static UIImage *_errorTile = nil;
 static UIImage *_missingTile = nil;
 
 @implementation RMTileImage
-
-@synthesize screenLocation, tile, layer, loadingCancelled;
-
-#pragma mark -
 
 + (UIImage *)errorTile
 {
@@ -56,6 +46,14 @@ static UIImage *_missingTile = nil;
     _didLoadErrorTile = YES;
 
     return _errorTile;
+}
+
++ (void)setErrorTile:(UIImage *)newErrorTile
+{
+    if (_errorTile == newErrorTile) return;
+    [_errorTile autorelease];
+    _errorTile = [newErrorTile retain];
+    _didLoadErrorTile = YES;
 }
 
 + (UIImage *)missingTile
@@ -72,145 +70,12 @@ static UIImage *_missingTile = nil;
     return _missingTile;
 }
 
-#pragma mark -
-
-+ (RMTileImage *)tileImageWithTile:(RMTile)tile
++ (void)setMissingTile:(UIImage *)newMissingTile
 {
-    return [[[RMTileImage alloc] initWithTile:tile] autorelease];
-}
-
-- (id)initWithTile:(RMTile)_tile
-{
-    if (!(self = [super init]))
-        return nil;
-
-    tile = _tile;
-    layer = nil;
-    screenLocation = CGRectZero;
-    loadingCancelled = NO;
-
-    [self makeLayer];
-
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(tileRemovedFromScreen:)
-                                                 name:RMMapImageRemovedFromScreenNotification
-                                               object:self];
-
-    return self;
-}
-
-- (id)init
-{
-    [NSException raise:@"Invalid initialiser" format:@"Use the designated initialiser for TileImage"];
-    [self release];
-    return nil;
-}
-
-- (void)tileRemovedFromScreen:(NSNotification *)notification
-{
-    [self cancelLoading];
-}
-
-- (void)dealloc
-{
-    //	RMLog(@"Removing tile image %d %d %d", tile.x, tile.y, tile.zoom);
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [layer release]; layer = nil;
-
-    [super dealloc];
-}
-
-#pragma mark -
-
-- (void)cancelLoading
-{
-    loadingCancelled = YES;
-    [[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadingCancelledNotification object:self];
-}
-
-- (void)updateWithImage:(UIImage *)image andNotifyListeners:(BOOL)notifyListeners
-{
-    dispatch_async(dispatch_get_main_queue(), ^{
-        layer.contents = (id)[image CGImage];
-
-        if (notifyListeners) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:RMMapImageLoadedNotification object:self userInfo:nil];
-        }
-    });
-}
-
-- (BOOL)isLoaded
-{
-    return (layer != nil && layer.contents != NULL);
-}
-
-- (NSUInteger)hash
-{
-    return (NSUInteger)RMTileHash(tile);
-}
-
-- (BOOL)isEqual:(id)anObject
-{
-    if (![anObject isKindOfClass:[RMTileImage class]])
-        return NO;
-
-    return RMTilesEqual(tile, [(RMTileImage *)anObject tile]);
-}
-
-- (void)makeLayer
-{
-    if (layer == nil)
-    {
-        layer = [[CALayer alloc] init];
-        layer.contents = nil;
-        layer.anchorPoint = CGPointZero;
-        layer.bounds = CGRectMake(0, 0, screenLocation.size.width, screenLocation.size.height);
-        layer.position = screenLocation.origin;
-        layer.edgeAntialiasingMask = 0;
-
-        NSMutableDictionary *customActions = [NSMutableDictionary dictionaryWithDictionary:[layer actions]];
-        [customActions setObject:[NSNull null] forKey:@"position"];
-        [customActions setObject:[NSNull null] forKey:@"bounds"];
-        [customActions setObject:[NSNull null] forKey:kCAOnOrderOut];
-        [customActions setObject:[NSNull null] forKey:kCAOnOrderIn];
-
-        CATransition *reveal = [[CATransition alloc] init];
-        reveal.duration = 0.2;
-        reveal.type = kCATransitionFade;
-        [customActions setObject:reveal forKey:@"contents"];
-        [reveal release];
-
-        layer.actions = customActions;
-    }
-}
-
-- (void)moveBy:(CGSize)delta
-{
-    self.screenLocation = RMTranslateCGRectBy(screenLocation, delta);
-}
-
-- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center
-{
-    self.screenLocation = RMScaleCGRectAboutPoint(screenLocation, zoomFactor, center);
-}
-
-- (CGRect)screenLocation
-{
-    return screenLocation;
-}
-
-- (void)setScreenLocation:(CGRect)newScreenLocation
-{
-    //	RMLog(@"location moving from %f %f to %f %f", screenLocation.origin.x, screenLocation.origin.y, newScreenLocation.origin.x, newScreenLocation.origin.y);
-    screenLocation = newScreenLocation;
-
-    if (layer != nil)
-    {
-        // layer.frame = screenLocation;
-        layer.position = screenLocation.origin;
-        layer.bounds = CGRectMake(0, 0, screenLocation.size.width, screenLocation.size.height);
-    }
+    if (_missingTile == newMissingTile) return;
+    [_missingTile autorelease];
+    _missingTile = [newMissingTile retain];
+    _didLoadMissingTile = YES;
 }
 
 @end

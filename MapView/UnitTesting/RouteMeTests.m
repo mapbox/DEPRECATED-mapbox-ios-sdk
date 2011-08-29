@@ -120,7 +120,7 @@
 	
 	[[mapView contents] moveBy:CGSizeMake(-5.0, 0.0)];
 #ifdef DEBUG
-	RMSphericalTrapezium screenLimitsDegrees = [[mapView contents] latitudeLongitudeBoundingBoxForScreen];
+	RMSphericalTrapezium screenLimitsDegrees = [[mapView contents] latitudeLongitudeBoundingBox];
 	RMLog(@"screen limits west: %4.1f east %4.1f", screenLimitsDegrees.southwest.longitude, screenLimitsDegrees.northeast.longitude);
 	RMLog(@"screen limits south: %4.1f north %4.1f", screenLimitsDegrees.southwest.latitude, screenLimitsDegrees.northeast.latitude);
 #endif
@@ -184,7 +184,7 @@
 	
 	[[mapView contents] moveBy:CGSizeMake(-5.0, 0.0)];
 #ifdef DEBUG
-	RMSphericalTrapezium screenLimitsDegrees = [[mapView contents] latitudeLongitudeBoundingBoxForScreen];
+	RMSphericalTrapezium screenLimitsDegrees = [[mapView contents] latitudeLongitudeBoundingBox];
 	RMLog(@"screen limits west: %4.1f east %4.1f", screenLimitsDegrees.southwest.longitude, screenLimitsDegrees.northeast.longitude);
 	RMLog(@"screen limits south: %4.1f north %4.1f", screenLimitsDegrees.southwest.latitude, screenLimitsDegrees.northeast.latitude);
 #endif

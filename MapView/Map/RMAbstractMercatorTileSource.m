@@ -27,7 +27,6 @@
 
 #import "RMAbstractMercatorTileSource.h"
 #import "RMTileImage.h"
-#import "RMTileLoader.h"
 #import "RMFractalTileProjection.h"
 #import "RMTiledLayerController.h"
 #import "RMProjection.h"
@@ -87,7 +86,7 @@
 	return kDefaultLatLonBoundingBox;
 }
 
-- (UIImage *)imageForTileImage:(RMTileImage *)tileImage addToCache:(RMTileCache *)tileCache withCacheKey:(NSString *)aCacheKey
+- (UIImage *)imageForTile:(RMTile)tile inCache:(RMTileCache *)tileCache
 {
 	@throw [NSException exceptionWithName:@"RMAbstractMethodInvocation"
                                    reason:@"imageForTile: invoked on AbstractMercatorWebSource. Override this method when instantiating abstract class."

@@ -6,6 +6,7 @@
 #import "FlipsideViewController.h"
 #import "SampleMapAppDelegate.h"
 #import "MainViewController.h"
+#import "RootViewController.h"
 
 @implementation FlipsideViewController
 
@@ -32,7 +33,7 @@
 
 - (RMMapView *)mapView
 {
-    return [[[(SampleMapAppDelegate *)[[UIApplication sharedApplication] delegate] rootViewController]  mainViewController] mapView];
+    return [[[((SampleMapAppDelegate *)[[UIApplication sharedApplication] delegate]) rootViewController] mainViewController] mapView];
 }
 
 - (void)didReceiveMemoryWarning
