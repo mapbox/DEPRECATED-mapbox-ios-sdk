@@ -226,20 +226,20 @@
 - (void)dealloc
 {
     LogMethod();
+    [self setQuadTree:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self setDelegate:nil];
+    [mapScrollView removeObserver:self forKeyPath:@"contentOffset"];
     [mapScrollView release]; mapScrollView = nil;
     [tiledLayerView release]; tiledLayerView = nil;
     [overlayView release]; overlayView = nil;
     [self setTileCache:nil];
+    [annotations release]; annotations = nil;
+    [visibleAnnotations release]; visibleAnnotations = nil;
     [projection release]; projection = nil;
     [mercatorToTileProjection release]; mercatorToTileProjection = nil;
     [tileSource release]; tileSource = nil;
-    [self setOverlay:nil];
     [self setBackgroundView:nil];
-    [annotations release]; annotations = nil;
-    [visibleAnnotations release]; visibleAnnotations = nil;
-    self.quadTree = nil;
     [super dealloc];
 }
 
