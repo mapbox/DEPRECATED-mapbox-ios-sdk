@@ -25,5 +25,5 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-static NSString* const RMSuspendNetworkOperations = @"RMSuspendNetworkOperations";
-static NSString* const RMResumeNetworkOperations = @"RMResumeNetworkOperations";
+static NSString * const RMSuspendNetworkOperations = @"RMSuspendNetworkOperations";
+static NSString * const RMResumeNetworkOperations = @"RMResumeNetworkOperations";

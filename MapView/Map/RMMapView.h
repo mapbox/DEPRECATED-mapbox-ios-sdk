@@ -63,10 +63,8 @@ typedef enum {
 {
     id <RMMapViewDelegate> delegate;
 
-    BOOL enableDragging;
-
     /// projection objects to convert from latitude/longitude to meters,
-    /// from projected meters to tiles and screen coordinates
+    /// from projected meters to tile coordinates
     RMProjection *projection;
     id <RMMercatorToTileProjection> mercatorToTileProjection;
 
@@ -121,12 +119,13 @@ typedef enum {
 @property (nonatomic, assign) id <RMMapViewDelegate> delegate;
 
 // View properties
-@property (nonatomic, assign)   BOOL enableDragging;
-@property (nonatomic, assign)   RMMapDecelerationMode decelerationMode;
+@property (nonatomic, assign) BOOL enableDragging;
+@property (nonatomic, assign) RMMapDecelerationMode decelerationMode;
 
-@property (nonatomic, assign)   CLLocationCoordinate2D mapCenterCoordinate;
-@property (nonatomic, assign)   RMProjectedPoint mapCenterProjectedPoint;
-@property (nonatomic, assign)   RMProjectedRect projectedBounds;
+@property (nonatomic, assign) CLLocationCoordinate2D centerCoordinate;
+@property (nonatomic, assign) RMProjectedPoint centerProjectedPoint;
+@property (nonatomic, assign) RMProjectedRect projectedBounds;
+
 @property (nonatomic, assign)   double metersPerPixel;
 @property (nonatomic, readonly) double scaledMetersPerPixel;
 @property (nonatomic, readonly) double scaleDenominator; /// The denominator in a cartographic scale like 1/24000, 1/50000, 1/2000000.
@@ -137,10 +136,10 @@ typedef enum {
 @property (nonatomic, assign) float minZoom;
 @property (nonatomic, assign) float maxZoom;
 
-@property (nonatomic, retain)   RMQuadTree *quadTree;
-@property (nonatomic, assign)   BOOL enableClustering;
-@property (nonatomic, assign)   BOOL positionClusterMarkersAtTheGravityCenter;
-@property (nonatomic, assign)   CGSize clusterMarkerSize;
+@property (nonatomic, retain) RMQuadTree *quadTree;
+@property (nonatomic, assign) BOOL enableClustering;
+@property (nonatomic, assign) BOOL positionClusterMarkersAtTheGravityCenter;
+@property (nonatomic, assign) CGSize clusterMarkerSize;
 
 @property (nonatomic, readonly) RMProjection *projection;
 @property (nonatomic, readonly) id <RMMercatorToTileProjection> mercatorToTileProjection;
@@ -170,12 +169,10 @@ typedef enum {
 #pragma mark Movement
 
 /// recenter the map on #coordinate, expressed as CLLocationCoordinate2D (latitude/longitude)
-- (void)moveToCoordinate:(CLLocationCoordinate2D)coordinate;
-- (void)moveToCoordinate:(CLLocationCoordinate2D)coordinate animated:(BOOL)animated;
+- (void)setCenterCoordinate:(CLLocationCoordinate2D)coordinate animated:(BOOL)animated;
 
 /// recenter the map on #aPoint, expressed in projected meters
-- (void)moveToProjectedPoint:(RMProjectedPoint)aPoint;
-- (void)moveToProjectedPoint:(RMProjectedPoint)aPoint animated:(BOOL)animated;
+- (void)setCenterProjectedPoint:(RMProjectedPoint)aPoint animated:(BOOL)animated;
 
 - (void)moveBy:(CGSize)delta;
 
@@ -185,17 +182,14 @@ typedef enum {
 #pragma mark -
 #pragma mark Zoom
 
+/// recenter the map on #boundsRect, expressed in projected meters
 - (void)setProjectedBounds:(RMProjectedRect)boundsRect animated:(BOOL)animated;
 
-- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)aPoint;
 - (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center animated:(BOOL)animated;
 
-- (void)zoomInToNextNativeZoomAt:(CGPoint)pivot;
 - (void)zoomInToNextNativeZoomAt:(CGPoint)pivot animated:(BOOL)animated;
-- (void)zoomOutToNextNativeZoomAt:(CGPoint)pivot;
 - (void)zoomOutToNextNativeZoomAt:(CGPoint)pivot animated:(BOOL)animated;
 
-- (void)zoomWithLatitudeLongitudeBoundsSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast;
 - (void)zoomWithLatitudeLongitudeBoundsSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast animated:(BOOL)animated;
 
 - (float)nextNativeZoomFactor;
