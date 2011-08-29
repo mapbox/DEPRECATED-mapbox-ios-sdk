@@ -43,6 +43,11 @@ enum {
     RMMapMinWidthBound	= 2  // Minimum map width when zooming out restricted to view width (default)
 };
 
+typedef enum {
+    RMMapDecelerationNormal,
+    RMMapDecelerationFast
+} RMMapDecelerationMode;
+
 @class RMProjection;
 @class RMTileCache;
 @class RMMapLayer;
@@ -93,18 +98,15 @@ enum {
 @private
     BOOL _delegateHasBeforeMapMove;
     BOOL _delegateHasAfterMapMove;
-    BOOL _delegateHasAfterMapMoveDeceleration;
-    BOOL _delegateHasBeforeMapZoomByFactor;
-    BOOL _delegateHasAfterMapZoomByFactor;
+    BOOL _delegateHasBeforeMapZoom;
+    BOOL _delegateHasAfterMapZoom;
     BOOL _delegateHasMapViewRegionDidChange;
-    BOOL _delegateHasBeforeMapRotate;
-    BOOL _delegateHasAfterMapRotate;
     BOOL _delegateHasDoubleTapOnMap;
     BOOL _delegateHasDoubleTapTwoFingersOnMap;
     BOOL _delegateHasSingleTapOnMap;
     BOOL _delegateHasLongSingleTapOnMap;
-    BOOL _delegateHasTapOnMarker;
-    BOOL _delegateHasTapOnLabelForMarker;
+    BOOL _delegateHasTapOnAnnotation;
+    BOOL _delegateHasTapOnLabelForAnnotation;
     BOOL _delegateHasAfterMapTouch;
     BOOL _delegateHasShouldDragMarker;
     BOOL _delegateHasDidDragMarker;
@@ -120,6 +122,7 @@ enum {
 
 // View properties
 @property (nonatomic, assign)   BOOL enableDragging;
+@property (nonatomic, assign)   RMMapDecelerationMode decelerationMode;
 
 @property (nonatomic, assign)   CLLocationCoordinate2D mapCenterCoordinate;
 @property (nonatomic, assign)   RMProjectedPoint mapCenterProjectedPoint;
@@ -182,6 +185,8 @@ enum {
 #pragma mark -
 #pragma mark Zoom
 
+- (void)setProjectedBounds:(RMProjectedRect)boundsRect animated:(BOOL)animated;
+
 - (void)zoomByFactor:(float)zoomFactor near:(CGPoint)aPoint;
 - (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center animated:(BOOL)animated;
 
@@ -191,7 +196,7 @@ enum {
 - (void)zoomOutToNextNativeZoomAt:(CGPoint)pivot animated:(BOOL)animated;
 
 - (void)zoomWithLatitudeLongitudeBoundsSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast;
-- (void)zoomWithProjectedBounds:(RMProjectedRect)bounds;
+- (void)zoomWithLatitudeLongitudeBoundsSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast animated:(BOOL)animated;
 
 - (float)nextNativeZoomFactor;
 - (float)previousNativeZoomFactor;

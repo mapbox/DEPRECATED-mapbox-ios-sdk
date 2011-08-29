@@ -74,7 +74,7 @@
 
 @implementation RMMapView
 
-@synthesize enableDragging;
+@synthesize enableDragging, decelerationMode;
 
 @synthesize boundingMask;
 @synthesize minZoom, maxZoom;
@@ -132,9 +132,9 @@
     [self setMaxZoom:maxZoomLevel];
     [self setZoom:initialZoomLevel];
 
+    [self recreateMapView];
     RMProjectedPoint initialProjectedCenter = [projection coordinateToProjectedPoint:initialCenterCoordinate];
     [self setMapCenterProjectedPoint:initialProjectedCenter];
-    [self recreateMapView];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleMemoryWarningNotification:)
@@ -275,25 +275,19 @@
 
     _delegateHasBeforeMapMove = [delegate respondsToSelector:@selector(beforeMapMove:)];
     _delegateHasAfterMapMove  = [delegate respondsToSelector:@selector(afterMapMove:)];
-    _delegateHasAfterMapMoveDeceleration = [delegate respondsToSelector:@selector(afterMapMoveDeceleration:)];
 
-    _delegateHasBeforeMapZoomByFactor = [delegate respondsToSelector:@selector(beforeMapZoom:byFactor:near:)];
-    _delegateHasAfterMapZoomByFactor  = [delegate respondsToSelector:@selector(afterMapZoom:byFactor:near:)];
+    _delegateHasBeforeMapZoom = [delegate respondsToSelector:@selector(beforeMapZoom:)];
+    _delegateHasAfterMapZoom  = [delegate respondsToSelector:@selector(afterMapZoom:)];
 
     _delegateHasMapViewRegionDidChange = [delegate respondsToSelector:@selector(mapViewRegionDidChange:)];
-
-    _delegateHasBeforeMapRotate  = [delegate respondsToSelector:@selector(beforeMapRotate:fromAngle:)];
-    _delegateHasAfterMapRotate  = [delegate respondsToSelector:@selector(afterMapRotate:toAngle:)];
 
     _delegateHasDoubleTapOnMap = [delegate respondsToSelector:@selector(doubleTapOnMap:at:)];
     _delegateHasDoubleTapTwoFingersOnMap = [delegate respondsToSelector:@selector(doubleTapTwoFingersOnMap:at:)];
     _delegateHasSingleTapOnMap = [delegate respondsToSelector:@selector(singleTapOnMap:at:)];
     _delegateHasLongSingleTapOnMap = [delegate respondsToSelector:@selector(longSingleTapOnMap:at:)];
 
-    _delegateHasTapOnMarker = [delegate respondsToSelector:@selector(tapOnAnnotation:onMap:)];
-    _delegateHasTapOnLabelForMarker = [delegate respondsToSelector:@selector(tapOnLabelForAnnotation:onMap:)];
-
-    _delegateHasAfterMapTouch  = [delegate respondsToSelector:@selector(afterMapTouch:)];
+    _delegateHasTapOnAnnotation = [delegate respondsToSelector:@selector(tapOnAnnotation:onMap:)];
+    _delegateHasTapOnLabelForAnnotation = [delegate respondsToSelector:@selector(tapOnLabelForAnnotation:onMap:)];
 
     _delegateHasShouldDragMarker = [delegate respondsToSelector:@selector(mapView:shouldDragAnnotation:withEvent:)];
     _delegateHasDidDragMarker = [delegate respondsToSelector:@selector(mapView:didDragAnnotation:withEvent:)];
@@ -417,7 +411,7 @@
     normalizedProjectedPoint.x = (center.x * self.metersPerPixel) - fabs(planetBounds.origin.x);
     normalizedProjectedPoint.y = (center.y * self.metersPerPixel) - fabs(planetBounds.origin.y);
 
-    NSLog(@"centerProjectedPoint: {%f,%f}", normalizedProjectedPoint.x, normalizedProjectedPoint.y);
+//    RMLog(@"centerProjectedPoint: {%f,%f}", normalizedProjectedPoint.x, normalizedProjectedPoint.y);
 
     return normalizedProjectedPoint;
 }
@@ -429,16 +423,18 @@
 
     if (_delegateHasBeforeMapMove) [delegate beforeMapMove:self];
 
-    NSLog(@"Current contentSize: {%.0f,%.0f}, zoom: %f", mapScrollView.contentSize.width, mapScrollView.contentSize.height, self.zoom);
+//    RMLog(@"Current contentSize: {%.0f,%.0f}, zoom: %f", mapScrollView.contentSize.width, mapScrollView.contentSize.height, self.zoom);
 
     RMProjectedRect planetBounds = projection.planetBounds;
 	RMProjectedPoint normalizedProjectedPoint;
 	normalizedProjectedPoint.x = centerProjectedPoint.x + fabs(planetBounds.origin.x);
 	normalizedProjectedPoint.y = centerProjectedPoint.y + fabs(planetBounds.origin.y);
-    
-    [mapScrollView setContentOffset:CGPointMake(normalizedProjectedPoint.x / self.metersPerPixel - mapScrollView.bounds.size.width/2.0, mapScrollView.contentSize.height - ((normalizedProjectedPoint.y / self.metersPerPixel) + mapScrollView.bounds.size.height/2.0)) animated:animated];
-    
-    NSLog(@"setMapCenterProjectedPoint: {%f,%f} -> {%.0f,%.0f}", centerProjectedPoint.x, centerProjectedPoint.y, mapScrollView.contentOffset.x, mapScrollView.contentOffset.y);
+
+    [mapScrollView setContentOffset:CGPointMake(normalizedProjectedPoint.x / self.metersPerPixel - mapScrollView.bounds.size.width/2.0,
+                                                mapScrollView.contentSize.height - ((normalizedProjectedPoint.y / self.metersPerPixel) + mapScrollView.bounds.size.height/2.0))
+                           animated:animated];
+
+//    RMLog(@"setMapCenterProjectedPoint: {%f,%f} -> {%.0f,%.0f}", centerProjectedPoint.x, centerProjectedPoint.y, mapScrollView.contentOffset.x, mapScrollView.contentOffset.y);
 
     if (_delegateHasAfterMapMove) [delegate afterMapMove:self];
     if (_delegateHasMapViewRegionDidChange) [delegate mapViewRegionDidChange:self];
@@ -551,7 +547,7 @@
 
 - (RMProjectedRect)projectedBounds
 {
-    CGPoint bottomLeft = CGPointMake(mapScrollView.contentOffset.x, mapScrollView.contentSize.height - mapScrollView.contentOffset.y);
+    CGPoint bottomLeft = CGPointMake(mapScrollView.contentOffset.x, mapScrollView.contentSize.height - (mapScrollView.contentOffset.y + mapScrollView.bounds.size.height));
 
     RMProjectedRect planetBounds = projection.planetBounds;
     RMProjectedRect normalizedProjectedRect;
@@ -565,13 +561,22 @@
 
 - (void)setProjectedBounds:(RMProjectedRect)boundsRect
 {
+    [self setProjectedBounds:boundsRect animated:YES];
+}
+
+- (void)setProjectedBounds:(RMProjectedRect)boundsRect animated:(BOOL)animated
+{
     RMProjectedRect planetBounds = projection.planetBounds;
 	RMProjectedPoint normalizedProjectedPoint;
 	normalizedProjectedPoint.x = boundsRect.origin.x + fabs(planetBounds.origin.x);
 	normalizedProjectedPoint.y = boundsRect.origin.y + fabs(planetBounds.origin.y);
 
-    CGRect zoomRect = CGRectMake(normalizedProjectedPoint.x / self.metersPerPixel, mapScrollView.contentSize.height - (normalizedProjectedPoint.y / self.metersPerPixel), boundsRect.size.width / self.metersPerPixel, boundsRect.size.height / self.metersPerPixel);
-    [mapScrollView zoomToRect:zoomRect animated:YES];
+    float zoomScale = mapScrollView.zoomScale;
+    CGRect zoomRect = CGRectMake((normalizedProjectedPoint.x / self.metersPerPixel) / zoomScale,
+                                 ((planetBounds.size.height - normalizedProjectedPoint.y - boundsRect.size.height) / self.metersPerPixel) / zoomScale,
+                                 (boundsRect.size.width / self.metersPerPixel) / zoomScale,
+                                 (boundsRect.size.height / self.metersPerPixel) / zoomScale);
+    [mapScrollView zoomToRect:zoomRect animated:animated];
 
     [self correctPositionOfAllAnnotations];
 }
@@ -663,8 +668,6 @@
 
     if ([self shouldZoomToTargetZoom:targetZoom withZoomFactor:zoomFactor])
     {
-        if (_delegateHasBeforeMapZoomByFactor) [delegate beforeMapZoom:self byFactor:zoomFactor near:pivot];
-
         float zoomScale = mapScrollView.zoomScale;
         CGSize newZoomSize = CGSizeMake(mapScrollView.bounds.size.width / zoomFactor,
                                         mapScrollView.bounds.size.height / zoomFactor);
@@ -673,8 +676,6 @@
                                      newZoomSize.width / zoomScale,
                                      newZoomSize.height / zoomScale);
         [mapScrollView zoomToRect:zoomRect animated:animated];
-        if (_delegateHasAfterMapZoomByFactor) [delegate afterMapZoom:self byFactor:zoomFactor near:pivot];
-        if (_delegateHasMapViewRegionDidChange) [delegate mapViewRegionDidChange:self];
     }
     else
     {
@@ -814,7 +815,7 @@
 #pragma mark -
 #pragma mark Zoom With Bounds
 
-- (void)zoomWithLatitudeLongitudeBoundsSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast
+- (void)zoomWithLatitudeLongitudeBoundsSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast animated:(BOOL)animated
 {
     if (northEast.latitude == southWest.latitude && northEast.longitude == southWest.longitude) // There are no bounds, probably only one marker.
     {
@@ -826,7 +827,7 @@
         myOrigin.x = myOrigin.x - (zoomRect.size.width / 2.0);
         myOrigin.y = myOrigin.y - (zoomRect.size.height / 2.0);
         zoomRect.origin = myOrigin;
-        [self zoomWithProjectedBounds:zoomRect];
+        [self setProjectedBounds:zoomRect animated:animated];
     }
     else
     {
@@ -848,39 +849,38 @@
         RMProjectedRect zoomRect;
 
         // Default is with scale = 2.0 * mercators/pixel
-        zoomRect.size.width = [self bounds].size.width * 2.0;
-        zoomRect.size.height = [self bounds].size.height * 2.0;
-        if ((myPoint.x / [self bounds].size.width) < (myPoint.y / [self bounds].size.height))
+        zoomRect.size.width = self.bounds.size.width * 2.0;
+        zoomRect.size.height = self.bounds.size.height * 2.0;
+        if ((myPoint.x / self.bounds.size.width) < (myPoint.y / self.bounds.size.height))
         {
-            if ((myPoint.y / ([self bounds].size.height - pixelBuffer)) > 1)
+            if ((myPoint.y / (self.bounds.size.height - pixelBuffer)) > 1)
             {
-                zoomRect.size.width = [self bounds].size.width * (myPoint.y / ([self bounds].size.height - pixelBuffer));
-                zoomRect.size.height = [self bounds].size.height * (myPoint.y / ([self bounds].size.height - pixelBuffer));
+                zoomRect.size.width = self.bounds.size.width * (myPoint.y / (self.bounds.size.height - pixelBuffer));
+                zoomRect.size.height = self.bounds.size.height * (myPoint.y / (self.bounds.size.height - pixelBuffer));
             }
         }
         else
         {
-            if ((myPoint.x / ([self bounds].size.width - pixelBuffer)) > 1)
+            if ((myPoint.x / (self.bounds.size.width - pixelBuffer)) > 1)
             {
-                zoomRect.size.width = [self bounds].size.width * (myPoint.x / ([self bounds].size.width - pixelBuffer));
-                zoomRect.size.height = [self bounds].size.height * (myPoint.x / ([self bounds].size.width - pixelBuffer));
+                zoomRect.size.width = self.bounds.size.width * (myPoint.x / (self.bounds.size.width - pixelBuffer));
+                zoomRect.size.height = self.bounds.size.height * (myPoint.x / (self.bounds.size.width - pixelBuffer));
             }
         }
         myOrigin.x = myOrigin.x - (zoomRect.size.width / 2);
         myOrigin.y = myOrigin.y - (zoomRect.size.height / 2);
-        RMLog(@"Origin is calculated at: %f, %f", [projection projectedPointToCoordinate:myOrigin].latitude, [projection projectedPointToCoordinate:myOrigin].longitude);
-
         zoomRect.origin = myOrigin;
-        [self zoomWithProjectedBounds:zoomRect];
-    }
 
-    [self moveBy:CGSizeZero];
+        RMProjectedPoint topRight = RMProjectedPointMake(myOrigin.x + zoomRect.size.width, myOrigin.y + zoomRect.size.height);
+        RMLog(@"zoomWithBoundingBox: {%f,%f} - {%f,%f}", [projection projectedPointToCoordinate:myOrigin].longitude, [projection projectedPointToCoordinate:myOrigin].latitude, [projection projectedPointToCoordinate:topRight].longitude, [projection projectedPointToCoordinate:topRight].latitude);
+
+        [self setProjectedBounds:zoomRect animated:animated];
+    }
 }
 
-- (void)zoomWithProjectedBounds:(RMProjectedRect)bounds
+- (void)zoomWithLatitudeLongitudeBoundsSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast
 {
-    [self setProjectedBounds:bounds];
-    [self correctPositionOfAllAnnotations];
+    [self zoomWithLatitudeLongitudeBoundsSouthWest:southWest northEast:northEast animated:YES];
 }
 
 #pragma mark -
@@ -943,23 +943,81 @@
     return tiledLayerView;
 }
 
-- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView singleTapAtPoint:(CGPoint)aPoint
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
+    if (_delegateHasBeforeMapMove)
+        [delegate beforeMapMove:self];
 }
 
-- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView doubleTapAtPoint:(CGPoint)aPoint
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
+    if (!decelerate && _delegateHasAfterMapMove)
+        [delegate afterMapMove:self];
 }
 
-- (void)mapTiledLayerView:(RMMapTiledLayerView *)aMapOverlayView doubleTapAtPoint:(CGPoint)aPoint
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    if (_delegateHasAfterMapMove)
+        [delegate afterMapMove:self];
+}
+
+- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
+{
+    if (_delegateHasBeforeMapZoom)
+        [delegate beforeMapZoom:self];
+}
+
+- (void)scrollViewDidZoom:(UIScrollView *)scrollView
+{
+    if (_delegateHasAfterMapZoom)
+        [delegate afterMapZoom:self];
+}
+
+// Overlay
+
+- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView tapOnAnnotation:(RMAnnotation *)anAnnotation
+{
+    if (_delegateHasTapOnAnnotation)
+        [delegate tapOnAnnotation:anAnnotation onMap:self];
+}
+
+- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView tapOnLabelForAnnotation:(RMAnnotation *)anAnnotation
+{
+    if (_delegateHasTapOnLabelForAnnotation)
+        [delegate tapOnLabelForAnnotation:anAnnotation onMap:self];
+}
+
+// Tiled layer
+
+- (void)mapTiledLayerView:(RMMapTiledLayerView *)aTiledLayerView singleTapAtPoint:(CGPoint)aPoint
+{
+    if (_delegateHasSingleTapOnMap)
+        [delegate singleTapOnMap:self at:aPoint];
+}
+
+- (void)mapTiledLayerView:(RMMapTiledLayerView *)aTiledLayerView doubleTapAtPoint:(CGPoint)aPoint
 {
     [self zoomInToNextNativeZoomAt:aPoint animated:YES];
+
+    if (_delegateHasDoubleTapOnMap)
+        [delegate doubleTapOnMap:self at:aPoint];
 }
 
-- (void)mapTiledLayerView:(RMMapTiledLayerView *)aMapOverlayView twoFingerDoubleTapAtPoint:(CGPoint)aPoint
+- (void)mapTiledLayerView:(RMMapTiledLayerView *)aTiledLayerView twoFingerDoubleTapAtPoint:(CGPoint)aPoint
 {
     [self zoomOutToNextNativeZoomAt:aPoint animated:YES];
+
+    if (_delegateHasDoubleTapTwoFingersOnMap)
+        [delegate doubleTapTwoFingersOnMap:self at:aPoint];
 }
+
+- (void)mapTiledLayerView:(RMMapTiledLayerView *)aTiledLayerView longPressAtPoint:(CGPoint)aPoint
+{
+    if (_delegateHasLongSingleTapOnMap)
+        [delegate longSingleTapOnMap:self at:aPoint];
+}
+
+// Detect dragging/zooming
 
 - (void)observeValueForKeyPath:(NSString *)aKeyPath ofObject:(id)anObject change:(NSDictionary *)change context:(void *)context
 {
@@ -968,7 +1026,10 @@
     RMProjectedRect planetBounds = projection.planetBounds;
     metersPerPixel = planetBounds.size.width / mapScrollView.contentSize.width;
 
-    [self correctPositionOfAllAnnotationsIncludingInvisibles:NO];
+    // TODO: Use RMTranslateCGPointBy
+    [self correctPositionOfAllAnnotationsIncludingInvisibles:YES];
+
+    if (_delegateHasMapViewRegionDidChange) [delegate mapViewRegionDidChange:self];
 }
 
 #pragma mark -
@@ -1079,6 +1140,16 @@
     [self correctPositionOfAllAnnotations];
 }
 
+- (RMMapDecelerationMode)decelerationMode
+{
+    return (mapScrollView.decelerationRate == UIScrollViewDecelerationRateNormal ? RMMapDecelerationNormal : RMMapDecelerationFast);
+}
+
+- (void)setDecelerationMode:(RMMapDecelerationMode)aDecelerationMode
+{
+    [mapScrollView setDecelerationRate:(aDecelerationMode == RMMapDecelerationNormal ? UIScrollViewDecelerationRateNormal : UIScrollViewDecelerationRateFast)];
+}
+
 - (RMProjection *)projection
 {
     return [[projection retain] autorelease];
@@ -1114,7 +1185,7 @@
     RMProjectedRect planetBounds = projection.planetBounds;
     RMProjectedPoint normalizedProjectedPoint;
     normalizedProjectedPoint.x = ((pixelCoordinate.x + mapScrollView.contentOffset.x) * self.metersPerPixel) - fabs(planetBounds.origin.x);
-    normalizedProjectedPoint.y = ((pixelCoordinate.y + mapScrollView.contentOffset.y) * self.metersPerPixel) - fabs(planetBounds.origin.y);
+    normalizedProjectedPoint.y = ((mapScrollView.contentSize.height - mapScrollView.contentOffset.y - pixelCoordinate.y) * self.metersPerPixel) - fabs(planetBounds.origin.y);
 
     return normalizedProjectedPoint;
 }
@@ -1234,7 +1305,7 @@
             if (_delegateHasDidHideLayerForAnnotation) [delegate mapView:self didHideLayerForAnnotation:annotation];
         }
 
-        RMLog(@"%d annotations on screen, %d total", [overlayView sublayersCount], [annotations count]);
+//        RMLog(@"%d annotations on screen, %d total", [overlayView sublayersCount], [annotations count]);
 
     } else
     {
@@ -1269,13 +1340,13 @@
                         if (_delegateHasDidHideLayerForAnnotation) [delegate mapView:self didHideLayerForAnnotation:annotation];
                     }
                 }
-                RMLog(@"%d annotations on screen, %d total", [overlayView sublayersCount], [annotations count]);
+//                RMLog(@"%d annotations on screen, %d total", [overlayView sublayersCount], [annotations count]);
             } else {
                 for (RMAnnotation *annotation in visibleAnnotations)
                 {
                     [self correctScreenPosition:annotation];
                 }
-                RMLog(@"%d annotations corrected", [visibleAnnotations count]);
+//                RMLog(@"%d annotations corrected", [visibleAnnotations count]);
             }
         }
     }

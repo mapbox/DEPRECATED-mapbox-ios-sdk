@@ -55,14 +55,16 @@ To report bugs and help fix them, please use the [issue tracker][tracker]
 [tracker]: http://github.com/route-me/route-me/issues
 
 
-Changes in this clone (Alpstein/route-me)
+Changes in this fork (Alpstein/route-me)
 -----------------------------------------
 
 * RMMapView and RMMapContents have been merged into one file
 
+* The map uses an UIScrollView with a CATiledLayer for better performance
+
 * Tile cache refactoring
 
-* Tile source refactoring (asynchronous tile downloads)
+* Tile source refactoring
 
 * Numerous performance improvements
 

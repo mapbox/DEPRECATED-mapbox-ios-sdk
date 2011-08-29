@@ -12,7 +12,6 @@
 @interface RMMapOverlayView ()
 
 - (void)handleSingleTap:(UIGestureRecognizer *)recognizer;
-- (void)handleDoubleTap:(UIGestureRecognizer *)recognizer;
 
 @end
 
@@ -28,12 +27,7 @@
     self.layer.masksToBounds = YES;
 
     UITapGestureRecognizer *singleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)] autorelease];
-    UITapGestureRecognizer *doubleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)] autorelease];
-    doubleTapRecognizer.numberOfTapsRequired = 2;
-    [singleTapRecognizer requireGestureRecognizerToFail:doubleTapRecognizer];
-
     [self addGestureRecognizer:singleTapRecognizer];
-    [self addGestureRecognizer:doubleTapRecognizer];
 
     return self;
 }
@@ -81,15 +75,28 @@
 
 - (void)handleSingleTap:(UIGestureRecognizer *)recognizer
 {
-    if ([delegate respondsToSelector:@selector(mapOverlayView:singleTapAtPoint:)])
-        [delegate mapOverlayView:self singleTapAtPoint:[recognizer locationInView:self]];
-}
+    CALayer *hit = [self.layer hitTest:[recognizer locationInView:self]];
+    RMLog(@"LAYER of type %@",[hit description]);
 
-- (void)handleDoubleTap:(UIGestureRecognizer *)recognizer
-{
-    if ([delegate respondsToSelector:@selector(mapOverlayView:doubleTapAtPoint:)])
-        [delegate mapOverlayView:self doubleTapAtPoint:[recognizer locationInView:self]];
-}
+    if (hit != nil)
+    {
+        CALayer *superlayer = [hit superlayer];
 
+        // See if tap was on a marker or marker label and send delegate protocol method
+        if ([hit isKindOfClass:[RMMarker class]]) {
+            if ([delegate respondsToSelector:@selector(mapOverlayView:tapOnAnnotation:)]) {
+                [delegate mapOverlayView:self tapOnAnnotation:[((RMMarker *)hit) annotation]];
+            }
+        } else if (superlayer != nil && [superlayer isKindOfClass:[RMMarker class]]) {
+            if ([delegate respondsToSelector:@selector(mapOverlayView:tapOnLabelForAnnotation:)]) {
+                [delegate mapOverlayView:self tapOnLabelForAnnotation:[((RMMarker *)superlayer) annotation]];
+            }
+        } else if ([superlayer superlayer] != nil && [[superlayer superlayer] isKindOfClass:[RMMarker class]]) {
+            if ([delegate respondsToSelector:@selector(mapOverlayView:tapOnLabelForAnnotation:)]) {
+                [delegate mapOverlayView:self tapOnLabelForAnnotation:[((RMMarker *)[superlayer superlayer]) annotation]];
+            }
+        }
+    }
+}
 
 @end

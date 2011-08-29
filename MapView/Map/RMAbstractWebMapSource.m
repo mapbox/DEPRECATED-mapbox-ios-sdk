@@ -54,13 +54,17 @@
     image = [tileCache cachedImage:tile withCacheKey:[self uniqueTilecacheKey]];
     if (image) return image;
 
-#warning TODO: Notifications
-    NSData *tileData = [NSData dataWithContentsOfURL:[self URLForTile:tile]];
-    if (!tileData) return [RMTileImage errorTile];
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMTileRequested object:nil];
 
-    image = [UIImage imageWithData:tileData];
-    if (image)
-        [tileCache addImage:image forTile:tile withCacheKey:[self uniqueTilecacheKey]];
+    NSData *tileData = [NSData dataWithContentsOfURL:[self URLForTile:tile]];
+    if (tileData && [tileData length]) {
+        image = [UIImage imageWithData:tileData];
+        if (image) [tileCache addImage:image forTile:tile withCacheKey:[self uniqueTilecacheKey]];
+    }
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMTileRetrieved object:nil];
+
+    if (!image) return [RMTileImage errorTile];
 
     return image;
 }

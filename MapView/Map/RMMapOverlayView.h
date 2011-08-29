@@ -8,15 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
-@class RMMapOverlayView;
+@class RMMapOverlayView, RMAnnotation;
 
 @protocol RMMapOverlayViewDelegate <NSObject>
 @optional
 
-- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView singleTapAtPoint:(CGPoint)aPoint;
-- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView doubleTapAtPoint:(CGPoint)aPoint;
-- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView twoFingerTapAtPoint:(CGPoint)aPoint;
-- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView twoFingerDoubleTapAtPoint:(CGPoint)aPoint;
+- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView tapOnAnnotation:(RMAnnotation *)anAnnotation;
+- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView tapOnLabelForAnnotation:(RMAnnotation *)anAnnotation;
 
 @end
 
