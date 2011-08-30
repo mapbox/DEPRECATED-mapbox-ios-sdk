@@ -397,11 +397,11 @@
 //    }
 //}
 //
-//- (void)setPosition:(CGPoint)value
-//{
-//    if (CGPointEqualToPoint(value, super.position) && CGRectEqualToRect(self.bounds, previousBounds)) return;
-//
-//    [self recalculateGeometry];
-//}
+- (void)setPosition:(CGPoint)value
+{
+    if (CGPointEqualToPoint(value, super.position) && CGRectEqualToRect(self.bounds, previousBounds)) return;
+
+    [self recalculateGeometry];
+}
 
 @end
