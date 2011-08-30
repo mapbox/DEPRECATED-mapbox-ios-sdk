@@ -63,6 +63,8 @@
 
 - (void)dealloc
 {
+    cachedClusterAnnotation.layer = nil; [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
+
     @synchronized (annotations) {
         for (RMAnnotation *annotation in annotations)
         {
@@ -70,7 +72,6 @@
         }
     }
     [annotations release]; annotations = nil;
-    cachedClusterAnnotation.layer = nil; [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
 
     [northWest release]; northWest = nil;
     [northEast release]; northEast = nil;
@@ -320,6 +321,12 @@
     rootNode = [[RMQuadTreeNode alloc] initWithMapView:mapView forParent:nil inBoundingBox:[[RMProjection googleProjection] planetBounds]];
 
     return self;
+}
+
+- (void)dealloc
+{
+    [rootNode release]; rootNode = nil;
+    [super dealloc];
 }
 
 - (void)addAnnotation:(RMAnnotation *)annotation

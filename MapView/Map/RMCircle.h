@@ -36,8 +36,6 @@
 	RMMapView *mapView;
 	CAShapeLayer *shapeLayer;
 
-	CLLocationCoordinate2D coordinate;
-
 	UIColor *lineColor;
 	UIColor *fillColor;
 	CGFloat radiusInMeters;
@@ -53,8 +51,6 @@
 @property (nonatomic, assign) CGFloat radiusInMeters;
 @property (nonatomic, assign) CGFloat lineWidthInPixels;
 
-- (id)initWithView:(RMMapView *)aMapView radiusInMeters:(CGFloat)newRadiusInMeters coordinate:(CLLocationCoordinate2D)coordinate;
-
-- (void)moveToCoordinate:(CLLocationCoordinate2D)coordinate;
+- (id)initWithView:(RMMapView *)aMapView radiusInMeters:(CGFloat)newRadiusInMeters;
 
 @end

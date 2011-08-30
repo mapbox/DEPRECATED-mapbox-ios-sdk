@@ -224,16 +224,16 @@
 - (void)dealloc
 {
     LogMethod();
-    [self setQuadTree:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self setDelegate:nil];
+    [self setQuadTree:nil];
+    [annotations release]; annotations = nil;
+    [visibleAnnotations release]; visibleAnnotations = nil;
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [mapScrollView removeObserver:self forKeyPath:@"contentOffset"];
     [mapScrollView release]; mapScrollView = nil;
     [tiledLayerView release]; tiledLayerView = nil;
     [overlayView release]; overlayView = nil;
     [self setTileCache:nil];
-    [annotations release]; annotations = nil;
-    [visibleAnnotations release]; visibleAnnotations = nil;
     [projection release]; projection = nil;
     [mercatorToTileProjection release]; mercatorToTileProjection = nil;
     [tileSource release]; tileSource = nil;
@@ -285,7 +285,9 @@
     _delegateHasLongSingleTapOnMap = [delegate respondsToSelector:@selector(longSingleTapOnMap:at:)];
 
     _delegateHasTapOnAnnotation = [delegate respondsToSelector:@selector(tapOnAnnotation:onMap:)];
+    _delegateHasDoubleTapOnAnnotation = [delegate respondsToSelector:@selector(doubleTapOnAnnotation:onMap:)];
     _delegateHasTapOnLabelForAnnotation = [delegate respondsToSelector:@selector(tapOnLabelForAnnotation:onMap:)];
+    _delegateHasDoubleTapOnLabelForAnnotation = [delegate respondsToSelector:@selector(doubleTapOnLabelForAnnotation:onMap:)];
 
     _delegateHasShouldDragMarker = [delegate respondsToSelector:@selector(mapView:shouldDragAnnotation:withEvent:)];
     _delegateHasDidDragMarker = [delegate respondsToSelector:@selector(mapView:didDragAnnotation:withEvent:)];
@@ -941,16 +943,48 @@
 
 // Overlay
 
-- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView tapOnAnnotation:(RMAnnotation *)anAnnotation
+- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView tapOnAnnotation:(RMAnnotation *)anAnnotation atPoint:(CGPoint)aPoint
 {
-    if (_delegateHasTapOnAnnotation)
+    if (_delegateHasTapOnAnnotation) {
         [delegate tapOnAnnotation:anAnnotation onMap:self];
+    } else {
+        if (_delegateHasSingleTapOnMap)
+            [delegate singleTapOnMap:self at:aPoint];   
+    }
 }
 
-- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView tapOnLabelForAnnotation:(RMAnnotation *)anAnnotation
+- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView doubleTapOnAnnotation:(RMAnnotation *)anAnnotation atPoint:(CGPoint)aPoint
 {
-    if (_delegateHasTapOnLabelForAnnotation)
+    if (_delegateHasDoubleTapOnAnnotation) {
+        [delegate doubleTapOnAnnotation:anAnnotation onMap:self];
+    } else {
+        [self zoomInToNextNativeZoomAt:aPoint animated:YES];
+
+        if (_delegateHasDoubleTapOnMap)
+            [delegate doubleTapOnMap:self at:aPoint];
+    }
+}
+
+- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView tapOnLabelForAnnotation:(RMAnnotation *)anAnnotation atPoint:(CGPoint)aPoint
+{
+    if (_delegateHasTapOnLabelForAnnotation) {
         [delegate tapOnLabelForAnnotation:anAnnotation onMap:self];
+    } else {
+        if (_delegateHasSingleTapOnMap)
+            [delegate singleTapOnMap:self at:aPoint];
+    }
+}
+
+- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView doubleTapOnLabelForAnnotation:(RMAnnotation *)anAnnotation atPoint:(CGPoint)aPoint
+{
+    if (_delegateHasDoubleTapOnLabelForAnnotation)
+        [delegate doubleTapOnLabelForAnnotation:anAnnotation onMap:self];
+    else {
+        [self zoomInToNextNativeZoomAt:aPoint animated:YES];
+
+        if (_delegateHasDoubleTapOnMap)
+            [delegate doubleTapOnMap:self at:aPoint];
+    }
 }
 
 // Tiled layer

@@ -79,6 +79,6 @@
 - (BOOL)isAnnotationWithinBounds:(CGRect)bounds;
 
 // Used internally
-@property (nonatomic, assign) RMMapView *mapView;
+@property (nonatomic, retain) RMMapView *mapView;
 
 @end

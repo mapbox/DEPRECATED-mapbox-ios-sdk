@@ -97,10 +97,9 @@
 {
     if (ignorePathUpdates) return;
 
-    RMMercatorToScreenProjection *projection = [mapView mercatorToScreenProjection];
-    CGPoint myPosition = [projection projectProjectedPoint:projectedLocation];
+    CGPoint myPosition = [mapView projectedPointToPixel:projectedLocation];
 
-    float scale = [projection metersPerPixel];
+    float scale = [mapView metersPerPixel];
     float scaledLineWidth;
     CGRect pixelBounds, screenBounds;
     float offset;
@@ -121,7 +120,7 @@
 
     // Clip bound rect to screen bounds.
     // If bounds are not clipped, they won't display when you zoom in too much.
-    screenBounds = [mapView screenBounds];
+    screenBounds = [mapView frame];
 
     // Clip top
     offset = myPosition.y + pixelBounds.origin.y - screenBounds.origin.y + outset;
@@ -167,7 +166,7 @@
         isFirstPoint = FALSE;
         projectedLocation = point;
 
-        self.position = [[mapView mercatorToScreenProjection] projectProjectedPoint:projectedLocation];
+        self.position = [mapView projectedPointToPixel:projectedLocation];
         // RMLog(@"screen position set to %f %f", self.position.x, self.position.y);
         CGPathMoveToPoint(path, NULL, 0.0f, 0.0f);
     }
@@ -196,7 +195,7 @@
 
 - (void)moveToScreenPoint:(CGPoint)point
 {
-    RMProjectedPoint mercator = [[mapView mercatorToScreenProjection] projectScreenPointToProjectedPoint:point];
+    RMProjectedPoint mercator = [mapView pixelToProjectedPoint:point];
     [self moveToProjectedPoint:mercator];
 }
 
@@ -213,7 +212,7 @@
 
 - (void)addLineToScreenPoint:(CGPoint)point
 {
-    RMProjectedPoint mercator = [[mapView mercatorToScreenProjection] projectScreenPointToProjectedPoint:point];
+    RMProjectedPoint mercator = [mapView pixelToProjectedPoint:point];
     [self addLineToProjectedPoint:mercator];
 }
 

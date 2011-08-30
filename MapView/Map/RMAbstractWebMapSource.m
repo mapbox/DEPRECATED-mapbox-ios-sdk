@@ -56,11 +56,15 @@
 
     [[NSNotificationCenter defaultCenter] postNotificationName:RMTileRequested object:nil];
 
+    [tileCache retain];
+
     NSData *tileData = [NSData dataWithContentsOfURL:[self URLForTile:tile]];
     if (tileData && [tileData length]) {
         image = [UIImage imageWithData:tileData];
         if (image) [tileCache addImage:image forTile:tile withCacheKey:[self uniqueTilecacheKey]];
     }
+
+    [tileCache release];
 
     [[NSNotificationCenter defaultCenter] postNotificationName:RMTileRetrieved object:nil];
 
