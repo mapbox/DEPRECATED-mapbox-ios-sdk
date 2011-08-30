@@ -86,8 +86,7 @@ typedef enum {
     RMTileCache *tileCache; // Generic tile cache
 
     /// minimum and maximum zoom number allowed for the view. #minZoom and #maxZoom must be within the limits of #tileSource but can be stricter; they are clamped to tilesource limits if needed.
-    float minZoom;
-    float maxZoom;
+    float minZoom, maxZoom, zoom;
     float screenScale;
 
     NSUInteger boundingMask;

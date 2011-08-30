@@ -53,7 +53,9 @@
 
 - (void)dealloc
 {
-	[cache release]; cache = nil;
+    @synchronized (cache) {
+        [cache release]; cache = nil;
+    }
 	[super dealloc];
 }
 

@@ -132,15 +132,14 @@
     [self setZoom:initialZoomLevel];
 
     [self createMapView];
-    RMProjectedPoint initialProjectedCenter = [projection coordinateToProjectedPoint:initialCenterCoordinate];
-    [self setCenterProjectedPoint:initialProjectedCenter];
+    [self setCenterCoordinate:initialCenterCoordinate animated:NO];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleMemoryWarningNotification:)
                                                  name:UIApplicationDidReceiveMemoryWarningNotification
                                                object:nil];
 
-    RMLog(@"Map initialised. tileSource:%@, minZoom:%.0f, maxZoom:%.0f, zoom:%.0f", tileSource, [self minZoom], [self maxZoom], [self zoom]);
+    RMLog(@"Map initialised. tileSource:%@, minZoom:%.0f, maxZoom:%.0f, zoom:%.0f at {%f,%f}", tileSource, [self minZoom], [self maxZoom], [self zoom], [self centerCoordinate].longitude, [self centerCoordinate].latitude);
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -401,7 +400,7 @@
 
 - (void)setCenterCoordinate:(CLLocationCoordinate2D)centerCoordinate animated:(BOOL)animated
 {
-    [self setCenterProjectedPoint:[projection coordinateToProjectedPoint:centerCoordinate]];
+    [self setCenterProjectedPoint:[projection coordinateToProjectedPoint:centerCoordinate] animated:animated];
 }
 
 // ===
@@ -866,7 +865,11 @@
 - (void)createMapView
 {
     [overlayView removeFromSuperview]; [overlayView release]; overlayView = nil;
-    [tiledLayerView release]; tiledLayerView = nil;
+    [visibleAnnotations removeAllObjects];
+
+    [tiledLayerView removeFromSuperview]; [tiledLayerView release]; tiledLayerView = nil;
+
+    [mapScrollView removeObserver:self forKeyPath:@"contentOffset"];
     [mapScrollView removeFromSuperview]; [mapScrollView release]; mapScrollView = nil;
 
     int tileSideLength = [[self tileSource] tileSideLength];
@@ -878,22 +881,18 @@
     mapScrollView.showsVerticalScrollIndicator = NO;
     mapScrollView.showsHorizontalScrollIndicator = NO;
     mapScrollView.scrollsToTop = NO;
-//    mapView.delaysContentTouches = NO;
     mapScrollView.contentSize = contentSize;
-    mapScrollView.minimumZoomScale = [self minZoom];
-    mapScrollView.maximumZoomScale = 1 << (int)[self maxZoom];
-    mapScrollView.zoomScale = [self zoom];
+    mapScrollView.minimumZoomScale = exp2f([self minZoom]);
+    mapScrollView.maximumZoomScale = exp2f([self maxZoom]);
     mapScrollView.contentOffset = CGPointMake(0.0, 0.0);
-
-    RMProjectedRect planetBounds = projection.planetBounds;
-    metersPerPixel = planetBounds.size.width / mapScrollView.contentSize.width;
-
-    [mapScrollView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:NULL];
 
     tiledLayerView = [[RMMapTiledLayerView alloc] initWithFrame:CGRectMake(0.0, 0.0, contentSize.width, contentSize.height) mapView:self];
     tiledLayerView.delegate = self;
     ((CATiledLayer *)tiledLayerView.layer).tileSize = CGSizeMake(tileSideLength, tileSideLength);
     [mapScrollView addSubview:tiledLayerView];
+
+    [mapScrollView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:NULL];
+    [mapScrollView setZoomScale:exp2f([self zoom] - 1.0) animated:NO];
 
     if (backgroundView)
         [self insertSubview:mapScrollView aboveSubview:backgroundView];
@@ -990,6 +989,7 @@
 {
     RMProjectedRect planetBounds = projection.planetBounds;
     metersPerPixel = planetBounds.size.width / mapScrollView.contentSize.width;
+    zoom = log2f(mapScrollView.zoomScale) + 1.0;
 
     // TODO: Use RMTranslateCGPointBy
     [self correctPositionOfAllAnnotationsIncludingInvisibles:YES];
@@ -1024,7 +1024,9 @@
     mercatorToTileProjection = [[tileSource mercatorToTileProjection] retain];
     tileSourceProjectedBounds = (RMProjectedRect)[self projectedRectFromLatitudeLongitudeBounds:[tileSource latitudeLongitudeBoundingBox]];
 
-    // TODO: Recreate the tiledLayerView so that it won't show any old tiles
+    // Reload the map with the new tilesource
+    tiledLayerView.layer.contents = nil;
+    [tiledLayerView.layer setNeedsDisplay];
 }
 
 - (UIView *)backgroundView
@@ -1078,27 +1080,27 @@
 - (void)setMinZoom:(float)newMinZoom
 {
     minZoom = newMinZoom;
-    mapScrollView.minimumZoomScale = 1<<(int)(newMinZoom - 1.0);
+    mapScrollView.minimumZoomScale = exp2f(newMinZoom - 1.0);
 }
 
 - (void)setMaxZoom:(float)newMaxZoom
 {
     maxZoom = newMaxZoom;
-    mapScrollView.maximumZoomScale = 1<<(int)(newMaxZoom - 1.0);
+    mapScrollView.maximumZoomScale = exp2f(newMaxZoom - 1.0);
 }
 
 - (float)zoom
 {
-    return log2f(mapScrollView.zoomScale) + 1.0;
+    return zoom;
 }
 
 // if #zoom is outside of range #minZoom to #maxZoom, zoom level is clamped to that range.
-- (void)setZoom:(float)zoom
+- (void)setZoom:(float)newZoom
 {
-    zoom = (zoom > maxZoom) ? maxZoom : zoom;
+    zoom = (newZoom > maxZoom) ? maxZoom : newZoom;
     zoom = (zoom < minZoom) ? minZoom : zoom;
 
-    mapScrollView.zoomScale = 1<<(int)(zoom - 1.0);
+    mapScrollView.zoomScale = exp2f(zoom - 1.0);
 }
 
 - (void)setEnableClustering:(BOOL)doEnableClustering
