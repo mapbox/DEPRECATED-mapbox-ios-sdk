@@ -898,6 +898,7 @@
 
     _lastZoom = [self zoom];
     _lastContentOffset = mapScrollView.contentOffset;
+    _accumulatedDelta = CGPointMake(0.0, 0.0);
 
     if (backgroundView)
         [self insertSubview:mapScrollView aboveSubview:backgroundView];
@@ -1039,7 +1040,16 @@
     if (zoom == _lastZoom) {
         CGPoint contentOffset = mapScrollView.contentOffset;
         CGSize delta = CGSizeMake(_lastContentOffset.x - contentOffset.x, _lastContentOffset.y - contentOffset.y);
-        [overlayView moveLayersBy:delta];
+        _accumulatedDelta.x += delta.width;
+        _accumulatedDelta.y += delta.height;
+
+        if (fabsf(_accumulatedDelta.x) < kZoomRectPixelBuffer && fabsf(_accumulatedDelta.y) < kZoomRectPixelBuffer)
+            [overlayView moveLayersBy:delta];
+        else {
+            [self correctPositionOfAllAnnotations];
+            _accumulatedDelta.x = 0.0;
+            _accumulatedDelta.y = 0.0;
+        }
 
     } else {
         [self correctPositionOfAllAnnotationsIncludingInvisibles:NO];

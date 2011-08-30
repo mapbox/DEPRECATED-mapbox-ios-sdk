@@ -119,7 +119,7 @@ typedef enum {
     RMProjectedPoint _northEastConstraint, _southWestConstraint;
 
     float _lastZoom;
-    CGPoint _lastContentOffset;
+    CGPoint _lastContentOffset, _accumulatedDelta;
 }
 
 @property (nonatomic, assign) id <RMMapViewDelegate> delegate;
