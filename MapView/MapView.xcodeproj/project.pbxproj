@@ -436,7 +436,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B83E64CE0E80E73F001663B6 /* Tile Images */ = {
+		B83E64CE0E80E73F001663B6 /* Tile Layer & Overlay */ = {
 			isa = PBXGroup;
 			children = (
 				B83E64D80E80E73F001663B6 /* RMTileImage.h */,
@@ -446,7 +446,7 @@
 				1609AF8C14068B09008344B7 /* RMMapOverlayView.h */,
 				1609AF8D14068B09008344B7 /* RMMapOverlayView.m */,
 			);
-			name = "Tile Images";
+			name = "Tile Layer & Overlay";
 			sourceTree = "<group>";
 		};
 		B83E64CF0E80E73F001663B6 /* Tile Cache */ = {
@@ -467,7 +467,8 @@
 		B83E64E20E80E73F001663B6 /* Projections */ = {
 			isa = PBXGroup;
 			children = (
-				B8C974B20E8A1FED007D16AD /* Proj4 wrapper */,
+				B83E64E30E80E73F001663B6 /* RMProjection.h */,
+				B83E64E40E80E73F001663B6 /* RMProjection.m */,
 				B83E64E90E80E73F001663B6 /* RMFractalTileProjection.h */,
 				B83E64EA0E80E73F001663B6 /* RMFractalTileProjection.m */,
 			);
@@ -557,22 +558,13 @@
 				B83E64E20E80E73F001663B6 /* Projections */,
 				B83E64CF0E80E73F001663B6 /* Tile Cache */,
 				B83E64EB0E80E73F001663B6 /* Tile Source */,
-				B83E64CE0E80E73F001663B6 /* Tile Images */,
+				B83E64CE0E80E73F001663B6 /* Tile Layer & Overlay */,
 				B86F26A80E8742ED007A3773 /* Markers and other layers */,
 				1266929E0EB75BEA00E002D5 /* Configuration */,
 				B8474B8C0EB40094006A0BC1 /* FMDB */,
 				B8474C610EB53A01006A0BC1 /* Resources */,
 			);
 			path = Map;
-			sourceTree = "<group>";
-		};
-		B8C974B20E8A1FED007D16AD /* Proj4 wrapper */ = {
-			isa = PBXGroup;
-			children = (
-				B83E64E30E80E73F001663B6 /* RMProjection.h */,
-				B83E64E40E80E73F001663B6 /* RMProjection.m */,
-			);
-			name = "Proj4 wrapper";
 			sourceTree = "<group>";
 		};
 		B8C974B30E8A23C5007D16AD /* Coordinate Systems */ = {
