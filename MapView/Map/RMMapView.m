@@ -926,6 +926,12 @@
         [delegate afterMapMove:self];
 }
 
+- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView
+{
+    if (decelerationMode == RMMapDecelerationOff)
+        [scrollView setContentOffset:scrollView.contentOffset animated:NO];
+}
+
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
     if (_delegateHasAfterMapMove)
@@ -1157,14 +1163,14 @@
     [self correctPositionOfAllAnnotations];
 }
 
-- (RMMapDecelerationMode)decelerationMode
-{
-    return (mapScrollView.decelerationRate == UIScrollViewDecelerationRateNormal ? RMMapDecelerationNormal : RMMapDecelerationFast);
-}
-
 - (void)setDecelerationMode:(RMMapDecelerationMode)aDecelerationMode
 {
-    [mapScrollView setDecelerationRate:(aDecelerationMode == RMMapDecelerationNormal ? UIScrollViewDecelerationRateNormal : UIScrollViewDecelerationRateFast)];
+    decelerationMode = aDecelerationMode;
+
+    float decelerationRate = 0.0;
+    if (aDecelerationMode == RMMapDecelerationNormal) decelerationRate = UIScrollViewDecelerationRateNormal;
+    else if (aDecelerationMode == RMMapDecelerationFast) decelerationRate = UIScrollViewDecelerationRateFast;
+    [mapScrollView setDecelerationRate:decelerationRate];
 }
 
 - (BOOL)enableDragging

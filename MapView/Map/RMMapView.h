@@ -45,7 +45,8 @@ enum {
 
 typedef enum {
     RMMapDecelerationNormal,
-    RMMapDecelerationFast
+    RMMapDecelerationFast,
+    RMMapDecelerationOff
 } RMMapDecelerationMode;
 
 @class RMProjection;
