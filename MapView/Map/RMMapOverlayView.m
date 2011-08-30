@@ -8,6 +8,7 @@
 
 #import "RMMapOverlayView.h"
 #import "RMMarker.h"
+#import "RMPixel.h"
 
 @interface RMMapOverlayView ()
 
@@ -62,6 +63,14 @@
 - (void)insertSublayer:(CALayer *)aLayer above:(CALayer *)sublayer
 {
     [self.layer insertSublayer:aLayer above:sublayer];
+}
+
+- (void)moveLayersBy:(CGSize)delta
+{
+    for (CALayer *currentLayer in self.layer.sublayers)
+    {
+        currentLayer.position = RMTranslateCGPointBy(currentLayer.position, delta);
+    }
 }
 
 #pragma mark -

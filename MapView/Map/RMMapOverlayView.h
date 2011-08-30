@@ -34,4 +34,6 @@
 - (void)insertSublayer:(CALayer *)aLayer below:(CALayer *)sublayer;
 - (void)insertSublayer:(CALayer *)aLayer above:(CALayer *)sublayer;
 
+- (void)moveLayersBy:(CGSize)delta;
+
 @end

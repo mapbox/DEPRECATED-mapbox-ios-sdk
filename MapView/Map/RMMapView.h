@@ -115,6 +115,9 @@ typedef enum {
 
     BOOL _constrainMovement;
     RMProjectedPoint _northEastConstraint, _southWestConstraint;
+
+    float _lastZoom;
+    CGPoint _lastContentOffset;
 }
 
 @property (nonatomic, assign) id <RMMapViewDelegate> delegate;

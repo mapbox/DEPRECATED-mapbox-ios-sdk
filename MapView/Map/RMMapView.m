@@ -48,7 +48,7 @@
 #pragma mark --- begin constants ----
 
 #define kiPhoneMilimeteresPerPixel .1543
-#define kZoomRectPixelBuffer 50
+#define kZoomRectPixelBuffer 50.0
 
 #define kDefaultInitialLatitude 47.56
 #define kDefaultInitialLongitude 10.22
@@ -225,6 +225,7 @@
 {
     LogMethod();
     [self setDelegate:nil];
+    [self setBackgroundView:nil];
     [self setQuadTree:nil];
     [annotations release]; annotations = nil;
     [visibleAnnotations release]; visibleAnnotations = nil;
@@ -233,11 +234,10 @@
     [mapScrollView release]; mapScrollView = nil;
     [tiledLayerView release]; tiledLayerView = nil;
     [overlayView release]; overlayView = nil;
-    [self setTileCache:nil];
     [projection release]; projection = nil;
     [mercatorToTileProjection release]; mercatorToTileProjection = nil;
     [tileSource release]; tileSource = nil;
-    [self setBackgroundView:nil];
+    [self setTileCache:nil];
     [super dealloc];
 }
 
@@ -896,6 +896,9 @@
     [mapScrollView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:NULL];
     [mapScrollView setZoomScale:exp2f([self zoom] - 1.0) animated:NO];
 
+    _lastZoom = [self zoom];
+    _lastContentOffset = mapScrollView.contentOffset;
+
     if (backgroundView)
         [self insertSubview:mapScrollView aboveSubview:backgroundView];
     else
@@ -937,6 +940,8 @@
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
 {
+    [self correctPositionOfAllAnnotations];
+
     if (_delegateHasAfterMapZoom)
         [delegate afterMapZoom:self];
 }
@@ -1025,8 +1030,17 @@
     metersPerPixel = planetBounds.size.width / mapScrollView.contentSize.width;
     zoom = log2f(mapScrollView.zoomScale) + 1.0;
 
-    // TODO: Use RMTranslateCGPointBy
-    [self correctPositionOfAllAnnotationsIncludingInvisibles:YES];
+    if (zoom == _lastZoom) {
+        CGPoint contentOffset = mapScrollView.contentOffset;
+        CGSize delta = CGSizeMake(_lastContentOffset.x - contentOffset.x, _lastContentOffset.y - contentOffset.y);
+        [overlayView moveLayersBy:delta];
+
+    } else {
+        [self correctPositionOfAllAnnotationsIncludingInvisibles:NO];
+        _lastZoom = zoom;
+    }
+
+    _lastContentOffset = mapScrollView.contentOffset;
 
     if (_delegateHasMapViewRegionDidChange) [delegate mapViewRegionDidChange:self];
 }
@@ -1290,6 +1304,12 @@
         }
 
         RMProjectedRect boundingBox = [self projectedBounds];
+        double boundingBoxBuffer = kZoomRectPixelBuffer * self.metersPerPixel;
+        boundingBox.origin.x -= boundingBoxBuffer;
+        boundingBox.origin.y -= boundingBoxBuffer;
+        boundingBox.size.width += 2*boundingBoxBuffer;
+        boundingBox.size.height += 2*boundingBoxBuffer;
+
         NSArray *annotationsToCorrect = [quadTree annotationsInProjectedRect:boundingBox createClusterAnnotations:self.enableClustering withClusterSize:RMProjectedSizeMake(self.clusterMarkerSize.width * self.metersPerPixel, self.clusterMarkerSize.height * self.metersPerPixel) findGravityCenter:self.positionClusterMarkersAtTheGravityCenter];
         NSMutableSet *previousVisibleAnnotations = [NSMutableSet setWithSet:visibleAnnotations];
 
