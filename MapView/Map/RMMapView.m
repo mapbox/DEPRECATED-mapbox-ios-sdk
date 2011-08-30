@@ -950,7 +950,7 @@
 
 - (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView tapOnAnnotation:(RMAnnotation *)anAnnotation atPoint:(CGPoint)aPoint
 {
-    if (_delegateHasTapOnAnnotation) {
+    if (_delegateHasTapOnAnnotation && anAnnotation) {
         [delegate tapOnAnnotation:anAnnotation onMap:self];
     } else {
         if (_delegateHasSingleTapOnMap)
@@ -960,7 +960,7 @@
 
 - (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView doubleTapOnAnnotation:(RMAnnotation *)anAnnotation atPoint:(CGPoint)aPoint
 {
-    if (_delegateHasDoubleTapOnAnnotation) {
+    if (_delegateHasDoubleTapOnAnnotation && anAnnotation) {
         [delegate doubleTapOnAnnotation:anAnnotation onMap:self];
     } else {
         [self zoomInToNextNativeZoomAt:aPoint animated:YES];
@@ -972,7 +972,7 @@
 
 - (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView tapOnLabelForAnnotation:(RMAnnotation *)anAnnotation atPoint:(CGPoint)aPoint
 {
-    if (_delegateHasTapOnLabelForAnnotation) {
+    if (_delegateHasTapOnLabelForAnnotation && anAnnotation) {
         [delegate tapOnLabelForAnnotation:anAnnotation onMap:self];
     } else {
         if (_delegateHasSingleTapOnMap)
@@ -982,7 +982,7 @@
 
 - (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView doubleTapOnLabelForAnnotation:(RMAnnotation *)anAnnotation atPoint:(CGPoint)aPoint
 {
-    if (_delegateHasDoubleTapOnLabelForAnnotation)
+    if (_delegateHasDoubleTapOnLabelForAnnotation && anAnnotation)
         [delegate doubleTapOnLabelForAnnotation:anAnnotation onMap:self];
     else {
         [self zoomInToNextNativeZoomAt:aPoint animated:YES];

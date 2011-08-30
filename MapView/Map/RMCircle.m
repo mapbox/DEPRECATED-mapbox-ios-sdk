@@ -63,7 +63,6 @@
 
     scaleLineWidth = NO;
     enableDragging = YES;
-    enableRotation = YES;
 
     circlePath = NULL;
     [self updateCirclePath];

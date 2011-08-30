@@ -8,6 +8,7 @@
 
 #import "RMMapOverlayView.h"
 #import "RMMarker.h"
+#import "RMAnnotation.h"
 #import "RMPixel.h"
 
 @interface RMMapOverlayView ()
@@ -86,7 +87,7 @@
         return NO;
     }
 
-    return YES;
+    return ((RMMarker *)hit).annotation.enabled;
 }
 
 - (void)handleSingleTap:(UIGestureRecognizer *)recognizer

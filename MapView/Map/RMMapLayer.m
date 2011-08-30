@@ -33,7 +33,6 @@
 @synthesize annotation;
 @synthesize projectedLocation;
 @synthesize enableDragging;
-@synthesize enableRotation;
 @synthesize userInfo;
 
 - (id)init
@@ -43,7 +42,6 @@
 
     self.annotation = nil;
     self.enableDragging = YES;
-    self.enableRotation = YES;
 
 	return self;
 }

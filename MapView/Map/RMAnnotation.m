@@ -48,6 +48,7 @@
 @synthesize projectedLocation;
 @synthesize projectedBoundingBox;
 @synthesize hasBoundingBox;
+@synthesize enabled;
 @synthesize position;
 @synthesize layer;
 @synthesize quadTreeNode;
@@ -73,6 +74,7 @@
     self.annotationIcon = nil;
     self.anchorPoint    = CGPointZero;
     self.hasBoundingBox = NO;
+    self.enabled        = YES;
 
     return self;
 }
