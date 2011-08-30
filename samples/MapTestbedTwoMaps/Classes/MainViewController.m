@@ -38,11 +38,11 @@
 
     [upperMapView setDelegate:self];
     upperMapView.tileSource = [[[RMOpenStreetMapSource alloc] init] autorelease];
-	[upperMapView moveToCoordinate:center];
+	[upperMapView setCenterCoordinate:center animated:NO];
 
     [lowerMapView setDelegate:self];
     lowerMapView.tileSource = [[[RMOpenCycleMapSource alloc] init] autorelease];
-	[lowerMapView moveToCoordinate:center];
+	[lowerMapView setCenterCoordinate:center animated:NO];
 
 	NSLog(@"%@ %@", upperMapView, lowerMapView);
 }
@@ -70,14 +70,14 @@
 - (void)afterMapMove:(RMMapView *)map
 {
     if (map == upperMapView)
-        [lowerMapView moveToCoordinate:upperMapView.mapCenterCoordinate];
+        [lowerMapView setCenterCoordinate:upperMapView.centerCoordinate animated:NO];
 }
 
-- (void)afterMapZoom:(RMMapView *)map byFactor:(float)zoomFactor near:(CGPoint)center
+- (void)afterMapZoom:(RMMapView *)map
 {
     if (map == upperMapView) {
         lowerMapView.zoom = upperMapView.zoom;
-        [lowerMapView moveToCoordinate:upperMapView.mapCenterCoordinate];
+        [lowerMapView setCenterCoordinate:upperMapView.centerCoordinate animated:NO];
     }
 }
 

@@ -51,7 +51,7 @@
     }
 
 	// Put the marker back
-    RMAnnotation *annotation = [RMAnnotation annotationWithMapView:mapView coordinate:[mapView mapCenterCoordinate] andTitle:@"Hello"];
+    RMAnnotation *annotation = [RMAnnotation annotationWithMapView:mapView coordinate:[mapView centerCoordinate] andTitle:@"Hello"];
     annotation.annotationIcon = [UIImage imageNamed:@"marker-blue.png"];
     [mapView addAnnotation:annotation];
 }
@@ -100,7 +100,7 @@
 		[(RMMarker *)annotation.layer changeLabelUsingText:@"World"];
 		tap = YES;
         annotation.coordinate = [mapView pixelToCoordinate:CGPointMake(annotation.position.x,annotation.position.y + 20.0)];
-		mapView.deceleration = YES;
+		mapView.decelerationMode = RMMapDecelerationNormal;
 	} else
 	{
         annotation.annotationIcon = [UIImage imageNamed:@"marker-blue.png"];
@@ -109,7 +109,7 @@
 		[(RMMarker *)annotation.layer changeLabelUsingText:@"Hello"];
         annotation.coordinate = [mapView pixelToCoordinate:CGPointMake(annotation.position.x,annotation.position.y - 20.0)];
 		tap = NO;
-		mapView.deceleration = NO;
+		mapView.decelerationMode = RMMapDecelerationOff;
 	}
 }
 
@@ -159,7 +159,7 @@
 		NSLog(@"Location: Lat: %lf Lon: %lf", currentLocation.latitude, currentLocation.longitude);
 	}
 
-	[mapView moveToCoordinate:currentLocation]; 
+	[mapView setCenterCoordinate:currentLocation]; 
 	[self.view addSubview:mapView]; 
 
     RMAnnotation *annotation = [RMAnnotation annotationWithMapView:mapView coordinate:currentLocation andTitle:@"Hello"];
@@ -207,7 +207,7 @@
 		}
 	}
 
-	[mapView moveToCoordinate:currentLocation]; 
+	[mapView setCenterCoordinate:currentLocation]; 
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error

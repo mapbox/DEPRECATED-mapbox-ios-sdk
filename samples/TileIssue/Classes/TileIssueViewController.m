@@ -57,7 +57,7 @@
 {
 	CLLocationCoordinate2D location;
 	[vlocation getValue:&location];
-	[mapView moveToCoordinate:location];
+	[mapView setCenterCoordinate:location];
 }
 
 - (void)dealloc

@@ -21,12 +21,11 @@
 
 -(void)performTestPart2
 {
-	// a bug exists that offsets the path when we execute this moveToCoordinate
 	CLLocationCoordinate2D pt;
 	pt.latitude = 48.86600492029781f;
 	pt.longitude = 2.3194026947021484f;
-	
-	[[self mapView] moveToCoordinate:pt];
+
+	[[self mapView] setCenterCoordinate:pt animated:NO];
 }
 
 -(void)performTestPart3
@@ -38,7 +37,7 @@
 	southwest.latitude = 48.860406466081656f;
 	southwest.longitude = 2.2885894775390625;
 
-	[[self mapView] zoomWithLatitudeLongitudeBoundsSouthWest:southwest northEast:northeast];
+	[[self mapView] zoomWithLatitudeLongitudeBoundsSouthWest:southwest northEast:northeast animated:NO];
 }	
 
 - (void)performTest
@@ -54,7 +53,7 @@
 	northeast.longitude = 2.338285446166992f;
 	southwest.latitude = 48.860406466081656f;
 	southwest.longitude = 2.2885894775390625;
-	[mapView zoomWithLatitudeLongitudeBoundsSouthWest:southwest northEast:northeast];
+	[mapView zoomWithLatitudeLongitudeBoundsSouthWest:southwest northEast:northeast animated:NO];
 
 	CLLocation *one, *two, *three, *four;
     one = [[[CLLocation alloc] initWithLatitude:48.884238608729035f longitude:2.297086715698242f] autorelease];

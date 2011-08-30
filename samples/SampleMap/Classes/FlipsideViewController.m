@@ -45,7 +45,7 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    CLLocationCoordinate2D mapCenter = [[self mapView] mapCenterCoordinate];
+    CLLocationCoordinate2D mapCenter = [[self mapView] centerCoordinate];
 
     [centerLatitude setText:[NSString stringWithFormat:@"%f", mapCenter.latitude]];
     [centerLongitude setText:[NSString stringWithFormat:@"%f", mapCenter.longitude]];
@@ -61,7 +61,7 @@
 
     newMapCenter.latitude = [[centerLatitude text] doubleValue];
     newMapCenter.longitude = [[centerLongitude text] doubleValue];
-    [[self mapView] moveToCoordinate:newMapCenter];
+    [[self mapView] setCenterCoordinate:newMapCenter animated:NO];
     [[self mapView] setZoom:[[zoomLevel text] floatValue]];
     [[self mapView] setMaxZoom:[[maxZoom text] floatValue]];
     [[self mapView] setMinZoom:[[minZoom text] floatValue]];

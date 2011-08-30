@@ -44,7 +44,7 @@
     for (RMAnnotation *annotation in annotations)
 	{
 		RMProjectedPoint point = annotation.projectedLocation;
-		NSLog(@"Marker projected location: east:%lf, north:%lf", point.easting, point.northing);
+		NSLog(@"Marker projected location: east:%lf, north:%lf", point.x, point.y);
     
 		CGPoint screenPoint = annotation.position;
 		NSLog(@"Marker screen location: X:%lf, Y:%lf", screenPoint.x, screenPoint.y);
@@ -56,7 +56,7 @@
 	}
 	
 	// Put the marker back
-    RMAnnotation *annotation = [RMAnnotation annotationWithMapView:mapView coordinate:[mapView mapCenterCoordinate] andTitle:@"Hello"];
+    RMAnnotation *annotation = [RMAnnotation annotationWithMapView:mapView coordinate:[mapView centerCoordinate] andTitle:@"Hello"];
     annotation.annotationIcon = [UIImage imageNamed:@"marker-blue.png"];
     annotation.anchorPoint = CGPointMake(0.5, 1.0);
 	[mapView addAnnotation:annotation];
@@ -106,7 +106,7 @@
 		[(RMMarker *)annotation.layer changeLabelUsingText:@"World"];
 		tap = YES;
         annotation.coordinate = [mapView pixelToCoordinate:CGPointMake(annotation.position.x,annotation.position.y + 20.0)];
-		mapView.deceleration = YES;
+		mapView.decelerationMode = RMMapDecelerationNormal;
 	} else
 	{
         annotation.annotationIcon = [UIImage imageNamed:@"marker-blue.png"];
@@ -115,7 +115,7 @@
 		[(RMMarker *)annotation.layer changeLabelUsingText:@"Hello"];
         annotation.coordinate = [mapView pixelToCoordinate:CGPointMake(annotation.position.x,annotation.position.y - 20.0)];
 		tap = NO;
-		mapView.deceleration = NO;
+		mapView.decelerationMode = RMMapDecelerationOff;
 	}
 }
 
@@ -137,7 +137,7 @@
 	CLLocationCoordinate2D coolPlace;
 	coolPlace.latitude = -33.9464;
 	coolPlace.longitude = 151.2381;
-    [mapView moveToCoordinate:coolPlace];
+    [mapView setCenterCoordinate:coolPlace animated:NO];
 
     RMAnnotation *annotation = [RMAnnotation annotationWithMapView:mapView coordinate:coolPlace andTitle:@"Hello"];
     annotation.annotationIcon = [UIImage imageNamed:@"marker-blue.png"];
@@ -147,7 +147,7 @@
                            nil];
     [mapView addAnnotation:annotation];
 
-	NSLog(@"Center: Lat: %lf Lon: %lf", mapView.mapCenterCoordinate.latitude, mapView.mapCenterCoordinate.longitude);
+	NSLog(@"Center: Lat: %lf Lon: %lf", mapView.centerCoordinate.latitude, mapView.centerCoordinate.longitude);
 }
 
 - (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation

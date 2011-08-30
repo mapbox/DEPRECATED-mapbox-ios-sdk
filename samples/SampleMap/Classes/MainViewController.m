@@ -67,7 +67,7 @@
 
 - (void)updateInfo
 {
-    CLLocationCoordinate2D mapCenter = [self.mapView mapCenterCoordinate];
+    CLLocationCoordinate2D mapCenter = [self.mapView centerCoordinate];
     
 	double truescaleDenominator = [self.mapView scaleDenominator];
     double routemeMetersPerPixel = [self.mapView metersPerPixel]; 
@@ -90,7 +90,7 @@
     [self updateInfo];
 }
 
-- (void)afterMapZoom:(RMMapView *)map byFactor:(float)zoomFactor near:(CGPoint)center
+- (void)afterMapZoom:(RMMapView *)map
 {
     [self updateInfo];
 }

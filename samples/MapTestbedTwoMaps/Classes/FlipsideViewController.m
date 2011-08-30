@@ -5,6 +5,8 @@
 
 #import "FlipsideViewController.h"
 #import "MapTestbedTwoMapsAppDelegate.h"
+#import "MainViewController.h"
+#import "RootViewController.h"
 
 @implementation FlipsideViewController
 
@@ -30,7 +32,7 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    CLLocationCoordinate2D mapCenter = [mapView mapCenterCoordinate];
+    CLLocationCoordinate2D mapCenter = [mapView centerCoordinate];
 
     [centerLatitude setText:[NSString stringWithFormat:@"%f", mapCenter.latitude]];
     [centerLongitude setText:[NSString stringWithFormat:@"%f", mapCenter.longitude]];
@@ -45,7 +47,7 @@
     
     newMapCenter.latitude = [[centerLatitude text] doubleValue];
     newMapCenter.longitude = [[centerLongitude text] doubleValue];
-    [mapView moveToCoordinate:newMapCenter];
+    [mapView setCenterCoordinate:newMapCenter animated:NO];
     [mapView setZoom:[[zoomLevel text] floatValue]];
     [mapView setMaxZoom:[[maxZoom text] floatValue]];
     [mapView setMinZoom:[[minZoom text] floatValue]];

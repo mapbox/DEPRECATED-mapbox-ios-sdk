@@ -11,7 +11,6 @@
 #import "RMOpenStreetMapSource.h"
 #import "RMMapView.h"
 #import "RMMarker.h"
-#import "RMMercatorToScreenProjection.h"
 #import "RMProjection.h"
 #import "RMAnnotation.h"
 
@@ -82,7 +81,7 @@
 //    [mapView zoomWithLatitudeLongitudeBoundsSouthWest:CLLocationCoordinate2DMake(47.5, 10.15) northEast:CLLocationCoordinate2DMake(47.6, 10.25) animated:NO];
 
 	[mapView setZoom:8.0];
-	[mapView moveToCoordinate:center];
+	[mapView setCenterCoordinate:center animated:NO];
 
 	[self updateInfo];
 	[self performSelector:@selector(addMarkers) withObject:nil afterDelay:0.5];
@@ -109,7 +108,7 @@
 
 - (void)updateInfo
 {
-    CLLocationCoordinate2D mapCenter = [mapView mapCenterCoordinate];
+    CLLocationCoordinate2D mapCenter = [mapView centerCoordinate];
 
     [infoTextView setText:[NSString stringWithFormat:@"Longitude : %f\nLatitude : %f\nZoom level : %.2f\n%@", 
                            mapCenter.longitude,
