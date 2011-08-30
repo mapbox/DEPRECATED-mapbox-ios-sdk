@@ -96,6 +96,8 @@
 
 - (void)handleLongPress:(UILongPressGestureRecognizer *)recognizer
 {
+    if (recognizer.state != UIGestureRecognizerStateBegan) return;
+
     if ([delegate respondsToSelector:@selector(mapTiledLayerView:longPressAtPoint:)])
         [delegate mapTiledLayerView:self longPressAtPoint:[recognizer locationInView:mapView]];
 }
