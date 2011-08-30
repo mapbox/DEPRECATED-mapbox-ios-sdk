@@ -49,6 +49,7 @@ typedef enum {
 } RMMapDecelerationMode;
 
 @class RMProjection;
+@class RMFractalTileProjection;
 @class RMTileCache;
 @class RMMapLayer;
 @class RMMapTiledLayerView;
@@ -66,7 +67,7 @@ typedef enum {
     /// projection objects to convert from latitude/longitude to meters,
     /// from projected meters to tile coordinates
     RMProjection *projection;
-    id <RMMercatorToTileProjection> mercatorToTileProjection;
+    RMFractalTileProjection *mercatorToTileProjection;
 
     /// subview for the background image displayed while tiles are loading. Set its contents by providing your own "loading.png".
     UIView *backgroundView;

@@ -36,7 +36,7 @@
 #import "RMAnnotation.h"
 #import "RMQuadTree.h"
 
-#import "RMMercatorToTileProjection.h"
+#import "RMFractalTileProjection.h"
 #import "RMOpenStreetMapSource.h"
 
 #import "RMTileCache.h"
@@ -1182,7 +1182,7 @@
     return [[projection retain] autorelease];
 }
 
-- (id <RMMercatorToTileProjection>)mercatorToTileProjection
+- (RMFractalTileProjection *)mercatorToTileProjection
 {
     return [[mercatorToTileProjection retain] autorelease];
 }

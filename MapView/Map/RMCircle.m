@@ -27,7 +27,6 @@
 
 #import "RMCircle.h"
 #import "RMProjection.h"
-#import "RMMercatorToScreenProjection.h"
 #import "RMMapView.h"
 
 #define kDefaultLineWidth 10

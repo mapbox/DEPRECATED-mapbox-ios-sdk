@@ -42,7 +42,7 @@
 
 - (UIImage *)imageForTile:(RMTile)tile inCache:(RMTileCache *)tileCache;
 
-- (id <RMMercatorToTileProjection>)mercatorToTileProjection;
+- (RMFractalTileProjection *)mercatorToTileProjection;
 - (RMProjection *)projection;
 
 - (float)minZoom;

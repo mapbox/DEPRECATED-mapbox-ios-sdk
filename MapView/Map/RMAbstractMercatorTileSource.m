@@ -28,7 +28,6 @@
 #import "RMAbstractMercatorTileSource.h"
 #import "RMTileImage.h"
 #import "RMFractalTileProjection.h"
-#import "RMTiledLayerController.h"
 #import "RMProjection.h"
 
 @implementation RMAbstractMercatorTileSource
@@ -93,7 +92,7 @@
                                  userInfo:nil];
 }    
 
-- (id <RMMercatorToTileProjection>)mercatorToTileProjection
+- (RMFractalTileProjection *)mercatorToTileProjection
 {
     if (!tileProjection) {
         tileProjection = [[RMFractalTileProjection alloc] initFromProjection:[self projection]

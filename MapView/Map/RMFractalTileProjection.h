@@ -26,11 +26,13 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import <Foundation/Foundation.h>
-#import "RMMercatorToTileProjection.h"
+#import "RMTile.h"
+#import "RMProjection.h"
+#import "RMFoundation.h"
 
 @class RMProjection;
 
-@interface RMFractalTileProjection : NSObject <RMMercatorToTileProjection> {
+@interface RMFractalTileProjection : NSObject {
 	// Maximum zoom for which our tile server stores images
 	NSUInteger maxZoom, minZoom;
 
@@ -49,10 +51,34 @@
 	double scaleFactor;
 }
 
+// bounds of the earth, in projected units (meters).
+@property (readonly, nonatomic) RMProjectedRect planetBounds;
+
+// Maximum zoom for which we have tile images 
+@property (readonly, nonatomic) NSUInteger maxZoom;
+// Minimum zoom for which we have tile images 
+@property (readonly, nonatomic) NSUInteger minZoom;
+
+// Tile side length in pixels
+@property (readonly, nonatomic) NSUInteger tileSideLength;
+
 - (id)initFromProjection:(RMProjection *)projection tileSideLength:(NSUInteger)tileSideLength maxZoom:(NSUInteger)aMaxZoom minZoom:(NSUInteger)aMinZoom;
 
 - (void)setTileSideLength:(NSUInteger)aTileSideLength;
 - (void)setMinZoom:(NSUInteger)aMinZoom;
 - (void)setMaxZoom:(NSUInteger)aMaxZoom;
+
+- (RMTilePoint)project:(RMProjectedPoint)aPoint atZoom:(float)zoom;
+- (RMTileRect)projectRect:(RMProjectedRect)aRect atZoom:(float)zoom;
+
+- (RMTilePoint)project:(RMProjectedPoint)aPoint atScale:(float)scale;
+- (RMTileRect)projectRect:(RMProjectedRect)aRect atScale:(float)scale;
+
+- (RMTile)normaliseTile:(RMTile)tile;
+- (float)normaliseZoom:(float)zoom;
+
+- (float)calculateZoomFromScale:(float)scale;
+- (float)calculateNormalisedZoomFromScale:(float)scale;
+- (float)calculateScaleFromZoom:(float)zoom;
 
 @end

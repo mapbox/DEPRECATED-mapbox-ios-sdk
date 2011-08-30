@@ -26,7 +26,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import "RMPath.h"
-#import "RMMercatorToScreenProjection.h"
 #import "RMPixel.h"
 #import "RMProjection.h"
 #import "RMMapView.h"

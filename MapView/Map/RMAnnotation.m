@@ -33,7 +33,6 @@
 #import "RMMapView.h"
 #import "RMMapLayer.h"
 #import "RMQuadTree.h"
-#import "RMMercatorToScreenProjection.h"
 
 @implementation RMAnnotation
 
