@@ -132,6 +132,9 @@ typedef enum {
 @property (nonatomic, assign) RMProjectedPoint centerProjectedPoint;
 @property (nonatomic, assign) RMProjectedRect projectedBounds;
 
+@property (nonatomic, readonly) RMProjectedPoint projectedOrigin;
+@property (nonatomic, readonly) RMProjectedSize projectedViewSize;
+
 @property (nonatomic, assign)   double metersPerPixel;
 @property (nonatomic, readonly) double scaledMetersPerPixel;
 @property (nonatomic, readonly) double scaleDenominator; /// The denominator in a cartographic scale like 1/24000, 1/50000, 1/2000000.
@@ -201,6 +204,8 @@ typedef enum {
 - (float)nextNativeZoomFactor;
 - (float)previousNativeZoomFactor;
 
+- (void)setMetersPerPixel:(double)newMetersPerPixel animated:(BOOL)animated;
+
 #pragma mark -
 #pragma mark Conversions
 
@@ -209,6 +214,9 @@ typedef enum {
 
 - (RMProjectedPoint)pixelToProjectedPoint:(CGPoint)pixelCoordinate;
 - (CLLocationCoordinate2D)pixelToCoordinate:(CGPoint)pixelCoordinate;
+
+- (RMProjectedSize)viewSizeToProjectedSize:(CGSize)screenSize;
+- (CGSize)projectedSizeToViewSize:(RMProjectedSize)projectedSize;
 
 /// returns the smallest bounding box containing the entire view
 - (RMSphericalTrapezium)latitudeLongitudeBoundingBox;

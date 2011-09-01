@@ -103,7 +103,7 @@
     mapScrollView = nil;
     tiledLayerView = nil;
     overlayView = nil;
-    
+
     screenScale = 1.0;
     if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
     {
@@ -139,7 +139,7 @@
                                                  name:UIApplicationDidReceiveMemoryWarningNotification
                                                object:nil];
 
-    RMLog(@"Map initialised. tileSource:%@, minZoom:%.0f, maxZoom:%.0f, zoom:%.0f at {%f,%f}", tileSource, [self minZoom], [self maxZoom], [self zoom], [self centerCoordinate].longitude, [self centerCoordinate].latitude);
+    RMLog(@"Map initialised. tileSource:%@, minZoom:%f, maxZoom:%f, zoom:%f at {%f,%f}", tileSource, [self minZoom], [self maxZoom], [self zoom], [self centerCoordinate].longitude, [self centerCoordinate].latitude);
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -318,7 +318,6 @@
     return YES;
 }
 
-// What does this method do?
 - (RMProjectedRect)projectedRectFromLatitudeLongitudeBounds:(RMSphericalTrapezium)bounds
 {
     float pixelBuffer = kZoomRectPixelBuffer;
@@ -341,22 +340,22 @@
     RMProjectedRect zoomRect;
 
     // Default is with scale = 2.0 * mercators/pixel
-    zoomRect.size.width = [self bounds].size.width * 2.0;
-    zoomRect.size.height = [self bounds].size.height * 2.0;
-    if ((myPoint.x / [self bounds].size.width) < (myPoint.y / [self bounds].size.height))
+    zoomRect.size.width = self.bounds.size.width * 2.0;
+    zoomRect.size.height = self.bounds.size.height * 2.0;
+    if ((myPoint.x / self.bounds.size.width) < (myPoint.y / self.bounds.size.height))
     {
-        if ((myPoint.y / ([self bounds].size.height - pixelBuffer)) > 1)
+        if ((myPoint.y / (self.bounds.size.height - pixelBuffer)) > 1)
         {
-            zoomRect.size.width = [self bounds].size.width * (myPoint.y / ([self bounds].size.height - pixelBuffer));
-            zoomRect.size.height = [self bounds].size.height * (myPoint.y / ([self bounds].size.height - pixelBuffer));
+            zoomRect.size.width = self.bounds.size.width * (myPoint.y / (self.bounds.size.height - pixelBuffer));
+            zoomRect.size.height = self.bounds.size.height * (myPoint.y / (self.bounds.size.height - pixelBuffer));
         }
     }
     else
     {
-        if ((myPoint.x / ([self bounds].size.width - pixelBuffer)) > 1)
+        if ((myPoint.x / (self.bounds.size.width - pixelBuffer)) > 1)
         {
-            zoomRect.size.width = [self bounds].size.width * (myPoint.x / ([self bounds].size.width - pixelBuffer));
-            zoomRect.size.height = [self bounds].size.height * (myPoint.x / ([self bounds].size.width - pixelBuffer));
+            zoomRect.size.width = self.bounds.size.width * (myPoint.x / (self.bounds.size.width - pixelBuffer));
+            zoomRect.size.height = self.bounds.size.height * (myPoint.x / (self.bounds.size.width - pixelBuffer));
         }
     }
     myOrigin.x = myOrigin.x - (zoomRect.size.width / 2);
@@ -385,6 +384,23 @@
 {
     RMProjectedPoint projectedPoint = [self pixelToProjectedPoint:pixelCoordinate];
     return [self tileSourceBoundsContainProjectedPoint:projectedPoint];
+}
+
+// ===
+
+- (void)setConstraintsSouthWest:(CLLocationCoordinate2D)southWest northEeast:(CLLocationCoordinate2D)northEast
+{
+    RMProjectedPoint projectedSouthWest = [projection coordinateToProjectedPoint:southWest];
+    RMProjectedPoint projectedNorthEast = [projection coordinateToProjectedPoint:northEast];
+
+    [self setProjectedConstraintsSouthWest:projectedSouthWest northEast:projectedNorthEast];
+}
+
+- (void)setProjectedConstraintsSouthWest:(RMProjectedPoint)southWest northEast:(RMProjectedPoint)northEast
+{
+    _southWestConstraint = southWest;
+    _northEastConstraint = northEast;
+    _constrainMovement = YES;
 }
 
 #pragma mark -
@@ -421,6 +437,11 @@
     return normalizedProjectedPoint;
 }
 
+- (void)setCenterProjectedPoint:(RMProjectedPoint)centerProjectedPoint
+{
+    [self setCenterProjectedPoint:centerProjectedPoint animated:YES];
+}
+
 - (void)setCenterProjectedPoint:(RMProjectedPoint)centerProjectedPoint animated:(BOOL)animated
 {
     if (![self tileSourceBoundsContainProjectedPoint:centerProjectedPoint])
@@ -446,57 +467,50 @@
     [self correctPositionOfAllAnnotations];
 }
 
-- (void)setCenterProjectedPoint:(RMProjectedPoint)centerProjectedPoint
-{
-    [self setCenterProjectedPoint:centerProjectedPoint animated:YES];
-}
-
 // ===
 
 - (void)moveBy:(CGSize)delta
 {
     if (_constrainMovement)
     {
-//        RMMercatorToScreenProjection *mtsp = self.mercatorToScreenProjection;
-//
-//        // calculate new bounds after move
-//        RMProjectedRect pBounds = [mtsp projectedBounds];
-//        RMProjectedSize XYDelta = [mtsp projectScreenSizeToProjectedSize:delta];
-//        CGSize sizeRatio = CGSizeMake(((delta.width == 0) ? 0 : XYDelta.width / delta.width),
-//                                      ((delta.height == 0) ? 0 : XYDelta.height / delta.height));
-//        RMProjectedRect newBounds = pBounds;
-//
-//        // move the rect by delta
-//        newBounds.origin.x -= XYDelta.width;
-//        newBounds.origin.y -= XYDelta.height;
-//
-//        // see if new bounds are within constrained bounds, and constrain if necessary
-//        BOOL constrained = NO;
-//        if (newBounds.origin.y < _southWestConstraint.y) {
-//            newBounds.origin.y = _southWestConstraint.y;
-//            constrained = YES;
-//        }
-//        if (newBounds.origin.y + newBounds.size.height > _northEastConstraint.y) {
-//            newBounds.origin.y = _northEastConstraint.y - newBounds.size.height;
-//            constrained = YES;
-//        }
-//        if (newBounds.origin.x < _southWestConstraint.x) {
-//            newBounds.origin.x = _southWestConstraint.x;
-//            constrained = YES;
-//        }
-//        if (newBounds.origin.x + newBounds.size.width > _northEastConstraint.x) {
-//            newBounds.origin.x = _northEastConstraint.x - newBounds.size.width;
-//            constrained = YES;
-//        }
-//
-//        if (constrained)
-//        {
-//            // Adjust delta to match constraint
-//            XYDelta.height = pBounds.origin.y - newBounds.origin.y;
-//            XYDelta.width = pBounds.origin.x - newBounds.origin.x;
-//            delta = CGSizeMake(((sizeRatio.width == 0) ? 0 : XYDelta.width / sizeRatio.width), 
-//                               ((sizeRatio.height == 0) ? 0 : XYDelta.height / sizeRatio.height));
-//        }
+        // calculate new bounds after move
+        RMProjectedRect pBounds = [self projectedBounds];
+        RMProjectedSize XYDelta = [self viewSizeToProjectedSize:delta];
+        CGSize sizeRatio = CGSizeMake(((delta.width == 0) ? 0 : XYDelta.width / delta.width),
+                                      ((delta.height == 0) ? 0 : XYDelta.height / delta.height));
+        RMProjectedRect newBounds = pBounds;
+
+        // move the rect by delta
+        newBounds.origin.x -= XYDelta.width;
+        newBounds.origin.y -= XYDelta.height;
+
+        // see if new bounds are within constrained bounds, and constrain if necessary
+        BOOL constrained = NO;
+        if (newBounds.origin.y < _southWestConstraint.y) {
+            newBounds.origin.y = _southWestConstraint.y;
+            constrained = YES;
+        }
+        if (newBounds.origin.y + newBounds.size.height > _northEastConstraint.y) {
+            newBounds.origin.y = _northEastConstraint.y - newBounds.size.height;
+            constrained = YES;
+        }
+        if (newBounds.origin.x < _southWestConstraint.x) {
+            newBounds.origin.x = _southWestConstraint.x;
+            constrained = YES;
+        }
+        if (newBounds.origin.x + newBounds.size.width > _northEastConstraint.x) {
+            newBounds.origin.x = _northEastConstraint.x - newBounds.size.width;
+            constrained = YES;
+        }
+
+        if (constrained)
+        {
+            // Adjust delta to match constraint
+            XYDelta.height = pBounds.origin.y - newBounds.origin.y;
+            XYDelta.width = pBounds.origin.x - newBounds.origin.x;
+            delta = CGSizeMake(((sizeRatio.width == 0) ? 0 : XYDelta.width / sizeRatio.width),
+                               ((sizeRatio.height == 0) ? 0 : XYDelta.height / sizeRatio.height));
+        }
     }
 
     if (_delegateHasBeforeMapMove) [delegate beforeMapMove:self];
@@ -505,23 +519,6 @@
     contentOffset.y += delta.height;
     mapScrollView.contentOffset = contentOffset;
     if (_delegateHasAfterMapMove) [delegate afterMapMove:self];
-}
-
-// ===
-
-- (void)setConstraintsSouthWest:(CLLocationCoordinate2D)southWest northEeast:(CLLocationCoordinate2D)northEast
-{
-    RMProjectedPoint projectedSouthWest = [projection coordinateToProjectedPoint:southWest];
-    RMProjectedPoint projectedNorthEast = [projection coordinateToProjectedPoint:northEast];
-
-    [self setProjectedConstraintsSouthWest:projectedSouthWest northEast:projectedNorthEast];
-}
-
-- (void)setProjectedConstraintsSouthWest:(RMProjectedPoint)southWest northEast:(RMProjectedPoint)northEast
-{
-    _southWestConstraint = southWest;
-    _northEastConstraint = northEast;
-    _constrainMovement = YES;
 }
 
 #pragma mark -
@@ -690,7 +687,7 @@
     if (newZoom == self.zoom) return;
 
     float factor = exp2f(newZoom - [self zoom]);
-    RMLog(@"zoom by factor: %f around {%f,%f}", factor, pivot.x, pivot.y);
+    RMLog(@"zoom by factor:%f around {%f,%f}", factor, pivot.x, pivot.y);
     [self zoomContentByFactor:factor near:pivot animated:animated];
 }
 
@@ -701,7 +698,7 @@
     if (newZoom == self.zoom) return;
 
     float factor = exp2f(newZoom - [self zoom]);
-    RMLog(@"zoom by factor: %f around {%f,%f}", factor, pivot.x, pivot.y);
+    RMLog(@"zoom by factor:%f around {%f,%f}", factor, pivot.x, pivot.y);
     [self zoomContentByFactor:factor near:pivot animated:animated];
 }
 
@@ -712,11 +709,9 @@
 
 - (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center animated:(BOOL)animated
 {
-    // \Bug: Move this to zoomContentByFactor, or merge zoomContentByFactor with this method
     if (_constrainMovement)
     {
         // check that bounds after zoom don't exceed map constraints
-        // the logic is copued from the method zoomByFactor,
         float _zoomFactor = [self adjustedZoomForCurrentBoundingMask:zoomFactor];
         float zoomDelta = log2f(_zoomFactor);
         float targetZoom = zoomDelta + [self zoom];
@@ -745,37 +740,32 @@
         //zooming out zoomFactor < 1
         if ((zoomGreaterMin && zoomLessMax) || (zoomAtMax && zoomFactor<1) || (zoomAtMin && zoomFactor>1))
         {
-//            // if I'm here it means I could zoom, now we have to see what will happen after zoom
-//            RMMercatorToScreenProjection *mtsp = self.mercatorToScreenProjection;
-//
-//            // get copies of mercatorRoScreenProjection's data
-//            RMProjectedPoint origin = [mtsp origin];
-//            float metersPerPixel = mtsp.metersPerPixel;
-//            CGRect screenBounds = [mtsp screenBounds];
-//
-//            // this is copied from [RMMercatorToScreenBounds zoomScreenByFactor]
-//            // First we move the origin to the pivot...
-//            origin.x += center.x * metersPerPixel;
-//            origin.y += (screenBounds.size.height - center.y) * metersPerPixel;
-//
-//            // Then scale by 1/factor
-//            metersPerPixel /= _zoomFactor;
-//
-//            // Then translate back
-//            origin.x -= center.x * metersPerPixel;
-//            origin.y -= (screenBounds.size.height - center.y) * metersPerPixel;
-//
-//            origin = [mtsp.projection wrapPointHorizontally:origin];
-//
-//            // calculate new bounds
-//            RMProjectedRect zRect;
-//            zRect.origin = origin;
-//            zRect.size.width = screenBounds.size.width * metersPerPixel;
-//            zRect.size.height = screenBounds.size.height * metersPerPixel;
-//
-//            // can zoom only if within bounds
-//            canZoom = !(zRect.origin.y < _southWestConstraint.y || zRect.origin.y+zRect.size.height > _northEastConstraint.y ||
-//                        zRect.origin.x < _southWestConstraint.x || zRect.origin.x+zRect.size.width > _northEastConstraint.x);
+            // if I'm here it means I could zoom, now we have to see what will happen after zoom
+            // get copies of mercatorRoScreenProjection's data
+            RMProjectedPoint origin = [self projectedOrigin];
+            CGRect screenBounds = self.bounds;
+
+            // this is copied from [RMMercatorToScreenBounds zoomScreenByFactor]
+            // First we move the origin to the pivot...
+            origin.x += center.x * self.metersPerPixel;
+            origin.y += (screenBounds.size.height - center.y) * self.metersPerPixel;
+
+            // Then scale by 1/factor
+            self.metersPerPixel /= _zoomFactor;
+
+            // Then translate back
+            origin.x -= center.x * self.metersPerPixel;
+            origin.y -= (screenBounds.size.height - center.y) * self.metersPerPixel;
+
+            // calculate new bounds
+            RMProjectedRect zRect;
+            zRect.origin = origin;
+            zRect.size.width = screenBounds.size.width * self.metersPerPixel;
+            zRect.size.height = screenBounds.size.height * self.metersPerPixel;
+
+            // can zoom only if within bounds
+            canZoom = !(zRect.origin.y < _southWestConstraint.y || zRect.origin.y+zRect.size.height > _northEastConstraint.y ||
+                        zRect.origin.x < _southWestConstraint.x || zRect.origin.x+zRect.size.width > _northEastConstraint.x);
         }
 
         if (!canZoom) {
@@ -1037,7 +1027,8 @@
     metersPerPixel = planetBounds.size.width / mapScrollView.contentSize.width;
     zoom = log2f(mapScrollView.zoomScale) + 1.0;
 
-    if (zoom == _lastZoom) {
+    if (zoom == _lastZoom)
+    {
         CGPoint contentOffset = mapScrollView.contentOffset;
         CGSize delta = CGSizeMake(_lastContentOffset.x - contentOffset.x, _lastContentOffset.y - contentOffset.y);
         _accumulatedDelta.x += delta.width;
@@ -1074,10 +1065,6 @@
     if (tileSource == newTileSource)
         return;
 
-    [self setMinZoom:newTileSource.minZoom];
-    [self setMaxZoom:newTileSource.maxZoom];
-    [self setZoom:[self zoom]]; // setZoom clamps zoom level to min/max limits
-
     [tileSource autorelease];
     tileSource = [newTileSource retain];
 
@@ -1087,6 +1074,10 @@
     [mercatorToTileProjection release];
     mercatorToTileProjection = [[tileSource mercatorToTileProjection] retain];
     tileSourceProjectedBounds = (RMProjectedRect)[self projectedRectFromLatitudeLongitudeBounds:[tileSource latitudeLongitudeBoundingBox]];
+
+    [self setMinZoom:newTileSource.minZoom];
+    [self setMaxZoom:newTileSource.maxZoom];
+    [self setZoom:[self zoom]]; // setZoom clamps zoom level to min/max limits
 
     // Reload the map with the new tilesource
     tiledLayerView.layer.contents = nil;
@@ -1124,8 +1115,13 @@
 
 - (void)setMetersPerPixel:(double)newMetersPerPixel
 {
-    // TODO: calculate zoom
-    [self correctPositionOfAllAnnotations];
+    [self setMetersPerPixel:newMetersPerPixel animated:YES];
+}
+
+- (void)setMetersPerPixel:(double)newMetersPerPixel animated:(BOOL)animated
+{
+    double factor = self.metersPerPixel / newMetersPerPixel;
+    [self zoomContentByFactor:factor near:CGPointMake(self.bounds.size.width/2.0, self.bounds.size.height/2.0) animated:animated];
 }
 
 - (double)scaledMetersPerPixel
@@ -1236,6 +1232,35 @@
 - (CLLocationCoordinate2D)pixelToCoordinate:(CGPoint)pixelCoordinate
 {
     return [projection projectedPointToCoordinate:[self pixelToProjectedPoint:pixelCoordinate]];
+}
+
+- (RMProjectedSize)viewSizeToProjectedSize:(CGSize)screenSize
+{
+    return RMProjectedSizeMake(screenSize.width * self.metersPerPixel, screenSize.height * self.metersPerPixel);
+}
+
+- (CGSize)projectedSizeToViewSize:(RMProjectedSize)projectedSize
+{
+    return CGSizeMake(projectedSize.width / self.metersPerPixel, projectedSize.height / self.metersPerPixel);
+}
+
+- (RMProjectedPoint)projectedOrigin
+{
+    CGPoint origin = CGPointMake(mapScrollView.contentOffset.x, mapScrollView.contentSize.height - mapScrollView.contentOffset.y);
+
+    RMProjectedRect planetBounds = projection.planetBounds;
+    RMProjectedPoint normalizedProjectedPoint;
+    normalizedProjectedPoint.x = (origin.x * self.metersPerPixel) - fabs(planetBounds.origin.x);
+    normalizedProjectedPoint.y = (origin.y * self.metersPerPixel) - fabs(planetBounds.origin.y);
+
+//    RMLog(@"projectedOrigin: {%f,%f}", normalizedProjectedPoint.x, normalizedProjectedPoint.y);
+
+    return normalizedProjectedPoint;
+}
+
+- (RMProjectedSize)projectedViewSize
+{
+    return RMProjectedSizeMake(self.bounds.size.width * self.metersPerPixel, self.bounds.size.height * self.metersPerPixel);
 }
 
 #pragma mark -
@@ -1498,254 +1523,10 @@
     return annotation.position;
 }
 
-//#pragma mark -
-//#pragma mark Event handling
-//
-//- (RMGestureDetails)gestureDetails:(NSSet *)touches
-//{
-//    RMGestureDetails gesture;
-//    gesture.center.x = gesture.center.y = 0;
-//    gesture.averageDistanceFromCenter = 0;
-//    gesture.angle = 0.0;
-//
-//    int interestingTouches = 0;
-//
-//    for (UITouch *touch in touches)
-//    {
-//        if ([touch phase] != UITouchPhaseBegan
-//            && [touch phase] != UITouchPhaseMoved
-//            && [touch phase] != UITouchPhaseStationary)
-//            continue;
-//        // RMLog(@"phase = %d", [touch phase]);
-//
-//        interestingTouches++;
-//
-//        CGPoint location = [touch locationInView: self];
-//
-//        gesture.center.x += location.x;
-//        gesture.center.y += location.y;
-//    }
-//
-//    if (interestingTouches == 0)
-//    {
-//        gesture.center = lastGesture.center;
-//        gesture.numTouches = 0;
-//        gesture.averageDistanceFromCenter = 0.0f;
-//        return gesture;
-//    }
-//
-//    //	RMLog(@"interestingTouches = %d", interestingTouches);
-//
-//    gesture.center.x /= interestingTouches;
-//    gesture.center.y /= interestingTouches;
-//
-//    for (UITouch *touch in touches)
-//    {
-//        if ([touch phase] != UITouchPhaseBegan
-//            && [touch phase] != UITouchPhaseMoved
-//            && [touch phase] != UITouchPhaseStationary)
-//            continue;
-//
-//        CGPoint location = [touch locationInView: self];
-//
-//        //		RMLog(@"For touch at %.0f, %.0f:", location.x, location.y);
-//        float dx = location.x - gesture.center.x;
-//        float dy = location.y - gesture.center.y;
-//        //		RMLog(@"delta = %.0f, %.0f  distance = %f", dx, dy, sqrtf((dx*dx) + (dy*dy)));
-//        gesture.averageDistanceFromCenter += sqrtf((dx*dx) + (dy*dy));
-//    }
-//
-//    gesture.averageDistanceFromCenter /= interestingTouches;
-//    gesture.numTouches = interestingTouches;
-//
-//    if ([touches count] == 2)
-//    {
-//        CGPoint first = [[[touches allObjects] objectAtIndex:0] locationInView:[self superview]];
-//        CGPoint second = [[[touches allObjects] objectAtIndex:1] locationInView:[self superview]];
-//        CGFloat height = second.y - first.y;
-//        CGFloat width = first.x - second.x;
-//        gesture.angle = atan2(height,width);
-//    }
-//
-//    return gesture;
-//}
-//
-//- (void)handleLongPress
-//{
-//    if (deceleration && _decelerationTimer != nil)
-//        return;
-//
-//    if (_delegateHasLongSingleTapOnMap)
-//        [delegate longSingleTapOnMap:self at:_longPressPosition];
-//}
-//
-//- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-//{
-//    UITouch *touch = [[touches allObjects] objectAtIndex:0];
-//    //Check if the touch hit a RMMarker subclass and if so, forward the touch event on
-//    //so it can be handled there
-//    id furthestLayerDown = [self.overlay hitTest:[touch locationInView:self]];
-//    if ([[furthestLayerDown class] isSubclassOfClass:[RMMarker class]]) {
-//        if ([furthestLayerDown respondsToSelector:@selector(touchesBegan:withEvent:)]) {
-//            [furthestLayerDown performSelector:@selector(touchesBegan:withEvent:) withObject:touches withObject:event];
-//            return;
-//        }
-//    }
-//
-//    //	RMLog(@"touchesBegan %d", [[event allTouches] count]);
-//    lastGesture = [self gestureDetails:[event allTouches]];
-//
-//    if (deceleration && _decelerationTimer != nil) {
-//        [self stopDeceleration];
-//    }
-//
-//    _longPressPosition = lastGesture.center;
-//    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(handleLongPress) object:nil];
-//
-//    if (lastGesture.numTouches == 1) {
-//        CALayer* hit = [self.overlay hitTest:[touch locationInView:self]];
-//        if (!hit || ![hit isKindOfClass: [RMMarker class]]) {            
-//            [self performSelector:@selector(handleLongPress) withObject:nil afterDelay:0.5];
-//        }
-//    }
-//}
-//
-//// \bug touchesCancelled should clean up, not pass event to markers
-//- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
-//{
-//    UITouch *touch = [[touches allObjects] objectAtIndex:0];
-//
-//    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(handleLongPress) object:nil];
-//
-//    // Check if the touch hit a RMMarker subclass and if so, forward the touch event on
-//    // so it can be handled there
-//    id furthestLayerDown = [self.overlay hitTest:[touch locationInView:self]];
-//    if ([[furthestLayerDown class]isSubclassOfClass: [RMMarker class]]) {
-//        if ([furthestLayerDown respondsToSelector:@selector(touchesCancelled:withEvent:)]) {
-//            [furthestLayerDown performSelector:@selector(touchesCancelled:withEvent:) withObject:touches withObject:event];
-//            return;
-//        }
-//    }
-//
-//    // I don't understand what the difference between this and touchesEnded is.
-//    [self touchesEnded:touches withEvent:event];
-//}
-//
-//- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-//{
-//    UITouch *touch = [[touches allObjects] objectAtIndex:0];
-//
-//    //Check if the touch hit a RMMarker subclass and if so, forward the touch event on
-//    //so it can be handled there
-//    id furthestLayerDown = [self.overlay hitTest:[touch locationInView:self]];
-//    if ([[furthestLayerDown class]isSubclassOfClass: [RMMarker class]]) {
-//        if ([furthestLayerDown respondsToSelector:@selector(touchesEnded:withEvent:)]) {
-//            [furthestLayerDown performSelector:@selector(touchesEnded:withEvent:) withObject:touches withObject:event];
-//            return;
-//        }
-//    }
-//    NSInteger lastTouches = lastGesture.numTouches;
-//
-//    // Calculate the gesture.
-//    lastGesture = [self gestureDetails:[event allTouches]];
-//
-//    BOOL decelerating = NO;
-//
-//    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(handleLongPress) object:nil];
-//
-//    if (touch.tapCount >= 2)
-//    {
-//        BOOL twoFingerTap = [touches count] >= 2;
-//        if (_delegateHasDoubleTapOnMap) {
-//            if (twoFingerTap) {
-//                if (_delegateHasDoubleTapTwoFingersOnMap) [delegate doubleTapTwoFingersOnMap:self at:lastGesture.center];
-//            } else {
-//                if (_delegateHasDoubleTapOnMap) [delegate doubleTapOnMap: self at:lastGesture.center];
-//            }
-//        } else {
-//            // Default behaviour matches built in maps.app
-//            float nextZoomFactor = 0;
-//            if (twoFingerTap) {
-//                nextZoomFactor = [self previousNativeZoomFactor];
-//            } else {
-//                nextZoomFactor = [self nextNativeZoomFactor];
-//            }
-//            if (nextZoomFactor != 0)
-//                [self zoomByFactor:nextZoomFactor near:[touch locationInView:self] animated:YES];
-//        }
-//    } else if (lastTouches == 1 && touch.tapCount != 1) {
-//        // deceleration
-//        if (deceleration && enableDragging)
-//        {
-//            CGPoint prevLocation = [touch previousLocationInView:self];
-//            CGPoint currLocation = [touch locationInView:self];
-//            CGSize touchDelta = CGSizeMake(currLocation.x - prevLocation.x, currLocation.y - prevLocation.y);
-//            [self startDecelerationWithDelta:touchDelta];
-//            decelerating = YES;
-//        }
-//    }
-//
-//    if (touch.tapCount == 1) 
-//    {
-//        if (lastGesture.numTouches == 0)
-//        {
-//            CALayer *hit = [self.overlay hitTest:[touch locationInView:self]];
-//            // RMLog(@"LAYER of type %@",[hit description]);
-//
-//            if (hit != nil)
-//            {
-//                CALayer *superlayer = [hit superlayer];
-//
-//                // See if tap was on a marker or marker label and send delegate protocol method
-//                if ([hit isKindOfClass:[RMMarker class]]) {
-//                    if (_delegateHasTapOnMarker) {
-//                        [delegate tapOnAnnotation:((RMMarker *)hit).annotation onMap:self];
-//                    }
-//                } else if (superlayer != nil && [superlayer isKindOfClass: [RMMarker class]]) {
-//                    if (_delegateHasTapOnLabelForMarker) {
-//                        [delegate tapOnLabelForAnnotation:((RMMarker *)superlayer).annotation onMap:self];
-//                    }
-//                } else if ([superlayer superlayer] != nil && [[superlayer superlayer] isKindOfClass:[RMMarker class]]) {
-//                    if (_delegateHasTapOnLabelForMarker) {
-//                        [delegate tapOnLabelForAnnotation:((RMMarker *)[superlayer superlayer]).annotation onMap:self];
-//                    }
-//                } else if (_delegateHasSingleTapOnMap) {
-//                    [delegate singleTapOnMap:self at:[touch locationInView:self]];
-//                }
-//            }
-//        }
-//        else if (!enableDragging && (lastGesture.numTouches == 1))
-//        {
-//            float prevZoomFactor = [self previousNativeZoomFactor];
-//            if (prevZoomFactor != 0)
-//                [self zoomByFactor:prevZoomFactor near:[touch locationInView:self] animated:YES];
-//        }
-//    }
-//
-//    if (_delegateHasAfterMapTouch) [delegate afterMapTouch:self];
-//}
 //
 //- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 //{
-//    UITouch *touch = [[touches allObjects] objectAtIndex:0];
-//
-//    //Check if the touch hit a RMMarker subclass and if so, forward the touch event on
-//    //so it can be handled there
-//    id furthestLayerDown = [self.overlay hitTest:[touch locationInView:self]];
-//    if ([[furthestLayerDown class]isSubclassOfClass: [RMMarker class]]) {
-//        if ([furthestLayerDown respondsToSelector:@selector(touchesMoved:withEvent:)]) {
-//            [furthestLayerDown performSelector:@selector(touchesMoved:withEvent:) withObject:touches withObject:event];
-//            return;
-//        }
-//    }
-//
 //    RMGestureDetails newGesture = [self gestureDetails:[event allTouches]];
-//    CGPoint newLongPressPosition = newGesture.center;
-//    CGFloat dx = newLongPressPosition.x - _longPressPosition.x;
-//    CGFloat dy = newLongPressPosition.y - _longPressPosition.y;
-//    if (sqrt(dx*dx + dy*dy) > 5.0)
-//        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(handleLongPress) object:nil];
-//
 //    CALayer *hit = [self.overlay hitTest:[touch locationInView:self]];
 ////	RMLog(@"LAYER of type %@",[hit description]);
 //
@@ -1762,29 +1543,5 @@
 //        }
 //    }
 //
-//    if (newGesture.numTouches == lastGesture.numTouches)
-//    {
-//        CGSize delta;
-//        delta.width = newGesture.center.x - lastGesture.center.x;
-//        delta.height = newGesture.center.y - lastGesture.center.y;
-//
-//        if (enableZoom && newGesture.numTouches > 1)
-//        {
-//            NSAssert (lastGesture.averageDistanceFromCenter > 0.0f && newGesture.averageDistanceFromCenter > 0.0f,
-//                      @"Distance from center is zero despite >1 touches on the screen");
-//
-//            double zoomFactor = newGesture.averageDistanceFromCenter / lastGesture.averageDistanceFromCenter;
-//
-//            [self moveBy:delta];
-//            [self zoomByFactor:zoomFactor near:newGesture.center];
-//        }
-//        else if (enableDragging)
-//        {
-//            [self moveBy:delta];
-//        }
-//    }
-//
-//    lastGesture = newGesture;
-//}
 
 @end
