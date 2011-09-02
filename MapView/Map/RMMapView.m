@@ -687,8 +687,18 @@
     if (newZoom == self.zoom) return;
 
     float factor = exp2f(newZoom - [self zoom]);
+    if (factor < 1.25) {
+        newZoom = fmin(floorf(newZoom + 1.0), [self maxZoom]);
+        factor = exp2f(newZoom - [self zoom]);
+    }
+
     RMLog(@"zoom by factor:%f around {%f,%f}", factor, pivot.x, pivot.y);
     [self zoomContentByFactor:factor near:pivot animated:animated];
+}
+
+- (void)zoomOutToNextNativeZoomAt:(CGPoint)pivot
+{
+    [self zoomOutToNextNativeZoomAt:pivot animated:NO];
 }
 
 - (void)zoomOutToNextNativeZoomAt:(CGPoint)pivot animated:(BOOL) animated
@@ -698,13 +708,13 @@
     if (newZoom == self.zoom) return;
 
     float factor = exp2f(newZoom - [self zoom]);
+    if (factor > 0.75) {
+        newZoom = fmax(ceilf([self zoom] - 1.0), [self minZoom]);
+        factor = exp2f(newZoom - [self zoom]);
+    }
+
     RMLog(@"zoom by factor:%f around {%f,%f}", factor, pivot.x, pivot.y);
     [self zoomContentByFactor:factor near:pivot animated:animated];
-}
-
-- (void)zoomOutToNextNativeZoomAt:(CGPoint)pivot
-{
-	[self zoomOutToNextNativeZoomAt:pivot animated:NO];
 }
 
 - (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center animated:(BOOL)animated
