@@ -27,8 +27,9 @@
 @interface RMMapOverlayView : UIView {
     id <RMMapOverlayViewDelegate> delegate;
 
-    BOOL trackPanGesture;
-    CGPoint lastTranslation;
+    BOOL _trackPanGesture;
+    CGPoint _lastTranslation;
+    RMAnnotation *_draggedAnnotation;
 }
 
 @property (nonatomic, assign) id <RMMapOverlayViewDelegate> delegate;

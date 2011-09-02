@@ -29,6 +29,10 @@
 
     self.layer.masksToBounds = YES;
 
+    _trackPanGesture = NO;
+    _lastTranslation = CGPointZero;
+    _draggedAnnotation = nil;
+
     UITapGestureRecognizer *doubleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)] autorelease];
     doubleTapRecognizer.numberOfTapsRequired = 2;
 
@@ -44,6 +48,12 @@
     [self addGestureRecognizer:panGestureRecognizer];
 
     return self;
+}
+
+- (void)dealloc
+{
+    [_draggedAnnotation release]; _draggedAnnotation = nil;
+    [super dealloc];
 }
 
 - (unsigned)sublayersCount
@@ -157,30 +167,34 @@
 
 - (void)handlePanGesture:(UIPanGestureRecognizer *)recognizer
 {
-    CALayer *hit = [self.layer hitTest:[recognizer locationInView:self]];
-    if (!hit) return;
+    if (recognizer.state == UIGestureRecognizerStateBegan)
+    {
+        CALayer *hit = [self.layer hitTest:[recognizer locationInView:self]];
+        if (!hit) return;
+        if ([hit respondsToSelector:@selector(enableDragging)] && ![(RMMarker *)hit enableDragging]) return;
 
-    if ([hit respondsToSelector:@selector(enableDragging)] && ![(RMMarker *)hit enableDragging]) return;
+        _lastTranslation = CGPointZero;
+        [_draggedAnnotation release];
+        _draggedAnnotation = [[self findAnnotationInLayer:hit] retain];
 
-    if (recognizer.state == UIGestureRecognizerStateBegan) {
-        lastTranslation = CGPointZero;
         if ([delegate respondsToSelector:@selector(mapOverlayView:shouldDragAnnotation:)])
-            trackPanGesture = [delegate mapOverlayView:self shouldDragAnnotation:[self findAnnotationInLayer:hit]];
+            _trackPanGesture = [delegate mapOverlayView:self shouldDragAnnotation:_draggedAnnotation];
         else
-            trackPanGesture = NO;
+            _trackPanGesture = NO;
     }
 
-    if (!trackPanGesture) return;
+    if (!_trackPanGesture) return;
 
     if (recognizer.state == UIGestureRecognizerStateChanged && [delegate respondsToSelector:@selector(mapOverlayView:didDragAnnotation:withDelta:)]) {
         CGPoint translation = [recognizer translationInView:self];
-        CGPoint delta = CGPointMake(lastTranslation.x - translation.x, lastTranslation.y - translation.y);
-        lastTranslation = translation;
-        [delegate mapOverlayView:self didDragAnnotation:[self findAnnotationInLayer:hit] withDelta:delta];
+        CGPoint delta = CGPointMake(_lastTranslation.x - translation.x, _lastTranslation.y - translation.y);
+        _lastTranslation = translation;
+        [delegate mapOverlayView:self didDragAnnotation:_draggedAnnotation withDelta:delta];
 
     } else if (recognizer.state == UIGestureRecognizerStateEnded && [delegate respondsToSelector:@selector(mapOverlayView:didEndDragAnnotation:)]) {
-        [delegate mapOverlayView:self didEndDragAnnotation:[self findAnnotationInLayer:hit]];
-        trackPanGesture = NO;
+        [delegate mapOverlayView:self didEndDragAnnotation:_draggedAnnotation];
+        _trackPanGesture = NO;
+        [_draggedAnnotation release]; _draggedAnnotation = nil;
     }
 }
 
