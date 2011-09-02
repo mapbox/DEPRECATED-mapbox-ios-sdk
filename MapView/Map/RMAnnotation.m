@@ -49,7 +49,6 @@
 @synthesize hasBoundingBox;
 @synthesize enabled;
 @synthesize position;
-@synthesize layer;
 @synthesize quadTreeNode;
 
 + (id)annotationWithMapView:(RMMapView *)aMapView coordinate:(CLLocationCoordinate2D)aCoordinate andTitle:(NSString *)aTitle
@@ -66,7 +65,6 @@
     self.coordinate   = aCoordinate;
     self.title        = aTitle;
     self.userInfo     = nil;
-    self.layer        = nil;
     self.quadTreeNode = nil;
 
     self.annotationType = nil;
@@ -75,17 +73,19 @@
     self.hasBoundingBox = NO;
     self.enabled        = YES;
 
+    layer = nil;
+
     return self;
 }
 
 - (void)dealloc
 {
-    [[self.mapView quadTree] removeAnnotation:self];
     self.title        = nil;
     self.userInfo     = nil;
-    self.mapView      = nil;
     self.layer        = nil;
+    [[self.mapView quadTree] removeAnnotation:self];
     self.quadTreeNode = nil;
+    self.mapView      = nil;
 
     self.annotationType = nil;
     self.annotationIcon = nil;
@@ -116,19 +116,27 @@
 - (void)setPosition:(CGPoint)aPosition
 {
     position = aPosition;
-    if (layer) {
-        layer.position = aPosition;
-    }
+    if (layer) layer.position = aPosition;
+}
+
+- (RMMapLayer *)layer
+{
+    return layer;
 }
 
 - (void)setLayer:(RMMapLayer *)aLayer
 {
     if (layer != aLayer) {
-        [layer removeFromSuperlayer]; [layer release];
-        layer = [aLayer retain];
-        layer.annotation = self;
+        if (layer.superlayer) [layer removeFromSuperlayer];
+        [layer release]; layer = nil;
     }
-    layer.position = self.position;
+
+    if (aLayer) {
+        layer = aLayer;
+        [layer retain];
+        layer.annotation = self;
+        layer.position = self.position;
+    }
 }
 
 - (BOOL)isAnnotationWithinBounds:(CGRect)bounds

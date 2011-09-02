@@ -390,16 +390,9 @@
     }
 }
 
-//- (void)moveBy:(CGSize)delta
-//{
-//    if (enableDragging) {
-//        [super moveBy:delta];
-//    }
-//}
-//
-- (void)setPosition:(CGPoint)value
+- (void)setPosition:(CGPoint)newPosition
 {
-    if (CGPointEqualToPoint(value, super.position) && CGRectEqualToRect(self.bounds, previousBounds)) return;
+    if (CGPointEqualToPoint(newPosition, super.position) && CGRectEqualToRect(self.bounds, previousBounds)) return;
 
     [self recalculateGeometry];
 }

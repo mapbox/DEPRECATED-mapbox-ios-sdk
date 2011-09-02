@@ -13,6 +13,7 @@
 #import "RMMarker.h"
 #import "RMProjection.h"
 #import "RMAnnotation.h"
+#import "RMQuadTree.h"
 
 @implementation MainViewController
 
@@ -29,7 +30,7 @@
 
 - (void)addMarkers
 {
-#define kNumberRows 1
+#define kNumberRows 3
 #define kNumberColumns 9
 #define kSpacing 0.1
 
@@ -73,6 +74,8 @@
 {
     [super viewDidLoad];
     [mapView setDelegate:self];
+    mapView.enableClustering = YES;
+    mapView.positionClusterMarkersAtTheGravityCenter = NO;
 	mapView.tileSource = [[[RMOpenStreetMapSource alloc] init] autorelease];
 
 	center.latitude = 47.5635;
@@ -133,9 +136,18 @@
 
 - (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
 {
-    RMMarker *marker = [[[RMMarker alloc] initWithUIImage:annotation.annotationIcon anchorPoint:annotation.anchorPoint] autorelease];
-    if (annotation.title)
-        [marker changeLabelUsingText:annotation.title];
+    RMMarker *marker = nil;
+    if ([annotation.annotationType isEqualToString:kRMClusterAnnotationTypeName]) {
+        marker = [[[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"marker-blue.png"] anchorPoint:annotation.anchorPoint] autorelease];
+        if (annotation.title)
+            [marker changeLabelUsingText:annotation.title];
+
+    } else {
+        marker = [[[RMMarker alloc] initWithUIImage:annotation.annotationIcon anchorPoint:annotation.anchorPoint] autorelease];
+        if (annotation.title)
+            [marker changeLabelUsingText:annotation.title];
+    }
+
     return marker;
 }
 

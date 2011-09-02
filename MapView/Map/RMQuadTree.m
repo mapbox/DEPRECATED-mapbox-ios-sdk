@@ -63,7 +63,7 @@
 
 - (void)dealloc
 {
-    cachedClusterAnnotation.layer = nil; [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
+    [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
 
     @synchronized (annotations) {
         for (RMAnnotation *annotation in annotations)
@@ -160,13 +160,13 @@
 - (void)removeAnnotation:(RMAnnotation *)annotation
 {
     if (!annotation.quadTreeNode) return;
+    annotation.quadTreeNode = nil;
 
     @synchronized (annotations) {
         [annotations removeObject:annotation];
     }
 
     [self removeUpwardsAllCachedClusterAnnotations];
-    annotation.quadTreeNode = nil;
 }
 
 - (void)annotationDidChangeBoundingBox:(RMAnnotation *)annotation
@@ -302,7 +302,7 @@
 - (void)removeUpwardsAllCachedClusterAnnotations
 {
     if (parentNode) [parentNode removeUpwardsAllCachedClusterAnnotations];
-    cachedClusterAnnotation.layer = nil; [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
+    [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
 }
 
 @end

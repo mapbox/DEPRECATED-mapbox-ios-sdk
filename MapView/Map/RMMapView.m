@@ -1352,7 +1352,7 @@
         boundingBox.size.height += 2*boundingBoxBuffer;
 
         NSArray *annotationsToCorrect = [quadTree annotationsInProjectedRect:boundingBox createClusterAnnotations:self.enableClustering withClusterSize:RMProjectedSizeMake(self.clusterMarkerSize.width * self.metersPerPixel, self.clusterMarkerSize.height * self.metersPerPixel) findGravityCenter:self.positionClusterMarkersAtTheGravityCenter];
-        NSMutableSet *previousVisibleAnnotations = [NSMutableSet setWithSet:visibleAnnotations];
+        NSMutableSet *previousVisibleAnnotations = [[NSMutableSet alloc] initWithSet:visibleAnnotations];
 
         for (RMAnnotation *annotation in annotationsToCorrect)
         {
@@ -1375,9 +1375,11 @@
         {
             if (_delegateHasWillHideLayerForAnnotation) [delegate mapView:self willHideLayerForAnnotation:annotation];
             annotation.layer = nil;
-            [visibleAnnotations removeObject:annotation];
             if (_delegateHasDidHideLayerForAnnotation) [delegate mapView:self didHideLayerForAnnotation:annotation];
+            [visibleAnnotations removeObject:annotation];
         }
+
+        [previousVisibleAnnotations release];
 
 //        RMLog(@"%d annotations on screen, %d total", [overlayView sublayersCount], [annotations count]);
 

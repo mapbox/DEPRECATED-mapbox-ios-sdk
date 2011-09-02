@@ -76,7 +76,6 @@
 
 - (void)dealloc
 {
-    self.userInfo = nil;
     self.label = nil;
     self.textForegroundColor = nil;
     self.textBackgroundColor = nil;
