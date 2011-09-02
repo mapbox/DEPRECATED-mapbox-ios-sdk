@@ -289,8 +289,9 @@
     _delegateHasTapOnLabelForAnnotation = [delegate respondsToSelector:@selector(tapOnLabelForAnnotation:onMap:)];
     _delegateHasDoubleTapOnLabelForAnnotation = [delegate respondsToSelector:@selector(doubleTapOnLabelForAnnotation:onMap:)];
 
-    _delegateHasShouldDragMarker = [delegate respondsToSelector:@selector(mapView:shouldDragAnnotation:withEvent:)];
-    _delegateHasDidDragMarker = [delegate respondsToSelector:@selector(mapView:didDragAnnotation:withEvent:)];
+    _delegateHasShouldDragMarker = [delegate respondsToSelector:@selector(mapView:shouldDragAnnotation:)];
+    _delegateHasDidDragMarker = [delegate respondsToSelector:@selector(mapView:didDragAnnotation:withDelta:)];
+    _delegateHasDidEndDragMarker = [delegate respondsToSelector:@selector(mapView:didEndDragAnnotation:)];
 
     _delegateHasLayerForAnnotation = [delegate respondsToSelector:@selector(mapView:layerForAnnotation:)];
     _delegateHasWillHideLayerForAnnotation = [delegate respondsToSelector:@selector(mapView:willHideLayerForAnnotation:)];
@@ -999,6 +1000,26 @@
     }
 }
 
+- (BOOL)mapOverlayView:(RMMapOverlayView *)aMapOverlayView shouldDragAnnotation:(RMAnnotation *)anAnnotation
+{
+    if (_delegateHasShouldDragMarker)
+        return [delegate mapView:self shouldDragAnnotation:anAnnotation];
+    else
+        return NO;
+}
+
+- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView didDragAnnotation:(RMAnnotation *)anAnnotation withDelta:(CGPoint)delta
+{
+    if (_delegateHasDidDragMarker)
+        [delegate mapView:self didDragAnnotation:anAnnotation withDelta:delta];
+}
+
+- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView didEndDragAnnotation:(RMAnnotation *)anAnnotation
+{
+    if (_delegateHasDidEndDragMarker)
+        [delegate mapView:self didEndDragAnnotation:anAnnotation];
+}
+
 // Tiled layer
 
 - (void)mapTiledLayerView:(RMMapTiledLayerView *)aTiledLayerView singleTapAtPoint:(CGPoint)aPoint
@@ -1059,6 +1080,7 @@
 
     _lastContentOffset = mapScrollView.contentOffset;
 
+    // Don't do anything stupid here or your scrolling experience will suck
     if (_delegateHasMapViewRegionDidChange) [delegate mapViewRegionDidChange:self];
 }
 

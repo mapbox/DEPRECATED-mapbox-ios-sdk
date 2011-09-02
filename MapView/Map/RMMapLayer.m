@@ -41,7 +41,7 @@
 		return nil;
 
     self.annotation = nil;
-    self.enableDragging = YES;
+    self.enableDragging = NO;
 
 	return self;
 }

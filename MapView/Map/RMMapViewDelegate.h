@@ -62,7 +62,8 @@
 - (void)tapOnLabelForAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map;
 - (void)doubleTapOnLabelForAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map;
 
-- (BOOL)mapView:(RMMapView *)map shouldDragAnnotation:(RMAnnotation *)annotation withEvent:(UIEvent *)event;
-- (void)mapView:(RMMapView *)map didDragAnnotation:(RMAnnotation *)annotation withEvent:(UIEvent *)event;
+- (BOOL)mapView:(RMMapView *)map shouldDragAnnotation:(RMAnnotation *)annotation;
+- (void)mapView:(RMMapView *)map didDragAnnotation:(RMAnnotation *)annotation withDelta:(CGPoint)delta;
+- (void)mapView:(RMMapView *)map didEndDragAnnotation:(RMAnnotation *)annotation;
 
 @end
