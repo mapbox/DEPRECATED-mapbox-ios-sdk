@@ -29,6 +29,7 @@
 #import "RMPixel.h"
 #import "RMProjection.h"
 #import "RMMapView.h"
+#import "RMAnnotation.h"
 
 @implementation RMPath
 
@@ -96,7 +97,7 @@
 {
     if (ignorePathUpdates) return;
 
-    CGPoint myPosition = [mapView projectedPointToPixel:projectedLocation];
+    CGPoint myPosition = self.annotation.position;
 
     float scale = [mapView metersPerPixel];
     float scaledLineWidth;
@@ -152,7 +153,7 @@
 //    RMLog(@"new bounds: %f %f %f %f", self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
 
     pathBoundingBox = CGRectMake(myPosition.x + self.bounds.origin.x, myPosition.y + self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
-    self.anchorPoint = CGPointMake(-pixelBounds.origin.x / pixelBounds.size.width,-pixelBounds.origin.y / pixelBounds.size.height);
+    self.anchorPoint = CGPointMake(-pixelBounds.origin.x / pixelBounds.size.width, -pixelBounds.origin.y / pixelBounds.size.height);
     [self setNeedsDisplay];
 }
 
