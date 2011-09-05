@@ -880,6 +880,7 @@
 
     mapScrollView = [[UIScrollView alloc] initWithFrame:[self bounds]];
     mapScrollView.delegate = self;
+    mapScrollView.opaque = NO;
     mapScrollView.backgroundColor = [UIColor clearColor];
     mapScrollView.showsVerticalScrollIndicator = NO;
     mapScrollView.showsHorizontalScrollIndicator = NO;

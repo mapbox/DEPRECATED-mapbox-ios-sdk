@@ -41,6 +41,7 @@
 
     self.userInteractionEnabled = YES;
     self.multipleTouchEnabled = YES;
+    self.opaque = NO;
 
     CATiledLayer *tiledLayer = [self tiledLayer];
     tiledLayer.levelsOfDetailBias = [[mapView tileSource] maxZoom] - 1;
