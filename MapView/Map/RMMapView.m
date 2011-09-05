@@ -684,16 +684,16 @@
 - (void)zoomInToNextNativeZoomAt:(CGPoint)pivot animated:(BOOL)animated
 {
     // Calculate rounded zoom
-    float newZoom = fmin(floorf([self zoom] + 1.0), [self maxZoom]);
+    float newZoom = fmin(ceilf([self zoom]) + 0.99, [self maxZoom]);
     if (newZoom == self.zoom) return;
 
     float factor = exp2f(newZoom - [self zoom]);
-    if (factor < 1.25) {
-        newZoom = fmin(floorf(newZoom + 1.0), [self maxZoom]);
+    if (factor > 2.25) {
+        newZoom = fmin(ceilf([self zoom]) - 0.01, [self maxZoom]);
         factor = exp2f(newZoom - [self zoom]);
     }
 
-    RMLog(@"zoom by factor:%f around {%f,%f}", factor, pivot.x, pivot.y);
+//    RMLog(@"zoom in from:%f to:%f by factor:%f around {%f,%f}", [self zoom], newZoom, factor, pivot.x, pivot.y);
     [self zoomContentByFactor:factor near:pivot animated:animated];
 }
 
@@ -705,16 +705,16 @@
 - (void)zoomOutToNextNativeZoomAt:(CGPoint)pivot animated:(BOOL) animated
 {
     // Calculate rounded zoom
-    float newZoom = fmax(ceilf([self zoom] - 1.0), [self minZoom]);
+    float newZoom = fmax(floorf([self zoom]) - 0.01, [self minZoom]);
     if (newZoom == self.zoom) return;
 
     float factor = exp2f(newZoom - [self zoom]);
     if (factor > 0.75) {
-        newZoom = fmax(ceilf([self zoom] - 1.0), [self minZoom]);
+        newZoom = fmax(floorf([self zoom]) - 1.01, [self minZoom]);
         factor = exp2f(newZoom - [self zoom]);
     }
 
-    RMLog(@"zoom by factor:%f around {%f,%f}", factor, pivot.x, pivot.y);
+//    RMLog(@"zoom out from:%f to:%f by factor:%f around {%f,%f}", [self zoom], newZoom, factor, pivot.x, pivot.y);
     [self zoomContentByFactor:factor near:pivot animated:animated];
 }
 
@@ -876,7 +876,7 @@
     [mapScrollView removeFromSuperview]; [mapScrollView release]; mapScrollView = nil;
 
     int tileSideLength = [[self tileSource] tileSideLength];
-    CGSize contentSize = CGSizeMake(2.0*tileSideLength, 2.0*tileSideLength); // zoom level 1
+    CGSize contentSize = CGSizeMake(tileSideLength, tileSideLength); // zoom level 1
 
     mapScrollView = [[UIScrollView alloc] initWithFrame:[self bounds]];
     mapScrollView.delegate = self;
@@ -1361,7 +1361,7 @@
 	normalizedProjectedPoint.y = annotation.projectedLocation.y + fabs(planetBounds.origin.y);
 
     annotation.position = CGPointMake((normalizedProjectedPoint.x / self.metersPerPixel) - mapScrollView.contentOffset.x, mapScrollView.contentSize.height - (normalizedProjectedPoint.y / self.metersPerPixel) - mapScrollView.contentOffset.y);
-//    NSLog(@"Change annotation at {%f,%f} in mapView {%f,%f}", annotation.position.x, annotation.position.y, mapScrollView.contentSize.width, mapScrollView.contentSize.height);
+//    RMLog(@"Change annotation at {%f,%f} in mapView {%f,%f}", annotation.position.x, annotation.position.y, mapScrollView.contentSize.width, mapScrollView.contentSize.height);
 }
 
 - (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllAnnotations
