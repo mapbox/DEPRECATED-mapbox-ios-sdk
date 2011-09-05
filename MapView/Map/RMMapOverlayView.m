@@ -22,6 +22,11 @@
 
 @synthesize delegate;
 
++ layerClass
+{
+    return [CAScrollLayer class];
+}
+
 - (id)initWithFrame:(CGRect)frame
 {
     if (!(self = [super initWithFrame:frame]))
@@ -81,12 +86,9 @@
     [self.layer insertSublayer:aLayer above:sublayer];
 }
 
-- (void)moveLayersBy:(CGSize)delta
+- (void)moveLayersBy:(CGPoint)delta
 {
-    for (CALayer *currentLayer in self.layer.sublayers)
-    {
-        currentLayer.position = RMTranslateCGPointBy(currentLayer.position, delta);
-    }
+    [self.layer scrollPoint:CGPointMake(-delta.x, -delta.y)];
 }
 
 #pragma mark -

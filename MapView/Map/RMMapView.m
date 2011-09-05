@@ -48,7 +48,7 @@
 #pragma mark --- begin constants ----
 
 #define kiPhoneMilimeteresPerPixel .1543
-#define kZoomRectPixelBuffer 50.0
+#define kZoomRectPixelBuffer 100.0
 
 #define kDefaultInitialLatitude 47.56
 #define kDefaultInitialLongitude 10.22
@@ -1059,19 +1059,20 @@
     metersPerPixel = planetBounds.size.width / mapScrollView.contentSize.width;
     zoom = log2f(mapScrollView.zoomScale) + 1.0;
 
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(correctPositionOfAllAnnotations) object:nil];
+
     if (zoom == _lastZoom)
     {
         CGPoint contentOffset = mapScrollView.contentOffset;
-        CGSize delta = CGSizeMake(_lastContentOffset.x - contentOffset.x, _lastContentOffset.y - contentOffset.y);
-        _accumulatedDelta.x += delta.width;
-        _accumulatedDelta.y += delta.height;
+        CGPoint delta = CGPointMake(_lastContentOffset.x - contentOffset.x, _lastContentOffset.y - contentOffset.y);
+        _accumulatedDelta.x += delta.x;
+        _accumulatedDelta.y += delta.y;
 
-        if (fabsf(_accumulatedDelta.x) < kZoomRectPixelBuffer && fabsf(_accumulatedDelta.y) < kZoomRectPixelBuffer)
-            [overlayView moveLayersBy:delta];
-        else {
+        if (fabsf(_accumulatedDelta.x) < kZoomRectPixelBuffer && fabsf(_accumulatedDelta.y) < kZoomRectPixelBuffer) {
+            [overlayView moveLayersBy:_accumulatedDelta];
+            [self performSelector:@selector(correctPositionOfAllAnnotations) withObject:nil afterDelay:0.1];
+        } else {
             [self correctPositionOfAllAnnotations];
-            _accumulatedDelta.x = 0.0;
-            _accumulatedDelta.y = 0.0;
         }
 
     } else {
@@ -1259,6 +1260,8 @@
     normalizedProjectedPoint.x = ((pixelCoordinate.x + mapScrollView.contentOffset.x) * self.metersPerPixel) - fabs(planetBounds.origin.x);
     normalizedProjectedPoint.y = ((mapScrollView.contentSize.height - mapScrollView.contentOffset.y - pixelCoordinate.y) * self.metersPerPixel) - fabs(planetBounds.origin.y);
 
+//    DLog(@"pixelToPoint: {%f,%f} -> {%f,%f}", pixelCoordinate.x, pixelCoordinate.y, normalizedProjectedPoint.x, normalizedProjectedPoint.y);
+
     return normalizedProjectedPoint;
 }
 
@@ -1363,6 +1366,10 @@
     // Prevent blurry movements
     [CATransaction begin];
     [CATransaction setAnimationDuration:0];
+
+    _accumulatedDelta.x = 0.0;
+    _accumulatedDelta.y = 0.0;
+    [overlayView moveLayersBy:_accumulatedDelta];
 
     if (self.quadTree)
     {
