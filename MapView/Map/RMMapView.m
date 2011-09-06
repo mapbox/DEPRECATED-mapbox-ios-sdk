@@ -896,7 +896,7 @@
     [mapScrollView addSubview:tiledLayerView];
 
     [mapScrollView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:NULL];
-    [mapScrollView setZoomScale:exp2f([self zoom] - 1.0) animated:NO];
+    [mapScrollView setZoomScale:exp2f([self zoom]) animated:NO];
 
     _lastZoom = [self zoom];
     _lastContentOffset = mapScrollView.contentOffset;
@@ -1057,7 +1057,7 @@
 {
     RMProjectedRect planetBounds = projection.planetBounds;
     metersPerPixel = planetBounds.size.width / mapScrollView.contentSize.width;
-    zoom = log2f(mapScrollView.zoomScale) + 1.0;
+    zoom = log2f(mapScrollView.zoomScale);
 
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(correctPositionOfAllAnnotations) object:nil];
 
@@ -1184,13 +1184,13 @@
 - (void)setMinZoom:(float)newMinZoom
 {
     minZoom = newMinZoom;
-    mapScrollView.minimumZoomScale = exp2f(newMinZoom - 1.0);
+    mapScrollView.minimumZoomScale = exp2f(newMinZoom);
 }
 
 - (void)setMaxZoom:(float)newMaxZoom
 {
     maxZoom = newMaxZoom;
-    mapScrollView.maximumZoomScale = exp2f(newMaxZoom - 1.0);
+    mapScrollView.maximumZoomScale = exp2f(newMaxZoom);
 }
 
 - (float)zoom
@@ -1204,7 +1204,9 @@
     zoom = (newZoom > maxZoom) ? maxZoom : newZoom;
     zoom = (zoom < minZoom) ? minZoom : zoom;
 
-    mapScrollView.zoomScale = exp2f(zoom - 1.0);
+//    RMLog(@"New zoom:%f", zoom);
+
+    mapScrollView.zoomScale = exp2f(zoom);
 }
 
 - (void)setEnableClustering:(BOOL)doEnableClustering

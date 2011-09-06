@@ -108,7 +108,6 @@ typedef enum {
     BOOL _delegateHasDoubleTapOnAnnotation;
     BOOL _delegateHasTapOnLabelForAnnotation;
     BOOL _delegateHasDoubleTapOnLabelForAnnotation;
-    BOOL _delegateHasAfterMapTouch;
     BOOL _delegateHasShouldDragMarker;
     BOOL _delegateHasDidDragMarker;
     BOOL _delegateHasDidEndDragMarker;

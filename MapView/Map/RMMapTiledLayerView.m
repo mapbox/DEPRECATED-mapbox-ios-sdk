@@ -76,7 +76,7 @@
 {
     CGRect bounds = self.bounds;
 
-//    NSLog(@"drawRect: {{%.0f,%.0f},{%.2f,%.2f}}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+//    NSLog(@"drawRect: {{%f,%f},{%f,%f}}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 
     short zoom = log2(bounds.size.width / rect.size.width);
     int x = floor(rect.origin.x / rect.size.width), y = floor(fabs(rect.origin.y / rect.size.height));
