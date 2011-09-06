@@ -896,7 +896,7 @@
     [mapScrollView addSubview:tiledLayerView];
 
     [mapScrollView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:NULL];
-    [mapScrollView setZoomScale:exp2f([self zoom] - 1.0) animated:NO];
+    [mapScrollView setZoomScale:exp2f([self zoom]) animated:NO];
 
     _lastZoom = [self zoom];
     _lastContentOffset = mapScrollView.contentOffset;
@@ -1057,9 +1057,16 @@
 {
     RMProjectedRect planetBounds = projection.planetBounds;
     metersPerPixel = planetBounds.size.width / mapScrollView.contentSize.width;
-    zoom = log2f(mapScrollView.zoomScale) + 1.0;
+    zoom = log2f(mapScrollView.zoomScale);
 
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(correctPositionOfAllAnnotations) object:nil];
+
+    if (_constrainMovement && ![self projectedBounds:tileSourceProjectedBounds containsPoint:[self centerProjectedPoint]]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [mapScrollView setContentOffset:_lastContentOffset animated:NO];
+        });
+        return;
+    }
 
     if (zoom == _lastZoom)
     {
@@ -1108,6 +1115,9 @@
     [mercatorToTileProjection release];
     mercatorToTileProjection = [[tileSource mercatorToTileProjection] retain];
     tileSourceProjectedBounds = (RMProjectedRect)[self projectedRectFromLatitudeLongitudeBounds:[tileSource latitudeLongitudeBoundingBox]];
+
+    RMSphericalTrapezium bounds = [tileSource latitudeLongitudeBoundingBox];
+    _constrainMovement = !(bounds.northEast.latitude == 90 && bounds.northEast.longitude == 180 && bounds.southWest.latitude == -90 && bounds.southWest.longitude == -180);
 
     [self setMinZoom:newTileSource.minZoom];
     [self setMaxZoom:newTileSource.maxZoom];
@@ -1174,13 +1184,19 @@
 - (void)setMinZoom:(float)newMinZoom
 {
     minZoom = newMinZoom;
-    mapScrollView.minimumZoomScale = exp2f(newMinZoom - 1.0);
+
+//    RMLog(@"New minZoom:%f", newMinZoom);
+
+    mapScrollView.minimumZoomScale = exp2f(newMinZoom);
 }
 
 - (void)setMaxZoom:(float)newMaxZoom
 {
     maxZoom = newMaxZoom;
-    mapScrollView.maximumZoomScale = exp2f(newMaxZoom - 1.0);
+
+//    RMLog(@"New maxZoom:%f", newMaxZoom);
+
+    mapScrollView.maximumZoomScale = exp2f(newMaxZoom);
 }
 
 - (float)zoom
@@ -1194,7 +1210,9 @@
     zoom = (newZoom > maxZoom) ? maxZoom : newZoom;
     zoom = (zoom < minZoom) ? minZoom : zoom;
 
-    mapScrollView.zoomScale = exp2f(zoom - 1.0);
+//    RMLog(@"New zoom:%f", zoom);
+
+    mapScrollView.zoomScale = exp2f(zoom);
 }
 
 - (void)setEnableClustering:(BOOL)doEnableClustering
@@ -1567,26 +1585,5 @@
     [self correctScreenPosition:annotation];
     return annotation.position;
 }
-
-//
-//- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
-//{
-//    RMGestureDetails newGesture = [self gestureDetails:[event allTouches]];
-//    CALayer *hit = [self.overlay hitTest:[touch locationInView:self]];
-////	RMLog(@"LAYER of type %@",[hit description]);
-//
-//    if (hit != nil)
-//    {   
-//        if ([hit isKindOfClass: [RMMarker class]]) {
-//            if (!_delegateHasShouldDragMarker || (_delegateHasShouldDragMarker && [delegate mapView:self shouldDragAnnotation:((RMMarker *)hit).annotation withEvent:event]))
-//            {
-//                if (_delegateHasDidDragMarker) {
-//                    [delegate mapView:self didDragAnnotation:((RMMarker *)hit).annotation withEvent:event];
-//                    return;
-//                }
-//            }
-//        }
-//    }
-//
 
 @end
