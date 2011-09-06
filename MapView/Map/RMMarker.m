@@ -76,7 +76,6 @@
 
 - (void)dealloc
 {
-    self.userInfo = nil;
     self.label = nil;
     self.textForegroundColor = nil;
     self.textBackgroundColor = nil;
@@ -180,20 +179,6 @@
         // Using removeFromSuperlayer will animate hiding the label, whereas setHidden is not animated
         [[self.label layer] removeFromSuperlayer];
         [self.label setHidden:YES];
-    }
-}
-
-- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center
-{
-    if (enableDragging) {
-        self.position = RMScaleCGPointAboutPoint(self.position, zoomFactor, center);
-    }
-}
-
-- (void)moveBy:(CGSize)delta
-{
-    if (enableDragging) {
-        [super moveBy:delta];
     }
 }
 

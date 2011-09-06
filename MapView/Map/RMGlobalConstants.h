@@ -7,18 +7,11 @@
  *
  */
 
-#import <CoreLocation/CoreLocation.h>
-
 #ifndef _GLOBAL_CONSTANTS_H_
 #define _GLOBAL_CONSTANTS_H_
 
 #define kMaxLong 180 
 #define kMaxLat 90
-
-typedef struct {
-	CLLocationCoordinate2D southWest;
-	CLLocationCoordinate2D northEast;
-} RMSphericalTrapezium;
 
 static const double kRMMinLatitude = -kMaxLat;
 static const double kRMMaxLatitude = kMaxLat;

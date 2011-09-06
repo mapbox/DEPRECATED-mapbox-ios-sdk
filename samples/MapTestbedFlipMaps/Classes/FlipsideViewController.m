@@ -28,7 +28,7 @@
     mapView.delegate = self;
     [self updateInfo];
 
-    RMAnnotation *annotation = [RMAnnotation annotationWithMapView:mapView coordinate:[mapView mapCenterCoordinate] andTitle:@"Hello"];
+    RMAnnotation *annotation = [RMAnnotation annotationWithMapView:mapView coordinate:[mapView centerCoordinate] andTitle:@"Hello"];
     annotation.annotationIcon = [UIImage imageNamed:@"marker-blue.png"];
     annotation.anchorPoint = CGPointMake(0.5, 1.0);
     annotation.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -57,7 +57,7 @@
 
 - (void)updateInfo
 {
-    CLLocationCoordinate2D mapCenter = [mapView mapCenterCoordinate];
+    CLLocationCoordinate2D mapCenter = [mapView centerCoordinate];
 
     float routemeMetersPerPixel = [mapView metersPerPixel]; 
 	double truescaleDenominator =  [mapView scaleDenominator];
@@ -106,7 +106,7 @@
     [self updateInfo];
 }
 
-- (void)afterMapZoom:(RMMapView *)map byFactor:(float)zoomFactor near:(CGPoint)center
+- (void)afterMapZoom:(RMMapView *)map
 {
     [self updateInfo];
 }

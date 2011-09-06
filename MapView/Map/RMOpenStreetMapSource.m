@@ -33,7 +33,7 @@
 {       
 	if (!(self = [super init]))
         return nil;
-    
+
     // http://wiki.openstreetmap.org/index.php/FAQ#What_is_the_map_scale_for_a_particular_zoom_level_of_the_map.3F 
     [self setMaxZoom:18];
     [self setMinZoom:1];

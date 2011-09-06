@@ -29,8 +29,7 @@
 {
     [super viewDidLoad];
     mapView.delegate = self;
-    mapView.tileDepth = 1;
-    mapView.deceleration = YES;
+    mapView.decelerationMode = RMMapDecelerationFast;
     [self updateInfo];
 
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tileNotification:) name:RMTileRequested object:nil];
@@ -39,7 +38,7 @@
 	[mapView setMinZoom:1.0];
 	[mapView setMaxZoom:20.0];
 
-    RMAnnotation *annotation = [RMAnnotation annotationWithMapView:mapView coordinate:[mapView mapCenterCoordinate] andTitle:@"Hello"];
+    RMAnnotation *annotation = [RMAnnotation annotationWithMapView:mapView coordinate:[mapView centerCoordinate] andTitle:@"Hello"];
     annotation.annotationIcon = [UIImage imageNamed:@"marker-blue.png"];
     annotation.anchorPoint = CGPointMake(0.5, 1.0);
     annotation.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -68,7 +67,7 @@
 
 - (void)updateInfo
 {
-    CLLocationCoordinate2D mapCenter = [mapView mapCenterCoordinate];
+    CLLocationCoordinate2D mapCenter = [mapView centerCoordinate];
     
     float routemeMetersPerPixel = [mapView metersPerPixel]; // really meters/pixel
 	double truescaleDenominator =  [mapView scaleDenominator];
@@ -97,7 +96,7 @@
     [self updateInfo];
 }
 
-- (void)afterMapZoom:(RMMapView *)map byFactor:(float)zoomFactor near:(CGPoint)center
+- (void)afterMapZoom:(RMMapView *)map
 {
     [self updateInfo];
 }

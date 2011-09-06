@@ -190,11 +190,13 @@
 
 #pragma mark RMTileSource methods
 
-- (UIImage *)imageForTileImage:(RMTileImage *)tileImage addToCache:(RMTileCache *)tileCache withCacheKey:(NSString *)aCacheKey
+- (UIImage *)imageForTile:(RMTile)tile inCache:(RMTileCache *)tileCache
 {
     UIImage *image = nil;
 
-	RMTile tile = [[self mercatorToTileProjection] normaliseTile:tileImage.tile];
+	tile = [[self mercatorToTileProjection] normaliseTile:tile];
+    image = [tileCache cachedImage:tile withCacheKey:[self uniqueTilecacheKey]];
+    if (image) return image;
 
     // get the unique key for the tile
     NSNumber *key = [NSNumber numberWithLongLong:RMTileKey(tile)];
@@ -212,8 +214,8 @@
         [result close];
     }
 
-    if (tileCache)
-        [tileCache addImage:image forTile:tile withCacheKey:aCacheKey];
+    if (image)
+        [tileCache addImage:image forTile:tile withCacheKey:[self uniqueTilecacheKey]];
 
 	return image;
 }

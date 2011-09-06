@@ -29,7 +29,7 @@
 {
     [super viewDidLoad];
     mapView.delegate = self;
-	mapView.deceleration  = YES;
+	mapView.decelerationMode = RMMapDecelerationFast;
     [self updateInfo];
 }
 
@@ -60,7 +60,7 @@
 
 - (void)updateInfo
 {
-    CLLocationCoordinate2D mapCenter = [self.mapView mapCenterCoordinate];
+    CLLocationCoordinate2D mapCenter = [self.mapView centerCoordinate];
 
     float routemeMetersPerPixel = [self.mapView metersPerPixel];
 	double truescaleDenominator =  [self.mapView scaleDenominator];
@@ -81,7 +81,7 @@
     [self updateInfo];
 }
 
-- (void)afterMapZoom:(RMMapView *)map byFactor:(float)zoomFactor near:(CGPoint)center
+- (void)afterMapZoom:(RMMapView *)map
 {
     [self updateInfo];
 }

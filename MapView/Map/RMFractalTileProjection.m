@@ -26,8 +26,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import "RMFractalTileProjection.h"
-#import "RMMercatorToScreenProjection.h"
-#import "RMProjection.h"
 
 #import <math.h>
 

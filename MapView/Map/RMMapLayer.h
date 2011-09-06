@@ -40,7 +40,6 @@
     RMProjectedPoint projectedLocation;
 
     BOOL enableDragging;
-    BOOL enableRotation;
 
     /// provided for storage of arbitrary user data
     id userInfo;
@@ -49,10 +48,6 @@
 @property (nonatomic, assign) RMAnnotation *annotation;
 @property (nonatomic, assign) RMProjectedPoint projectedLocation;
 @property (nonatomic, assign) BOOL enableDragging;
-@property (nonatomic, assign) BOOL enableRotation;
 @property (nonatomic, retain) id userInfo;
-
-- (void)moveBy:(CGSize)delta;
-- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center;
 
 @end

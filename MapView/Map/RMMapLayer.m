@@ -33,7 +33,6 @@
 @synthesize annotation;
 @synthesize projectedLocation;
 @synthesize enableDragging;
-@synthesize enableRotation;
 @synthesize userInfo;
 
 - (id)init
@@ -42,8 +41,7 @@
 		return nil;
 
     self.annotation = nil;
-    self.enableDragging = YES;
-    self.enableRotation = YES;
+    self.enableDragging = NO;
 
 	return self;
 }
@@ -58,6 +56,13 @@
     return self;
 }
 
+- (void)dealloc
+{
+    self.annotation = nil;
+    self.userInfo = nil;
+    [super dealloc];
+}
+
 /// return nil for certain animation keys to block core animation
 - (id <CAAction>)actionForKey:(NSString *)key
 {
@@ -65,21 +70,6 @@
         return nil;
     else
         return [super actionForKey:key];
-}
-
-- (void)moveBy:(CGSize)delta
-{
-    self.position = RMTranslateCGPointBy(self.position, delta);
-}
-
-- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)pivot
-{
-    // a empty layer has size=(0,0) which cause divide by 0 if scaled
-    if (self.bounds.size.width == 0.0 || self.bounds.size.height == 0.0)
-        return;
-
-    self.position = RMScaleCGPointAboutPoint(self.position, zoomFactor, pivot);
-    self.bounds = RMScaleCGRectAboutPoint(self.bounds, zoomFactor, pivot);
 }
 
 @end

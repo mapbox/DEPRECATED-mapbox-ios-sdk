@@ -27,7 +27,6 @@
 
 #import "RMCircle.h"
 #import "RMProjection.h"
-#import "RMMercatorToScreenProjection.h"
 #import "RMMapView.h"
 
 #define kDefaultLineWidth 10
@@ -46,7 +45,7 @@
 @synthesize radiusInMeters;
 @synthesize lineWidthInPixels;
 
-- (id)initWithView:(RMMapView *)aMapView radiusInMeters:(CGFloat)newRadiusInMeters coordinate:(CLLocationCoordinate2D)newCoordinate
+- (id)initWithView:(RMMapView *)aMapView radiusInMeters:(CGFloat)newRadiusInMeters
 {
     if (!(self = [super init]))
         return nil;
@@ -56,9 +55,6 @@
 
     mapView = aMapView;
     radiusInMeters = newRadiusInMeters;
-    coordinate = newCoordinate;
-    projectedLocation = [[mapView projection] coordinateToProjectedPoint:newCoordinate];
-    [self setPosition:[[mapView mercatorToScreenProjection] projectProjectedPoint:projectedLocation]];
 
     lineWidthInPixels = kDefaultLineWidth;
     lineColor = kDefaultLineColor;
@@ -66,7 +62,6 @@
 
     scaleLineWidth = NO;
     enableDragging = YES;
-    enableRotation = YES;
 
     circlePath = NULL;
     [self updateCirclePath];
@@ -92,7 +87,7 @@
 
     CGMutablePathRef newPath = CGPathCreateMutable();
 
-    CGFloat latRadians = coordinate.latitude * M_PI / 180.0f;
+    CGFloat latRadians = [[mapView projection] projectedPointToCoordinate:projectedLocation].latitude * M_PI / 180.0f;
     CGFloat pixelRadius = radiusInMeters / cos(latRadians) / [mapView metersPerPixel];
     //	DLog(@"Pixel Radius: %f", pixelRadius);
 
@@ -118,12 +113,6 @@
 }
 
 #pragma mark Accessors
-
-- (void)setProjectedLocation:(RMProjectedPoint)newProjectedLocation
-{
-    projectedLocation = newProjectedLocation;
-    [self setPosition:[[mapView mercatorToScreenProjection] projectProjectedPoint:projectedLocation]];
-}
 
 - (void)setLineColor:(UIColor *)newLineColor
 {
@@ -153,28 +142,6 @@
 {
     lineWidthInPixels = newLineWidthInPixels;
     [self updateCirclePath];
-}
-
-#pragma mark Map Movement and Scaling
-
-- (void)moveBy:(CGSize)delta
-{
-    if (enableDragging) {
-        [super moveBy:delta];
-    }
-}
-
-- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center
-{
-    [super zoomByFactor:zoomFactor near:center];
-    [self updateCirclePath];
-}
-
-- (void)moveToCoordinate:(CLLocationCoordinate2D)newCoordinate
-{
-    coordinate = newCoordinate;
-    [self setProjectedLocation:[[mapView projection] coordinateToProjectedPoint:newCoordinate]];
-    [self setPosition:[[mapView mercatorToScreenProjection] projectProjectedPoint:projectedLocation]];
 }
 
 @end

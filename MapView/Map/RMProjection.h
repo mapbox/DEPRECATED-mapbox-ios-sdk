@@ -35,10 +35,10 @@
 {
 	/// This is actually a PROJ4 projPJ, but it is typed as void* so the proj_api doesn't have to be included
 	void *internalProjection;
-	
+
 	/// the size of the earth, in projected units (meters, most often)
 	RMProjectedRect	planetBounds;
-	
+
 	/// hardcoded to YES in #initWithString:InBounds:
 	BOOL projectionWrapsHorizontally;
 }

@@ -39,6 +39,7 @@
     RMProjectedPoint projectedLocation;
     RMProjectedRect  projectedBoundingBox;
     BOOL hasBoundingBox;
+    BOOL enabled;
 
     RMMapLayer *layer;
     RMQuadTreeNode *quadTreeNode;
@@ -62,6 +63,7 @@
 @property (nonatomic, assign) RMProjectedPoint projectedLocation; // in projected meters
 @property (nonatomic, assign) RMProjectedRect  projectedBoundingBox;
 @property (nonatomic, assign) BOOL hasBoundingBox;
+@property (nonatomic, assign) BOOL enabled;
 
 // RMMarker, RMPath, whatever you return in your delegate method mapView:layerForAnnotation:
 @property (nonatomic, retain) RMMapLayer *layer;
@@ -79,6 +81,6 @@
 - (BOOL)isAnnotationWithinBounds:(CGRect)bounds;
 
 // Used internally
-@property (nonatomic, assign) RMMapView *mapView;
+@property (nonatomic, retain) RMMapView *mapView;
 
 @end

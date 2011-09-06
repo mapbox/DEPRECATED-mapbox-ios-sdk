@@ -26,10 +26,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import "RMPath.h"
-#import "RMMercatorToScreenProjection.h"
 #import "RMPixel.h"
 #import "RMProjection.h"
 #import "RMMapView.h"
+#import "RMAnnotation.h"
 
 @implementation RMPath
 
@@ -97,10 +97,9 @@
 {
     if (ignorePathUpdates) return;
 
-    RMMercatorToScreenProjection *projection = [mapView mercatorToScreenProjection];
-    CGPoint myPosition = [projection projectProjectedPoint:projectedLocation];
+    CGPoint myPosition = self.annotation.position;
 
-    float scale = [projection metersPerPixel];
+    float scale = [mapView metersPerPixel];
     float scaledLineWidth;
     CGRect pixelBounds, screenBounds;
     float offset;
@@ -121,7 +120,7 @@
 
     // Clip bound rect to screen bounds.
     // If bounds are not clipped, they won't display when you zoom in too much.
-    screenBounds = [mapView screenBounds];
+    screenBounds = [mapView frame];
 
     // Clip top
     offset = myPosition.y + pixelBounds.origin.y - screenBounds.origin.y + outset;
@@ -154,7 +153,7 @@
 //    RMLog(@"new bounds: %f %f %f %f", self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
 
     pathBoundingBox = CGRectMake(myPosition.x + self.bounds.origin.x, myPosition.y + self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
-    self.anchorPoint = CGPointMake(-pixelBounds.origin.x / pixelBounds.size.width,-pixelBounds.origin.y / pixelBounds.size.height);
+    self.anchorPoint = CGPointMake(-pixelBounds.origin.x / pixelBounds.size.width, -pixelBounds.origin.y / pixelBounds.size.height);
     [self setNeedsDisplay];
 }
 
@@ -167,7 +166,7 @@
         isFirstPoint = FALSE;
         projectedLocation = point;
 
-        self.position = [[mapView mercatorToScreenProjection] projectProjectedPoint:projectedLocation];
+        self.position = [mapView projectedPointToPixel:projectedLocation];
         // RMLog(@"screen position set to %f %f", self.position.x, self.position.y);
         CGPathMoveToPoint(path, NULL, 0.0f, 0.0f);
     }
@@ -196,7 +195,7 @@
 
 - (void)moveToScreenPoint:(CGPoint)point
 {
-    RMProjectedPoint mercator = [[mapView mercatorToScreenProjection] projectScreenPointToProjectedPoint:point];
+    RMProjectedPoint mercator = [mapView pixelToProjectedPoint:point];
     [self moveToProjectedPoint:mercator];
 }
 
@@ -213,7 +212,7 @@
 
 - (void)addLineToScreenPoint:(CGPoint)point
 {
-    RMProjectedPoint mercator = [[mapView mercatorToScreenProjection] projectScreenPointToProjectedPoint:point];
+    RMProjectedPoint mercator = [mapView pixelToProjectedPoint:point];
     [self addLineToProjectedPoint:mercator];
 }
 
@@ -392,16 +391,9 @@
     }
 }
 
-- (void)moveBy:(CGSize)delta
+- (void)setPosition:(CGPoint)newPosition
 {
-    if (enableDragging) {
-        [super moveBy:delta];
-    }
-}
-
-- (void)setPosition:(CGPoint)value
-{
-    if (CGPointEqualToPoint(value, super.position) && CGRectEqualToRect(self.bounds, previousBounds)) return;
+    if (CGPointEqualToPoint(newPosition, super.position) && CGRectEqualToRect(self.bounds, previousBounds)) return;
 
     [self recalculateGeometry];
 }
