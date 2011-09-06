@@ -1184,12 +1184,18 @@
 - (void)setMinZoom:(float)newMinZoom
 {
     minZoom = newMinZoom;
+
+//    RMLog(@"New minZoom:%f", newMinZoom);
+
     mapScrollView.minimumZoomScale = exp2f(newMinZoom);
 }
 
 - (void)setMaxZoom:(float)newMaxZoom
 {
     maxZoom = newMaxZoom;
+
+//    RMLog(@"New maxZoom:%f", newMaxZoom);
+
     mapScrollView.maximumZoomScale = exp2f(newMaxZoom);
 }
 
