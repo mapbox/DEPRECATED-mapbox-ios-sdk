@@ -1061,6 +1061,13 @@
 
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(correctPositionOfAllAnnotations) object:nil];
 
+    if (_constrainMovement && ![self projectedBounds:tileSourceProjectedBounds containsPoint:[self centerProjectedPoint]]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [mapScrollView setContentOffset:_lastContentOffset animated:NO];
+        });
+        return;
+    }
+
     if (zoom == _lastZoom)
     {
         CGPoint contentOffset = mapScrollView.contentOffset;
@@ -1108,6 +1115,9 @@
     [mercatorToTileProjection release];
     mercatorToTileProjection = [[tileSource mercatorToTileProjection] retain];
     tileSourceProjectedBounds = (RMProjectedRect)[self projectedRectFromLatitudeLongitudeBounds:[tileSource latitudeLongitudeBoundingBox]];
+
+    RMSphericalTrapezium bounds = [tileSource latitudeLongitudeBoundingBox];
+    _constrainMovement = !(bounds.northEast.latitude == 90 && bounds.northEast.longitude == 180 && bounds.southWest.latitude == -90 && bounds.southWest.longitude == -180);
 
     [self setMinZoom:newTileSource.minZoom];
     [self setMaxZoom:newTileSource.maxZoom];
