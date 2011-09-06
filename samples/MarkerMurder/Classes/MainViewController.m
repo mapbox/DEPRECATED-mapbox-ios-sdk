@@ -30,7 +30,7 @@
 
 - (void)addMarkers
 {
-#define kNumberRows 3
+#define kNumberRows 1
 #define kNumberColumns 9
 #define kSpacing 0.1
 
@@ -74,8 +74,6 @@
 {
     [super viewDidLoad];
     [mapView setDelegate:self];
-    mapView.enableClustering = YES;
-    mapView.positionClusterMarkersAtTheGravityCenter = NO;
 	mapView.tileSource = [[[RMOpenStreetMapSource alloc] init] autorelease];
 
 	center.latitude = 47.5635;
@@ -83,7 +81,7 @@
 
 //    [mapView zoomWithLatitudeLongitudeBoundsSouthWest:CLLocationCoordinate2DMake(47.5, 10.15) northEast:CLLocationCoordinate2DMake(47.6, 10.25) animated:NO];
 
-	[mapView setZoom:8.0];
+	[mapView setZoom:10.0];
 	[mapView setCenterCoordinate:center animated:NO];
 
 	[self updateInfo];
