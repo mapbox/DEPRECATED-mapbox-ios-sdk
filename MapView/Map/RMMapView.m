@@ -229,6 +229,7 @@
     [self setQuadTree:nil];
     [annotations release]; annotations = nil;
     [visibleAnnotations release]; visibleAnnotations = nil;
+    [tileSource cancelAllDownloads]; [tileSource release]; tileSource = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [mapScrollView removeObserver:self forKeyPath:@"contentOffset"];
     [mapScrollView release]; mapScrollView = nil;
@@ -236,7 +237,6 @@
     [overlayView release]; overlayView = nil;
     [projection release]; projection = nil;
     [mercatorToTileProjection release]; mercatorToTileProjection = nil;
-    [tileSource release]; tileSource = nil;
     [self setTileCache:nil];
     [super dealloc];
 }
