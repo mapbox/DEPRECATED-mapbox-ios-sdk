@@ -1106,6 +1106,7 @@
     if (tileSource == newTileSource)
         return;
 
+    [tileSource cancelAllDownloads];
     [tileSource autorelease];
     tileSource = [newTileSource retain];
 

@@ -92,6 +92,10 @@
                                  userInfo:nil];
 }    
 
+- (void)cancelAllDownloads
+{
+}
+
 - (RMFractalTileProjection *)mercatorToTileProjection
 {
     if (!tileProjection) {

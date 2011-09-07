@@ -41,6 +41,7 @@
 @protocol RMTileSource <NSObject>
 
 - (UIImage *)imageForTile:(RMTile)tile inCache:(RMTileCache *)tileCache;
+- (void)cancelAllDownloads;
 
 - (RMFractalTileProjection *)mercatorToTileProjection;
 - (RMProjection *)projection;
