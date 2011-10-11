@@ -54,6 +54,7 @@
 - (void)dealloc
 {
     @synchronized (cache) {
+        [cache removeAllObjects];
         [cache release]; cache = nil;
     }
 	[super dealloc];

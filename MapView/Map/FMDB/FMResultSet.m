@@ -2,12 +2,20 @@
 #import "FMDatabase.h"
 #import "unistd.h"
 
+@interface FMDatabase ()
+- (void)resultSetDidClose:(FMResultSet *)resultSet;
+@end
+
+
 @interface FMResultSet (Private)
 - (NSMutableDictionary *)columnNameToIndexMap;
 - (void)setColumnNameToIndexMap:(NSMutableDictionary *)value;
 @end
 
 @implementation FMResultSet
+@synthesize query;
+@synthesize columnNameToIndexMap;
+@synthesize statement;
 
 + (id)resultSetWithStatement:(FMStatement *)statement usingParentDatabase:(FMDatabase*)aDB {
     
@@ -17,6 +25,11 @@
     [rs setParentDB:aDB];
     
     return [rs autorelease];
+}
+
+- (void)finalize {
+    [self close];
+    [super finalize];
 }
 
 - (void)dealloc {
@@ -32,14 +45,18 @@
 }
 
 - (void)close {
-    
     [statement reset];
     [statement release];
     statement = nil;
     
     // we don't need this anymore... (i think)
     //[parentDB setInUse:NO];
+    [parentDB resultSetDidClose:self];
     parentDB = nil;
+}
+
+- (int)columnCount {
+	return sqlite3_column_count(statement.statement);
 }
 
 - (void)setupColumnNames {
@@ -83,40 +100,15 @@
     if (num_cols > 0) {
         NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:num_cols];
         
-        int i;
-        for (i = 0; i < num_cols; i++) {
-            
-            const char *col_name = sqlite3_column_name(statement.statement, i);
-            
-            if (col_name) {
-                NSString *colName = [NSString stringWithUTF8String:col_name];
-                id value = nil;
-                
-                // fetch according to type
-                switch (sqlite3_column_type(statement.statement, i)) {
-                    case SQLITE_INTEGER: {
-                        value = [NSNumber numberWithInt:[self intForColumnIndex:i]];
-                        break;
-                    }
-                    case SQLITE_FLOAT: {
-                        value = [NSNumber numberWithDouble:[self doubleForColumnIndex:i]];
-                        break;
-                    }
-                    case SQLITE_TEXT: {
-                        value = [self stringForColumnIndex:i];
-                        break;
-                    }
-                    case SQLITE_BLOB: {
-                        value = [self dataForColumnIndex:i];
-                        break;
-                    }
-                }
-                
-                // save to dict
-                if (value) {
-                    [dict setObject:value forKey:colName];
-                }
-            }
+        if (!columnNamesSetup) {
+            [self setupColumnNames];
+        }
+        
+        NSEnumerator *columnNames = [columnNameToIndexMap keyEnumerator];
+        NSString *columnName = nil;
+        while ((columnName = [columnNames nextObject])) {
+            id objectValue = [self objectForColumnName:columnName];
+            [dict setObject:objectValue forKey:columnName];
         }
         
         return [[dict copy] autorelease];
@@ -142,12 +134,12 @@
             // this will happen if the db is locked, like if we are doing an update or insert.
             // in that case, retry the step... and maybe wait just 10 milliseconds.
             retry = YES;
-			if (SQLITE_LOCKED == rc) {
-				rc = sqlite3_reset(statement.statement);
-				if (rc != SQLITE_LOCKED) {
-					NSLog(@"Unexpected result from sqlite3_reset (%d) rs", rc);
-				}
-			}
+            if (SQLITE_LOCKED == rc) {
+                rc = sqlite3_reset(statement.statement);
+                if (rc != SQLITE_LOCKED) {
+                    NSLog(@"Unexpected result from sqlite3_reset (%d) rs", rc);
+                }
+            }
             usleep(20);
             
             if ([parentDB busyRetryTimeout] && (numberOfRetries++ > [parentDB busyRetryTimeout])) {
@@ -343,6 +335,35 @@
     return [self UTF8StringForColumnIndex:[self columnIndexForName:columnName]];
 }
 
+- (id)objectForColumnIndex:(int)columnIdx {
+    int columnType = sqlite3_column_type(statement.statement, columnIdx);
+    
+    id returnValue = nil;
+    
+    if (columnType == SQLITE_INTEGER) {
+        returnValue = [NSNumber numberWithLongLong:[self longLongIntForColumnIndex:columnIdx]];
+    }
+    else if (columnType == SQLITE_FLOAT) {
+        returnValue = [NSNumber numberWithDouble:[self doubleForColumnIndex:columnIdx]];
+    }
+    else if (columnType == SQLITE_BLOB) {
+        returnValue = [self dataForColumnIndex:columnIdx];
+    }
+    else {
+        //default to a string for everything else
+        returnValue = [self stringForColumnIndex:columnIdx];
+    }
+    
+    if (returnValue == nil) {
+        returnValue = [NSNull null];
+    }
+    
+    return returnValue;
+}
+
+- (id)objectForColumnName:(NSString*)columnName {
+    return [self objectForColumnIndex:[self columnIndexForName:columnName]];
+}
 
 // returns autoreleased NSString containing the name of the column in the result set
 - (NSString*)columnNameForIndex:(int)columnIdx {
@@ -352,39 +373,6 @@
 - (void)setParentDB:(FMDatabase *)newDb {
     parentDB = newDb;
 }
-
-
-- (NSString *)query {
-    return query;
-}
-
-- (void)setQuery:(NSString *)value {
-    [value retain];
-    [query release];
-    query = value;
-}
-
-- (NSMutableDictionary *)columnNameToIndexMap {
-    return columnNameToIndexMap;
-}
-
-- (void)setColumnNameToIndexMap:(NSMutableDictionary *)value {
-    [value retain];
-    [columnNameToIndexMap release];
-    columnNameToIndexMap = value;
-}
-
-- (FMStatement *)statement {
-    return statement;
-}
-
-- (void)setStatement:(FMStatement *)value {
-    if (statement != value) {
-        [statement release];
-        statement = [value retain];
-    }
-}
-
 
 
 @end
