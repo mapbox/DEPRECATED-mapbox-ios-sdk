@@ -2,6 +2,13 @@
 #import "unistd.h"
 
 @implementation FMDatabase
+@synthesize inTransaction;
+@synthesize cachedStatements;
+@synthesize logsErrors;
+@synthesize crashOnErrors;
+@synthesize busyRetryTimeout;
+@synthesize checkedOut;
+@synthesize traceExecution;
 
 + (id)databaseWithPath:(NSString*)aPath {
     return [[[self alloc] initWithPath:aPath] autorelease];
@@ -9,24 +16,31 @@
 
 - (id)initWithPath:(NSString*)aPath {
     self = [super init];
-	
+    
     if (self) {
         databasePath        = [aPath copy];
+        openResultSets      = [[NSMutableSet alloc] init];
         db                  = 0x00;
         logsErrors          = 0x00;
         crashOnErrors       = 0x00;
         busyRetryTimeout    = 0x00;
     }
-	
-	return self;
+    
+    return self;
+}
+
+- (void)finalize {
+    [self close];
+    [super finalize];
 }
 
 - (void)dealloc {
-	[self close];
+    [self close];
     
+    [openResultSets release];
     [cachedStatements release];
     [databasePath release];
-	
+    
     [super dealloc];
 }
 
@@ -43,27 +57,27 @@
 }
 
 - (BOOL)open {
-	if (db) {
-		return YES;
-	}
-	
-	int err = sqlite3_open((databasePath ? [databasePath fileSystemRepresentation] : ":memory:"), &db );
-	if(err != SQLITE_OK) {
+    if (db) {
+        return YES;
+    }
+    
+    int err = sqlite3_open((databasePath ? [databasePath fileSystemRepresentation] : ":memory:"), &db );
+    if(err != SQLITE_OK) {
         NSLog(@"error opening!: %d", err);
-		return NO;
-	}
-	
-	return YES;
+        return NO;
+    }
+    
+    return YES;
 }
 
 #if SQLITE_VERSION_NUMBER >= 3005000
 - (BOOL)openWithFlags:(int)flags {
     int err = sqlite3_open_v2((databasePath ? [databasePath fileSystemRepresentation] : ":memory:"), &db, flags, NULL /* Name of VFS module to use */);
-	if(err != SQLITE_OK) {
-		NSLog(@"error opening!: %d", err);
-		return NO;
-	}
-	return YES;
+    if(err != SQLITE_OK) {
+        NSLog(@"error opening!: %d", err);
+        return NO;
+    }
+    return YES;
 }
 #endif
 
@@ -71,14 +85,17 @@
 - (BOOL)close {
     
     [self clearCachedStatements];
+    [self closeOpenResultSets];
     
-	if (!db) {
+    if (!db) {
         return YES;
     }
     
     int  rc;
     BOOL retry;
     int numberOfRetries = 0;
+    BOOL triedFinalizingOpenStatements = NO;
+    
     do {
         retry   = NO;
         rc      = sqlite3_close(db);
@@ -90,6 +107,15 @@
                 NSLog(@"Database busy, unable to close");
                 return NO;
             }
+            
+            if (!triedFinalizingOpenStatements) {
+                triedFinalizingOpenStatements = YES;
+                sqlite3_stmt *pStmt;
+                while ((pStmt = sqlite3_next_stmt(db, 0x00)) !=0) {
+                    NSLog(@"Closing leaked statement");
+                    sqlite3_finalize(pStmt);
+                }
+            }
         }
         else if (SQLITE_OK != rc) {
             NSLog(@"error closing!: %d", rc);
@@ -97,7 +123,7 @@
     }
     while (retry);
     
-	db = nil;
+    db = nil;
     return YES;
 }
 
@@ -107,10 +133,30 @@
     FMStatement *cachedStmt;
 
     while ((cachedStmt = [e nextObject])) {
-    	[cachedStmt close];
+        [cachedStmt close];
     }
     
     [cachedStatements removeAllObjects];
+}
+
+- (void)closeOpenResultSets {
+    //Copy the set so we don't get mutation errors
+    NSSet *resultSets = [[openResultSets copy] autorelease];
+    
+    NSEnumerator *e = [resultSets objectEnumerator];
+    NSValue *returnedResultSet = nil;
+    
+    while((returnedResultSet = [e nextObject])) {
+        FMResultSet *rs = (FMResultSet *)[returnedResultSet pointerValue];
+        if ([rs respondsToSelector:@selector(close)]) {
+            [rs close];
+        }
+    }
+}
+
+- (void)resultSetDidClose:(FMResultSet *)resultSet {
+    NSValue *setValue = [NSValue valueWithNonretainedObject:resultSet];
+    [openResultSets removeObject:setValue];
 }
 
 - (FMStatement*)cachedStatementForQuery:(NSString*)query {
@@ -175,7 +221,7 @@
     return NO;
 }
 
-- (void)complainAboutInUse {
+- (void)warnInUse {
     NSLog(@"The FMDatabase %@ is currently in use.", self);
     
 #ifndef NS_BLOCK_ASSERTIONS
@@ -183,6 +229,24 @@
         NSAssert1(false, @"The FMDatabase %@ is currently in use.", self);
     }
 #endif
+}
+
+- (BOOL)databaseExists {
+    
+    if (!db) {
+            
+        NSLog(@"The FMDatabase %@ is not open.", self);
+        
+    #ifndef NS_BLOCK_ASSERTIONS
+        if (crashOnErrors) {
+            NSAssert1(false, @"The FMDatabase %@ is not open.", self);
+        }
+    #endif
+        
+        return NO;
+    }
+    
+    return YES;
 }
 
 - (NSString*)lastErrorMessage {
@@ -202,7 +266,7 @@
 - (sqlite_int64)lastInsertRowId {
     
     if (inUse) {
-        [self complainAboutInUse];
+        [self warnInUse];
         return NO;
     }
     [self setInUse:YES];
@@ -215,11 +279,11 @@
 }
 
 - (int)changes {
-	if (inUse) {
-        [self complainAboutInUse];
+    if (inUse) {
+        [self warnInUse];
         return 0;
     }
-	
+    
     [self setInUse:YES];
     int ret = sqlite3_changes(db);
     [self setInUse:NO];
@@ -235,7 +299,7 @@
     
     // FIXME - someday check the return codes on these binds.
     else if ([obj isKindOfClass:[NSData class]]) {
-        sqlite3_bind_blob(pStmt, idx, [obj bytes], (int)[(NSData *)obj length], SQLITE_STATIC);
+        sqlite3_bind_blob(pStmt, idx, [obj bytes], (int)[obj length], SQLITE_STATIC);
     }
     else if ([obj isKindOfClass:[NSDate class]]) {
         sqlite3_bind_double(pStmt, idx, [obj timeIntervalSince1970]);
@@ -269,19 +333,130 @@
     }
 }
 
+- (void)_extractSQL:(NSString *)sql argumentsList:(va_list)args intoString:(NSMutableString *)cleanedSQL arguments:(NSMutableArray *)arguments {
+    
+    NSUInteger length = [sql length];
+    unichar last = '\0';
+    for (NSUInteger i = 0; i < length; ++i) {
+        id arg = nil;
+        unichar current = [sql characterAtIndex:i];
+        unichar add = current;
+        if (last == '%') {
+            switch (current) {
+                case '@':
+                    arg = va_arg(args, id); break;
+                case 'c':
+                    arg = [NSString stringWithFormat:@"%c", va_arg(args, int)]; break;
+                case 's':
+                    arg = [NSString stringWithUTF8String:va_arg(args, char*)]; break;
+                case 'd':
+                case 'D':
+                case 'i':
+                    arg = [NSNumber numberWithInt:va_arg(args, int)]; break;
+                case 'u':
+                case 'U':
+                    arg = [NSNumber numberWithUnsignedInt:va_arg(args, unsigned int)]; break;
+                case 'h':
+                    i++;
+                    if (i < length && [sql characterAtIndex:i] == 'i') {
+                        arg = [NSNumber numberWithInt:va_arg(args, int)];
+                    }
+                    else if (i < length && [sql characterAtIndex:i] == 'u') {
+                        arg = [NSNumber numberWithInt:va_arg(args, int)];
+                    }
+                    else {
+                        i--;
+                    }
+                    break;
+                case 'q':
+                    i++;
+                    if (i < length && [sql characterAtIndex:i] == 'i') {
+                        arg = [NSNumber numberWithLongLong:va_arg(args, long long)];
+                    }
+                    else if (i < length && [sql characterAtIndex:i] == 'u') {
+                        arg = [NSNumber numberWithUnsignedLongLong:va_arg(args, unsigned long long)];
+                    }
+                    else {
+                        i--;
+                    }
+                    break;
+                case 'f':
+                    arg = [NSNumber numberWithDouble:va_arg(args, double)]; break;
+                case 'g':
+                    arg = [NSNumber numberWithDouble:va_arg(args, double)]; break;
+                case 'l':
+                    i++;
+                    if (i < length) {
+                        unichar next = [sql characterAtIndex:i];
+                        if (next == 'l') {
+                            i++;
+                            if (i < length && [sql characterAtIndex:i] == 'd') {
+                                //%lld
+                                arg = [NSNumber numberWithLongLong:va_arg(args, long long)];
+                            }
+                            else if (i < length && [sql characterAtIndex:i] == 'u') {
+                                //%llu
+                                arg = [NSNumber numberWithUnsignedLongLong:va_arg(args, unsigned long long)];
+                            }
+                            else {
+                                i--;
+                            }
+                        }
+                        else if (next == 'd') {
+                            //%ld
+                            arg = [NSNumber numberWithLong:va_arg(args, long)];
+                        }
+                        else if (next == 'u') {
+                            //%lu
+                            arg = [NSNumber numberWithUnsignedLong:va_arg(args, unsigned long)];
+                        }
+                        else {
+                            i--;
+                        }
+                    }
+                    else {
+                        i--;
+                    }
+                    break;
+                default:
+                    // something else that we can't interpret. just pass it on through like normal
+                    break;
+            }
+        }
+        else if (current == '%') {
+            // percent sign; skip this character
+            add = '\0';
+        }
+        
+        if (arg != nil) {
+            [cleanedSQL appendString:@"?"];
+            [arguments addObject:arg];
+        }
+        else if (add != '\0') {
+            [cleanedSQL appendFormat:@"%C", add];
+        }
+        last = current;
+    }
+    
+}
+
 - (FMResultSet *)executeQuery:(NSString *)sql withArgumentsInArray:(NSArray*)arrayArgs orVAList:(va_list)args {
     
+    if (![self databaseExists]) {
+        return 0x00;
+    }
+    
     if (inUse) {
-        [self complainAboutInUse];
-        return nil;
+        [self warnInUse];
+        return 0x00;
     }
     
     [self setInUse:YES];
     
     FMResultSet *rs = nil;
     
-    int rc                  = 0x00;;
-    sqlite3_stmt *pStmt     = 0x00;;
+    int rc                  = 0x00;
+    sqlite3_stmt *pStmt     = 0x00;
     FMStatement *statement  = 0x00;
     
     if (traceExecution && sql) {
@@ -378,6 +553,8 @@
     // the statement gets closed in rs's dealloc or [rs close];
     rs = [FMResultSet resultSetWithStatement:statement usingParentDatabase:self];
     [rs setQuery:sql];
+    NSValue *openResultSet = [NSValue valueWithNonretainedObject:rs];
+    [openResultSets addObject:openResultSet];
     
     statement.useCount = statement.useCount + 1;
     
@@ -398,14 +575,31 @@
     return result;
 }
 
+- (FMResultSet *)executeQueryWithFormat:(NSString*)format, ... {
+    va_list args;
+    va_start(args, format);
+    
+    NSMutableString *sql = [NSMutableString stringWithCapacity:[format length]];
+    NSMutableArray *arguments = [NSMutableArray array];
+    [self _extractSQL:format argumentsList:args intoString:sql arguments:arguments];    
+    
+    va_end(args);
+    
+    return [self executeQuery:sql withArgumentsInArray:arguments];
+}
+
 - (FMResultSet *)executeQuery:(NSString *)sql withArgumentsInArray:(NSArray *)arguments {
     return [self executeQuery:sql withArgumentsInArray:arguments orVAList:nil];
 }
 
 - (BOOL)executeUpdate:(NSString*)sql error:(NSError**)outErr withArgumentsInArray:(NSArray*)arrayArgs orVAList:(va_list)args {
-	
+    
+    if (![self databaseExists]) {
+        return NO;
+    }
+    
     if (inUse) {
-        [self complainAboutInUse];
+        [self warnInUse];
         return NO;
     }
     
@@ -413,7 +607,7 @@
     
     int rc                   = 0x00;
     sqlite3_stmt *pStmt      = 0x00;
-    FMStatement *cachedStmt = 0x00;
+    FMStatement *cachedStmt  = 0x00;
     
     if (traceExecution && sql) {
         NSLog(@"%@ executeUpdate: %@", self, sql);
@@ -513,12 +707,12 @@
             // this will happen if the db is locked, like if we are doing an update or insert.
             // in that case, retry the step... and maybe wait just 10 milliseconds.
             retry = YES;
-			if (SQLITE_LOCKED == rc) {
-				rc = sqlite3_reset(pStmt);
-				if (rc != SQLITE_LOCKED) {
-					NSLog(@"Unexpected result from sqlite3_reset (%d) eu", rc);
-				}
-			}
+            if (SQLITE_LOCKED == rc) {
+                rc = sqlite3_reset(pStmt);
+                if (rc != SQLITE_LOCKED) {
+                    NSLog(@"Unexpected result from sqlite3_reset (%d) eu", rc);
+                }
+            }
             usleep(20);
             
             if (busyRetryTimeout && (numberOfRetries++ > busyRetryTimeout)) {
@@ -593,6 +787,19 @@
     return [self executeUpdate:sql error:nil withArgumentsInArray:arguments orVAList:nil];
 }
 
+- (BOOL)executeUpdateWithFormat:(NSString*)format, ... {
+    va_list args;
+    va_start(args, format);
+    
+    NSMutableString *sql = [NSMutableString stringWithCapacity:[format length]];
+    NSMutableArray *arguments = [NSMutableArray array];
+    [self _extractSQL:format argumentsList:args intoString:sql arguments:arguments];    
+    
+    va_end(args);
+    
+    return [self executeUpdate:sql withArgumentsInArray:arguments];
+}
+
 - (BOOL)update:(NSString*)sql error:(NSError**)outErr bind:(id)bindArgs, ... {
     va_list args;
     va_start(args, bindArgs);
@@ -635,19 +842,7 @@
     return b;
 }
 
-- (BOOL)logsErrors {
-    return logsErrors;
-}
-- (void)setLogsErrors:(BOOL)flag {
-    logsErrors = flag;
-}
 
-- (BOOL)crashOnErrors {
-    return crashOnErrors;
-}
-- (void)setCrashOnErrors:(BOOL)flag {
-    crashOnErrors = flag;
-}
 
 - (BOOL)inUse {
     return inUse || inTransaction;
@@ -655,35 +850,6 @@
 
 - (void)setInUse:(BOOL)b {
     inUse = b;
-}
-
-- (BOOL)inTransaction {
-    return inTransaction;
-}
-- (void)setInTransaction:(BOOL)flag {
-    inTransaction = flag;
-}
-
-- (BOOL)traceExecution {
-    return traceExecution;
-}
-- (void)setTraceExecution:(BOOL)flag {
-    traceExecution = flag;
-}
-
-- (BOOL)checkedOut {
-    return checkedOut;
-}
-- (void)setCheckedOut:(BOOL)flag {
-    checkedOut = flag;
-}
-
-
-- (int)busyRetryTimeout {
-    return busyRetryTimeout;
-}
-- (void)setBusyRetryTimeout:(int)newBusyRetryTimeout {
-    busyRetryTimeout = newBusyRetryTimeout;
 }
 
 
@@ -704,30 +870,30 @@
     }
 }
 
-- (NSMutableDictionary *)cachedStatements {
-    return cachedStatements;
++ (BOOL)isThreadSafe {
+    // make sure to read the sqlite headers on this guy!
+    return sqlite3_threadsafe();
 }
-
-- (void)setCachedStatements:(NSMutableDictionary *)value {
-    if (cachedStatements != value) {
-        [cachedStatements release];
-        cachedStatements = [value retain];
-    }
-}
-
 
 @end
 
 
 
 @implementation FMStatement
+@synthesize statement;
+@synthesize query;
+@synthesize useCount;
 
-- (void)dealloc {
-	[self close];
-    [query release];
-	[super dealloc];
+- (void)finalize {
+    [self close];
+    [super finalize];
 }
 
+- (void)dealloc {
+    [self close];
+    [query release];
+    [super dealloc];
+}
 
 - (void)close {
     if (statement) {
@@ -739,35 +905,6 @@
 - (void)reset {
     if (statement) {
         sqlite3_reset(statement);
-    }
-}
-
-- (sqlite3_stmt *)statement {
-    return statement;
-}
-
-- (void)setStatement:(sqlite3_stmt *)value {
-    statement = value;
-}
-
-- (NSString *)query {
-    return query;
-}
-
-- (void)setQuery:(NSString *)value {
-    if (query != value) {
-        [query release];
-        query = [value retain];
-    }
-}
-
-- (long)useCount {
-    return useCount;
-}
-
-- (void)setUseCount:(long)value {
-    if (useCount != value) {
-        useCount = value;
     }
 }
 

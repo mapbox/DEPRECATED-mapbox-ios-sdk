@@ -15,7 +15,17 @@
     int         busyRetryTimeout;
     BOOL        shouldCacheStatements;
     NSMutableDictionary *cachedStatements;
+	NSMutableSet *openResultSets;
 }
+
+
+@property (assign) BOOL inTransaction;
+@property (assign) BOOL traceExecution;
+@property (assign) BOOL checkedOut;
+@property (assign) int busyRetryTimeout;
+@property (assign) BOOL crashOnErrors;
+@property (assign) BOOL logsErrors;
+@property (retain) NSMutableDictionary *cachedStatements;
 
 
 + (id)databaseWithPath:(NSString*)inPath;
@@ -28,6 +38,7 @@
 - (BOOL)close;
 - (BOOL)goodConnection;
 - (void)clearCachedStatements;
+- (void)closeOpenResultSets;
 
 // encryption methods.  You need to have purchased the sqlite encryption extensions for these to work.
 - (BOOL)setKey:(NSString*)key;
@@ -46,10 +57,12 @@
 
 - (BOOL)update:(NSString*)sql error:(NSError**)outErr bind:(id)bindArgs, ...;
 - (BOOL)executeUpdate:(NSString*)sql, ...;
+- (BOOL)executeUpdateWithFormat:(NSString *)format, ...;
 - (BOOL)executeUpdate:(NSString*)sql withArgumentsInArray:(NSArray *)arguments;
 - (BOOL)executeUpdate:(NSString*)sql error:(NSError**)outErr withArgumentsInArray:(NSArray*)arrayArgs orVAList:(va_list)args; // you shouldn't ever need to call this.  use the previous two instead.
 
 - (FMResultSet *)executeQuery:(NSString*)sql, ...;
+- (FMResultSet *)executeQueryWithFormat:(NSString*)format, ...;
 - (FMResultSet *)executeQuery:(NSString *)sql withArgumentsInArray:(NSArray *)arguments;
 - (FMResultSet *)executeQuery:(NSString *)sql withArgumentsInArray:(NSArray*)arrayArgs orVAList:(va_list)args; // you shouldn't ever need to call this.  use the previous two instead.
 
@@ -58,34 +71,14 @@
 - (BOOL)beginTransaction;
 - (BOOL)beginDeferredTransaction;
 
-- (BOOL)logsErrors;
-- (void)setLogsErrors:(BOOL)flag;
-
-- (BOOL)crashOnErrors;
-- (void)setCrashOnErrors:(BOOL)flag;
-
 - (BOOL)inUse;
 - (void)setInUse:(BOOL)value;
 
-- (BOOL)inTransaction;
-- (void)setInTransaction:(BOOL)flag;
-
-- (BOOL)traceExecution;
-- (void)setTraceExecution:(BOOL)flag;
-
-- (BOOL)checkedOut;
-- (void)setCheckedOut:(BOOL)flag;
-
-- (int)busyRetryTimeout;
-- (void)setBusyRetryTimeout:(int)newBusyRetryTimeout;
 
 - (BOOL)shouldCacheStatements;
 - (void)setShouldCacheStatements:(BOOL)value;
 
-- (NSMutableDictionary *)cachedStatements;
-- (void)setCachedStatements:(NSMutableDictionary *)value;
-
-
++ (BOOL)isThreadSafe;
 + (NSString*)sqliteLibVersion;
 
 - (int)changes;
@@ -98,19 +91,12 @@
     long useCount;
 }
 
+@property (assign) long useCount;
+@property (retain) NSString *query;
+@property (assign) sqlite3_stmt *statement;
 
 - (void)close;
 - (void)reset;
-
-- (sqlite3_stmt *)statement;
-- (void)setStatement:(sqlite3_stmt *)value;
-
-- (NSString *)query;
-- (void)setQuery:(NSString *)value;
-
-- (long)useCount;
-- (void)setUseCount:(long)value;
-
 
 @end
 

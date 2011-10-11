@@ -11,7 +11,18 @@ int main (int argc, const char * argv[]) {
     NSFileManager *fileManager = [NSFileManager defaultManager];
     [fileManager removeItemAtPath:@"/tmp/tmp.db" error:nil];
     
-    FMDatabase* db = [FMDatabase databaseWithPath:@"/tmp/tmp.db"];
+    FMDatabase *db = [FMDatabase databaseWithPath:@"/tmp/tmp.db"];
+    
+    NSLog(@"Is SQLite compiled with it's thread safe options turned on? %@!", [FMDatabase isThreadSafe] ? @"Yes" : @"No");
+    
+    {
+		// -------------------------------------------------------------------------------
+		// Un-opened database check.		
+		FMDBQuickCheck([db executeQuery:@"select * from table"] == nil);
+		NSLog(@"%d: %@", [db lastErrorCode], [db lastErrorMessage]);
+	}
+    
+    
     if (![db open]) {
         NSLog(@"Could not open db.");
         [pool release];
@@ -479,6 +490,21 @@ int main (int argc, const char * argv[]) {
     }
     
     
+    {
+        FMDBQuickCheck([db executeUpdate:@"create table t5 (a text, b int, c blob, d text, e text)"]);
+        FMDBQuickCheck(([db executeUpdateWithFormat:@"insert into t5 values (%s, %d, %@, %c, %lld)", "text", 42, @"BLOB", 'd', 12345678901234]));
+        
+        rs = [db executeQueryWithFormat:@"select * from t5 where a = %s", "text"];
+        FMDBQuickCheck((rs != nil));
+        
+        [rs next];
+        
+        FMDBQuickCheck([[rs stringForColumn:@"a"] isEqualToString:@"text"]);
+        FMDBQuickCheck(([rs intForColumn:@"b"] == 42));
+        FMDBQuickCheck([[rs stringForColumn:@"c"] isEqualToString:@"BLOB"]);
+        FMDBQuickCheck([[rs stringForColumn:@"d"] isEqualToString:@"d"]);
+        FMDBQuickCheck(([rs longLongIntForColumn:@"e"] == 12345678901234));
+    }
     
     
     
