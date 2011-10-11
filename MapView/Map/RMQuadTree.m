@@ -63,6 +63,7 @@
 
 - (void)dealloc
 {
+    mapView = nil;
     [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
 
     @synchronized (annotations) {
@@ -325,6 +326,7 @@
 
 - (void)dealloc
 {
+    mapView = nil;
     [rootNode release]; rootNode = nil;
     [super dealloc];
 }

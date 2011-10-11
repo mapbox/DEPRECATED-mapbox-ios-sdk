@@ -82,8 +82,12 @@
     int x = floor(rect.origin.x / rect.size.width), y = floor(fabs(rect.origin.y / rect.size.height));
 //    NSLog(@"Tile @ x:%d, y:%d, zoom:%d", x, y, zoom);
 
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
     UIImage *tileImage = [[mapView tileSource] imageForTile:RMTileMake(x, y, zoom) inCache:[mapView tileCache]];
     [tileImage drawInRect:rect];
+
+    [pool release]; pool = nil;
 }
 
 #pragma mark -

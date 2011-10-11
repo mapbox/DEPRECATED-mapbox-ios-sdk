@@ -58,7 +58,8 @@
 
     [tileCache retain];
 
-    NSData *tileData = [NSData dataWithContentsOfURL:[self URLForTile:tile]];
+    // Beware: dataWithContentsOfURL is leaking like hell. Better use AFNetwork or ASIHTTPRequest
+    NSData *tileData = [NSData dataWithContentsOfURL:[self URLForTile:tile] options:NSDataReadingUncached error:NULL];
     if (tileData && [tileData length]) {
         image = [UIImage imageWithData:tileData];
         if (image) [tileCache addImage:image forTile:tile withCacheKey:[self uniqueTilecacheKey]];

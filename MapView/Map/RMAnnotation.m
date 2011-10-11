@@ -107,7 +107,8 @@
 
 - (void)setMapView:(RMMapView *)aMapView
 {
-    mapView = aMapView;
+    [mapView autorelease];
+    mapView = [aMapView retain];
     if (!aMapView) {
         self.layer = nil;
     }
