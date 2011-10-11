@@ -90,6 +90,7 @@ int main (int argc, const char * argv[]) {
               [[rs columnNameForIndex:1] isEqualToString:@"a"])
               ) {
             NSLog(@"WHOA THERE BUDDY, columnNameForIndex ISN'T WORKING!");
+            [pool release];
             return 7;
         }
     }
@@ -160,6 +161,7 @@ int main (int argc, const char * argv[]) {
     
     if (success) {
         NSLog(@"Whoa- the database didn't stay locked!");
+        [pool release];
         return 7;
     }
     else {
@@ -198,6 +200,7 @@ int main (int argc, const char * argv[]) {
         if (a != nil) {
             NSLog(@"%s:%d", __FUNCTION__, __LINE__);
             NSLog(@"OH OH, PROBLEMO!");
+            [pool release];
             return 10;
         }
         else {
@@ -207,6 +210,7 @@ int main (int argc, const char * argv[]) {
         if (![b isEqualToString:@"5"]) {
             NSLog(@"%s:%d", __FUNCTION__, __LINE__);
             NSLog(@"OH OH, PROBLEMO!");
+            [pool release];
             return 10;
         }
     }
@@ -249,6 +253,7 @@ int main (int argc, const char * argv[]) {
         
         if ([rs2 intForColumnIndex:0] != newVal) {
             NSLog(@"Oh crap, our update didn't work out!");
+            [pool release];
             return 9;
         }
         
@@ -271,11 +276,13 @@ int main (int argc, const char * argv[]) {
         
         if (!b) {
             NSLog(@"Oh crap, the nil / null inserts didn't work!");
+            [pool release];
             return 10;
         }
         
         if (a) {
             NSLog(@"Oh crap, the nil / null inserts didn't work (son of error message)!");
+            [pool release];
             return 11;
         }
         else {
@@ -304,11 +311,13 @@ int main (int argc, const char * argv[]) {
         
         if (a) {
             NSLog(@"Oh crap, the null date insert didn't work!");
+            [pool release];
             return 12;
         }
         
         if (!c) {
             NSLog(@"Oh crap, the 0 date insert didn't work!");
+            [pool release];
             return 12;
         }
         
@@ -316,6 +325,7 @@ int main (int argc, const char * argv[]) {
         
         if (floor(dti) > 0.0) {
             NSLog(@"Date matches didn't really happen... time difference of %f", dti);
+            [pool release];
             return 13;
         }
         
@@ -324,6 +334,7 @@ int main (int argc, const char * argv[]) {
         
         if (floor(dti) > 0.0) {
             NSLog(@"Date matches didn't really happen... time difference of %f", dti);
+            [pool release];
             return 13;
         }
     }
@@ -333,6 +344,7 @@ int main (int argc, const char * argv[]) {
     NSTimeInterval dti = fabs([foo timeIntervalSinceDate:date]);
     if (floor(dti) > 0.0) {
         NSLog(@"Date matches didn't really happen... time difference of %f", dti);
+        [pool release];
         return 14;
     }
     
