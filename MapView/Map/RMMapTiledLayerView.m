@@ -37,7 +37,7 @@
     if (!(self = [super initWithFrame:frame]))
         return nil;
 
-    mapView = aMapView;
+    mapView = [aMapView retain];
 
     self.userInteractionEnabled = YES;
     self.multipleTouchEnabled = YES;
@@ -65,6 +65,13 @@
     [self addGestureRecognizer:longPressRecognizer];
 
     return self;
+}
+
+- (void)dealloc
+{
+    [[mapView tileSource] cancelAllDownloads];
+    [mapView release]; mapView = nil;
+    [super dealloc];
 }
 
 - (void)layoutSubviews
