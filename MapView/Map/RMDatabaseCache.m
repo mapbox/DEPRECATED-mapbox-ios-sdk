@@ -77,10 +77,10 @@
 
 - (void)configureDBForFirstUse
 {
-    [db executeUpdate:@"PRAGMA synchronous=OFF"];
-    [[db executeQuery:@"PRAGMA journal_mode=OFF"] close]; // Bug, see https://github.com/ccgus/fmdb/issues/36
-    [db executeUpdate:@"PRAGMA cache-size=100"];
-    [db executeUpdate:@"PRAGMA count_changes=OFF"];
+    [[db executeQuery:@"PRAGMA synchronous=OFF"] close];
+    [[db executeQuery:@"PRAGMA journal_mode=OFF"] close];
+    [[db executeQuery:@"PRAGMA cache-size=100"] close];
+    [[db executeQuery:@"PRAGMA count_changes=OFF"] close];
     [db executeUpdate:@"CREATE TABLE IF NOT EXISTS ZCACHE (tile_hash INTEGER NOT NULL, cache_key VARCHAR(25) NOT NULL, last_used DOUBLE NOT NULL, data BLOB NOT NULL)"];
     [db executeUpdate:@"CREATE UNIQUE INDEX IF NOT EXISTS main_index ON ZCACHE(tile_hash, cache_key)"];
     [db executeUpdate:@"CREATE INDEX IF NOT EXISTS last_used_index ON ZCACHE(last_used)"];
