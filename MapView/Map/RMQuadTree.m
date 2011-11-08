@@ -213,6 +213,26 @@
     return enclosedAnnotations;
 }
 
+- (NSArray *)unclusteredAnnotations
+{
+    NSMutableArray *unclusteredAnnotations = [NSMutableArray array];
+
+    @synchronized (annotations) {
+        for (RMAnnotation *annotation in annotations)
+        {
+            if (!annotation.clusteringEnabled)
+                [unclusteredAnnotations addObject:annotation];
+        }
+    }
+
+    if (northWest) [unclusteredAnnotations addObjectsFromArray:[northWest unclusteredAnnotations]];
+    if (northEast) [unclusteredAnnotations addObjectsFromArray:[northEast unclusteredAnnotations]];
+    if (southWest) [unclusteredAnnotations addObjectsFromArray:[southWest unclusteredAnnotations]];
+    if (southEast) [unclusteredAnnotations addObjectsFromArray:[southEast unclusteredAnnotations]];
+
+    return unclusteredAnnotations;
+}
+
 - (void)addAnnotationsInBoundingBox:(RMProjectedRect)aBoundingBox toMutableArray:(NSMutableArray *)someArray createClusterAnnotations:(BOOL)createClusterAnnotations withClusterSize:(RMProjectedSize)clusterSize findGravityCenter:(BOOL)findGravityCenter
 {
     if (createClusterAnnotations)
@@ -262,6 +282,7 @@
             }
 
             [someArray addObject:cachedClusterAnnotation];
+            [someArray addObjectsFromArray:[self unclusteredAnnotations]];
             return;
         }
 
