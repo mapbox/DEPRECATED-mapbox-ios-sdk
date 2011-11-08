@@ -39,7 +39,7 @@
     RMProjectedPoint projectedLocation;
     RMProjectedRect  projectedBoundingBox;
     BOOL hasBoundingBox;
-    BOOL enabled;
+    BOOL enabled, clusteringEnabled;
 
     RMMapLayer *layer;
     RMQuadTreeNode *quadTreeNode;
@@ -64,6 +64,7 @@
 @property (nonatomic, assign) RMProjectedRect  projectedBoundingBox;
 @property (nonatomic, assign) BOOL hasBoundingBox;
 @property (nonatomic, assign) BOOL enabled;
+@property (nonatomic, assign) BOOL clusteringEnabled;
 
 // RMMarker, RMPath, whatever you return in your delegate method mapView:layerForAnnotation:
 @property (nonatomic, retain) RMMapLayer *layer;

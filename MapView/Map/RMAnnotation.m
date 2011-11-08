@@ -47,7 +47,7 @@
 @synthesize projectedLocation;
 @synthesize projectedBoundingBox;
 @synthesize hasBoundingBox;
-@synthesize enabled;
+@synthesize enabled, clusteringEnabled;
 @synthesize position;
 @synthesize quadTreeNode;
 
@@ -67,11 +67,12 @@
     self.userInfo     = nil;
     self.quadTreeNode = nil;
 
-    self.annotationType = nil;
-    self.annotationIcon = nil;
-    self.anchorPoint    = CGPointZero;
-    self.hasBoundingBox = NO;
-    self.enabled        = YES;
+    self.annotationType    = nil;
+    self.annotationIcon    = nil;
+    self.anchorPoint       = CGPointZero;
+    self.hasBoundingBox    = NO;
+    self.enabled           = YES;
+    self.clusteringEnabled = YES;
 
     layer = nil;
 
