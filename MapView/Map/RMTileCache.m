@@ -183,50 +183,53 @@
 
 - (id <RMTileCache>)databaseCacheWithConfig:(NSDictionary *)cfg
 {
-	BOOL useCacheDir = NO;
-	RMCachePurgeStrategy strategy = RMCachePurgeStrategyFIFO;
+    BOOL useCacheDir = NO;
+    RMCachePurgeStrategy strategy = RMCachePurgeStrategyFIFO;
 
-	NSUInteger capacity = 1000;
-	NSUInteger minimalPurge = capacity / 10;
+    NSUInteger capacity = 1000;
+    NSUInteger minimalPurge = capacity / 10;
 
-	NSNumber *capacityNumber = [cfg objectForKey:@"capacity"];
-	if (capacityNumber != nil) {
-		NSInteger value = [capacityNumber intValue];
-		
-		// 0 is valid: it means no capacity limit
-		if (value >= 0) {
-			capacity =  value;
-			minimalPurge = MAX(1,capacity / 10);
-		} else 
-			RMLog(@"illegal value for capacity: %d", value);
-	}
+    NSNumber *capacityNumber = [cfg objectForKey:@"capacity"];
+    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad && [cfg objectForKey:@"capacity-ipad"])
+        capacityNumber = [cfg objectForKey:@"capacity-ipad"];
 
-	NSString *strategyStr = [cfg objectForKey:@"strategy"];
-	if (strategyStr != nil) {
-		if ([strategyStr caseInsensitiveCompare:@"FIFO"] == NSOrderedSame) strategy = RMCachePurgeStrategyFIFO;
-		if ([strategyStr caseInsensitiveCompare:@"LRU"] == NSOrderedSame) strategy = RMCachePurgeStrategyLRU;
-	}
+    if (capacityNumber != nil) {
+        NSInteger value = [capacityNumber intValue];
 
-	NSNumber *useCacheDirNumber = [cfg objectForKey:@"useCachesDirectory"];
-	if (useCacheDirNumber != nil)
+        // 0 is valid: it means no capacity limit
+        if (value >= 0) {
+            capacity =  value;
+            minimalPurge = MAX(1,capacity / 10);
+        } else
+            RMLog(@"illegal value for capacity: %d", value);
+    }
+
+    NSString *strategyStr = [cfg objectForKey:@"strategy"];
+    if (strategyStr != nil) {
+        if ([strategyStr caseInsensitiveCompare:@"FIFO"] == NSOrderedSame) strategy = RMCachePurgeStrategyFIFO;
+        if ([strategyStr caseInsensitiveCompare:@"LRU"] == NSOrderedSame) strategy = RMCachePurgeStrategyLRU;
+    }
+
+    NSNumber *useCacheDirNumber = [cfg objectForKey:@"useCachesDirectory"];
+    if (useCacheDirNumber != nil)
         useCacheDir = [useCacheDirNumber boolValue];
 
-	NSNumber *minimalPurgeNumber = [cfg objectForKey:@"minimalPurge"];
-	if (minimalPurgeNumber != nil && capacity != 0) {
-		NSUInteger value = [minimalPurgeNumber unsignedIntValue];
-		if (value > 0 && value<=capacity) 
-			minimalPurge = value;
-		else {
-			RMLog(@"minimalPurge must be at least one and at most the cache capacity");
-		}
-	}
+    NSNumber *minimalPurgeNumber = [cfg objectForKey:@"minimalPurge"];
+    if (minimalPurgeNumber != nil && capacity != 0) {
+        NSUInteger value = [minimalPurgeNumber unsignedIntValue];
+        if (value > 0 && value<=capacity) {
+            minimalPurge = value;
+        } else {
+            RMLog(@"minimalPurge must be at least one and at most the cache capacity");
+        }
+    }
 
-	RMDatabaseCache *dbCache = [[[RMDatabaseCache alloc] initUsingCacheDir:useCacheDir] autorelease];
-	[dbCache setCapacity:capacity];
-	[dbCache setPurgeStrategy:strategy];
-	[dbCache setMinimalPurge:minimalPurge];
+    RMDatabaseCache *dbCache = [[[RMDatabaseCache alloc] initUsingCacheDir:useCacheDir] autorelease];
+    [dbCache setCapacity:capacity];
+    [dbCache setPurgeStrategy:strategy];
+    [dbCache setMinimalPurge:minimalPurge];
 
-	return dbCache;
+    return dbCache;
 }
 
 @end
