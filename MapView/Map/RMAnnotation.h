@@ -47,7 +47,7 @@
     // provided for storage of arbitrary user data
     id userInfo;
     NSString *annotationType;
-    UIImage  *annotationIcon;
+    UIImage  *annotationIcon, *badgeIcon;
     CGPoint   anchorPoint;
 }
 
@@ -56,6 +56,7 @@
 @property (nonatomic, retain) id userInfo;
 @property (nonatomic, retain) NSString *annotationType;
 @property (nonatomic, retain) UIImage *annotationIcon;
+@property (nonatomic, retain) UIImage *badgeIcon;
 @property (nonatomic, assign) CGPoint anchorPoint;
 
 // the location on screen. don't set this directly, use the coordinate property.
