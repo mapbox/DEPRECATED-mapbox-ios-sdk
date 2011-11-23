@@ -40,7 +40,7 @@
 @synthesize title;
 @synthesize userInfo;
 @synthesize annotationType;
-@synthesize annotationIcon;
+@synthesize annotationIcon, badgeIcon;
 @synthesize anchorPoint;
 
 @synthesize mapView;
@@ -69,6 +69,7 @@
 
     self.annotationType    = nil;
     self.annotationIcon    = nil;
+    self.badgeIcon         = nil;
     self.anchorPoint       = CGPointZero;
     self.hasBoundingBox    = NO;
     self.enabled           = YES;
@@ -90,6 +91,7 @@
 
     self.annotationType = nil;
     self.annotationIcon = nil;
+    self.badgeIcon      = nil;
 
     [super dealloc];
 }
