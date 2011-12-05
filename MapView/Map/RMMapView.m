@@ -649,8 +649,10 @@
         float zoomScale = mapScrollView.zoomScale;
         CGSize newZoomSize = CGSizeMake(mapScrollView.bounds.size.width / zoomFactor,
                                         mapScrollView.bounds.size.height / zoomFactor);
-        CGRect zoomRect = CGRectMake(((mapScrollView.contentOffset.x + pivot.x) - (newZoomSize.width / 2.0)) / zoomScale,
-                                     ((mapScrollView.contentOffset.y + pivot.y) - (newZoomSize.height / 2.0)) / zoomScale,
+        CGFloat factorX = pivot.x / mapScrollView.bounds.size.width,
+                factorY = pivot.y / mapScrollView.bounds.size.height;
+        CGRect zoomRect = CGRectMake(((mapScrollView.contentOffset.x + pivot.x) - (newZoomSize.width * factorX)) / zoomScale,
+                                     ((mapScrollView.contentOffset.y + pivot.y) - (newZoomSize.height * factorY)) / zoomScale,
                                      newZoomSize.width / zoomScale,
                                      newZoomSize.height / zoomScale);
         [mapScrollView zoomToRect:zoomRect animated:animated];
