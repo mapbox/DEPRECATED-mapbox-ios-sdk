@@ -52,6 +52,7 @@
         return nil;
 
     self.annotation = nil;
+    self.userInfo = nil;
 
     return self;
 }
