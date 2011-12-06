@@ -1,7 +1,7 @@
 //
-// RMWebMapSource.h
+//  RMOpenSeaMapSource.h
 //
-// Copyright (c) 2009, Frank Schroeder, SharpMind GbR
+// Copyright (c) 2008-2009, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,16 +25,14 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import "RMAbstractMercatorTileSource.h"
-#import "RMProjection.h"
+#import "RMAbstractWebMapSource.h"
 
-@interface RMAbstractWebMapSource : RMAbstractMercatorTileSource {
-}
+/*!
+ \brief Subclass of RMAbstractMercatorWebSource for access to the OpenSeaMap Layer over OpenStreetMap.
 
-- (NSURL *)URLForTile:(RMTile)tile;
+ Provides key-based access to tiles from the OpenSeaMap layer.
+ */
 
-// Tilesources with layers use this method.
-// URLs are ordered from the bottom layer to the top layer.
-- (NSArray *)URLsForTile:(RMTile)tile;
+@interface RMOpenSeaMapSource : RMAbstractWebMapSource
 
 @end

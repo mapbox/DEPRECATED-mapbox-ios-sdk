@@ -46,6 +46,11 @@
                                  userInfo:nil];
 }
 
+- (NSArray *)URLsForTile:(RMTile)tile
+{
+    return [NSArray arrayWithObjects:[self URLForTile:tile], nil];
+}
+
 - (UIImage *)imageForTile:(RMTile)tile inCache:(RMTileCache *)tileCache
 {
     UIImage *image = nil;
@@ -59,11 +64,23 @@
     [tileCache retain];
 
     // Beware: dataWithContentsOfURL is leaking like hell. Better use AFNetwork or ASIHTTPRequest
-    NSData *tileData = [NSData dataWithContentsOfURL:[self URLForTile:tile] options:NSDataReadingUncached error:NULL];
-    if (tileData && [tileData length]) {
-        image = [UIImage imageWithData:tileData];
-        if (image) [tileCache addImage:image forTile:tile withCacheKey:[self uniqueTilecacheKey]];
+    for (NSURL *currentURL in [self URLsForTile:tile])
+    {
+        NSData *tileData = [NSData dataWithContentsOfURL:currentURL options:NSDataReadingUncached error:NULL];
+        if (tileData && [tileData length]) {
+            if (image != nil) {
+                UIGraphicsBeginImageContext(image.size);
+                [image drawAtPoint:CGPointMake(0,0)];
+                [[UIImage imageWithData:tileData] drawAtPoint:CGPointMake(0,0)];
+
+                image = UIGraphicsGetImageFromCurrentImageContext();
+                UIGraphicsEndImageContext();
+            } else {
+                image = [UIImage imageWithData:tileData];
+            }
+        }
     }
+    if (image) [tileCache addImage:image forTile:tile withCacheKey:[self uniqueTilecacheKey]];
 
     [tileCache release];
 
