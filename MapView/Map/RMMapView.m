@@ -82,6 +82,7 @@
 @synthesize tileCache;
 @synthesize quadTree;
 @synthesize enableClustering, positionClusterMarkersAtTheGravityCenter, clusterMarkerSize;
+@synthesize adjustTilesForRetinaDisplay;
 
 #pragma mark -
 #pragma mark Initialization
@@ -111,6 +112,7 @@
     }
 
     boundingMask = RMMapMinWidthBound;
+    adjustTilesForRetinaDisplay = YES;
 
     annotations = [NSMutableArray new];
     visibleAnnotations = [NSMutableSet new];
@@ -894,7 +896,11 @@
 
     tiledLayerView = [[RMMapTiledLayerView alloc] initWithFrame:CGRectMake(0.0, 0.0, contentSize.width, contentSize.height) mapView:self];
     tiledLayerView.delegate = self;
-    ((CATiledLayer *)tiledLayerView.layer).tileSize = CGSizeMake(tileSideLength, tileSideLength);
+    if (self.adjustTilesForRetinaDisplay && screenScale > 1.0) {
+        RMLog(@"adjustTiles");
+        ((CATiledLayer *)tiledLayerView.layer).tileSize = CGSizeMake(tileSideLength * 2.0, tileSideLength * 2.0);
+    } else
+        ((CATiledLayer *)tiledLayerView.layer).tileSize = CGSizeMake(tileSideLength, tileSideLength);
     [mapScrollView addSubview:tiledLayerView];
 
     [mapScrollView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:NULL];
@@ -1242,6 +1248,14 @@
 - (void)setEnableDragging:(BOOL)enableDragging
 {
     mapScrollView.scrollEnabled = enableDragging;
+}
+
+- (void)setAdjustTilesForRetinaDisplay:(BOOL)doAdjustTilesForRetinaDisplay
+{
+    if (adjustTilesForRetinaDisplay == doAdjustTilesForRetinaDisplay) return;
+
+    adjustTilesForRetinaDisplay = doAdjustTilesForRetinaDisplay;
+    [self createMapView];
 }
 
 - (RMProjection *)projection

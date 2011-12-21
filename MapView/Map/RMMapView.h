@@ -77,6 +77,7 @@ typedef enum {
     RMMapOverlayView *overlayView;
 
     double metersPerPixel;
+    BOOL adjustTilesForRetinaDisplay;
 
     NSMutableArray *annotations;
     NSMutableSet   *visibleAnnotations;
@@ -140,6 +141,8 @@ typedef enum {
 @property (nonatomic, readonly) double scaleDenominator; /// The denominator in a cartographic scale like 1/24000, 1/50000, 1/2000000.
 @property (nonatomic, readonly) float screenScale;
 @property (nonatomic, assign)   NSUInteger boundingMask;
+
+@property (nonatomic, assign) BOOL adjustTilesForRetinaDisplay;
 
 @property (nonatomic, assign) float zoom; /// zoom level is clamped to range (minZoom, maxZoom)
 @property (nonatomic, assign) float minZoom;
