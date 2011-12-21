@@ -66,6 +66,8 @@ Changes in this fork (Alpstein/route-me)
 
 * Tile source refactoring
 
+* Support for tile sources with multiple layers
+
 * Numerous performance improvements
 
 * Markers have been refactored into a MKMapView-like system, with annotations and on-demand markers
