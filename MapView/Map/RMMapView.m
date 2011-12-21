@@ -112,7 +112,7 @@
     }
 
     boundingMask = RMMapMinWidthBound;
-    adjustTilesForRetinaDisplay = YES;
+    adjustTilesForRetinaDisplay = NO;
 
     annotations = [NSMutableArray new];
     visibleAnnotations = [NSMutableSet new];
