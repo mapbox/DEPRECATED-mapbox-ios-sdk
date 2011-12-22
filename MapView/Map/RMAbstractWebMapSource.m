@@ -29,6 +29,9 @@
 #import "RMTileCache.h"
 #import "RMTileImage.h"
 
+#define RMAbstractWebMapSourceRetryCount  3
+#define RMAbstractWebMapSourceWaitSeconds 2
+
 @implementation RMAbstractWebMapSource
 
 - (id)init
@@ -53,7 +56,7 @@
 
 - (UIImage *)imageForTile:(RMTile)tile inCache:(RMTileCache *)tileCache
 {
-    UIImage *image = nil;
+    __block UIImage *image = nil;
 
 	tile = [[self mercatorToTileProjection] normaliseTile:tile];
     image = [tileCache cachedImage:tile withCacheKey:[self uniqueTilecacheKey]];
@@ -63,11 +66,52 @@
 
     [tileCache retain];
 
-    // Beware: dataWithContentsOfURL is leaking like hell. Better use AFNetwork or ASIHTTPRequest
-    for (NSURL *currentURL in [self URLsForTile:tile])
+    NSArray *URLs = [self URLsForTile:tile];
+    
+    // fill up collection array with placeholders
+    //
+    NSMutableArray *tilesData = [NSMutableArray arrayWithCapacity:[URLs count]];
+    
+    for (int p = 0; p < [URLs count]; p++)
+        [tilesData addObject:[NSNull null]];
+
+    dispatch_group_t fetchGroup = dispatch_group_create();
+    
+    for (int u = 0; u < [URLs count]; u++)
     {
-        NSData *tileData = [NSData dataWithContentsOfURL:currentURL options:NSDataReadingUncached error:NULL];
-        if (tileData && [tileData length]) {
+        NSURL *currentURL = [URLs objectAtIndex:u];
+        
+        dispatch_group_async(fetchGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void)
+        {
+            NSData *tileData = nil;
+            
+            for (int try = 0; try < RMAbstractWebMapSourceRetryCount; try++)
+                if ( ! tileData)
+                    // Beware: dataWithContentsOfURL is leaking like hell. Better use AFNetwork or ASIHTTPRequest
+                    tileData = [NSData dataWithContentsOfURL:currentURL options:NSDataReadingUncached error:NULL];
+            
+            if (tileData)
+            {
+                dispatch_sync(dispatch_get_main_queue(), ^(void)
+                {
+                    // safely put into collection array in proper order
+                    //
+                    [tilesData replaceObjectAtIndex:u withObject:tileData]; 
+                });
+            }
+        });
+    }
+    
+    // wait for whole group of fetches (with retries) to finish, then clean up
+    //
+    dispatch_group_wait(fetchGroup, dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * RMAbstractWebMapSourceWaitSeconds));
+    dispatch_release(fetchGroup);
+    
+    // composite the collected images together
+    //
+    for (NSData *tileData in tilesData)
+    {
+        if (tileData && [tileData isKindOfClass:[NSData class]] && [tileData length]) {
             if (image != nil) {
                 UIGraphicsBeginImageContext(image.size);
                 [image drawAtPoint:CGPointMake(0,0)];
