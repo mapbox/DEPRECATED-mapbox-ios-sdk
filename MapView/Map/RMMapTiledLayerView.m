@@ -57,11 +57,16 @@
     twoFingerDoubleTapRecognizer.numberOfTapsRequired = 2;
     twoFingerDoubleTapRecognizer.numberOfTouchesRequired = 2;
 
+    UITapGestureRecognizer *twoFingerSingleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTwoFingerSingleTap:)] autorelease];
+    twoFingerSingleTapRecognizer.numberOfTouchesRequired = 2;
+    [twoFingerSingleTapRecognizer requireGestureRecognizerToFail:twoFingerDoubleTapRecognizer];
+
     UILongPressGestureRecognizer *longPressRecognizer = [[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)] autorelease];
 
     [self addGestureRecognizer:singleTapRecognizer];
     [self addGestureRecognizer:doubleTapRecognizer];
     [self addGestureRecognizer:twoFingerDoubleTapRecognizer];
+    [self addGestureRecognizer:twoFingerSingleTapRecognizer];
     [self addGestureRecognizer:longPressRecognizer];
 
     return self;
@@ -104,6 +109,12 @@
 {
     if ([delegate respondsToSelector:@selector(mapTiledLayerView:singleTapAtPoint:)])
         [delegate mapTiledLayerView:self singleTapAtPoint:[recognizer locationInView:mapView]];
+}
+
+- (void)handleTwoFingerSingleTap:(UIGestureRecognizer *)recognizer
+{
+    if ([delegate respondsToSelector:@selector(mapTiledLayerView:twoFingerSingleTapAtPoint:)])
+        [delegate mapTiledLayerView:self twoFingerSingleTapAtPoint:[recognizer locationInView:mapView]];
 }
 
 - (void)handleLongPress:(UILongPressGestureRecognizer *)recognizer

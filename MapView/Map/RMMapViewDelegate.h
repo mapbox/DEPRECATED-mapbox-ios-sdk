@@ -55,6 +55,7 @@
 - (void)doubleTapOnMap:(RMMapView *)map at:(CGPoint)point;
 - (void)doubleTapTwoFingersOnMap:(RMMapView *)map at:(CGPoint)point;
 - (void)singleTapOnMap:(RMMapView *)map at:(CGPoint)point;
+- (void)singleTapTwoFingersOnMap:(RMMapView *)map at:(CGPoint)point;
 - (void)longSingleTapOnMap:(RMMapView *)map at:(CGPoint)point;
 
 - (void)tapOnAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map;

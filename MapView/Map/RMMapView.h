@@ -104,6 +104,7 @@ typedef enum {
     BOOL _delegateHasDoubleTapOnMap;
     BOOL _delegateHasDoubleTapTwoFingersOnMap;
     BOOL _delegateHasSingleTapOnMap;
+    BOOL _delegateHasSingleTapTwoFingersOnMap;
     BOOL _delegateHasLongSingleTapOnMap;
     BOOL _delegateHasTapOnAnnotation;
     BOOL _delegateHasDoubleTapOnAnnotation;
