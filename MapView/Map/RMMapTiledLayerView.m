@@ -45,7 +45,7 @@
 
     CATiledLayer *tiledLayer = [self tiledLayer];
     tiledLayer.levelsOfDetail = [[mapView tileSource] maxZoom];
-    tiledLayer.levelsOfDetailBias = [[mapView tileSource] maxZoom]+1;
+    tiledLayer.levelsOfDetailBias = [[mapView tileSource] maxZoom];
 
     UITapGestureRecognizer *doubleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)] autorelease];
     doubleTapRecognizer.numberOfTapsRequired = 2;
