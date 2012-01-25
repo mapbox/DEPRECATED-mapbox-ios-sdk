@@ -138,6 +138,12 @@
 		DD2B374814CF8041008DE8CB /* FMDatabaseAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = DD2B374214CF8041008DE8CB /* FMDatabaseAdditions.m */; };
 		DD2B374914CF8041008DE8CB /* FMResultSet.h in Headers */ = {isa = PBXBuildFile; fileRef = DD2B374314CF8041008DE8CB /* FMResultSet.h */; };
 		DD2B374A14CF8041008DE8CB /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = DD2B374414CF8041008DE8CB /* FMResultSet.m */; };
+		DD2B374F14CF814F008DE8CB /* FMDatabasePool.h in Headers */ = {isa = PBXBuildFile; fileRef = DD2B374B14CF814F008DE8CB /* FMDatabasePool.h */; };
+		DD2B375014CF814F008DE8CB /* FMDatabasePool.m in Sources */ = {isa = PBXBuildFile; fileRef = DD2B374C14CF814F008DE8CB /* FMDatabasePool.m */; };
+		DD2B375114CF814F008DE8CB /* FMDatabaseQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = DD2B374D14CF814F008DE8CB /* FMDatabaseQueue.h */; };
+		DD2B375214CF814F008DE8CB /* FMDatabaseQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = DD2B374E14CF814F008DE8CB /* FMDatabaseQueue.m */; };
+		DD2B375514CF8197008DE8CB /* RMMBTilesTileSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DD2B375314CF8197008DE8CB /* RMMBTilesTileSource.h */; };
+		DD2B375614CF8197008DE8CB /* RMMBTilesTileSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD2B375414CF8197008DE8CB /* RMMBTilesTileSource.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -275,6 +281,12 @@
 		DD2B374214CF8041008DE8CB /* FMDatabaseAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FMDatabaseAdditions.m; path = src/FMDatabaseAdditions.m; sourceTree = "<group>"; };
 		DD2B374314CF8041008DE8CB /* FMResultSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FMResultSet.h; path = src/FMResultSet.h; sourceTree = "<group>"; };
 		DD2B374414CF8041008DE8CB /* FMResultSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FMResultSet.m; path = src/FMResultSet.m; sourceTree = "<group>"; };
+		DD2B374B14CF814F008DE8CB /* FMDatabasePool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FMDatabasePool.h; path = src/FMDatabasePool.h; sourceTree = "<group>"; };
+		DD2B374C14CF814F008DE8CB /* FMDatabasePool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FMDatabasePool.m; path = src/FMDatabasePool.m; sourceTree = "<group>"; };
+		DD2B374D14CF814F008DE8CB /* FMDatabaseQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FMDatabaseQueue.h; path = src/FMDatabaseQueue.h; sourceTree = "<group>"; };
+		DD2B374E14CF814F008DE8CB /* FMDatabaseQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FMDatabaseQueue.m; path = src/FMDatabaseQueue.m; sourceTree = "<group>"; };
+		DD2B375314CF8197008DE8CB /* RMMBTilesTileSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMBTilesTileSource.h; sourceTree = "<group>"; };
+		DD2B375414CF8197008DE8CB /* RMMBTilesTileSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMBTilesTileSource.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -485,6 +497,8 @@
 				16EC85CD133CA6C300219947 /* RMAbstractMercatorTileSource.m */,
 				16EC85CE133CA6C300219947 /* RMAbstractWebMapSource.h */,
 				16EC85CF133CA6C300219947 /* RMAbstractWebMapSource.m */,
+				DD2B375314CF8197008DE8CB /* RMMBTilesTileSource.h */,
+				DD2B375414CF8197008DE8CB /* RMMBTilesTileSource.m */,
 			);
 			name = "Tile Source";
 			sourceTree = "<group>";
@@ -508,6 +522,10 @@
 				DD2B374214CF8041008DE8CB /* FMDatabaseAdditions.m */,
 				DD2B374314CF8041008DE8CB /* FMResultSet.h */,
 				DD2B374414CF8041008DE8CB /* FMResultSet.m */,
+				DD2B374B14CF814F008DE8CB /* FMDatabasePool.h */,
+				DD2B374C14CF814F008DE8CB /* FMDatabasePool.m */,
+				DD2B374D14CF814F008DE8CB /* FMDatabaseQueue.h */,
+				DD2B374E14CF814F008DE8CB /* FMDatabaseQueue.m */,
 			);
 			path = FMDB;
 			sourceTree = "<group>";
@@ -620,6 +638,9 @@
 				DD2B374514CF8041008DE8CB /* FMDatabase.h in Headers */,
 				DD2B374714CF8041008DE8CB /* FMDatabaseAdditions.h in Headers */,
 				DD2B374914CF8041008DE8CB /* FMResultSet.h in Headers */,
+				DD2B374F14CF814F008DE8CB /* FMDatabasePool.h in Headers */,
+				DD2B375114CF814F008DE8CB /* FMDatabaseQueue.h in Headers */,
+				DD2B375514CF8197008DE8CB /* RMMBTilesTileSource.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -830,6 +851,9 @@
 				DD2B374614CF8041008DE8CB /* FMDatabase.m in Sources */,
 				DD2B374814CF8041008DE8CB /* FMDatabaseAdditions.m in Sources */,
 				DD2B374A14CF8041008DE8CB /* FMResultSet.m in Sources */,
+				DD2B375014CF814F008DE8CB /* FMDatabasePool.m in Sources */,
+				DD2B375214CF814F008DE8CB /* FMDatabaseQueue.m in Sources */,
+				DD2B375614CF8197008DE8CB /* RMMBTilesTileSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
