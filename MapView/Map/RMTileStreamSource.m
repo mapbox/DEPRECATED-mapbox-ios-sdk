@@ -117,17 +117,22 @@
     return kTileStreamDefaultLatLonBoundingBox;
 }
 
-//- (BOOL)coversFullWorld
-//{
-//    RMSphericalTrapezium ownBounds     = [self latitudeLongitudeBoundingBox];
-//    RMSphericalTrapezium defaultBounds = kTileStreamDefaultLatLonBoundingBox;
-//    
-//    if (ownBounds.southwest.longitude <= defaultBounds.southwest.longitude + 10 && 
-//        ownBounds.northeast.longitude >= defaultBounds.northeast.longitude - 10)
-//        return YES;
-//    
-//    return NO;
-//}
+- (BOOL)coversFullWorld
+{
+    RMSphericalTrapezium ownBounds     = [self latitudeLongitudeBoundingBox];
+    RMSphericalTrapezium defaultBounds = kTileStreamDefaultLatLonBoundingBox;
+    
+    if (ownBounds.southWest.longitude <= defaultBounds.southWest.longitude + 10 && 
+        ownBounds.northEast.longitude >= defaultBounds.northEast.longitude - 10)
+        return YES;
+    
+    return NO;
+}
+
+- (NSString *)legend
+{
+    return [self.infoDictionary objectForKey:@"legend"];
+}
 
 - (NSString *)uniqueTilecacheKey
 {
@@ -154,28 +159,4 @@
 	return [self shortAttribution];
 }
 
-- (NSString *)legend
-{
-    return [self.infoDictionary objectForKey:@"legend"];
-}
-
-- (RMTileStreamLayerType)layerType
-{
-    return ([[self.infoDictionary objectForKey:@"type"] isEqualToString:@"overlay"] ? RMTileStreamLayerTypeOverlay : RMTileStreamLayerTypeBaselayer);
-}
-
 @end
-
-//#pragma mark -
-//
-//@implementation RMCachedTileSource (RMTileStreamSourceExtensions)
-//
-//- (NSString *)legend
-//{
-//    if ([tileSource isKindOfClass:[RMTileStreamSource class]])
-//        return [(RMTileStreamSource *)tileSource legend];
-//    
-//    return nil;
-//}
-//
-//@end

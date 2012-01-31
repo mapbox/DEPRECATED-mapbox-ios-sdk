@@ -65,11 +65,6 @@
 #define kTileStreamDefaultLatLonBoundingBox ((RMSphericalTrapezium){ .northEast = { .latitude =  90, .longitude =  180 }, \
                                                                      .southWest = { .latitude = -90, .longitude = -180 } })
 
-typedef enum {
-    RMTileStreamLayerTypeBaselayer = 0,
-    RMTileStreamLayerTypeOverlay   = 1,
-} RMTileStreamLayerType;
-
 @interface RMTileStreamSource : RMAbstractWebMapSource
 {
     NSDictionary *infoDictionary;
@@ -77,18 +72,9 @@ typedef enum {
 
 - (id)initWithInfo:(NSDictionary *)info;
 - (id)initWithReferenceURL:(NSURL *)referenceURL;
-//- (NSString *)legend;
-//- (RMTileStreamLayerType)layerType;
-//- (BOOL)coversFullWorld;
+- (BOOL)coversFullWorld;
+- (NSString *)legend;
 
 @property (nonatomic, readonly, retain) NSDictionary *infoDictionary;
 
 @end
-
-//#pragma mark -
-//
-//@interface RMCachedTileSource (RMTileStreamSourceExtensions)
-//
-//- (NSString *)legend;
-//
-//@end
