@@ -29,18 +29,22 @@ Installing
 As Route-Me is undergoing some significant changes, the recommended course of
 action is to clone a copy of the repository:
 
-      git://github.com/route-me/route-me.git
+      git://github.com/Alpstein/route-me.git
 
 Or, [download the trunk][dl].
+
+Then, update the submodules (only FMDB at the moment):
+
+      git submodule update --init
 
 See the 'samples' subdirectory for usage examples.
 
 There are three subdirectories - MapView, Proj4, and samples. Proj4 is a support class used to do map projections. The MapView project contains only the route-me map library. "samples" contains some ready-to-build projects which you may use as starting points for your own applications, and also some engineering test cases. `samples/SampleMap` and `samples/ProgrammaticMap` are the best places to look, to see how to embed a Route-Me map in your application.
 
-See LicenseRouteMe.txt for license details. In any app that uses the Route-Me library, include the following text on your "preferences" or "about" screen: "Uses Route-Me map library, (c) 2008-2010 Route-Me Contributors". Your data provider will have additional attribution requirements.
+See LicenseRouteMe.txt for license details. In any app that uses the Route-Me library, include the following text on your "preferences" or "about" screen: "Uses Route-Me map library, (c) 2008-2012 Route-Me Contributors". Your data provider will have additional attribution requirements.
 
 
-   [dl]: http://github.com/route-me/route-me/zipball/master
+   [dl]: https://github.com/Alpstein/route-me/zipball/master
    
    
 News, Support and Contributing
@@ -52,7 +56,7 @@ and other users:
 To report bugs and help fix them, please use the [issue tracker][tracker]
 
 [list]: http://groups.google.com/group/route-me-map
-[tracker]: http://github.com/route-me/route-me/issues
+[tracker]: https://github.com/Alpstein/route-me/issues
 
 
 Changes in this fork (Alpstein/route-me)
