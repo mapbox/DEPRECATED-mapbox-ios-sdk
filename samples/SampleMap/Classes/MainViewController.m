@@ -59,7 +59,6 @@
 
 - (void)dealloc
 {
-	LogMethod();
     self.infoTextView = nil; 
     self.mapView = nil; 
     [super dealloc];
