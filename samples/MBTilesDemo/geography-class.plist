@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>apiHostname</key>
+	<string>tiles.mapbox.com</string>
+	<key>apiPath</key>
+	<string>/mapbox</string>
+	<key>apiPort</key>
+	<integer>80</integer>
+	<key>apiScheme</key>
+	<string>http</string>
+	<key>attribution</key>
+	<string></string>
+	<key>basename</key>
+	<string>geography-class.mbtiles</string>
+	<key>bounds</key>
+	<string>-179.9999250554491,-85.05112231458043,179.9999250554491,85.05112231458043</string>
+	<key>center</key>
+	<string>0,0,4</string>
+	<key>description</key>
+	<string>One of the example maps that comes with TileMill - a bright &amp; colorful world map that blends retro and high-tech with its folded paper texture and interactive flag tooltips.</string>
+	<key>formatter</key>
+	<string>function(options, data) { switch (options.format) { case 'full': return '';       break; case 'location': return ''; break; case 'teaser': default: return '&lt;img src="data:image/png;base64,' + data.flagpng + '" style="box-shadow:0px 1px 5px #333;-moz-box-shadow:0px 1px 5px #333;-webkit-box-shadow:0px 1px 5px #333;" /&gt;&lt;br /&gt; &lt;strong&gt;' + data.ADMIN + '&lt;/strong&gt;'; break; }}</string>
+	<key>gridURL</key>
+	<string>http://a.tiles.mapbox.com/mapbox/1.0.0/geography-class/{z}/{x}/{y}.grid.json</string>
+	<key>id</key>
+	<string>geography-class</string>
+	<key>maxzoom</key>
+	<integer>8</integer>
+	<key>minzoom</key>
+	<integer>0</integer>
+	<key>mtime</key>
+	<date>1970-01-01T00:00:00Z</date>
+	<key>name</key>
+	<string>Geography Class</string>
+	<key>size</key>
+	<integer>0</integer>
+	<key>tileURL</key>
+	<string>http://a.tiles.mapbox.com/mapbox/1.0.0/geography-class/{z}/{x}/{y}.png</string>
+	<key>type</key>
+	<string>baselayer</string>
+	<key>version</key>
+	<string>1.0.0</string>
+</dict>
+</plist>
