@@ -28,27 +28,15 @@
 #import <UIKit/UIKit.h>
 #import "RMTileCache.h"
 
-@class RMTileCacheDAO;
-@class FMDatabase;
-
-@interface RMDatabaseCache : NSObject <RMTileCache> {
-    // Database
-	FMDatabase *db;
+@interface RMDatabaseCache : NSObject <RMTileCache>
+{
 	NSString *databasePath;
-
-    NSUInteger tileCount;
-    NSOperationQueue *writeQueue;
-    NSRecursiveLock *writeQueueLock;
-
-    // Cache
-	RMCachePurgeStrategy purgeStrategy;
-	NSUInteger capacity;
-	NSUInteger minimalPurge;
 }
 
 @property (nonatomic, retain) NSString *databasePath;
 
 + (NSString *)dbPathUsingCacheDir:(BOOL)useCacheDir;
+
 - (id)initWithDatabase:(NSString *)path;
 - (id)initUsingCacheDir:(BOOL)useCacheDir;
 
