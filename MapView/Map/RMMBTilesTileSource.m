@@ -69,10 +69,8 @@
 
 - (void)dealloc
 {
-	[tileProjection release];
-    
-    [queue release];
-    
+	[tileProjection release]; tileProjection = nil;
+    [queue release]; queue = nil;
 	[super dealloc];
 }
 

@@ -72,6 +72,8 @@
 #import "RMTileImage.h"
 #import "RMTileCache.h"
 #import "RMFractalTileProjection.h"
+#import "FMDatabase.h"
+#import "FMDatabaseQueue.h"
 
 #define kDefaultLatLonBoundingBox ((RMSphericalTrapezium){.northEast = {.latitude = 90, .longitude = 180}, .southWest = {.latitude = -90, .longitude = -180}})
 
@@ -108,6 +110,14 @@
 #pragma mark -
 
 @implementation RMDBMapSource
+{
+    FMDatabaseQueue *queue;
+
+    // coverage area
+	CLLocationCoordinate2D topLeft;
+	CLLocationCoordinate2D bottomRight;
+	CLLocationCoordinate2D center;
+}
 
 @synthesize uniqueTilecacheKey;
 
@@ -117,44 +127,47 @@
         return nil;
 
     uniqueTilecacheKey = [[[path lastPathComponent] stringByDeletingPathExtension] retain];
-    
-    // open the db
-    db = [[FMDatabase alloc] initWithPath:path];
-    if ([db openWithFlags:SQLITE_OPEN_READONLY])
+
+    queue = [[FMDatabaseQueue databaseQueueWithPath:path] retain];
+
+    if (!queue)
     {
-        RMLog(@"Opening db map source %@", path);
-
-        // Debug mode
-//        [db setTraceExecution:YES];
-
-        // get the tile side length
-        tileSideLength = [self getPreferenceAsInt:kTileSideLengthKey];
-
-        // get the supported zoom levels
-        minZoom = [self getPreferenceAsFloat:kMinZoomKey];
-        maxZoom = [self getPreferenceAsFloat:kMaxZoomKey];
-
-        // get the coverage area
-        topLeft.latitude = [self getPreferenceAsFloat:kCoverageTopLeftLatitudeKey];
-        topLeft.longitude = [self getPreferenceAsFloat:kCoverageTopLeftLongitudeKey];
-        bottomRight.latitude = [self getPreferenceAsFloat:kCoverageBottomRightLatitudeKey];
-        bottomRight.longitude = [self getPreferenceAsFloat:kCoverageBottomRightLongitudeKey];
-        center.latitude = [self getPreferenceAsFloat:kCoverageCenterLatitudeKey];
-        center.longitude = [self getPreferenceAsFloat:kCoverageCenterLongitudeKey];
-
-        RMLog(@"Tile size: %d pixel", tileSideLength);
-        RMLog(@"Supported zoom range: %.0f - %.0f", minZoom, maxZoom);
-        RMLog(@"Coverage area: (%2.6f,%2.6f) x (%2.6f,%2.6f)", 
-              topLeft.latitude, 
-              topLeft.longitude,
-              bottomRight.latitude, 
-              bottomRight.longitude);
-        RMLog(@"Center: (%2.6f,%2.6f)", 
-              center.latitude, 
-              center.longitude);
-    } else {
         RMLog(@"Error opening db map source %@", path);
+        return nil;
     }
+
+    [[queue database] setShouldCacheStatements:YES];
+
+    RMLog(@"Opening db map source %@", path);
+
+    // Debug mode
+// [db setTraceExecution:YES];
+
+    // get the tile side length
+    tileSideLength = [self getPreferenceAsInt:kTileSideLengthKey];
+
+    // get the supported zoom levels
+    minZoom = [self getPreferenceAsFloat:kMinZoomKey];
+    maxZoom = [self getPreferenceAsFloat:kMaxZoomKey];
+
+    // get the coverage area
+    topLeft.latitude = [self getPreferenceAsFloat:kCoverageTopLeftLatitudeKey];
+    topLeft.longitude = [self getPreferenceAsFloat:kCoverageTopLeftLongitudeKey];
+    bottomRight.latitude = [self getPreferenceAsFloat:kCoverageBottomRightLatitudeKey];
+    bottomRight.longitude = [self getPreferenceAsFloat:kCoverageBottomRightLongitudeKey];
+    center.latitude = [self getPreferenceAsFloat:kCoverageCenterLatitudeKey];
+    center.longitude = [self getPreferenceAsFloat:kCoverageCenterLongitudeKey];
+
+    RMLog(@"Tile size: %d pixel", tileSideLength);
+    RMLog(@"Supported zoom range: %.0f - %.0f", minZoom, maxZoom);
+    RMLog(@"Coverage area: (%2.6f,%2.6f) x (%2.6f,%2.6f)",
+          topLeft.latitude,
+          topLeft.longitude,
+          bottomRight.latitude,
+          bottomRight.longitude);
+    RMLog(@"Center: (%2.6f,%2.6f)",
+          center.latitude,
+          center.longitude);
 
     // init the tile projection
     tileProjection = [[RMFractalTileProjection alloc] initFromProjection:[self projection]
@@ -168,8 +181,7 @@
 - (void)dealloc
 {
     [uniqueTilecacheKey release]; uniqueTilecacheKey = nil;
-	[db release]; db = nil;
-	[tileProjection release]; tileProjection = nil;
+    [queue release]; queue = nil;
 	[super dealloc];
 }
 
@@ -192,27 +204,30 @@
 
 - (UIImage *)imageForTile:(RMTile)tile inCache:(RMTileCache *)tileCache
 {
-    UIImage *image = nil;
+    __block UIImage *image = nil;
 
 	tile = [[self mercatorToTileProjection] normaliseTile:tile];
     image = [tileCache cachedImage:tile withCacheKey:[self uniqueTilecacheKey]];
-    if (image) return image;
+
+    if (image)
+        return image;
 
     // get the unique key for the tile
     NSNumber *key = [NSNumber numberWithLongLong:RMTileKey(tile)];
 
-    @synchronized(db) {
+    [queue inDatabase:^(FMDatabase *db)
+    {
         // fetch the image from the db
         FMResultSet *result = [db executeQuery:@"SELECT image FROM tiles WHERE tilekey = ?", key];
         FMDBErrorCheck(db);
 
-        if ([result next]) {
+        if ([result next])
             image = [[[UIImage alloc] initWithData:[result dataForColumnIndex:0]] autorelease];
-        } else {
+        else
             image = [RMTileImage missingTile];
-        }
+
         [result close];
-    }
+    }];
 
     if (image)
         [tileCache addImage:image forTile:tile withCacheKey:[self uniqueTilecacheKey]];
@@ -264,15 +279,17 @@
 
 - (NSString *)getPreferenceAsString:(NSString*)name
 {
-	NSString* value = nil;
+	__block NSString* value = nil;
 
-    @synchronized(db) {
+    [queue inDatabase:^(FMDatabase *db)
+     {
         FMResultSet *result = [db executeQuery:@"select value from preferences where name = ?", name];
-        if ([result next]) {
+
+        if ([result next])
             value = [result stringForColumn:@"value"];
-        }
+
         [result close];
-    }
+     }];
 
 	return value;
 }
