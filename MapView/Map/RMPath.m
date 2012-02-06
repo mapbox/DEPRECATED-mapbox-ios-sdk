@@ -36,6 +36,9 @@
 @synthesize scaleLineWidth;
 @synthesize lineDashPhase;
 @synthesize scaleLineDash;
+@synthesize shadowBlur;
+@synthesize shadowOffset;
+@synthesize enableShadow;
 @synthesize pathBoundingBox;
 
 #define kDefaultLineWidth 2
@@ -63,6 +66,10 @@
     _lineDashLengths = NULL;
     _scaledLineDashLengths = NULL;
     lineDashPhase = 0.0;
+
+    self.shadowBlur = 0.0;
+    self.shadowOffset = CGSizeMake(0, 0);
+    self.enableShadow = NO;
 
     self.masksToBounds = YES;
 
@@ -273,6 +280,9 @@
 
     if (_lineDashLengths)
         CGContextSetLineDash(theContext, lineDashPhase, dashLengths, _lineDashCount);
+
+    if (self.enableShadow)
+        CGContextSetShadow(theContext, self.shadowOffset, self.shadowBlur);
 
     // according to Apple's documentation, DrawPath closes the path if it's a filled style, so a call to ClosePath isn't necessary
     CGContextDrawPath(theContext, drawingMode);
