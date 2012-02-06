@@ -75,9 +75,7 @@
 #import "FMDatabase.h"
 #import "FMDatabaseQueue.h"
 
-#define kDefaultLatLonBoundingBox ((RMSphericalTrapezium){.northEast = {.latitude = 90, .longitude = 180}, .southWest = {.latitude = -90, .longitude = -180}})
-
-#define FMDBErrorCheck(db) { if ([db hadError]) { NSLog(@"DB error %d on line %d: %@", [db lastErrorCode], __LINE__, [db lastErrorMessage]); } }
+#pragma mark --- begin constants ----
 
 // mandatory preference keys
 #define kMinZoomKey @"map.minZoom"
@@ -98,6 +96,7 @@
 #define kShortAttributionKey @"map.shortAttribution"
 #define kLongAttributionKey @"map.longAttribution"
 
+#pragma mark --- end constants ----
 
 @interface RMDBMapSource (Preferences)
 
@@ -219,7 +218,8 @@
     {
         // fetch the image from the db
         FMResultSet *result = [db executeQuery:@"SELECT image FROM tiles WHERE tilekey = ?", key];
-        FMDBErrorCheck(db);
+        if ([db hadError])
+            NSLog(@"DB error %d on line %d: %@", [db lastErrorCode], __LINE__, [db lastErrorMessage]);
 
         if ([result next])
             image = [[[UIImage alloc] initWithData:[result dataForColumnIndex:0]] autorelease];

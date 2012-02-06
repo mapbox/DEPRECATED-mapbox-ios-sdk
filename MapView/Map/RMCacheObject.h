@@ -27,7 +27,8 @@
 
 #import "RMTile.h"
 
-@interface RMCacheObject : NSObject {
+@interface RMCacheObject : NSObject
+{
     id cachedObject;
     NSString *cacheKey;
 

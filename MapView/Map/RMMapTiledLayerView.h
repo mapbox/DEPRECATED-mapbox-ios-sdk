@@ -20,7 +20,8 @@
 
 @end
 
-@interface RMMapTiledLayerView : UIView {
+@interface RMMapTiledLayerView : UIView
+{
     id <RMMapTiledLayerViewDelegate> delegate;
     RMMapView *mapView;
 }

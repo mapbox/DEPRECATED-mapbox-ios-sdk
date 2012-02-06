@@ -41,6 +41,7 @@
 	
 	if (aCapacity < 1)
 		aCapacity = 1;
+
 	capacity = aCapacity;
 
 	return self;
@@ -53,24 +54,29 @@
 
 - (void)dealloc
 {
-    @synchronized (cache) {
+    @synchronized (cache)
+    {
         [cache removeAllObjects];
         [cache release]; cache = nil;
     }
+
 	[super dealloc];
 }
 
 - (void)didReceiveMemoryWarning
 {
 	LogMethod();
-    @synchronized (cache) {
+
+    @synchronized (cache)
+    {
         [cache removeAllObjects];
     }
 }
 
 - (void)removeTile:(RMTile)tile
 {
-    @synchronized (cache) {
+    @synchronized (cache)
+    {
         [cache removeObjectForKey:[RMTileCache tileHash:tile]];
     }
 }
@@ -81,13 +87,15 @@
 
     RMCacheObject *cachedObject = nil;
     NSNumber *tileHash = [RMTileCache tileHash:tile];
-    
-    @synchronized (cache) {
+
+    @synchronized (cache)
+    {
         cachedObject = [cache objectForKey:tileHash];
         if (!cachedObject)
             return nil;
 
-        if (![[cachedObject cacheKey] isEqualToString:aCacheKey]) {
+        if (![[cachedObject cacheKey] isEqualToString:aCacheKey])
+        {
             [cache removeObjectForKey:tileHash];
             return nil;
         }
@@ -103,7 +111,8 @@
 /// Remove the least-recently used image from cache, if cache is at or over capacity. Removes only 1 image.
 - (void)makeSpaceInCache
 {
-    @synchronized (cache) {
+    @synchronized (cache)
+    {
         while ([cache count] >= capacity)
         {
             // Rather than scanning I would really like to be using a priority queue
@@ -126,7 +135,8 @@
                 }
             }
 
-            if (oldestImage) {
+            if (oldestImage)
+            {
                 // RMLog(@"Memory cache delete tile %d %d %d (%@)", oldestImage.tile.x, oldestImage.tile.y, oldestImage.tile.zoom, [RMTileCache tileHash:oldestImage.tile]);
                 [cache removeObjectForKey:[RMTileCache tileHash:oldestImage.tile]];
             }
@@ -140,7 +150,8 @@
 
 	[self makeSpaceInCache];
 
-    @synchronized (cache) {
+    @synchronized (cache)
+    {
         [cache setObject:[RMCacheObject cacheObject:image forTile:tile withCacheKey:aCacheKey] forKey:[RMTileCache tileHash:tile]];
     }
 }
@@ -148,7 +159,9 @@
 - (void)removeAllCachedImages
 {
     LogMethod();
-    @synchronized (cache) {
+
+    @synchronized (cache)
+    {
         [cache removeAllObjects];
     }
 }

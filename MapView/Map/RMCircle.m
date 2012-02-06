@@ -34,8 +34,12 @@
 #define kDefaultFillColor [UIColor blueColor]
 
 @interface RMCircle ()
+
 - (void)updateCirclePath;
+
 @end
+
+#pragma mark -
 
 @implementation RMCircle
 
@@ -116,7 +120,8 @@
 
 - (void)setLineColor:(UIColor *)newLineColor
 {
-    if (lineColor != newLineColor) {
+    if (lineColor != newLineColor)
+    {
         [lineColor release];
         lineColor = [newLineColor retain];
         [self updateCirclePath];
@@ -125,7 +130,8 @@
 
 - (void)setFillColor:(UIColor *)newFillColor
 {
-    if (fillColor != newFillColor) {
+    if (fillColor != newFillColor)
+    {
         [fillColor release];
         fillColor = [newFillColor retain];
         [self updateCirclePath];

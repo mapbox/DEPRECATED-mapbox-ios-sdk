@@ -32,7 +32,6 @@
  
  Provides key-based access to tiles from the Open Cycle Map project. 
  */
-@interface RMOpenCycleMapSource : RMAbstractWebMapSource {
-}
+@interface RMOpenCycleMapSource : RMAbstractWebMapSource
 
 @end

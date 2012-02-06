@@ -28,8 +28,7 @@
 #import "RMAbstractMercatorTileSource.h"
 #import "RMProjection.h"
 
-@interface RMAbstractWebMapSource : RMAbstractMercatorTileSource {
-}
+@interface RMAbstractWebMapSource : RMAbstractMercatorTileSource
 
 - (NSURL *)URLForTile:(RMTile)tile;
 

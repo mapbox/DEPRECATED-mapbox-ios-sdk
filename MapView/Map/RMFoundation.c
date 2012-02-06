@@ -67,6 +67,7 @@ RMProjectedPoint RMScaleProjectedPointAboutPoint(RMProjectedPoint point, float f
 {
 	point.x = (point.x - pivot.x) * factor + pivot.x;
 	point.y = (point.y - pivot.y) * factor + pivot.y;
+
 	return point;
 }
 
@@ -75,6 +76,7 @@ RMProjectedRect RMScaleProjectedRectAboutPoint(RMProjectedRect rect, float facto
 	rect.origin = RMScaleProjectedPointAboutPoint(rect.origin, factor, pivot);
 	rect.size.width *= factor;
 	rect.size.height *= factor;
+
 	return rect;
 }
 
@@ -82,18 +84,21 @@ RMProjectedPoint RMTranslateProjectedPointBy(RMProjectedPoint point, RMProjected
 {
 	point.x += delta.width;
 	point.y += delta.height;
+
 	return point;
 }
 
 RMProjectedRect RMTranslateProjectedRectBy(RMProjectedRect rect,  RMProjectedSize delta)
 {
 	rect.origin = RMTranslateProjectedPointBy(rect.origin, delta);
+
 	return rect;
 }
 
 RMProjectedPoint RMProjectedPointMake(double x, double y)
 {
 	RMProjectedPoint point = { x, y };
+
 	return point;
 }
 
@@ -103,6 +108,7 @@ RMProjectedRect RMProjectedRectMake(double x, double y, double width, double hei
 		{x, y},
 		{width, height}
 	};
+
 	return rect;
 }
 
@@ -111,6 +117,7 @@ RMProjectedSize RMProjectedSizeMake(double width, double heigth)
     RMProjectedSize size = {
         width, heigth
     };
+
     return size;
 }
 

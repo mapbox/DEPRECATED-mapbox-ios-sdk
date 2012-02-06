@@ -37,7 +37,8 @@
 
 #pragma mark --- end constants ---
 
-@interface RMAbstractMercatorTileSource : NSObject <RMTileSource> {
+@interface RMAbstractMercatorTileSource : NSObject <RMTileSource>
+{
 	RMFractalTileProjection *tileProjection;
 
 	// supported zoom levels

@@ -39,6 +39,7 @@ uint64_t RMTileHash(RMTile tile)
 		accumulator |= ((uint64_t)tile.x & (1LL<<i)) << i;
 		accumulator |= ((uint64_t)tile.y & (1LL<<i)) << (i+1);
 	}
+
 	accumulator |= 1LL<<(tile.zoom * 2);
 
 	return accumulator;
@@ -61,6 +62,7 @@ RMTile RMTileDummy()
 	t.x = -1;
 	t.y = -1;
 	t.zoom = -1;
+
 	return t;
 }
 
@@ -80,6 +82,7 @@ RMTile RMTileMake(uint32_t x, uint32_t y, short zoom)
 	t.x = x;
 	t.y = y;
 	t.zoom = zoom;
+
 	return t;
 }
 
@@ -89,6 +92,7 @@ RMTileRect RMTileRectRound(RMTileRect rect)
 	rect.size.width = ceilf(rect.size.width + rect.origin.offset.x);
 	rect.size.height = ceilf(rect.size.height + rect.origin.offset.y);
 	rect.origin.offset = CGPointZero;
+
 	return rect;
 }
 

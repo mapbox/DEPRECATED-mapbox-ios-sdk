@@ -97,11 +97,10 @@
 {
 	// The mask contains a 1 for every valid x-coordinate bit.
 	uint32_t mask = 1;
+
 	for (int i = 0; i < tile.zoom; i++)
-    {
 		mask <<= 1;
-	}
-    
+
 	mask -= 1;
 	tile.x &= mask;
 

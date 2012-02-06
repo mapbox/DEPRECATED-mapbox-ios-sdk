@@ -22,7 +22,7 @@
 
 @synthesize delegate;
 
-+ layerClass
++ (Class)layerClass
 {
     return [CATiledLayer class];
 }

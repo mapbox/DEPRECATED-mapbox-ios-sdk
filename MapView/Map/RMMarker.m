@@ -103,12 +103,14 @@
     if (label == aView)
         return;
 
-    if (label != nil) {
+    if (label != nil)
+    {
         [[label layer] removeFromSuperlayer];
         [label release]; label = nil;
     }
 
-    if (aView != nil) {
+    if (aView != nil)
+    {
         label = [aView retain];
         [self addSublayer:[label layer]];
     }
@@ -166,7 +168,8 @@
 
 - (void)showLabel
 {
-    if ([self.label isHidden]) {
+    if ([self.label isHidden])
+    {
         // Using addSublayer will animate showing the label, whereas setHidden is not animated
         [self addSublayer:[self.label layer]];
         [self.label setHidden:NO];
@@ -175,7 +178,8 @@
 
 - (void)hideLabel
 {
-    if (![self.label isHidden]) {
+    if (![self.label isHidden])
+    {
         // Using removeFromSuperlayer will animate hiding the label, whereas setHidden is not animated
         [[self.label layer] removeFromSuperlayer];
         [self.label setHidden:YES];
