@@ -8,14 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@class RMMapView;
+#import "RMMapView.h"
 
-@interface ProgrammaticMapViewController : UIViewController
-{
-	RMMapView *mapView;
-}
+@interface ProgrammaticMapViewController : UIViewController <RMMapViewDelegate>
 
-@property(nonatomic,retain)RMMapView *mapView;
+@property(nonatomic, retain) RMMapView *mapView;
 
 - (IBAction)swtichTilesource:(id)sender;
 
