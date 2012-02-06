@@ -1,12 +1,9 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_vandg2.c	4.1	94/02/15	GIE	REL";
-#endif
 # define TOL	1e-10
 # define TWORPI	0.63661977236758134308
 #define PROJ_PARMS__ \
 	int	vdg3;
 #define PJ_LIB__
-#include	"projects.h"
+#include	<projects.h>
 PROJ_HEAD(vandg2, "van der Grinten II") "\n\tMisc Sph, no inv.";
 PROJ_HEAD(vandg3, "van der Grinten III") "\n\tMisc Sph, no inv.";
 FORWARD(s_forward); /* spheroid */

@@ -1,8 +1,5 @@
 /* generate double bivariate Chebychev polynomial */
-#ifndef lint
-static const char SCCSID[]="@(#)bchgen.c	4.5	94/03/22	GIE	REL";
-#endif
-#include "projects.h"
+#include <projects.h>
 	int
 bchgen(projUV a, projUV b, int nu, int nv, projUV **f, projUV(*func)(projUV)) {
 	int i, j, k;

@@ -1,6 +1,3 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_eqdc.c	4.2	94/03/16	GIE	REL";
-#endif
 #define PROJ_PARMS__ \
 	double phi1; \
 	double phi2; \
@@ -11,7 +8,7 @@ static const char SCCSID[]="@(#)PJ_eqdc.c	4.2	94/03/16	GIE	REL";
 	double *en; \
 	int		ellips;
 #define PJ_LIB__
-#include	"projects.h"
+#include	<projects.h>
 PROJ_HEAD(eqdc, "Equidistant Conic")
 	"\n\tConic, Sph&Ell\n\tlat_1= lat_2=";
 # define EPS10	1.e-10

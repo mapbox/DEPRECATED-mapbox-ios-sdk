@@ -1,7 +1,4 @@
-#ifndef lint
-static const char SCCSID[]="@(#)pj_mlfn.c	4.5	95/07/06	GIE	REL";
-#endif
-#include "projects.h"
+#include <projects.h>
 /* meridinal distance for ellipsoid and inverse
 **	8th degree - accurate to < 1e-5 meters when used in conjuction
 **		with typical major axis values.
@@ -26,8 +23,7 @@ static const char SCCSID[]="@(#)pj_mlfn.c	4.5	95/07/06	GIE	REL";
 pj_enfn(double es) {
 	double t, *en;
 
-	en = (double *)pj_malloc(EN_SIZE * sizeof(double));
-	if (en) {
+	if ((en = (double *)pj_malloc(EN_SIZE * sizeof(double)))) {
 		en[0] = C00 - es * (C02 + es * (C04 + es * (C06 + es * C08)));
 		en[1] = es * (C22 - es * (C04 + es * (C06 + es * C08)));
 		en[2] = (t = es * es) * (C44 - es * (C46 + es * C48));

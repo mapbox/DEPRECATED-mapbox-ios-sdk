@@ -1,9 +1,6 @@
 /* projection scale factors */
-#ifndef lint
-static const char SCCSID[]="@(#)pj_factors.c	4.9	94/03/17	GIE	REL";
-#endif
 #define PJ_LIB__
-#include "projects.h"
+#include <projects.h>
 #include <errno.h>
 #ifndef DEFAULT_H
 #define DEFAULT_H   1e-5    /* radian default for numeric h */
@@ -15,8 +12,7 @@ pj_factors(LP lp, PJ *P, double h, struct FACTORS *fac) {
 	double cosphi, t, n, r;
 
 	/* check for forward and latitude or longitude overange */
-	t = fabs(lp.phi)-HALFPI;
-	if (t > EPS || fabs(lp.lam) > 10.) {
+	if ((t = fabs(lp.phi)-HALFPI) > EPS || fabs(lp.lam) > 10.) {
 		pj_errno = -14;
 		return 1;
 	} else { /* proceed */

@@ -1,10 +1,7 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_cc.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PROJ_PARMS__ \
 	double ap;
 #define PJ_LIB__
-#include	"projects.h"
+#include	<projects.h>
 PROJ_HEAD(cc, "Central Cylindrical") "\n\tCyl, Sph";
 #define EPS10 1.e-10
 FORWARD(s_forward); /* spheroid */

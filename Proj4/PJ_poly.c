@@ -1,11 +1,8 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_poly.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PROJ_PARMS__ \
 	double ml0; \
 	double *en;
 #define PJ_LIB__
-#include "projects.h"
+#include <projects.h>
 PROJ_HEAD(poly, "Polyconic (American)")
 	"\n\tConic, Sph&Ell";
 #define TOL	1e-10

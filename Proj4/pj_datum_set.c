@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: pj_datum_set.c,v 1.4 2007/11/29 21:06:50 fwarmerdam Exp $
+ * $Id: pj_datum_set.c 1504 2009-01-06 02:11:57Z warmerdam $
  *
  * Project:  PROJ.4
  * Purpose:  Apply datum definition to PJ structure from initialization string.
@@ -25,24 +25,9 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- ******************************************************************************
- *
- * $Log: pj_datum_set.c,v $
- * Revision 1.4  2007/11/29 21:06:50  fwarmerdam
- * make sure we only look for 7 parameters
- *
- * Revision 1.3  2007/01/31 06:41:01  fwarmerdam
- * dont parse more datum parameters than we have room for in datum_params[]
- *
- * Revision 1.2  2001/04/04 21:13:21  warmerda
- * do arcsecond/radian and ppm datum parm transformation in pj_set_datum()
- *
- * Revision 1.1  2000/07/06 23:32:27  warmerda
- * New
- *
- */
+ *****************************************************************************/
 
-#include "projects.h"
+#include <projects.h>
 #include <string.h>
 
 /* SEC_TO_RAD = Pi/180/3600 */
@@ -55,7 +40,7 @@
 int pj_datum_set(paralist *pl, PJ *projdef)
 
 {
-    const char *name, *towgs84;
+    const char *name, *towgs84, *nadgrids;
 
     projdef->datum_type = PJD_UNKNOWN;
 
@@ -69,8 +54,7 @@ int pj_datum_set(paralist *pl, PJ *projdef)
 /*      definition will last into the pj_ell_set() function called      */
 /*      after this one.                                                 */
 /* -------------------------------------------------------------------- */
-    name = pj_param(pl,"sdatum").s;
-    if( name != NULL )
+    if( (name = pj_param(pl,"sdatum").s) != NULL )
     {
         paralist *curr;
         const char *s;
@@ -90,24 +74,17 @@ int pj_datum_set(paralist *pl, PJ *projdef)
             
             strcpy( entry, "ellps=" );
             strncat( entry, pj_datums[i].ellipse_id, 80 );
-		  if (curr)
-		  {
-                curr->next = pj_mkparam(entry);
-		      curr = curr->next;
-		  }
+            curr = curr->next = pj_mkparam(entry);
         }
         
         if( pj_datums[i].defn && strlen(pj_datums[i].defn) > 0 )
-	   {
-            if (curr)
-                curr->next = pj_mkparam(pj_datums[i].defn);
-	   }
+            curr = curr->next = pj_mkparam(pj_datums[i].defn);
     }
 
 /* -------------------------------------------------------------------- */
 /*      Check for nadgrids parameter.                                   */
 /* -------------------------------------------------------------------- */
-    if( pj_param(pl,"snadgrids").s != NULL )
+    if( (nadgrids = pj_param(pl,"snadgrids").s) != NULL )
     {
         /* We don't actually save the value separately.  It will continue
            to exist int he param list for use in pj_apply_gridshift.c */
@@ -126,6 +103,7 @@ int pj_datum_set(paralist *pl, PJ *projdef)
         memset( projdef->datum_params, 0, sizeof(double) * 7);
 
         /* parse out the parameters */
+        s = towgs84;
         for( s = towgs84; *s != '\0' && parm_count < 7; ) 
         {
             projdef->datum_params[parm_count++] = atof(s);

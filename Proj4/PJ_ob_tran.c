@@ -1,12 +1,9 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_ob_tran.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PROJ_PARMS__ \
 	struct PJconsts *link; \
 	double	lamp; \
 	double	cphip, sphip;
 #define PJ_LIB__
-#include "projects.h"
+#include <projects.h>
 #include <string.h>
 PROJ_HEAD(ob_tran, "General Oblique Transformation") "\n\tMisc Sph"
 "\n\to_proj= plus parameters for projection"

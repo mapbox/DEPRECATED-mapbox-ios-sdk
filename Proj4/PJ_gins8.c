@@ -1,8 +1,5 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_gins8.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PJ_LIB__
-# include	"projects.h"
+# include	<projects.h>
 PROJ_HEAD(gins8, "Ginsburg VIII (TsNIIGAiK)") "\n\tPCyl, Sph., no inv.";
 #define	Cl 0.000952426
 #define	Cp 0.162388

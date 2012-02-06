@@ -1,13 +1,10 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_oea.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PROJ_PARMS__ \
 	double	theta; \
 	double	m, n; \
 	double	two_r_m, two_r_n, rm, rn, hm, hn; \
 	double	cp0, sp0;
 #define PJ_LIB__
-#include	"projects.h"
+#include	<projects.h>
 PROJ_HEAD(oea, "Oblated Equal Area") "\n\tMisc Sph\n\tn= m= theta=";
 FORWARD(s_forward); /* sphere */
 	double Az, M, N, cp, sp, cl, shz;

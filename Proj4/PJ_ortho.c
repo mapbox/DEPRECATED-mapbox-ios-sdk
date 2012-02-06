@@ -1,12 +1,9 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_ortho.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PROJ_PARMS__ \
 	double	sinph0; \
 	double	cosph0; \
 	int		mode;
 #define PJ_LIB__
-#include	"projects.h"
+#include	<projects.h>
 PROJ_HEAD(ortho, "Orthographic") "\n\tAzi, Sph.";
 #define EPS10 1.e-10
 #define N_POLE	0

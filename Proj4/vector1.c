@@ -1,9 +1,6 @@
 /* make storage for one and two dimensional matricies */
-#ifndef lint
-static const char SCCSID[]="@(#)vector1.c	4.4	94/03/22	GIE	REL";
-#endif
 #include <stdlib.h>
-#include "projects.h"
+#include <projects.h>
 	void * /* one dimension array */
 vector1(int nvals, int size) { return((void *)pj_malloc(size * nvals)); }
 	void /* free 2D array */
@@ -18,8 +15,7 @@ freev2(void **v, int nrows) {
 vector2(int nrows, int ncols, int size) {
 	void **s;
 
-	s = (void **)pj_malloc(sizeof(void *) * nrows);
-	if (s) {
+	if ((s = (void **)pj_malloc(sizeof(void *) * nrows))) {
 		int rsize, i;
 
 		rsize = size * ncols;

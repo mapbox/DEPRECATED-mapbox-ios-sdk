@@ -1,6 +1,3 @@
-#ifndef lint
-static const char SCCSID[]="@(#)geod_set.c	4.8	95/09/23	GIE	REL";
-#endif
 
 #define _IN_GEOD_SET
 
@@ -10,7 +7,7 @@ static const char SCCSID[]="@(#)geod_set.c	4.8	95/09/23	GIE	REL";
 #include "emess.h"
 	void
 geod_set(int argc, char **argv) {
-	paralist *start = 0, *curr = 0;
+	paralist *start = 0, *curr;
 	double es;
 	char *name;
 	int i;
@@ -26,8 +23,7 @@ geod_set(int argc, char **argv) {
 	/* set elliptical parameters */
 	if (pj_ell_set(start, &geod_a, &es)) emess(1,"ellipse setup failure");
 	/* set units */
-	name = pj_param(start, "sunits").s;
-	if (name) {
+	if ((name = pj_param(start, "sunits").s)) {
 		char *s;
                 struct PJ_UNITS *unit_list = pj_get_units_ref();
 		for (i = 0; (s = unit_list[i].id) && strcmp(name, s) ; ++i) ;
@@ -36,8 +32,7 @@ geod_set(int argc, char **argv) {
 		fr_meter = 1. / (to_meter = atof(unit_list[i].to_meter));
 	} else
 		to_meter = fr_meter = 1.;
-	ellipse = es != 0.;
-	if (ellipse) {
+	if ((ellipse = es != 0.)) {
 		onef = sqrt(1. - es);
 		geod_f = 1 - onef;
 		f2 = geod_f/2;

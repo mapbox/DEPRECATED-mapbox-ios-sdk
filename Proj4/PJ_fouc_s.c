@@ -1,10 +1,7 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_fouc_s.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PROJ_PARMS__ \
 	double n, n1;
 #define PJ_LIB__
-#include	"projects.h"
+#include	<projects.h>
 PROJ_HEAD(fouc_s, "Foucaut Sinusoidal") "\n\tPCyl., Sph.";
 #define MAX_ITER    10
 #define LOOP_TOL    1e-7

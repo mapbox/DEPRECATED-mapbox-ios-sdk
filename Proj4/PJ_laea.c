@@ -1,6 +1,3 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_laea.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PROJ_PARMS__ \
 	double	sinb1; \
 	double	cosb1; \
@@ -13,7 +10,7 @@ static const char SCCSID[]="@(#)PJ_laea.c	4.1	94/02/15	GIE	REL";
 	double	*apa; \
 	int		mode;
 #define PJ_LIB__
-#include	"projects.h"
+#include	<projects.h>
 PROJ_HEAD(laea, "Lambert Azimuthal Equal Area") "\n\tAzi, Sph&Ell";
 #define sinph0	P->sinb1
 #define cosph0	P->cosb1

@@ -1,8 +1,5 @@
 /* determine latitude from authalic latitude */
-#ifndef lint
-static const char SCCSID[]="@(#)pj_auth.c	4.3	93/06/12	GIE	REL";
-#endif
-#include "projects.h"
+#include <projects.h>
 # define P00 .33333333333333333333
 # define P01 .17222222222222222222
 # define P02 .10257936507936507936
@@ -14,8 +11,7 @@ static const char SCCSID[]="@(#)pj_auth.c	4.3	93/06/12	GIE	REL";
 pj_authset(double es) {
 	double t, *APA;
 
-	APA = (double *)pj_malloc(APA_SIZE * sizeof(double));
-	if (APA) {
+	if ((APA = (double *)pj_malloc(APA_SIZE * sizeof(double)))) {
 		APA[0] = es * P00;
 		t = es * es;
 		APA[0] += t * P01;

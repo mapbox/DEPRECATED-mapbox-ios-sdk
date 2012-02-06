@@ -1,8 +1,5 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_eck2.c	4.1 94/02/15     GIE     REL";
-#endif
 #define PJ_LIB__
-# include	"projects.h"
+# include	<projects.h>
 PROJ_HEAD(eck2, "Eckert II") "\n\tPCyl. Sph.";
 #define FXC	0.46065886596178063902
 #define FYC	1.44720250911653531871

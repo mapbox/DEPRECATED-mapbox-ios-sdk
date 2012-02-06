@@ -1,10 +1,7 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_wag3.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PROJ_PARMS__ \
 	double	C_x;
 #define PJ_LIB__
-# include	"projects.h"
+# include	<projects.h>
 PROJ_HEAD(wag3, "Wagner III") "\n\tPCyl., Sph.\n\tlat_ts=";
 #define TWOTHIRD 0.6666666666666666666667
 FORWARD(s_forward); /* spheroid */

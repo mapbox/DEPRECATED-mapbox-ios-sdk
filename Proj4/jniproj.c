@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: jniproj.c,v 1.3 2005/07/05 16:31:48 fwarmerdam Exp $
+ * $Id: jniproj.c 1558 2009-04-02 18:25:58Z warmerdam $
  *
  * Project:  PROJ.4
  * Purpose:  Java/JNI wrappers for PROJ.4 API.
@@ -25,13 +25,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- ******************************************************************************
- *
- * $Log: jniproj.c,v $
- * Revision 1.3  2005/07/05 16:31:48  fwarmerdam
- * Added standard headers.
- *
- */
+ *****************************************************************************/
 
 /*!
 * \file jniproj.c
@@ -48,13 +42,14 @@
 
 #ifdef JNI_ENABLED
 
+#include <string.h>
 #include "projects.h"
 #include "org_proj4_Projections.h"
 #include <jni.h>
 
 #define arraysize 300
 
-PJ_CVSID("$Id: jniproj.c,v 1.3 2005/07/05 16:31:48 fwarmerdam Exp $");
+PJ_CVSID("$Id: jniproj.c 1558 2009-04-02 18:25:58Z warmerdam $");
 
 /*!
  * \brief

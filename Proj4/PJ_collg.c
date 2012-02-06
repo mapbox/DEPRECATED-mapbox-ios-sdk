@@ -1,8 +1,5 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_collg.c	4.1 94/02/15     GIE     REL";
-#endif
 #define PJ_LIB__
-# include	"projects.h"
+# include	<projects.h>
 PROJ_HEAD(collg, "Collignon") "\n\tPCyl, Sph.";
 #define FXC	1.12837916709551257390
 #define FYC	1.77245385090551602729

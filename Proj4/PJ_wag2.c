@@ -1,8 +1,5 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_wag2.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PJ_LIB__
-# include	"projects.h"
+# include	<projects.h>
 PROJ_HEAD(wag2, "Wagner II") "\n\tPCyl., Sph.";
 #define C_x 0.92483
 #define C_y 1.38725

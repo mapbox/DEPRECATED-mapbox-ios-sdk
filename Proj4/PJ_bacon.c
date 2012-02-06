@@ -1,13 +1,10 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_bacon.c	4.1	94/02/15	GIE	REL";
-#endif
 # define HLFPI2	2.46740110027233965467
 # define EPS	1e-10
 #define PROJ_PARMS__ \
 	int bacn; \
 	int ortl;
 #define PJ_LIB__
-#include	"projects.h"
+#include	<projects.h>
 PROJ_HEAD(apian, "Apian Globular I") "\n\tMisc Sph, no inv.";
 PROJ_HEAD(ortel, "Ortelius Oval") "\n\tMisc Sph, no inv.";
 PROJ_HEAD(bacon, "Bacon Globular") "\n\tMisc Sph, no inv.";
