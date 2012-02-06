@@ -10,7 +10,6 @@
 {
 	IBOutlet RMMapView *mapView;
 	IBOutlet UITextView *infoTextView;
-	CLLocationCoordinate2D center;
 }
 
 @property (nonatomic, retain) IBOutlet RMMapView *mapView;

@@ -16,6 +16,9 @@
 #import "RMQuadTree.h"
 
 @implementation MainViewController
+{
+    CLLocationCoordinate2D center;
+}
 
 @synthesize mapView;
 @synthesize infoTextView;

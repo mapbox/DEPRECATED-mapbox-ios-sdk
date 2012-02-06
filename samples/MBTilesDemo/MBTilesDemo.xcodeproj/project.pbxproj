@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		160E121E14E02D43000E5EFB /* marker-blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 160E121B14E02D43000E5EFB /* marker-blue.png */; };
+		160E121F14E02D43000E5EFB /* marker-red.png in Resources */ = {isa = PBXBuildFile; fileRef = 160E121C14E02D43000E5EFB /* marker-red.png */; };
+		160E122014E02D43000E5EFB /* marker-X.png in Resources */ = {isa = PBXBuildFile; fileRef = 160E121D14E02D43000E5EFB /* marker-X.png */; };
 		1611888B14D936E50054ED7A /* control-room-0.2.0.mbtiles in Resources */ = {isa = PBXBuildFile; fileRef = 1611888A14D936E50054ED7A /* control-room-0.2.0.mbtiles */; };
 		1611889214D937E00054ED7A /* geography-class.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1611889114D937E00054ED7A /* geography-class.plist */; };
 		1D3623260D0F684500981E51 /* ProgrammaticMapAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* ProgrammaticMapAppDelegate.m */; };
@@ -48,6 +51,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		160E121B14E02D43000E5EFB /* marker-blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "marker-blue.png"; path = "../MarkerMurder/marker-blue.png"; sourceTree = "<group>"; };
+		160E121C14E02D43000E5EFB /* marker-red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "marker-red.png"; path = "../MarkerMurder/marker-red.png"; sourceTree = "<group>"; };
+		160E121D14E02D43000E5EFB /* marker-X.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "marker-X.png"; path = "../MarkerMurder/marker-X.png"; sourceTree = "<group>"; };
 		1611888A14D936E50054ED7A /* control-room-0.2.0.mbtiles */ = {isa = PBXFileReference; lastKnownFileType = file; path = "control-room-0.2.0.mbtiles"; sourceTree = "<group>"; };
 		1611889114D937E00054ED7A /* geography-class.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "geography-class.plist"; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -136,6 +142,9 @@
 				8D1107310486CEB800E47090 /* Info.plist */,
 				1611888A14D936E50054ED7A /* control-room-0.2.0.mbtiles */,
 				1611889114D937E00054ED7A /* geography-class.plist */,
+				160E121B14E02D43000E5EFB /* marker-blue.png */,
+				160E121C14E02D43000E5EFB /* marker-red.png */,
+				160E121D14E02D43000E5EFB /* marker-X.png */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -242,6 +251,9 @@
 				2899E5220DE3E06400AC0155 /* ProgrammaticMapViewController.xib in Resources */,
 				1611888B14D936E50054ED7A /* control-room-0.2.0.mbtiles in Resources */,
 				1611889214D937E00054ED7A /* geography-class.plist in Resources */,
+				160E121E14E02D43000E5EFB /* marker-blue.png in Resources */,
+				160E121F14E02D43000E5EFB /* marker-red.png in Resources */,
+				160E122014E02D43000E5EFB /* marker-X.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
