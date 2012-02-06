@@ -28,6 +28,9 @@
 #import "RMAbstractMercatorTileSource.h"
 #import "RMProjection.h"
 
+#define RMAbstractWebMapSourceRetryCount  3
+#define RMAbstractWebMapSourceWaitSeconds 2
+
 @interface RMAbstractWebMapSource : RMAbstractMercatorTileSource
 
 - (NSURL *)URLForTile:(RMTile)tile;
