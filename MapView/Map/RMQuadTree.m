@@ -16,6 +16,7 @@
 
 #define kMinimumQuadTreeElementWidth 200.0 // projected meters
 #define kMaxAnnotationsPerLeaf 4
+#define kMinPixelDistanceForLeafClustering 100.0
 
 @interface RMQuadTreeNode ()
 
@@ -34,7 +35,7 @@
 
 @synthesize nodeType;
 @synthesize boundingBox, northWestBoundingBox, northEastBoundingBox, southWestBoundingBox, southEastBoundingBox;
-@synthesize parentNode, northWest, northEast, southWest, southEast, cachedClusterAnnotation;
+@synthesize parentNode, northWest, northEast, southWest, southEast;
 
 - (id)initWithMapView:(RMMapView *)aMapView forParent:(RMQuadTreeNode *)aParentNode inBoundingBox:(RMProjectedRect)aBoundingBox
 {
@@ -49,6 +50,7 @@
     annotations = [NSMutableArray new];
     boundingBox = aBoundingBox;
     cachedClusterAnnotation = nil;
+    cachedClusterEnclosedAnnotations = nil;
 
     double halfWidth = boundingBox.size.width / 2.0, halfHeight = boundingBox.size.height / 2.0;
     northWestBoundingBox = RMProjectedRectMake(boundingBox.origin.x, boundingBox.origin.y + halfHeight, halfWidth, halfHeight);
@@ -65,6 +67,7 @@
 {
     mapView = nil;
     [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
+    [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
 
     @synchronized (annotations)
     {
@@ -263,9 +266,14 @@
     return unclusteredAnnotations;
 }
 
-- (RMAnnotation *)cachedClusterAnnotation
+- (RMAnnotation *)clusterAnnotation
 {
     return cachedClusterAnnotation;
+}
+
+- (NSArray *)clusteredAnnotations
+{
+    return cachedClusterEnclosedAnnotations;
 }
 
 - (void)addAnnotationsInBoundingBox:(RMProjectedRect)aBoundingBox toMutableArray:(NSMutableArray *)someArray createClusterAnnotations:(BOOL)createClusterAnnotations withClusterSize:(RMProjectedSize)clusterSize findGravityCenter:(BOOL)findGravityCenter
@@ -273,12 +281,63 @@
     if (createClusterAnnotations)
     {
         double halfWidth = boundingBox.size.width / 2.0;
+        BOOL forceClustering = (boundingBox.size.width >= clusterSize.width && halfWidth < clusterSize.width);
+        NSArray *enclosedAnnotations = nil;
 
-        if (boundingBox.size.width >= clusterSize.width && halfWidth < clusterSize.width)
+        // Leaf clustering
+        if (!forceClustering && nodeType == nodeTypeLeaf && [annotations count] > 1)
         {
+            NSMutableArray *annotationsToCheck = [NSMutableArray arrayWithArray:self.enclosedAnnotations];
+
+            for (NSInteger i=[annotationsToCheck count]-1; i>0; --i)
+            {
+                BOOL mustBeClustered = NO;
+                RMAnnotation *currentAnnotation = [annotationsToCheck objectAtIndex:i];
+
+                for (NSInteger j=i-1; j>=0; --j)
+                {
+                    RMAnnotation *secondAnnotation = [annotationsToCheck objectAtIndex:j];
+
+                    // This is of course not very accurate but is good enough for this use case
+                    double distance = RMEuclideanDistanceBetweenProjectedPoints(currentAnnotation.projectedLocation, secondAnnotation.projectedLocation) / mapView.metersPerPixel;
+                    if (distance < kMinPixelDistanceForLeafClustering)
+                    {
+                        mustBeClustered = YES;
+                        break;
+                    }
+                }
+
+                if (!mustBeClustered)
+                {
+                    [someArray addObject:currentAnnotation];
+                    [annotationsToCheck removeObjectAtIndex:i];
+                }
+            }
+
+            forceClustering = [annotationsToCheck count] > 0;
+
+            if (forceClustering)
+            {
+                [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
+                [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+
+                enclosedAnnotations = [NSArray arrayWithArray:annotationsToCheck];
+            }
+        }
+
+        if (forceClustering)
+        {
+            if (!enclosedAnnotations)
+                enclosedAnnotations = self.enclosedAnnotations;
+
+            if (cachedClusterAnnotation && [enclosedAnnotations count] != [cachedClusterEnclosedAnnotations count])
+            {
+                [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
+                [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+            }
+
             if (!cachedClusterAnnotation)
             {
-                NSArray *enclosedAnnotations = self.enclosedAnnotations;
                 NSUInteger enclosedAnnotationsCount = [enclosedAnnotations count];
 
                 if (enclosedAnnotationsCount < 2)
@@ -328,6 +387,8 @@
                                                                        andTitle:[NSString stringWithFormat:@"%d", enclosedAnnotationsCount]];
                 cachedClusterAnnotation.annotationType = kRMClusterAnnotationTypeName;
                 cachedClusterAnnotation.userInfo = self;
+
+                cachedClusterEnclosedAnnotations = [[NSArray alloc] initWithArray:enclosedAnnotations];
             }
 
             [someArray addObject:cachedClusterAnnotation];
@@ -336,7 +397,6 @@
             return;
         }
 
-        // TODO: leaf clustering (necessary?)
         if (nodeType == nodeTypeLeaf)
         {
             @synchronized (annotations)
@@ -385,6 +445,7 @@
         [parentNode removeUpwardsAllCachedClusterAnnotations];
 
     [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
+    [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
 }
 
 @end
