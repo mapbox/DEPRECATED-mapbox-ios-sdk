@@ -34,7 +34,7 @@
 
 @synthesize nodeType;
 @synthesize boundingBox, northWestBoundingBox, northEastBoundingBox, southWestBoundingBox, southEastBoundingBox;
-@synthesize parentNode, northWest, northEast, southWest, southEast;
+@synthesize parentNode, northWest, northEast, southWest, southEast, cachedClusterAnnotation;
 
 - (id)initWithMapView:(RMMapView *)aMapView forParent:(RMQuadTreeNode *)aParentNode inBoundingBox:(RMProjectedRect)aBoundingBox
 {
@@ -263,6 +263,11 @@
     return unclusteredAnnotations;
 }
 
+- (RMAnnotation *)cachedClusterAnnotation
+{
+    return cachedClusterAnnotation;
+}
+
 - (void)addAnnotationsInBoundingBox:(RMProjectedRect)aBoundingBox toMutableArray:(NSMutableArray *)someArray createClusterAnnotations:(BOOL)createClusterAnnotations withClusterSize:(RMProjectedSize)clusterSize findGravityCenter:(BOOL)findGravityCenter
 {
     if (createClusterAnnotations)
@@ -316,7 +321,11 @@
                     clusterMarkerPosition = RMProjectedPointMake(boundingBox.origin.x + halfWidth, boundingBox.origin.y + (boundingBox.size.height / 2.0));
                 }
 
-                cachedClusterAnnotation = [[RMAnnotation alloc] initWithMapView:mapView coordinate:[[mapView projection] projectedPointToCoordinate:clusterMarkerPosition] andTitle:[NSString stringWithFormat:@"%d", enclosedAnnotationsCount]];
+                CLLocationCoordinate2D clusterMarkerCoordinate = [[mapView projection] projectedPointToCoordinate:clusterMarkerPosition];
+
+                cachedClusterAnnotation = [[RMAnnotation alloc] initWithMapView:mapView
+                                                                     coordinate:clusterMarkerCoordinate
+                                                                       andTitle:[NSString stringWithFormat:@"%d", enclosedAnnotationsCount]];
                 cachedClusterAnnotation.annotationType = kRMClusterAnnotationTypeName;
                 cachedClusterAnnotation.userInfo = self;
             }

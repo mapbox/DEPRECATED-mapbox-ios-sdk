@@ -45,6 +45,8 @@ typedef enum {
 @property (nonatomic, readonly) RMQuadTreeNode *southWest;
 @property (nonatomic, readonly) RMQuadTreeNode *southEast;
 
+@property (nonatomic, readonly) RMAnnotation *cachedClusterAnnotation;
+
 // Operations on this node and all subnodes
 @property (nonatomic, readonly) NSArray *enclosedAnnotations;
 @property (nonatomic, readonly) NSUInteger countEnclosedAnnotations;

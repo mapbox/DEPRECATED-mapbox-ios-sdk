@@ -66,7 +66,7 @@
 - (void)createMapView;
 
 - (void)correctPositionOfAllAnnotations;
-- (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllLayers;
+- (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllLayers wasZoom:(BOOL)wasZoom;
 
 @end
 
@@ -100,6 +100,7 @@
 
     float _lastZoom;
     CGPoint _lastContentOffset, _accumulatedDelta;
+    BOOL _mapScrollViewIsZooming;
 }
 
 @synthesize decelerationMode;
@@ -949,6 +950,8 @@
     [mapScrollView removeObserver:self forKeyPath:@"contentOffset"];
     [mapScrollView removeFromSuperview]; [mapScrollView release]; mapScrollView = nil;
 
+    _mapScrollViewIsZooming = NO;
+
     int tileSideLength = [[self tileSource] tileSideLength];
     CGSize contentSize = CGSizeMake(tileSideLength, tileSideLength); // zoom level 1
 
@@ -1028,8 +1031,15 @@
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
 {
+    _mapScrollViewIsZooming = YES;
+
     if (_delegateHasBeforeMapZoom)
         [delegate beforeMapZoom:self];
+}
+
+- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(float)scale
+{
+    _mapScrollViewIsZooming = NO;
 }
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
@@ -1189,12 +1199,15 @@
         }
         else
         {
-            [self correctPositionOfAllAnnotations];
+            if (_mapScrollViewIsZooming)
+                [self correctPositionOfAllAnnotationsIncludingInvisibles:NO wasZoom:YES];
+            else
+                [self correctPositionOfAllAnnotations];
         }
     }
     else
     {
-        [self correctPositionOfAllAnnotationsIncludingInvisibles:NO];
+        [self correctPositionOfAllAnnotationsIncludingInvisibles:NO wasZoom:YES];
         _lastZoom = zoom;
     }
 
@@ -1513,11 +1526,21 @@
 //    RMLog(@"Change annotation at {%f,%f} in mapView {%f,%f}", annotation.position.x, annotation.position.y, mapScrollView.contentSize.width, mapScrollView.contentSize.height);
 }
 
-- (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllAnnotations
+- (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllAnnotations wasZoom:(BOOL)wasZoom
 {
     // Prevent blurry movements
     [CATransaction begin];
-    [CATransaction setAnimationDuration:0];
+
+    // Synchronize marker movement with the map scroll view
+    if (wasZoom && !mapScrollView.isZooming)
+    {
+        [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+        [CATransaction setAnimationDuration:0.30];
+    }
+    else
+    {
+        [CATransaction setAnimationDuration:0.0];
+    }
 
     _accumulatedDelta.x = 0.0;
     _accumulatedDelta.y = 0.0;
@@ -1549,8 +1572,6 @@
 
         for (RMAnnotation *annotation in annotationsToCorrect)
         {
-            [self correctScreenPosition:annotation];
-
             if (annotation.layer == nil && _delegateHasLayerForAnnotation)
                 annotation.layer = [delegate mapView:self layerForAnnotation:annotation];
             if (annotation.layer == nil)
@@ -1562,6 +1583,8 @@
                 [overlayView addSublayer:annotation.layer];
                 [visibleAnnotations addObject:annotation];
             }
+
+            [self correctScreenPosition:annotation];
 
             [previousVisibleAnnotations removeObject:annotation];
         }
@@ -1643,7 +1666,7 @@
 
 - (void)correctPositionOfAllAnnotations
 {
-    [self correctPositionOfAllAnnotationsIncludingInvisibles:YES];
+    [self correctPositionOfAllAnnotationsIncludingInvisibles:YES wasZoom:NO];
 }
 
 - (NSArray *)annotations
@@ -1691,7 +1714,7 @@
         }
     }
 
-    [self correctPositionOfAllAnnotationsIncludingInvisibles:YES];
+    [self correctPositionOfAllAnnotationsIncludingInvisibles:YES wasZoom:NO];
 }
 
 - (void)removeAnnotation:(RMAnnotation *)annotation
