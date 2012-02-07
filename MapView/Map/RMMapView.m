@@ -1040,6 +1040,8 @@
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(float)scale
 {
     _mapScrollViewIsZooming = NO;
+
+    [self correctPositionOfAllAnnotations];
 }
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
@@ -1548,7 +1550,7 @@
 
     if (self.quadTree)
     {
-        if (!correctAllAnnotations)
+        if (!correctAllAnnotations || _mapScrollViewIsZooming)
         {
             for (RMAnnotation *annotation in visibleAnnotations)
                 [self correctScreenPosition:annotation];
