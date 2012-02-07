@@ -32,8 +32,6 @@
 
 @class RMMapView;
 
-/*! \brief buggy, incomplete, untested; overlays paths/polygons on map
- */
 @interface RMPath : RMMapLayer
 {
     BOOL isFirstPoint;
@@ -48,7 +46,7 @@
     BOOL ignorePathUpdates;
     CGRect previousBounds;
 
-    /// Width of the line, units unknown; pixels maybe?
+    /// Width of the line, in pixels
     float lineWidth;
 
     /*! Drawing mode of the path; Choices are

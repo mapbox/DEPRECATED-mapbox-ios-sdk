@@ -29,7 +29,7 @@
 #import "RMProjection.h"
 #import "RMMapView.h"
 
-#define kDefaultLineWidth 10
+#define kDefaultLineWidth 10.0
 #define kDefaultLineColor [UIColor blackColor]
 #define kDefaultFillColor [UIColor blueColor]
 
@@ -116,7 +116,7 @@
     [self.shapeLayer setLineWidth:lineWidthInPixels];
 }
 
-#pragma mark Accessors
+#pragma mark - Accessors
 
 - (void)setLineColor:(UIColor *)newLineColor
 {

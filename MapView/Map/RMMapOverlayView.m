@@ -118,6 +118,7 @@
         return [((RMMarker *)layer) annotation];
 
     CALayer *superlayer = [layer superlayer];
+
     if (superlayer != nil && [superlayer respondsToSelector:@selector(annotation)])
         return [((RMMarker *)superlayer) annotation];
     else if ([superlayer superlayer] != nil && [[superlayer superlayer] respondsToSelector:@selector(annotation)])

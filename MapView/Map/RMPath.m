@@ -41,7 +41,7 @@
 @synthesize enableShadow;
 @synthesize pathBoundingBox;
 
-#define kDefaultLineWidth 2
+#define kDefaultLineWidth 2.0
 
 - (id)initWithView:(RMMapView *)aMapView
 {
@@ -78,9 +78,7 @@
     isFirstPoint = YES;
 
     if ([self respondsToSelector:@selector(setContentsScale:)])
-    {
         [(id)self setValue:[[UIScreen mainScreen] valueForKey:@"scale"] forKey:@"contentsScale"];
-    }
 
     return self;
 }
@@ -95,10 +93,12 @@
     [super dealloc];
 }
 
-- (id <CAAction>)actionForKey:(NSString *)key
-{
-    return nil;
-}
+//- (id <CAAction>)actionForKey:(NSString *)key
+//{
+//    return nil;
+//}
+
+#pragma mark -
 
 - (void)recalculateGeometry
 {
@@ -175,6 +175,50 @@
     [self setNeedsDisplay];
 }
 
+- (void)drawInContext:(CGContextRef)theContext
+{
+    renderedScale = [mapView metersPerPixel];
+    CGFloat *dashLengths = _lineDashLengths;
+
+    float scale = 1.0f / [mapView metersPerPixel];
+
+    float scaledLineWidth = lineWidth;
+    if (!scaleLineWidth)
+        scaledLineWidth *= renderedScale;
+
+    // NSLog(@"line width = %f, content scale = %f", scaledLineWidth, renderedScale);
+
+    if (!scaleLineDash && _lineDashLengths)
+    {
+        dashLengths = _scaledLineDashLengths;
+
+        for (size_t dashIndex=0; dashIndex<_lineDashCount; dashIndex++)
+            dashLengths[dashIndex] = _lineDashLengths[dashIndex] * renderedScale;
+    }
+
+    CGContextScaleCTM(theContext, scale, scale);
+
+    CGContextBeginPath(theContext);
+    CGContextAddPath(theContext, path);
+
+    CGContextSetLineWidth(theContext, scaledLineWidth);
+    CGContextSetLineCap(theContext, lineCap);
+    CGContextSetLineJoin(theContext, lineJoin);
+    CGContextSetStrokeColorWithColor(theContext, [lineColor CGColor]);
+    CGContextSetFillColorWithColor(theContext, [fillColor CGColor]);
+
+    if (_lineDashLengths)
+        CGContextSetLineDash(theContext, lineDashPhase, dashLengths, _lineDashCount);
+
+    if (self.enableShadow)
+        CGContextSetShadow(theContext, self.shadowOffset, self.shadowBlur);
+
+    // according to Apple's documentation, DrawPath closes the path if it's a filled style, so a call to ClosePath isn't necessary
+    CGContextDrawPath(theContext, drawingMode);
+}
+
+#pragma mark -
+
 - (void)addPointToProjectedPoint:(RMProjectedPoint)point withDrawing:(BOOL)isDrawing
 {
     //	RMLog(@"addLineToXY %f %f", point.x, point.y);
@@ -243,50 +287,11 @@
     ignorePathUpdates = YES;
     block(self);
     ignorePathUpdates = NO;
+
     [self recalculateGeometry];
 }
 
-- (void)drawInContext:(CGContextRef)theContext
-{
-    renderedScale = [mapView metersPerPixel];
-    CGFloat *dashLengths = _lineDashLengths;
-
-    float scale = 1.0f / [mapView metersPerPixel];
-
-    float scaledLineWidth = lineWidth;
-    if (!scaleLineWidth)
-        scaledLineWidth *= renderedScale;
-
-    // NSLog(@"line width = %f, content scale = %f", scaledLineWidth, renderedScale);
-
-    if (!scaleLineDash && _lineDashLengths)
-    {
-        dashLengths = _scaledLineDashLengths;
-
-        for (size_t dashIndex=0; dashIndex<_lineDashCount; dashIndex++)
-            dashLengths[dashIndex] = _lineDashLengths[dashIndex] * renderedScale;
-    }
-
-    CGContextScaleCTM(theContext, scale, scale);
-
-    CGContextBeginPath(theContext);
-    CGContextAddPath(theContext, path);
-
-    CGContextSetLineWidth(theContext, scaledLineWidth);
-    CGContextSetLineCap(theContext, lineCap);
-    CGContextSetLineJoin(theContext, lineJoin);
-    CGContextSetStrokeColorWithColor(theContext, [lineColor CGColor]);
-    CGContextSetFillColorWithColor(theContext, [fillColor CGColor]);
-
-    if (_lineDashLengths)
-        CGContextSetLineDash(theContext, lineDashPhase, dashLengths, _lineDashCount);
-
-    if (self.enableShadow)
-        CGContextSetShadow(theContext, self.shadowOffset, self.shadowBlur);
-
-    // according to Apple's documentation, DrawPath closes the path if it's a filled style, so a call to ClosePath isn't necessary
-    CGContextDrawPath(theContext, drawingMode);
-}
+#pragma mark - Accessors
 
 - (void)closePath
 {
