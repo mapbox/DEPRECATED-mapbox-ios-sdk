@@ -32,7 +32,7 @@
 //
 //  http://mapbox.com/hosting/api/
 //
-//  Example usage at https://github.com/mapbox/tilestream-ios-example
+//  See samples/MBTilesDemo for example usage
 //
 //  This class supports both the paid, hosted version of TileStream, as well as the 
 //  open source, self-hosted version. 

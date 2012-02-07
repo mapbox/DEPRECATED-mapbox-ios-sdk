@@ -344,14 +344,18 @@
 			children = (
 				D1437B33122869E400888DAE /* RMDBMapSource.h */,
 				D1437B32122869E400888DAE /* RMDBMapSource.m */,
-				1606C9FC13D86BA300547581 /* RMOpenCycleMapSource.h */,
-				1606C9FD13D86BA300547581 /* RMOpenCycleMapSource.m */,
-				B83E64ED0E80E73F001663B6 /* RMOpenStreetMapSource.h */,
-				B83E64EE0E80E73F001663B6 /* RMOpenStreetMapSource.m */,
-				16128CF3148D295300C23C0E /* RMOpenSeaMapSource.h */,
-				16128CF4148D295300C23C0E /* RMOpenSeaMapSource.m */,
 				DD8CDB4814E0507100B73EB9 /* RMMapQuestOSMSource.h */,
 				DD8CDB4914E0507100B73EB9 /* RMMapQuestOSMSource.m */,
+				DD2B375314CF8197008DE8CB /* RMMBTilesTileSource.h */,
+				DD2B375414CF8197008DE8CB /* RMMBTilesTileSource.m */,
+				1606C9FC13D86BA300547581 /* RMOpenCycleMapSource.h */,
+				1606C9FD13D86BA300547581 /* RMOpenCycleMapSource.m */,
+				16128CF3148D295300C23C0E /* RMOpenSeaMapSource.h */,
+				16128CF4148D295300C23C0E /* RMOpenSeaMapSource.m */,
+				B83E64ED0E80E73F001663B6 /* RMOpenStreetMapSource.h */,
+				B83E64EE0E80E73F001663B6 /* RMOpenStreetMapSource.m */,
+				DD98B6F814D76B930092882F /* RMTileStreamSource.h */,
+				DD98B6F914D76B930092882F /* RMTileStreamSource.m */,
 			);
 			name = "Map sources";
 			sourceTree = "<group>";
@@ -507,10 +511,6 @@
 				16EC85CD133CA6C300219947 /* RMAbstractMercatorTileSource.m */,
 				16EC85CE133CA6C300219947 /* RMAbstractWebMapSource.h */,
 				16EC85CF133CA6C300219947 /* RMAbstractWebMapSource.m */,
-				DD2B375314CF8197008DE8CB /* RMMBTilesTileSource.h */,
-				DD2B375414CF8197008DE8CB /* RMMBTilesTileSource.m */,
-				DD98B6F814D76B930092882F /* RMTileStreamSource.h */,
-				DD98B6F914D76B930092882F /* RMTileStreamSource.m */,
 			);
 			name = "Tile Source";
 			sourceTree = "<group>";

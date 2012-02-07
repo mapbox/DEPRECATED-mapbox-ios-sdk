@@ -1,7 +1,7 @@
 //
 //  OpenCycleMapSource.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -70,7 +70,7 @@
 	return @"© OpenCycleMap CC-BY-SA";
 }
 
--(NSString *)longAttribution
+- (NSString *)longAttribution
 {
 	return @"Map data © OpenCycleMap, licensed under Creative Commons Share Alike By Attribution.";
 }

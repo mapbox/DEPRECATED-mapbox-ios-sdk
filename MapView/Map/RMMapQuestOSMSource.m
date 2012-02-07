@@ -1,7 +1,7 @@
 //
 //  RMMapQuestOSMSource.m
 //
-// Copyright (c) 2008-2011, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,13 +29,14 @@
 
 @implementation RMMapQuestOSMSource
 
--(id) init
+- (id)init
 {       
-	if(self = [super init]) 
-	{
-		[self setMaxZoom:18];
-		[self setMinZoom:1];
-	}
+    if (!(self = [super init]))
+        return nil;
+
+    [self setMaxZoom:18];
+    [self setMinZoom:1];
+
 	return self;
 } 
 
@@ -44,27 +45,31 @@
 	NSAssert4(((tile.zoom >= self.minZoom) && (tile.zoom <= self.maxZoom)),
 			  @"%@ tried to retrieve tile with zoomLevel %d, outside source's defined range %f to %f", 
 			  self, tile.zoom, self.minZoom, self.maxZoom);
+
 	return [NSURL URLWithString:[NSString stringWithFormat:@"http://otile1.mqcdn.com/tiles/1.0.0/osm/%d/%d/%d.png", tile.zoom, tile.x, tile.y]];
 }
 
--(NSString*) uniqueTilecacheKey
+- (NSString *)uniqueTilecacheKey
 {
 	return @"MapQuestOSM";
 }
 
--(NSString *)shortName
+- (NSString *)shortName
 {
 	return @"MapQuest";
 }
--(NSString *)longDescription
+
+- (NSString *)longDescription
 {
 	return @"Map tiles courtesy of MapQuest.";
 }
--(NSString *)shortAttribution
+
+- (NSString *)shortAttribution
 {
 	return @"Tiles courtesy of MapQuest.";
 }
--(NSString *)longAttribution
+
+- (NSString *)longAttribution
 {
 	return @"Tiles courtesy of MapQuest and OpenStreetMap contributors.";
 }

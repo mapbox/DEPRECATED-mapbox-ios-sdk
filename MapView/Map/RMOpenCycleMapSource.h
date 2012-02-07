@@ -1,7 +1,7 @@
 //
 //  OpenCycleMapSource.h
 //
-// Copyright (c) 2008, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,7 @@
  
  Provides key-based access to tiles from the Open Cycle Map project. 
  */
+
 @interface RMOpenCycleMapSource : RMAbstractWebMapSource
 
 @end
