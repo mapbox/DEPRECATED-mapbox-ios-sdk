@@ -26,6 +26,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import "RMFoundation.h"
+#import <math.h>
 
 bool RMProjectedPointEqualToProjectedPoint(RMProjectedPoint point1, RMProjectedPoint point2)
 {
@@ -124,4 +125,12 @@ RMProjectedSize RMProjectedSizeMake(double width, double heigth)
 RMProjectedRect RMProjectedRectZero()
 {
     return RMProjectedRectMake(0.0, 0.0, 0.0, 0.0);
+}
+
+double RMEuclideanDistanceBetweenProjectedPoints(RMProjectedPoint point1, RMProjectedPoint point2)
+{
+    double xd = point2.x - point1.x;
+	double yd = point2.y - point1.y;
+
+	return sqrt(xd*xd + yd*yd);
 }
