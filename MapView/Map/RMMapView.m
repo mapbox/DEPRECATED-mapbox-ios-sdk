@@ -1221,6 +1221,84 @@
 }
 
 #pragma mark -
+#pragma mark Snapshots
+
+// snapshotRect is not yet used
+- (UIImage *)takeSnapshotInRect:(CGRect)snapshotRect includeOverlay:(BOOL)includeOverlay
+{
+    RMProjectedRect bounds = [self projectedBounds];
+
+    CLLocationCoordinate2D bottomLeft = [projection projectedPointToCoordinate:bounds.origin];
+    CLLocationCoordinate2D topRight = [projection projectedPointToCoordinate:RMProjectedPointMake(bounds.origin.x + bounds.size.width, bounds.origin.y + bounds.size.height)];
+
+    RMTile baseTile = [self tileWithCoordinate:bottomLeft andZoom:ceilf(zoom)];
+    RMTile borderTile = [self tileWithCoordinate:topRight andZoom:ceilf(zoom)];
+
+//    RMLog(@"x:%d, y:%d, zoom:%d (real zoom:%f)", baseTile.x, baseTile.y, baseTile.zoom, zoom);
+//    RMLog(@"-> x:%d, y:%d, zoom:%d (real zoom:%f)", borderTile.x, borderTile.y, borderTile.zoom, zoom);
+
+    CATiledLayer *tiledLayer = (CATiledLayer *)tiledLayerView.layer;
+    CGSize tileSize = tiledLayer.tileSize;
+
+    int tilesX = borderTile.x - baseTile.x + 1;
+    int tilesY = baseTile.y - borderTile.y + 1;
+
+//    RMLog(@"tiles x=%d, y=%d", tilesX, tilesY);
+
+    int scale = (1<<(int)ceilf(zoom));
+	CLLocationCoordinate2D normalizedCoordinate = [self normalizeCoordinate:bottomLeft];
+
+    CGFloat leftBorder = round(((normalizedCoordinate.longitude * scale) * tileSize.width) - (baseTile.x * tileSize.width));
+    CGFloat topBorder = (tilesY * tileSize.height) - (256.0 - round(((normalizedCoordinate.latitude * scale) * tileSize.height) - (baseTile.y * tileSize.height))) - self.bounds.size.height;
+
+//    RMLog(@"left: %f, top:%f", leftBorder, topBorder);
+
+    UIGraphicsBeginImageContextWithOptions(self.bounds.size, NO, [[UIScreen mainScreen] scale]);
+
+    for (int column=0; column<tilesX; column++)
+    {
+        for (int row=0; row<tilesY; row++)
+        {
+//            RMLog(@"x:%d, y:%d, zoom:%d", baseTile.x + column, borderTile.y + row, baseTile.zoom);
+
+            UIImage *tileImage = [tileSource imageForTile:RMTileMake(baseTile.x + column, borderTile.y + row, baseTile.zoom) inCache:tileCache];
+
+            if (tileImage)
+            {
+                [tileImage drawInRect:CGRectMake(column * tileSize.width - leftBorder,
+                                                 row * tileSize.height - topBorder,
+                                                 tileSize.width,
+                                                 tileSize.height)];
+            }
+        }
+    }
+
+    if (includeOverlay)
+    {
+        UIGraphicsBeginImageContextWithOptions(overlayView.bounds.size, NO, [[UIScreen mainScreen] scale]);
+
+        [overlayView.layer renderInContext:UIGraphicsGetCurrentContext()];
+        UIImage *overlayImage = UIGraphicsGetImageFromCurrentImageContext();
+
+        UIGraphicsEndImageContext();
+
+        [overlayImage drawInRect:CGRectMake(0.0, 0.0, overlayView.bounds.size.width, overlayView.bounds.size.height)];
+    }
+
+    // final image
+    UIImage *finalImage = UIGraphicsGetImageFromCurrentImageContext();
+
+    UIGraphicsEndImageContext();
+
+    return finalImage;
+}
+
+- (UIImage *)takeSnapshot
+{
+    return [self takeSnapshotInRect:self.bounds includeOverlay:YES];
+}
+
+#pragma mark -
 #pragma mark Properties
 
 - (id <RMTileSource>)tileSource
@@ -1464,6 +1542,31 @@
 - (RMProjectedSize)projectedViewSize
 {
     return RMProjectedSizeMake(self.bounds.size.width * self.metersPerPixel, self.bounds.size.height * self.metersPerPixel);
+}
+
+- (CLLocationCoordinate2D)normalizeCoordinate:(CLLocationCoordinate2D)coordinate
+{
+	if (coordinate.longitude > 180)
+        coordinate.longitude -= 360;
+
+	coordinate.longitude /= 360.0;
+	coordinate.longitude += 0.5;
+	coordinate.latitude = 0.5 - ((log(tan((M_PI_4) + ((0.5 * M_PI * coordinate.latitude) / 180.0))) / M_PI) / 2.0);
+
+	return coordinate;
+}
+
+- (RMTile)tileWithCoordinate:(CLLocationCoordinate2D)coordinate andZoom:(int)tileZoom
+{
+	int scale = (1<<tileZoom);
+	CLLocationCoordinate2D normalizedCoordinate = [self normalizeCoordinate:coordinate];
+
+	RMTile returnTile;
+	returnTile.x = (int)(normalizedCoordinate.longitude * scale);
+	returnTile.y = (int)(normalizedCoordinate.latitude * scale);
+	returnTile.zoom = tileZoom;
+
+	return returnTile;
 }
 
 #pragma mark -

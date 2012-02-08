@@ -18,6 +18,7 @@
 @property(nonatomic,retain)RMMapView *mapView;
 
 - (IBAction)doTheTest:(id)sender;
+- (IBAction)takeSnapshot:(id)sender;
 
 @end
 

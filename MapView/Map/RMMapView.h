@@ -195,6 +195,9 @@ typedef enum {
 - (RMProjectedSize)viewSizeToProjectedSize:(CGSize)screenSize;
 - (CGSize)projectedSizeToViewSize:(RMProjectedSize)projectedSize;
 
+- (CLLocationCoordinate2D)normalizeCoordinate:(CLLocationCoordinate2D)coordinate;
+- (RMTile)tileWithCoordinate:(CLLocationCoordinate2D)coordinate andZoom:(int)zoom;
+
 /// returns the smallest bounding box containing the entire view
 - (RMSphericalTrapezium)latitudeLongitudeBoundingBox;
 /// returns the smallest bounding box containing a rectangular region of the view
@@ -225,5 +228,11 @@ typedef enum {
 
 ///  Clear all images from the #tileSource's caching system.
 -(void)removeAllCachedImages;
+
+#pragma mark -
+#pragma mark Snapshots
+
+- (UIImage *)takeSnapshot;
+- (UIImage *)takeSnapshotInRect:(CGRect)snapshotRect includeOverlay:(BOOL)includeOverlay;
 
 @end
