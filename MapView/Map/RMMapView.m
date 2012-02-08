@@ -1223,7 +1223,6 @@
 #pragma mark -
 #pragma mark Snapshots
 
-// snapshotRect is not yet used
 - (UIImage *)takeSnapshotInRect:(CGRect)snapshotRect includeOverlay:(BOOL)includeOverlay
 {
     RMProjectedRect bounds = [self projectedBounds];
@@ -1289,6 +1288,13 @@
     UIImage *finalImage = UIGraphicsGetImageFromCurrentImageContext();
 
     UIGraphicsEndImageContext();
+
+    if (!CGRectEqualToRect(self.bounds, snapshotRect))
+    {
+        CGImageRef imageRef = CGImageCreateWithImageInRect([finalImage CGImage], snapshotRect);
+        finalImage = [UIImage imageWithCGImage:imageRef];
+        CGImageRelease(imageRef);
+    }
 
     return finalImage;
 }
