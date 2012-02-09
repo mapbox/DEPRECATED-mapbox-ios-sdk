@@ -11,6 +11,12 @@
 #import "MainView.h"
 #import "RMTileSource.h"
 
+#import "RMOpenCycleMapSource.h"
+#import "RMOpenStreetMapSource.h"
+#import "RMOpenSeaMapSource.h"
+#import "RMMapQuestOSMSource.h"
+#import "RMMapQuestOpenAerialSource.h"
+
 @implementation MainViewController
 
 @synthesize mapView;
@@ -82,10 +88,28 @@
 
 - (IBAction)mapSelectChange
 {
-	if (mapSelectControl.selectedSegmentIndex == 1)
-        [mapView setTileSource:[[[RMOpenCycleMapSource alloc] init] autorelease]];
-	else 
-		[mapView setTileSource:[[[RMOpenStreetMapSource alloc] init] autorelease]];
+    switch (mapSelectControl.selectedSegmentIndex)
+    {
+        case 1:
+            [mapView setTileSource:[[[RMOpenCycleMapSource alloc] init] autorelease]];
+            break;
+
+        case 2:
+            [mapView setTileSource:[[[RMOpenSeaMapSource alloc] init] autorelease]];
+            break;
+
+        case 3:
+            [mapView setTileSource:[[[RMMapQuestOSMSource alloc] init] autorelease]];
+            break;
+
+        case 4:
+            [mapView setTileSource:[[[RMMapQuestOpenAerialSource alloc] init] autorelease]];
+            break;
+
+        default:
+            [mapView setTileSource:[[[RMOpenStreetMapSource alloc] init] autorelease]];
+            break;
+    }
 }
 
 #pragma mark -
