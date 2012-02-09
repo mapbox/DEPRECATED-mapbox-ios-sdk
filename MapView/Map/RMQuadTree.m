@@ -66,8 +66,12 @@
 - (void)dealloc
 {
     mapView = nil;
-    [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
-    [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+
+    @synchronized (cachedClusterAnnotation)
+    {
+        [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
+        [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+    }
 
     @synchronized (annotations)
     {
@@ -273,7 +277,14 @@
 
 - (NSArray *)clusteredAnnotations
 {
-    return cachedClusterEnclosedAnnotations;
+    NSArray *clusteredAnnotations = nil;
+
+    @synchronized (cachedClusterAnnotation)
+    {
+        clusteredAnnotations = [NSArray arrayWithArray:cachedClusterEnclosedAnnotations];
+    }
+
+    return clusteredAnnotations;
 }
 
 - (void)addAnnotationsInBoundingBox:(RMProjectedRect)aBoundingBox toMutableArray:(NSMutableArray *)someArray createClusterAnnotations:(BOOL)createClusterAnnotations withClusterSize:(RMProjectedSize)clusterSize findGravityCenter:(BOOL)findGravityCenter
@@ -318,8 +329,11 @@
 
             if (forceClustering)
             {
-                [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
-                [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+                @synchronized (cachedClusterAnnotation)
+                {
+                    [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
+                    [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+                }
 
                 enclosedAnnotations = [NSArray arrayWithArray:annotationsToCheck];
             }
@@ -330,10 +344,13 @@
             if (!enclosedAnnotations)
                 enclosedAnnotations = self.enclosedAnnotations;
 
-            if (cachedClusterAnnotation && [enclosedAnnotations count] != [cachedClusterEnclosedAnnotations count])
+            @synchronized (cachedClusterAnnotation)
             {
-                [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
-                [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+                if (cachedClusterAnnotation && [enclosedAnnotations count] != [cachedClusterEnclosedAnnotations count])
+                {
+                    [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
+                    [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+                }
             }
 
             if (!cachedClusterAnnotation)
@@ -444,8 +461,11 @@
     if (parentNode)
         [parentNode removeUpwardsAllCachedClusterAnnotations];
 
-    [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
-    [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+    @synchronized (cachedClusterAnnotation)
+    {
+        [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
+        [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+    }
 }
 
 @end
