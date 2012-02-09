@@ -1,16 +1,11 @@
 Route-Me: iOS map library (Alpstein fork)
 -----------------------------------------
 
-Route-Me is an open source map library that runs natively on iOS.  It's designed
-to look and feel much like the inbuilt iOS map library, but it's entirely open,
-and works with any map source.
+Route-Me is an open source map library that runs natively on iOS.  It's designed to look and feel much like the built-in iOS map library, but it's entirely open, and works with any map source.
 
-Currently, [OpenStreetMap][1], [OpenCycleMap][2], [OpenSeaMap][3], [MapQuest OSM][4], [MapQuest Open Aerial][5] and two offline,
-database-backed formats (DBMap and [MBTiles][6]) are supported as map
-sources.
+Currently, [OpenStreetMap][1], [OpenCycleMap][2], [OpenSeaMap][3], [MapQuest OSM][4], [MapQuest Open Aerial][5] and two offline, database-backed formats (DBMap and [MBTiles][6]) are supported as map sources.
 
-Please note that you are responsible for getting permission to use the map data,
-and for ensuring your use adheres to the relevant terms of use.
+Please note that you are responsible for getting permission to use the map data, and for ensuring your use adheres to the relevant terms of use.
 
 
    [1]: http://www.openstreetmap.org/index.html
@@ -24,8 +19,7 @@ and for ensuring your use adheres to the relevant terms of use.
 Installing
 ----------
 
-As Route-Me is undergoing some significant changes, the recommended course of
-action is to clone a copy of the repository:
+As Route-Me is undergoing some significant changes, the recommended course of action is to clone a copy of the repository:
 
       git://github.com/Alpstein/route-me.git
 
@@ -48,8 +42,7 @@ See LicenseRouteMe.txt for license details. In any app that uses the Route-Me li
 News, Support and Contributing
 ------------------------------
 
-Join our [mailing list][list] for news and to communicate with project members
-and other users:
+Join our [mailing list][list] for news and to communicate with project members and other users:
 
 To report bugs and help fix them, please use the [issue tracker][tracker]
 
@@ -57,8 +50,8 @@ To report bugs and help fix them, please use the [issue tracker][tracker]
 [tracker]: https://github.com/Alpstein/route-me/issues
 
 
-Changes in this fork (Alpstein/route-me)
------------------------------------------
+Major changes in this fork (Alpstein/route-me)
+----------------------------------------------
 
 * RMMapView and RMMapContents have been merged into one file
 
