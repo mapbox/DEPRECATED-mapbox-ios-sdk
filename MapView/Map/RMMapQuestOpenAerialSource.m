@@ -1,5 +1,5 @@
 //
-//  OpenStreetMapsSource.m
+//  RMMapQuestOpenAerialSource.m
 //
 // Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
@@ -25,54 +25,53 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import "RMOpenStreetMapSource.h"
+#import "RMMapQuestOpenAerialSource.h"
 
-@implementation RMOpenStreetMapSource
+@implementation RMMapQuestOpenAerialSource
 
 - (id)init
 {
-	if (!(self = [super init]))
+    if (!(self = [super init]))
         return nil;
 
-    // http://wiki.openstreetmap.org/index.php/FAQ#What_is_the_map_scale_for_a_particular_zoom_level_of_the_map.3F 
-    [self setMaxZoom:18];
+    [self setMaxZoom:11];
     [self setMinZoom:1];
 
 	return self;
-} 
+}
 
 - (NSURL *)URLForTile:(RMTile)tile
 {
 	NSAssert4(((tile.zoom >= self.minZoom) && (tile.zoom <= self.maxZoom)),
-			  @"%@ tried to retrieve tile with zoomLevel %d, outside source's defined range %f to %f", 
+			  @"%@ tried to retrieve tile with zoomLevel %d, outside source's defined range %f to %f",
 			  self, tile.zoom, self.minZoom, self.maxZoom);
 
-	return [NSURL URLWithString:[NSString stringWithFormat:@"http://tile.openstreetmap.org/%d/%d/%d.png", tile.zoom, tile.x, tile.y]];
+	return [NSURL URLWithString:[NSString stringWithFormat:@"http://oatile1.mqcdn.com/tiles/1.0.0/sat/%d/%d/%d.png", tile.zoom, tile.x, tile.y]];
 }
 
 - (NSString *)uniqueTilecacheKey
 {
-	return @"OpenStreetMap";
+	return @"MapQuestOpenAerial";
 }
 
 - (NSString *)shortName
 {
-	return @"Open Street Map";
+	return @"MapQuest Open Aerial";
 }
 
 - (NSString *)longDescription
 {
-	return @"Open Street Map, the free wiki world map, provides freely usable map data for all parts of the world, under the Creative Commons Attribution-Share Alike 2.0 license.";
+	return @"Map tiles courtesy of MapQuest. Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency.";
 }
 
 - (NSString *)shortAttribution
 {
-	return @"© OpenStreetMap CC-BY-SA";
+	return @"Tiles courtesy of MapQuest.";
 }
 
 - (NSString *)longAttribution
 {
-	return @"Map data © OpenStreetMap, licensed under Creative Commons Share Alike By Attribution.";
+	return @"Tiles courtesy of MapQuest and OpenStreetMap contributors. Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency.";
 }
 
 @end

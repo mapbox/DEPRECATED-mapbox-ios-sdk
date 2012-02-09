@@ -30,7 +30,7 @@
 @implementation RMOpenCycleMapSource
 
 - (id)init
-{       
+{
 	if (!(self = [super init]))
         return nil;
     
