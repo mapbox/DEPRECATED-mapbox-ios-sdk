@@ -233,6 +233,6 @@ typedef enum {
 #pragma mark Snapshots
 
 - (UIImage *)takeSnapshot;
-- (UIImage *)takeSnapshotInRect:(CGRect)snapshotRect includeOverlay:(BOOL)includeOverlay;
+- (UIImage *)takeSnapshotForMapBounds:(RMProjectedRect)bounds inRect:(CGRect)snapshotRect includeOverlay:(BOOL)includeOverlay;
 
 @end
