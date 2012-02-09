@@ -1,6 +1,7 @@
 bin_PROGRAMS =	proj nad2nad nad2bin geod cs2cs
 
-INCLUDES =	-DPROJ_LIB=\"$(pkgdatadir)\" @JNI_INCLUDE@
+INCLUDES =	-DPROJ_LIB=\"$(pkgdatadir)\" \
+		-DMUTEX_@MUTEX_SETTING@ @JNI_INCLUDE@
 
 include_HEADERS = projects.h nad_list.h proj_api.h org_proj4_Projections.h
 
@@ -20,7 +21,7 @@ geod_LDADD = libproj.la
 
 lib_LTLIBRARIES = libproj.la
 
-libproj_la_LDFLAGS = -version-info 5:4:5
+libproj_la_LDFLAGS = -no-undefined -version-info 6:6:6
 
 libproj_la_SOURCES = \
 	projects.h pj_list.h \
@@ -40,7 +41,7 @@ libproj_la_SOURCES = \
 	PJ_wag7.c PJ_lcca.c PJ_geos.c \
 	PJ_boggs.c PJ_collg.c PJ_crast.c PJ_denoy.c \
 	PJ_eck1.c PJ_eck2.c PJ_eck3.c PJ_eck4.c \
-	PJ_eck5.c PJ_fahey.c PJ_fouc_s.c PJ_gins8.c \
+	PJ_eck5.c PJ_fahey.c PJ_fouc_s.c PJ_gins8.c PJ_gstmerc.c \
 	PJ_gn_sinu.c PJ_goode.c PJ_hatano.c PJ_loxim.c \
 	PJ_mbt_fps.c PJ_mbtfpp.c PJ_mbtfpq.c PJ_moll.c \
 	PJ_nell.c PJ_nell_h.c PJ_putp2.c PJ_putp3.c \
@@ -59,7 +60,7 @@ libproj_la_SOURCES = \
 	nad_cvt.c nad_init.c nad_intr.c emess.c emess.h \
 	pj_apply_gridshift.c pj_datums.c pj_datum_set.c pj_transform.c \
 	geocent.c geocent.h pj_utils.c pj_gridinfo.c pj_gridlist.c \
-	jniproj.c
+	jniproj.c pj_mutex.c pj_initcache.c
 
 
 install-exec-local:

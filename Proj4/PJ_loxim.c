@@ -1,12 +1,9 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_loxim.c	4.1 94/02/15     GIE     REL";
-#endif
 #define PROJ_PARMS__ \
 	double phi1; \
 	double cosphi1; \
 	double tanphi1;
 #define PJ_LIB__
-#include	"projects.h"
+#include	<projects.h>
 PROJ_HEAD(loxim, "Loximuthal") "\n\tPCyl Sph";
 #define EPS	1e-8
 FORWARD(s_forward); /* spheroid */

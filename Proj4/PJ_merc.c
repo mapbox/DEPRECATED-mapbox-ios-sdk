@@ -1,8 +1,5 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_merc.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PJ_LIB__
-#include	"projects.h"
+#include	<projects.h>
 PROJ_HEAD(merc, "Mercator") "\n\tCyl, Sph&Ell\n\tlat_ts=";
 #define EPS10 1.e-10
 FORWARD(e_forward); /* ellipsoid */

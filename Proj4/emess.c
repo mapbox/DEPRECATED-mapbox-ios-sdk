@@ -1,7 +1,4 @@
 /* Error message processing */
-#ifndef lint
-static const char SCCSID[]="@(#)emess.c	4.6	94/05/24	GIE	REL";
-#endif
 
 #ifdef _MSC_VER
 #  ifndef _CRT_SECURE_NO_DEPRECATE
@@ -17,7 +14,7 @@ static const char SCCSID[]="@(#)emess.c	4.6	94/05/24	GIE	REL";
 #include <stdarg.h>
 #include <errno.h>
 #include <string.h>
-#include "proj_api.h"
+#include <proj_api.h>
 #define EMESS_ROUTINE
 #include "emess.h"
 	void

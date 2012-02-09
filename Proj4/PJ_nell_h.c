@@ -1,8 +1,5 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_nell_h.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PJ_LIB__
-# include	"projects.h"
+# include	<projects.h>
 PROJ_HEAD(nell_h, "Nell-Hammer") "\n\tPCyl., Sph.";
 #define NITER 9
 #define EPS 1e-7

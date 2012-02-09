@@ -1,6 +1,3 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_chamb.c	4.1	94/02/15	GIE	REL";
-#endif
 typedef struct { double r, Az; } VECT;
 #define PROJ_PARMS__ \
 	struct { /* control point data */ \
@@ -13,7 +10,7 @@ typedef struct { double r, Az; } VECT;
 	XY p; \
 	double beta_0, beta_1, beta_2;
 #define PJ_LIB__
-#include	"projects.h"
+#include	<projects.h>
 PROJ_HEAD(chamb, "Chamberlin Trimetric") "\n\tMisc Sph, no inv."
 "\n\tlat_1= lon_1= lat_2= lon_2= lat_3= lon_3=";
 #include	<stdio.h>

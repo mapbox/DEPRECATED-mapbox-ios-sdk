@@ -112,15 +112,17 @@
 {
     [mapView autorelease];
     mapView = [aMapView retain];
-    if (!aMapView) {
+
+    if (!aMapView)
         self.layer = nil;
-    }
 }
 
 - (void)setPosition:(CGPoint)aPosition
 {
     position = aPosition;
-    if (layer) layer.position = aPosition;
+
+    if (layer)
+        layer.position = aPosition;
 }
 
 - (RMMapLayer *)layer
@@ -130,12 +132,16 @@
 
 - (void)setLayer:(RMMapLayer *)aLayer
 {
-    if (layer != aLayer) {
-        if (layer.superlayer) [layer removeFromSuperlayer];
+    if (layer != aLayer)
+    {
+        if (layer.superlayer)
+            [layer removeFromSuperlayer];
+
         [layer release]; layer = nil;
     }
 
-    if (aLayer) {
+    if (aLayer)
+    {
         layer = aLayer;
         [layer retain];
         layer.annotation = self;
@@ -145,10 +151,13 @@
 
 - (BOOL)isAnnotationWithinBounds:(CGRect)bounds
 {
-    if (self.hasBoundingBox) {
+    if (self.hasBoundingBox)
+    {
         RMProjectedRect projectedScreenBounds = [mapView projectedBounds];
         return RMProjectedRectIntersectsProjectedRect(projectedScreenBounds, projectedBoundingBox);
-    } else {
+    }
+    else
+    {
         return CGRectContainsPoint(bounds, self.position);
     }
 }
@@ -176,15 +185,15 @@
 	max.latitude = kRMMinLatitude; max.longitude = kRMMinLongitude;
 
     CLLocationDegrees currentLatitude, currentLongitude;
+
 	for (CLLocation *currentLocation in locations)
     {
         currentLatitude = currentLocation.coordinate.latitude;
         currentLongitude = currentLocation.coordinate.longitude;
 
         // POIs outside of the world...
-        if (currentLatitude < kRMMinLatitude || currentLatitude > kRMMaxLatitude || currentLongitude < kRMMinLongitude || currentLongitude > kRMMaxLongitude) {
+        if (currentLatitude < kRMMinLatitude || currentLatitude > kRMMaxLatitude || currentLongitude < kRMMinLongitude || currentLongitude > kRMMaxLongitude)
             continue;
-        }
 
 		max.latitude  = fmax(currentLatitude, max.latitude);
 		max.longitude = fmax(currentLongitude, max.longitude);

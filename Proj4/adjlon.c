@@ -1,9 +1,6 @@
 /* reduce argument to range +/- PI */
-#ifndef lint
-static const char SCCSID[]="@(#)adjlon.c	4.3	93/06/12	GIE	REL";
-#endif
 #include <math.h>
-#include "projects.h"
+#include <projects.h>
 
 #define SPI     3.14159265359
 #define TWOPI   6.2831853071795864769

@@ -28,6 +28,7 @@ typedef enum {
     RMQuadTreeNodeType nodeType;
     RMMapView *mapView;
     RMAnnotation *cachedClusterAnnotation;
+    NSArray *cachedClusterEnclosedAnnotations;
 }
 
 @property (nonatomic, readonly) NSArray *annotations;
@@ -44,6 +45,9 @@ typedef enum {
 @property (nonatomic, readonly) RMQuadTreeNode *northEast;
 @property (nonatomic, readonly) RMQuadTreeNode *southWest;
 @property (nonatomic, readonly) RMQuadTreeNode *southEast;
+
+@property (nonatomic, readonly) RMAnnotation *clusterAnnotation;
+@property (nonatomic, readonly) NSArray *clusteredAnnotations;
 
 // Operations on this node and all subnodes
 @property (nonatomic, readonly) NSArray *enclosedAnnotations;

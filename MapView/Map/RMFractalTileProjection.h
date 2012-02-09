@@ -32,7 +32,8 @@
 
 @class RMProjection;
 
-@interface RMFractalTileProjection : NSObject {
+@interface RMFractalTileProjection : NSObject
+{
 	// Maximum zoom for which our tile server stores images
 	NSUInteger maxZoom, minZoom;
 

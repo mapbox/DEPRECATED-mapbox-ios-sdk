@@ -1,11 +1,8 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_sts.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PROJ_PARMS__ \
 	double C_x, C_y, C_p; \
 	int tan_mode;
 #define PJ_LIB__
-# include	"projects.h"
+# include	<projects.h>
 PROJ_HEAD(kav5, "Kavraisky V") "\n\tPCyl., Sph.";
 PROJ_HEAD(qua_aut, "Quartic Authalic") "\n\tPCyl., Sph.";
 PROJ_HEAD(mbt_s, "McBryde-Thomas Flat-Polar Sine (No. 1)") "\n\tPCyl., Sph.";
@@ -32,7 +29,7 @@ INVERSE(s_inverse); /* spheroid */
 	xy.y /= P->C_y;
 	c = cos(lp.phi = P->tan_mode ? atan(xy.y) : aasin(xy.y));
 	lp.phi /= P->C_p;
-	lp.lam = xy.x / (P->C_x * cos(lp.phi /= P->C_p));
+	lp.lam = xy.x / (P->C_x * cos(lp.phi));
 	if (P->tan_mode)
 		lp.lam /= c * c;
 	else

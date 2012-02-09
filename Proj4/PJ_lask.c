@@ -1,9 +1,6 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_lask.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PROJ_PARMS__
 #define PJ_LIB__
-#include	"projects.h"
+#include	<projects.h>
 PROJ_HEAD(lask, "Laskowski") "\n\tMisc Sph, no inv.";
 #define	a10	 0.975534
 #define	a12	-0.119161

@@ -29,13 +29,17 @@
 #import "RMProjection.h"
 #import "RMMapView.h"
 
-#define kDefaultLineWidth 10
+#define kDefaultLineWidth 10.0
 #define kDefaultLineColor [UIColor blackColor]
 #define kDefaultFillColor [UIColor blueColor]
 
 @interface RMCircle ()
+
 - (void)updateCirclePath;
+
 @end
+
+#pragma mark -
 
 @implementation RMCircle
 
@@ -112,11 +116,12 @@
     [self.shapeLayer setLineWidth:lineWidthInPixels];
 }
 
-#pragma mark Accessors
+#pragma mark - Accessors
 
 - (void)setLineColor:(UIColor *)newLineColor
 {
-    if (lineColor != newLineColor) {
+    if (lineColor != newLineColor)
+    {
         [lineColor release];
         lineColor = [newLineColor retain];
         [self updateCirclePath];
@@ -125,7 +130,8 @@
 
 - (void)setFillColor:(UIColor *)newFillColor
 {
-    if (fillColor != newFillColor) {
+    if (fillColor != newFillColor)
+    {
         [fillColor release];
         fillColor = [newFillColor retain];
         [self updateCirclePath];

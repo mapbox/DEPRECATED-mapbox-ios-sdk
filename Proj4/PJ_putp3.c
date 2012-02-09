@@ -1,10 +1,7 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_putp3.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PROJ_PARMS__ \
 	double	A;
 #define PJ_LIB__
-# include	"projects.h"
+# include	<projects.h>
 PROJ_HEAD(putp3, "Putnins P3") "\n\tPCyl., Sph.";
 PROJ_HEAD(putp3p, "Putnins P3'") "\n\tPCyl., no inv., Sph.";
 #define C	0.79788456

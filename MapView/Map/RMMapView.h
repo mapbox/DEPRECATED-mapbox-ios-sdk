@@ -1,7 +1,7 @@
 //
 //  RMMapView.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -57,6 +57,7 @@ typedef enum {
 @class RMMarker;
 @class RMAnnotation;
 @class RMQuadTree;
+
 @protocol RMMercatorToTileProjection;
 @protocol RMTileSource;
 @protocol RMMapTiledLayerViewDelegate;
@@ -94,34 +95,6 @@ typedef enum {
 
     NSUInteger boundingMask;
     RMProjectedRect tileSourceProjectedBounds;
-
-@private
-    BOOL _delegateHasBeforeMapMove;
-    BOOL _delegateHasAfterMapMove;
-    BOOL _delegateHasBeforeMapZoom;
-    BOOL _delegateHasAfterMapZoom;
-    BOOL _delegateHasMapViewRegionDidChange;
-    BOOL _delegateHasDoubleTapOnMap;
-    BOOL _delegateHasDoubleTapTwoFingersOnMap;
-    BOOL _delegateHasSingleTapOnMap;
-    BOOL _delegateHasSingleTapTwoFingersOnMap;
-    BOOL _delegateHasLongSingleTapOnMap;
-    BOOL _delegateHasTapOnAnnotation;
-    BOOL _delegateHasDoubleTapOnAnnotation;
-    BOOL _delegateHasTapOnLabelForAnnotation;
-    BOOL _delegateHasDoubleTapOnLabelForAnnotation;
-    BOOL _delegateHasShouldDragMarker;
-    BOOL _delegateHasDidDragMarker;
-    BOOL _delegateHasDidEndDragMarker;
-    BOOL _delegateHasLayerForAnnotation;
-    BOOL _delegateHasWillHideLayerForAnnotation;
-    BOOL _delegateHasDidHideLayerForAnnotation;
-
-    BOOL _constrainMovement;
-    RMProjectedPoint _northEastConstraint, _southWestConstraint;
-
-    float _lastZoom;
-    CGPoint _lastContentOffset, _accumulatedDelta;
 }
 
 @property (nonatomic, assign) id <RMMapViewDelegate> delegate;

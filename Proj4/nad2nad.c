@@ -1,13 +1,10 @@
 /* <<<< North American Datum Transfer Program >>>> */
-#ifndef lint
-static const char SCCSID[]="@(#)nad2nad.c	4.5	94/02/15	GIE	REL";
-#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#define PJ_LIST_H "nad_list.h"
-#include "projects.h"
+#define PJ_LIST_H <nad_list.h>
+#include <projects.h>
 #include "emess.h"
 
 #define MAX_LINE 1000
@@ -225,8 +222,8 @@ process(FILE *fid) {
 		}
 	}
 }
-	void
-main(int argc, char **argv) {
+
+int main(int argc, char **argv) {
 	char *arg, **eargv = argv, work[MAX_PARGS];
 	FILE *fid;
 	int eargc = 0, c;

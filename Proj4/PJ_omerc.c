@@ -1,12 +1,9 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_omerc.c	4.2	95/01/01	GIE	REL";
-#endif
 #define PROJ_PARMS__ \
 	double	alpha, lamc, lam1, phi1, lam2, phi2, Gamma, al, bl, el, \
 		singam, cosgam, sinrot, cosrot, u_0; \
 	int		ellips, rot;
 #define PJ_LIB__
-#include	"projects.h"
+#include	<projects.h>
 PROJ_HEAD(omerc, "Oblique Mercator")
 	"\n\tCyl, Sph&Ell\n\t no_rot rot_conv no_uoff and\n\t"
 "alpha= lonc= or\n\t lon_1= lat_1= lon_2= lat_2=";

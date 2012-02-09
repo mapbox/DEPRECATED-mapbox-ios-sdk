@@ -46,19 +46,19 @@
 {
 	if ( ! [super init])
 		return nil;
-	
+
 	tileProjection = [[RMFractalTileProjection alloc] initFromProjection:[self projection] 
                                                           tileSideLength:kMBTilesDefaultTileSize 
                                                                  maxZoom:kMBTilesDefaultMaxTileZoom 
                                                                  minZoom:kMBTilesDefaultMinTileZoom];
 
     queue = [[FMDatabaseQueue databaseQueueWithPath:[tileSetURL relativePath]] retain];
-    
+
     if ( ! queue)
         return nil;
-    
+
     [[queue database] setShouldCacheStatements:YES];
-    
+
 	return self;
 }
 
@@ -69,10 +69,8 @@
 
 - (void)dealloc
 {
-	[tileProjection release];
-    
-    [queue release];
-    
+	[tileProjection release]; tileProjection = nil;
+    [queue release]; queue = nil;
 	[super dealloc];
 }
 
@@ -95,9 +93,9 @@
     NSInteger zoom = tile.zoom;
     NSInteger x    = tile.x;
     NSInteger y    = pow(2, zoom) - tile.y - 1;
-    
+
     __block UIImage *image;
-    
+
     [queue inDatabase:^(FMDatabase *db)
     {
         FMResultSet *results = [db executeQuery:@"select tile_data from tiles where zoom_level = ? and tile_column = ? and tile_row = ?", 
@@ -107,17 +105,16 @@
 
         if ([db hadError])
             image = [RMTileImage errorTile];
-        
+
         [results next];
-        
+
         NSData *data = [results dataForColumn:@"tile_data"];
-        
+
         if ( ! data)
             image = [RMTileImage errorTile];
-        
         else
             image = [UIImage imageWithData:data];
-        
+
         [results close];
     }];
 
@@ -152,42 +149,42 @@
 - (float)minZoom
 {
     __block double minZoom;
-    
+
     [queue inDatabase:^(FMDatabase *db)
     {
         FMResultSet *results = [db executeQuery:@"select min(zoom_level) from tiles"];
-        
+
         if ([db hadError])
             minZoom = kMBTilesDefaultMinTileZoom;
-        
+
         [results next];
-        
+
         minZoom = [results doubleForColumnIndex:0];
-        
+
         [results close];
     }];
-    
+
     return minZoom;
 }
 
 - (float)maxZoom
 {
     __block double maxZoom;
-    
+
     [queue inDatabase:^(FMDatabase *db)
     {
         FMResultSet *results = [db executeQuery:@"select max(zoom_level) from tiles"];
-        
+
         if ([db hadError])
             maxZoom = kMBTilesDefaultMaxTileZoom;
-        
+
         [results next];
-        
+
         maxZoom = [results doubleForColumnIndex:0];
-        
+
         [results close];
     }];
-    
+
     return maxZoom;
 }
 
@@ -204,21 +201,21 @@
 - (RMSphericalTrapezium)latitudeLongitudeBoundingBox
 {
     __block RMSphericalTrapezium bounds = kMBTilesDefaultLatLonBoundingBox;
-    
+
     [queue inDatabase:^(FMDatabase *db)
     {
         FMResultSet *results = [db executeQuery:@"select value from metadata where name = 'bounds'"];
-        
+
         [results next];
-        
+
         NSString *boundsString = [results stringForColumnIndex:0];
-        
+
         [results close];
-        
+
         if (boundsString)
         {
             NSArray *parts = [boundsString componentsSeparatedByString:@","];
-            
+
             if ([parts count] == 4)
             {
                 bounds.southWest.longitude = [[parts objectAtIndex:0] doubleValue];
@@ -227,9 +224,8 @@
                 bounds.northEast.latitude  = [[parts objectAtIndex:3] doubleValue];
             }
         }
-        
     }];
-    
+
     return bounds;
 }
 
@@ -237,18 +233,18 @@
 {
     RMSphericalTrapezium ownBounds     = [self latitudeLongitudeBoundingBox];
     RMSphericalTrapezium defaultBounds = kMBTilesDefaultLatLonBoundingBox;
-    
+
     if (ownBounds.southWest.longitude <= defaultBounds.southWest.longitude + 10 && 
         ownBounds.northEast.longitude >= defaultBounds.northEast.longitude - 10)
         return YES;
-    
+
     return NO;
 }
 
 - (NSString *)legend
 {
     __block NSString *legend;
-    
+
     [queue inDatabase:^(FMDatabase *db)
     {
         FMResultSet *results = [db executeQuery:@"select value from metadata where name = 'legend'"];
@@ -262,7 +258,7 @@
 
         [results close];
     }];
-    
+
     return legend;
 }
 
@@ -279,49 +275,49 @@
 - (NSString *)shortName
 {
     __block NSString *shortName;
-    
+
     [queue inDatabase:^(FMDatabase *db)
     {
         FMResultSet *results = [db executeQuery:@"select value from metadata where name = 'name'"];
-        
+
         if ([db hadError])
             shortName = nil;
-        
+
         [results next];
-        
+
         shortName = [results stringForColumnIndex:0];
-        
+
         [results close];
     }];
-    
+
     return shortName;
 }
 
 - (NSString *)longDescription
 {
     __block NSString *description;
-    
+
     [queue inDatabase:^(FMDatabase *db)
     {
         FMResultSet *results = [db executeQuery:@"select value from metadata where name = 'description'"];
-        
+
         if ([db hadError])
             description = nil;
-        
+
         [results next];
-        
+
         description = [results stringForColumnIndex:0];
-        
+
         [results close];
     }];
-    
+
     return [NSString stringWithFormat:@"%@ - %@", [self shortName], description];
 }
 
 - (NSString *)shortAttribution
 {
     __block NSString *attribution;
-    
+
     [queue inDatabase:^(FMDatabase *db)
     {
         FMResultSet *results = [db executeQuery:@"select value from metadata where name = 'attribution'"];
@@ -335,7 +331,7 @@
 
         [results close];
     }];
-    
+
     return attribution;
 }
 

@@ -27,18 +27,10 @@
 
 #import "RMAbstractMercatorTileSource.h"
 #import "RMProjection.h"
-#import "FMDatabase.h"
 
-@interface RMDBMapSource : RMAbstractMercatorTileSource {
-	// tile database
-	FMDatabase* db;
-
+@interface RMDBMapSource : RMAbstractMercatorTileSource
+{
     NSString *uniqueTilecacheKey;
-
-	// coverage area
-	CLLocationCoordinate2D topLeft;
-	CLLocationCoordinate2D bottomRight;
-	CLLocationCoordinate2D center;
 }
 
 @property (nonatomic, retain) NSString *uniqueTilecacheKey;

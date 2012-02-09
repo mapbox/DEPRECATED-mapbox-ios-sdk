@@ -1,18 +1,12 @@
 /* procedures for evaluating Tseries */
-#ifndef lint
-static const char SCCSID[]="@(#)biveval.c	4.4	93/06/12	GIE	REL";
-#endif
-# include "projects.h"
+# include <projects.h>
 # define NEAR_ONE	1.00001
-	static projUV
-w2, w;
-static double ceval(struct PW_COEF *C, int n) {
+static double ceval(struct PW_COEF *C, int n, projUV w, projUV w2) {
 	double d=0, dd=0, vd, vdd, tmp, *c;
 	int j;
 
 	for (C += n ; n-- ; --C ) {
-		j = C->m;
-		if (j) {
+		if ((j = C->m)) {
 			vd = vdd = 0.;
 			for (c = C->c + --j; j ; --j ) {
 				vd = w2.v * (tmp = vd) - vdd + *c--;
@@ -23,8 +17,7 @@ static double ceval(struct PW_COEF *C, int n) {
 			d = w2.u * (tmp = d) - dd;
 		dd = tmp;
 	}
-	j = C->m;
-	if (j) {
+	if ((j = C->m)) {
 		vd = vdd = 0.;
 		for (c = C->c + --j; j ; --j ) {
 			vd = w2.v * (tmp = vd) - vdd + *c--;
@@ -36,6 +29,7 @@ static double ceval(struct PW_COEF *C, int n) {
 }
 	projUV /* bivariate Chebyshev polynomial entry point */
 bcheval(projUV in, Tseries *T) {
+        projUV w2, w;
 	projUV out;
 		/* scale to +-1 */
  	w.u = ( in.u + in.u - T->a.u ) * T->b.u;
@@ -46,8 +40,8 @@ bcheval(projUV in, Tseries *T) {
 	} else { /* double evaluation */
 		w2.u = w.u + w.u;
 		w2.v = w.v + w.v;
-		out.u = ceval(T->cu, T->mu);
-		out.v = ceval(T->cv, T->mv);
+                out.u = ceval(T->cu, T->mu, w, w2);
+                out.v = ceval(T->cv, T->mv, w, w2);
 	}
 	return out;
 }
@@ -60,8 +54,7 @@ bpseval(projUV in, Tseries *T) {
 	out.u = out.v = 0.;
 	for (i = T->mu; i >= 0; --i) {
 		row = 0.;
-		m = T->cu[i].m;
-		if (m) {
+		if ((m = T->cu[i].m)) {
 			c = T->cu[i].c + m;
 			while (m--)
 				row = *--c + in.v * row;
@@ -70,8 +63,7 @@ bpseval(projUV in, Tseries *T) {
 	}
 	for (i = T->mv; i >= 0; --i) {
 		row = 0.;
-		m = T->cv[i].m;
-		if (m) {
+		if ((m = T->cv[i].m)) {
 			c = T->cv[i].c + m;
 			while (m--)
 				row = *--c + in.v * row;

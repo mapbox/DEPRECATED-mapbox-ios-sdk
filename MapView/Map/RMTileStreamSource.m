@@ -47,9 +47,11 @@
 
 - (id)initWithInfo:(NSDictionary *)info
 {
-	if (self = [super init])
-        infoDictionary = [[NSDictionary dictionaryWithDictionary:info] retain];
-    
+    if (!(self = [super init]))
+        return nil;
+
+    infoDictionary = [[NSDictionary dictionaryWithDictionary:info] retain];
+
 	return self;
 }
 
@@ -61,7 +63,6 @@
 - (void)dealloc
 {
     [infoDictionary release];
-    
     [super dealloc];
 }
 
@@ -74,13 +75,13 @@
     NSInteger zoom = tile.zoom;
     NSInteger x    = tile.x;
     NSInteger y    = pow(2, zoom) - tile.y - 1;
-    
+
     NSString *tileURLString = [self.infoDictionary objectForKey:@"tileURL"];
-    
+
     tileURLString = [tileURLString stringByReplacingOccurrencesOfString:@"{z}" withString:[[NSNumber numberWithInteger:zoom] stringValue]];
     tileURLString = [tileURLString stringByReplacingOccurrencesOfString:@"{x}" withString:[[NSNumber numberWithInteger:x]    stringValue]];
     tileURLString = [tileURLString stringByReplacingOccurrencesOfString:@"{y}" withString:[[NSNumber numberWithInteger:y]    stringValue]];
-    
+
 	return [NSURL URLWithString:tileURLString];
 }
 
@@ -97,7 +98,7 @@
 - (RMSphericalTrapezium)latitudeLongitudeBoundingBox
 {
     NSArray *parts = [[self.infoDictionary objectForKey:@"bounds"] componentsSeparatedByString:@","];
-        
+
     if ([parts count] == 4)
     {
         RMSphericalTrapezium bounds = {
@@ -110,10 +111,10 @@
                 .latitude  = [[parts objectAtIndex:3] doubleValue],
             },
         };
-        
+
         return bounds;
     }
-    
+
     return kTileStreamDefaultLatLonBoundingBox;
 }
 
@@ -121,11 +122,11 @@
 {
     RMSphericalTrapezium ownBounds     = [self latitudeLongitudeBoundingBox];
     RMSphericalTrapezium defaultBounds = kTileStreamDefaultLatLonBoundingBox;
-    
+
     if (ownBounds.southWest.longitude <= defaultBounds.southWest.longitude + 10 && 
         ownBounds.northEast.longitude >= defaultBounds.northEast.longitude - 10)
         return YES;
-    
+
     return NO;
 }
 

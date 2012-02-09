@@ -64,25 +64,6 @@
  *    ----              -----------
  *    25-02-97          Original Code
  *
- * $Log: geocent.c,v $
- * Revision 1.7  2007/09/11 20:19:36  fwarmerdam
- * avoid use of static variables to make reentrant
- *
- * Revision 1.6  2006/01/12 22:29:01  fwarmerdam
- * make geocent.c globals static to avoid conflicts
- *
- * Revision 1.5  2004/10/25 15:34:36  fwarmerdam
- * make names of geodetic funcs from geotrans unique
- *
- * Revision 1.4  2004/05/03 16:28:01  warmerda
- * Apply iterative solution to geocentric_to_geodetic as suggestion from
- * Lothar Gorling.
- * http://bugzilla.remotesensing.org/show_bug.cgi?id=563
- *
- * Revision 1.3  2002/01/08 15:04:08  warmerda
- * The latitude clamping fix from September in Convert_Geodetic_To_Geocentric
- * was botched.  Fixed up now.
- *
  */
 
 
@@ -381,8 +362,10 @@ void pj_Convert_Geocentric_To_Geodetic (GeocentricInfo *gi,
     double CPHI;     /* cos of searched geodetic latitude */
     double SPHI;     /* sin of searched geodetic latitude */
     double SDPHI;    /* end-criterium: addition-theorem of sin(Latitude(iter)-Latitude(iter-1)) */
+    int At_Pole;     /* indicates location is in polar region */
     int iter;        /* # of continous iteration, max. 30 is always enough (s.a.) */
 
+    At_Pole = FALSE;
     P = sqrt(X*X+Y*Y);
     RR = sqrt(X*X+Y*Y+Z*Z);
 
@@ -390,6 +373,7 @@ void pj_Convert_Geocentric_To_Geodetic (GeocentricInfo *gi,
     if (P/gi->Geocent_a < genau) {
 
 /*  special case, if P=0. (X=0., Y=0.) */
+        At_Pole = TRUE;
 	*Longitude = 0.;
 
 /*  if (X,Y,Z)=(0.,0.,0.) then Height becomes semi-minor axis

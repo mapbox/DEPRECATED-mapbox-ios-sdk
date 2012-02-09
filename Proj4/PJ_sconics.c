@@ -1,6 +1,3 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_sconics.c	4.1	94/05/22	GIE	REL";
-#endif
 #define PROJ_PARMS__ \
 	double	n; \
 	double	rho_c; \
@@ -9,7 +6,7 @@ static const char SCCSID[]="@(#)PJ_sconics.c	4.1	94/05/22	GIE	REL";
 	double	c1, c2; \
 	int		type;
 #define PJ_LIB__
-#include	"projects.h"
+#include	<projects.h>
 #define EULER 0
 #define MURD1 1
 #define MURD2 2

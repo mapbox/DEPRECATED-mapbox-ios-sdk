@@ -1,6 +1,3 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_stere.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PROJ_PARMS__ \
 	double phits; \
 	double sinX1; \
@@ -8,7 +5,7 @@ static const char SCCSID[]="@(#)PJ_stere.c	4.1	94/02/15	GIE	REL";
 	double akm1; \
 	int	mode;
 #define PJ_LIB__
-#include	"projects.h"
+#include	<projects.h>
 PROJ_HEAD(stere, "Stereographic") "\n\tAzi, Sph&Ell\n\tlat_ts=";
 PROJ_HEAD(ups, "Universal Polar Stereographic") "\n\tAzi, Sph&Ell\n\tsouth";
 #define sinph0	P->sinX1

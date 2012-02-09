@@ -50,12 +50,11 @@
     memoryCache = nil;
     
 	id cacheCfg = [[RMConfiguration configuration] cacheConfiguration];	
-	if (!cacheCfg) {
+	if (!cacheCfg)
 		cacheCfg = [NSArray arrayWithObjects:
                     [NSDictionary dictionaryWithObject: @"memory-cache" forKey: @"type"],
                     [NSDictionary dictionaryWithObject: @"db-cache"     forKey: @"type"],
                     nil];
-	}
 
 	for (id cfg in cacheCfg) 
 	{
@@ -65,7 +64,8 @@
 
 			NSString *type = [cfg valueForKey:@"type"];
 
-			if ([@"memory-cache" isEqualToString:type]) {
+			if ([@"memory-cache" isEqualToString:type])
+            {
 				memoryCache = [[self memoryCacheWithConfig:cfg] retain];
                 continue;
             }
@@ -73,11 +73,10 @@
 			if ([@"db-cache" isEqualToString:type])
 				newCache = [self databaseCacheWithConfig:cfg];
 
-			if (newCache) {
+			if (newCache)
 				[caches addObject:newCache];
-			} else {
+			else
 				RMLog(@"failed to create cache of type %@", type);
-			}
 
 		}
 		@catch (NSException * e) {
@@ -97,7 +96,8 @@
 
 - (void)addCache:(id <RMTileCache>)cache
 {
-    @synchronized (caches) {
+    @synchronized (caches)
+    {
         [caches addObject:cache];
     }
 }
@@ -111,13 +111,18 @@
 - (UIImage *)cachedImage:(RMTile)tile withCacheKey:(NSString *)aCacheKey
 {
     UIImage *image = [memoryCache cachedImage:tile withCacheKey:aCacheKey];
-    if (image) return image;
 
-    @synchronized (caches) {
+    if (image)
+        return image;
+
+    @synchronized (caches)
+    {
         for (id <RMTileCache> cache in caches)
         {
             image = [cache cachedImage:tile withCacheKey:aCacheKey];
-            if (image != nil) {
+
+            if (image != nil)
+            {
                 [memoryCache addImage:image forTile:tile withCacheKey:aCacheKey];
                 return image;
             }
@@ -131,12 +136,12 @@
 {
     [memoryCache addImage:image forTile:tile withCacheKey:aCacheKey];
 
-    @synchronized (caches) {
+    @synchronized (caches)
+    {
         for (id <RMTileCache> cache in caches)
         {	
-            if ([cache respondsToSelector:@selector(addImage:forTile:withCacheKey:)]) {
+            if ([cache respondsToSelector:@selector(addImage:forTile:withCacheKey:)])
                 [cache addImage:image forTile:tile withCacheKey:aCacheKey];
-            }
         }
     }
 }
@@ -146,7 +151,8 @@
 	LogMethod();
     [memoryCache didReceiveMemoryWarning];
 
-    @synchronized (caches) {
+    @synchronized (caches)
+    {
         for (id<RMTileCache> cache in caches)
         {
             [cache didReceiveMemoryWarning];
@@ -158,7 +164,8 @@
 {
     [memoryCache removeAllCachedImages];
 
-    @synchronized (caches) {
+    @synchronized (caches)
+    {
         for (id<RMTileCache> cache in caches)
         {
             [cache removeAllCachedImages];

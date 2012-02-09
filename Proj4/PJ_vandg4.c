@@ -1,8 +1,5 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_vandg4.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PJ_LIB__
-#include	"projects.h"
+#include	<projects.h>
 PROJ_HEAD(vandg4, "van der Grinten IV") "\n\tMisc Sph, no inv.";
 #define TOL	1e-10
 #define TWORPI	0.63661977236758134308

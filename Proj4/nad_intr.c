@@ -1,9 +1,6 @@
 /* Determine nad table correction value */
-#ifndef lint
-static const char SCCSID[]="@(#)nad_intr.c	4.2   95/09/23 GIE REL";
-#endif
 #define PJ_LIB__
-#include "projects.h"
+#include <projects.h>
 	LP
 nad_intr(LP t, struct CTABLE *ct) {
 	LP val, frct;

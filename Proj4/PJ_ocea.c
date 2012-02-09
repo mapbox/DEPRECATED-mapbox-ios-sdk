@@ -1,6 +1,3 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_ocea.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PROJ_PARMS__ \
 	double	rok; \
 	double	rtk; \
@@ -9,7 +6,7 @@ static const char SCCSID[]="@(#)PJ_ocea.c	4.1	94/02/15	GIE	REL";
 	double	singam; \
 	double	cosgam;
 #define PJ_LIB__
-#include	"projects.h"
+#include	<projects.h>
 PROJ_HEAD(ocea, "Oblique Cylindrical Equal Area") "\n\tCyl, Sph"
 	"lonc= alpha= or\n\tlat_1= lat_2= lon_1= lon_2=";
 FORWARD(s_forward); /* spheroid */

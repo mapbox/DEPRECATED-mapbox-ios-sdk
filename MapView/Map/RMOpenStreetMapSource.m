@@ -1,7 +1,7 @@
 //
 //  OpenStreetMapsSource.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -46,6 +46,7 @@
 	NSAssert4(((tile.zoom >= self.minZoom) && (tile.zoom <= self.maxZoom)),
 			  @"%@ tried to retrieve tile with zoomLevel %d, outside source's defined range %f to %f", 
 			  self, tile.zoom, self.minZoom, self.maxZoom);
+
 	return [NSURL URLWithString:[NSString stringWithFormat:@"http://tile.openstreetmap.org/%d/%d/%d.png", tile.zoom, tile.x, tile.y]];
 }
 
@@ -69,7 +70,7 @@
 	return @"© OpenStreetMap CC-BY-SA";
 }
 
--(NSString *)longAttribution
+- (NSString *)longAttribution
 {
 	return @"Map data © OpenStreetMap, licensed under Creative Commons Share Alike By Attribution.";
 }

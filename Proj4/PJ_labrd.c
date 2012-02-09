@@ -1,11 +1,8 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_labrd.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PROJ_PARMS__ \
 	double	Az, kRg, p0s, A, C, Ca, Cb, Cc, Cd; \
 	int		rot;
 #define PJ_LIB__
-#include	"projects.h"
+#include	<projects.h>
 PROJ_HEAD(labrd, "Laborde") "\n\tCyl, Sph\n\tSpecial for Madagascar";
 #define EPS	1.e-10
 FORWARD(e_forward);

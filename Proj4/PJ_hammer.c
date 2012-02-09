@@ -1,11 +1,8 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_hammer.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PROJ_PARMS__ \
 	double w; \
 	double m, rm;
 #define PJ_LIB__
-# include	"projects.h"
+# include	<projects.h>
 PROJ_HEAD(hammer, "Hammer & Eckert-Greifendorff")
 	"\n\tMisc Sph, no inv.\n\tW= M=";
 FORWARD(s_forward); /* spheroid */

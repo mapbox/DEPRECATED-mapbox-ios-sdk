@@ -1,8 +1,5 @@
 /* Convert DMS string to radians */
-#ifndef lint
-static const char SCCSID[]="@(#)dmstor.c	4.4	93/06/16	GIE	REL";
-#endif
-#include "projects.h"
+#include <projects.h>
 #include <string.h>
 #include <ctype.h>
 
@@ -27,7 +24,7 @@ dmstor(const char *is, char **rs) {
 	if (rs)
 		*rs = (char *)is;
 	/* copy sting into work space */
-	while (isspace(*is)) ++is;
+	while (isspace(sign = *is)) ++is;
 	for (n = MAX_WORK, s = work, p = (char *)is; isgraph(*p) && --n ; )
 		*s++ = *p++;
 	*s = '\0';

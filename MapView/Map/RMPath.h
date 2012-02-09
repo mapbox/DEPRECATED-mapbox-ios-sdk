@@ -32,8 +32,6 @@
 
 @class RMMapView;
 
-/*! \brief buggy, incomplete, untested; overlays paths/polygons on map
- */
 @interface RMPath : RMMapLayer
 {
     BOOL isFirstPoint;
@@ -48,7 +46,7 @@
     BOOL ignorePathUpdates;
     CGRect previousBounds;
 
-    /// Width of the line, units unknown; pixels maybe?
+    /// Width of the line, in pixels
     float lineWidth;
 
     /*! Drawing mode of the path; Choices are
@@ -69,6 +67,11 @@
     size_t _lineDashCount;
     CGFloat lineDashPhase;
 
+    // Line shadow
+    CGFloat shadowBlur;
+    CGSize shadowOffset;
+    BOOL enableShadow;
+
     BOOL scaleLineWidth;
     BOOL scaleLineDash; // if YES line dashes will be scaled to keep a constant size if the layer is zoomed
 
@@ -86,6 +89,9 @@
 @property (nonatomic, assign) BOOL scaleLineDash;
 @property (nonatomic, assign) float lineWidth;
 @property (nonatomic, assign) BOOL	scaleLineWidth;
+@property (nonatomic, assign) CGFloat shadowBlur;
+@property (nonatomic, assign) CGSize shadowOffset;
+@property (nonatomic, assign) BOOL enableShadow;
 @property (nonatomic, retain) UIColor *lineColor;
 @property (nonatomic, retain) UIColor *fillColor;
 @property (nonatomic, readonly) CGRect pathBoundingBox;

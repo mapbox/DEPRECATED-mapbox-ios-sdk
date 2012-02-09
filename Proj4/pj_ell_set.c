@@ -1,8 +1,5 @@
 /* set ellipsoid parameters a and es */
-#ifndef lint
-static const char SCCSID[]="@(#)pj_ell_set.c	4.5	93/06/12	GIE	REL";
-#endif
-#include "projects.h"
+#include <projects.h>
 #include <string.h>
 #define SIXTH .1666666666666666667 /* 1/6 */
 #define RA4 .04722222222222222222 /* 17/360 */
@@ -24,17 +21,15 @@ pj_ell_set(paralist *pl, double *a, double *es) {
 	else { /* probable elliptical figure */
 
 		/* check if ellps present and temporarily append its values to pl */
-		name = pj_param(pl, "sellps").s;
-		if (name && pl) {
+		if ((name = pj_param(pl, "sellps").s)) {
 			char *s;
 
 			for (start = pl; start && start->next ; start = start->next) ;
 			curr = start;
 			for (i = 0; (s = pj_ellps[i].id) && strcmp(name, s) ; ++i) ;
 			if (!s) { pj_errno = -9; return 1; }
-			curr->next = pj_mkparam(pj_ellps[i].major);
-			curr = curr->next;
-			curr->next = pj_mkparam(pj_ellps[i].ell);
+			curr = curr->next = pj_mkparam(pj_ellps[i].major);
+			curr = curr->next = pj_mkparam(pj_ellps[i].ell);
 		}
 		*a = pj_param(pl, "da").f;
 		if (pj_param(pl, "tes").i) /* eccentricity squared */

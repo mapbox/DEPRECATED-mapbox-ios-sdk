@@ -1,8 +1,5 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_robin.c	4.1 94/02/15     GIE     REL";
-#endif
 #define PJ_LIB__
-#include	"projects.h"
+#include	<projects.h>
 PROJ_HEAD(robin, "Robinson") "\n\tPCyl., Sph.";
 #define V(C,z) (C.c0 + z * (C.c1 + z * (C.c2 + z * C.c3)))
 #define DV(C,z) (C.c1 + z * (C.c2 + C.c2 + z * 3. * C.c3))

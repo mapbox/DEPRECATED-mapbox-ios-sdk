@@ -1,8 +1,5 @@
 /* print projection's list of parameters */
-#ifndef lint
-static const char SCCSID[]="@(#)pj_pr_list.c	4.6   94/03/19 GIE REL";
-#endif
-#include "projects.h"
+#include <projects.h>
 #include <stdio.h>
 #include <string.h>
 #define LINE_LEN 72

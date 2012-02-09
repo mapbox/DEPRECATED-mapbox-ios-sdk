@@ -29,7 +29,8 @@
 #import "RMTile.h"
 #import "RMTileCache.h"
 
-@interface RMMemoryCache : NSObject <RMTileCache> {
+@interface RMMemoryCache : NSObject <RMTileCache>
+{
 	NSMutableDictionary *cache;
 	NSUInteger capacity;
 }

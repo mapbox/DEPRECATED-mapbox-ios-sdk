@@ -27,9 +27,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface RMConfiguration : NSObject {
-	id propertyList;
-}
+@interface RMConfiguration : NSObject
 
 + (RMConfiguration *)configuration;
 

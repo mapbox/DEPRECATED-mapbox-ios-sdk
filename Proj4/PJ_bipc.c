@@ -1,10 +1,7 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_bipc.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PROJ_PARMS__ \
 	int	noskew;
 #define PJ_LIB__
-# include	"projects.h"
+# include	<projects.h>
 PROJ_HEAD(bipc, "Bipolar conic of western hemisphere")
 	"\n\tConic Sph.";
 # define EPS	1e-10

@@ -1,7 +1,4 @@
 /* generates 'T' option output */
-#ifndef lint
-static const char SCCSID[]="@(#)gen_cheb.c	4.9	95/09/23	GIE	REL";
-#endif
 #define PJ_LIB__
 #include "projects.h"
 #include <stdio.h>
@@ -15,7 +12,7 @@ static const char SCCSID[]="@(#)gen_cheb.c	4.9	95/09/23	GIE	REL";
 gen_cheb(int inverse, projUV (*proj)(projUV), char *s, PJ *P, int iargc, char **iargv) {
 	int NU = 15, NV = 15, i, res = -1, errin = 0, pwr;
 	char *arg, fmt[15];
-	projUV low={.u=0,.v=0}, upp={.u=0,.v=0}, resid={.u=0,.v=0};
+	projUV low, upp, resid;
 	Tseries *F;
 	extern void p_series(Tseries *, FILE *, char *);
 	double (*input)(const char *, char **);
@@ -36,11 +33,11 @@ gen_cheb(int inverse, projUV (*proj)(projUV), char *s, PJ *P, int iargc, char **
 	if (iargc > 0) { /* proj execution audit trail */
 		int n = 0, L;
 
-		while (--iargc) {
+		for( i = 0 ; iargc ; --iargc) {
 			arg = *iargv++;
 			if (*arg != '+') {
 				if (!n) { putchar('#'); ++n; }
-				L = printf(" %s",arg);
+				(void)printf(" %s%n",arg, &L);
 				if ((n += L) > 50) { putchar('\n'); n = 0; }
 			}
 		}

@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		160E11F614E00054000E5EFB /* PJ_gstmerc.c in Sources */ = {isa = PBXBuildFile; fileRef = 160E11F314E00054000E5EFB /* PJ_gstmerc.c */; };
+		160E11F714E00054000E5EFB /* pj_initcache.c in Sources */ = {isa = PBXBuildFile; fileRef = 160E11F414E00054000E5EFB /* pj_initcache.c */; };
+		160E11F814E00054000E5EFB /* pj_mutex.c in Sources */ = {isa = PBXBuildFile; fileRef = 160E11F514E00054000E5EFB /* pj_mutex.c */; };
 		B87055FA0E67C32200CC2ED1 /* aasincos.c in Sources */ = {isa = PBXBuildFile; fileRef = B87055580E67C32200CC2ED1 /* aasincos.c */; };
 		B87055FB0E67C32200CC2ED1 /* adjlon.c in Sources */ = {isa = PBXBuildFile; fileRef = B87055590E67C32200CC2ED1 /* adjlon.c */; };
 		B87055FC0E67C32200CC2ED1 /* bch2bps.c in Sources */ = {isa = PBXBuildFile; fileRef = B870555A0E67C32200CC2ED1 /* bch2bps.c */; };
@@ -165,6 +168,9 @@
 		0867D69BFE84028FC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		160E11F314E00054000E5EFB /* PJ_gstmerc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PJ_gstmerc.c; sourceTree = "<group>"; };
+		160E11F414E00054000E5EFB /* pj_initcache.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pj_initcache.c; sourceTree = "<group>"; };
+		160E11F514E00054000E5EFB /* pj_mutex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pj_mutex.c; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* Proj4_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Proj4_Prefix.pch; sourceTree = "<group>"; };
 		B87055580E67C32200CC2ED1 /* aasincos.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = aasincos.c; sourceTree = "<group>"; };
 		B87055590E67C32200CC2ED1 /* adjlon.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = adjlon.c; sourceTree = "<group>"; };
@@ -404,6 +410,7 @@
 				B87055730E67C32200CC2ED1 /* nad_list.h */,
 				B87055740E67C32200CC2ED1 /* org_proj4_Projections.h */,
 				B87055750E67C32200CC2ED1 /* p_series.c */,
+				160E11F414E00054000E5EFB /* pj_initcache.c */,
 				B87055760E67C32200CC2ED1 /* PJ_aea.c */,
 				B87055770E67C32200CC2ED1 /* PJ_aeqd.c */,
 				B87055780E67C32200CC2ED1 /* PJ_airy.c */,
@@ -449,6 +456,7 @@
 				B87055A00E67C32200CC2ED1 /* PJ_goode.c */,
 				B87055A10E67C32200CC2ED1 /* pj_gridinfo.c */,
 				B87055A20E67C32200CC2ED1 /* pj_gridlist.c */,
+				160E11F314E00054000E5EFB /* PJ_gstmerc.c */,
 				B87055A30E67C32200CC2ED1 /* PJ_hammer.c */,
 				B87055A40E67C32200CC2ED1 /* PJ_hatano.c */,
 				B87055A50E67C32200CC2ED1 /* PJ_imw_p.c */,
@@ -477,6 +485,7 @@
 				B87055BC0E67C32200CC2ED1 /* PJ_mod_ster.c */,
 				B87055BD0E67C32200CC2ED1 /* PJ_moll.c */,
 				B87055BE0E67C32200CC2ED1 /* pj_msfn.c */,
+				160E11F514E00054000E5EFB /* pj_mutex.c */,
 				B87055BF0E67C32200CC2ED1 /* PJ_nell.c */,
 				B87055C00E67C32200CC2ED1 /* PJ_nell_h.c */,
 				B87055C10E67C32200CC2ED1 /* PJ_nocol.c */,
@@ -781,6 +790,9 @@
 				B87056970E67C32200CC2ED1 /* vector1.c in Sources */,
 				B87056980E67C39700CC2ED1 /* nad_intr.c in Sources */,
 				B87056990E67C39800CC2ED1 /* nad_init.c in Sources */,
+				160E11F614E00054000E5EFB /* PJ_gstmerc.c in Sources */,
+				160E11F714E00054000E5EFB /* pj_initcache.c in Sources */,
+				160E11F814E00054000E5EFB /* pj_mutex.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -836,6 +848,7 @@
 				GCC_STRICT_ALIASING = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				SDKROOT = iphoneos;
@@ -860,6 +873,7 @@
 				GCC_STRICT_ALIASING = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				SDKROOT = iphoneos;

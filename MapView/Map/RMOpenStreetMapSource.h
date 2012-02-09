@@ -1,7 +1,7 @@
 //
 //  OpenStreetMapsSource.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,7 @@
  
  Provides key-based access to tiles from the Open Street Map project. 
  */
-@interface RMOpenStreetMapSource : RMAbstractWebMapSource {
-}
+
+@interface RMOpenStreetMapSource : RMAbstractWebMapSource
 
 @end

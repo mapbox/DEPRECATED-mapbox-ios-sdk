@@ -1,10 +1,7 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_wink2.c	4.1 94/02/15     GIE     REL";
-#endif
 #define PROJ_PARMS__ \
 	double	cosphi1;
 #define PJ_LIB__
-# include	"projects.h"
+# include	<projects.h>
 PROJ_HEAD(wink2, "Winkel II") "\n\tPCyl., Sph., no inv.\n\tlat_1=";
 #define MAX_ITER    10
 #define LOOP_TOL    1e-7

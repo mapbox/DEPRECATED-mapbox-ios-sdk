@@ -30,14 +30,19 @@
 static RMConfiguration *RMConfigurationSharedInstance = nil;
 
 @implementation RMConfiguration
+{
+	id propertyList;
+}
 
 + (RMConfiguration *)configuration
 {
-	@synchronized (RMConfigurationSharedInstance) {
+	@synchronized (RMConfigurationSharedInstance)
+    {
 		if (RMConfigurationSharedInstance != nil)
             return RMConfigurationSharedInstance;
 
 		RMConfigurationSharedInstance = [[RMConfiguration alloc] initWithPath:[[NSBundle mainBundle] pathForResource:@"routeme" ofType:@"plist"]];
+
 		return RMConfigurationSharedInstance;
 	}
 
@@ -53,12 +58,14 @@ static RMConfiguration *RMConfigurationSharedInstance = nil;
 	NSString *error;
 	NSPropertyListFormat format;
 
-	if (path == nil) {
+	if (path == nil)
+    {
 		propertyList = nil;
 		return self;
 	}
 
 	RMLog(@"reading configuration from %@", path);
+
 	plistData = [NSData dataWithContentsOfFile:path];
 
 	propertyList = [[NSPropertyListSerialization propertyListFromData:plistData
@@ -66,7 +73,8 @@ static RMConfiguration *RMConfigurationSharedInstance = nil;
                                                            format:&format
                                                  errorDescription:&error] retain];
 
-	if (!propertyList) {
+	if (!propertyList)
+    {
 		RMLog(@"problem reading from %@: %@", path, error);
 		[error release];
 	}

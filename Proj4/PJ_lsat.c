@@ -1,12 +1,9 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_lsat.c	4.1	94/02/15	GIE	REL";
-#endif
 /* based upon Snyder and Linck, USGS-NMD */
 #define PROJ_PARMS__ \
     double a2, a4, b, c1, c3; \
     double q, t, u, w, p22, sa, ca, xj, rlm, rlm2;
 #define PJ_LIB__
-#include	"projects.h"
+#include	<projects.h>
 PROJ_HEAD(lsat, "Space oblique for LANDSAT")
 	"\n\tCyl, Sph&Ell\n\tlsat= path=";
 #define TOL 1e-7

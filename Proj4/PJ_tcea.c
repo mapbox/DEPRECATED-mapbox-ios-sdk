@@ -1,10 +1,7 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_tcea.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PROJ_PARMS__ \
 	double rk0;
 #define PJ_LIB__
-#include	"projects.h"
+#include	<projects.h>
 PROJ_HEAD(tcea, "Transverse Cylindrical Equal Area") "\n\tCyl, Sph";
 FORWARD(s_forward); /* spheroid */
 	xy.x = P->rk0 * cos(lp.phi) * sin(lp.lam);

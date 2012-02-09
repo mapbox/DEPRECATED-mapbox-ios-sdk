@@ -33,7 +33,7 @@
 //
 //  http://mbtiles.org
 //
-//  Example usage at https://github.com/mapbox/mbtiles-ios-example
+//  See samples/MBTilesDemo for example usage
 //
 
 #import <Foundation/Foundation.h>

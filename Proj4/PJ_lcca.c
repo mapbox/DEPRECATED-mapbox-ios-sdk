@@ -1,9 +1,5 @@
-static const char RCS_ID[] = "$Id: PJ_lcca.c,v 1.1 2003/03/04 02:59:41 warmerda Exp $";
-/* PROJ.4 Cartographic Projection System -- Revision Log:
-**$Log: PJ_lcca.c,v $
-**Revision 1.1  2003/03/04 02:59:41  warmerda
-**New
-**
+static const char RCS_ID[] = "$Id: PJ_lcca.c 1504 2009-01-06 02:11:57Z warmerdam $";
+/* PROJ.4 Cartographic Projection System 
 */
 #define MAX_ITER 10
 #define DEL_TOL 1e-12
@@ -12,7 +8,7 @@ static const char RCS_ID[] = "$Id: PJ_lcca.c,v 1.1 2003/03/04 02:59:41 warmerda 
 	double	r0, l, M0; \
 	double	C;
 #define PJ_LIB__
-#include	"projects.h"
+#include	<projects.h>
 
 PROJ_HEAD(lcca, "Lambert Conformal Conic Alternative")
 	"\n\tConic, Sph&Ell\n\tlat_0=";

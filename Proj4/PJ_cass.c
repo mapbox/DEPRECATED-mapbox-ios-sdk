@@ -1,6 +1,3 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_cass.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PROJ_PARMS__ \
 	double m0; \
 	double n; \
@@ -14,7 +11,7 @@ static const char SCCSID[]="@(#)PJ_cass.c	4.1	94/02/15	GIE	REL";
 	double tn; \
 	double *en;
 #define PJ_LIB__
-# include	"projects.h"
+# include	<projects.h>
 PROJ_HEAD(cass, "Cassini") "\n\tCyl, Sph&Ell";
 # define EPS10	1e-10
 # define C1	.16666666666666666666

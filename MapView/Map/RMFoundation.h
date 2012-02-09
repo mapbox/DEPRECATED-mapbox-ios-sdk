@@ -80,4 +80,6 @@ RMProjectedSize  RMProjectedSizeMake(double width, double heigth);
 
 RMProjectedRect RMProjectedRectZero();
 
+double RMEuclideanDistanceBetweenProjectedPoints(RMProjectedPoint point1, RMProjectedPoint point2);
+
 #endif

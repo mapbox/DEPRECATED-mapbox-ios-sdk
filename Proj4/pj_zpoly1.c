@@ -1,8 +1,5 @@
 /* evaluate complex polynomial */
-#ifndef lint
-static const char SCCSID[]="@(#)pj_zpoly1.c	4.3	93/06/12	GIE	REL";
-#endif
-#include "projects.h"
+#include <projects.h>
 /* note: coefficients are always from C_1 to C_n
 **	i.e. C_0 == (0., 0)
 **	n should always be >= 1 though no checks are made
@@ -28,10 +25,11 @@ pj_zpolyd1(COMPLEX z, COMPLEX *C, int n, COMPLEX *der) {
 	double t;
 	int first = 1;
 
-	b = a = *(C += n);
+	a = *(C += n);
 	while (n-- > 0) {
 		if (first) {
 			first = 0;
+			b = a;
 		} else {
 			b.r = a.r + z.r * (t = b.r) - z.i * b.i;
 			b.i = a.i + z.r * b.i + z.i * t;

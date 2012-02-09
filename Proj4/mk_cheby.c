@@ -1,7 +1,4 @@
-#ifndef lint
-static const char SCCSID[]="@(#)mk_cheby.c	4.5	94/03/22	GIE	REL";
-#endif
-#include "projects.h"
+#include <projects.h>
 	static void /* sum coefficients less than res */
 eval(projUV **w, int nu, int nv, double res, projUV *resid) {
 	int i, j;
@@ -19,19 +16,19 @@ eval(projUV **w, int nu, int nv, double res, projUV *resid) {
 }
 	static Tseries * /* create power series structure */
 makeT(int nru, int nrv) {
-	Tseries *Ts;
+	Tseries *T;
 	int i;
 
-	if ((Ts = (Tseries *)pj_malloc(sizeof(Tseries))) &&
-		(Ts->cu = (struct PW_COEF *)pj_malloc(
+	if ((T = (Tseries *)pj_malloc(sizeof(Tseries))) &&
+		(T->cu = (struct PW_COEF *)pj_malloc(
 			sizeof(struct PW_COEF) * nru)) &&
-		(Ts->cv = (struct PW_COEF *)pj_malloc(
+		(T->cv = (struct PW_COEF *)pj_malloc(
 			sizeof(struct PW_COEF) * nrv))) {
 		for (i = 0; i < nru; ++i)
-			Ts->cu[i].c = 0;
+			T->cu[i].c = 0;
 		for (i = 0; i < nrv; ++i)
-			Ts->cv[i].c = 0;
-		return Ts;
+			T->cv[i].c = 0;
+		return T;
 	} else
 		return 0;
 }
@@ -39,7 +36,7 @@ makeT(int nru, int nrv) {
 mk_cheby(projUV a, projUV b, double res, projUV *resid, projUV (*func)(projUV), 
 	int nu, int nv, int power) {
 	int j, i, nru, nrv, *ncu, *ncv;
-	Tseries *Ts = 0;
+	Tseries *T;
 	projUV **w;
 	double cutres;
 
@@ -49,7 +46,7 @@ mk_cheby(projUV a, projUV b, double res, projUV *resid, projUV (*func)(projUV),
 	ncv = ncu + nu;
 	if (!bchgen(a, b, nu, nv, w, func)) {
 		projUV *s;
-		double *p;
+		double ab, *p;
 
 		/* analyse coefficients and adjust until residual OK */
 		cutres = res;
@@ -66,11 +63,11 @@ mk_cheby(projUV a, projUV b, double res, projUV *resid, projUV (*func)(projUV),
 		for (j = 0; j < nu; ++j) {
 			ncu[j] = ncv[j] = 0; /* clear column maxes */
 			for (s = w[j], i = 0; i < nv; ++i, ++s) {
-				if (fabs(s->u) < cutres) /* < resolution ? */
+				if ((ab = fabs(s->u)) < cutres) /* < resolution ? */
 					s->u = 0.;		/* clear coefficient */
 				else
 					ncu[j] = i + 1;	/* update column max */
-				if (fabs(s->v) < cutres) /* same for v coef's */
+				if ((ab = fabs(s->v)) < cutres) /* same for v coef's */
 					s->v = 0.;
 				else
 					ncv[j] = i + 1;
@@ -94,54 +91,49 @@ mk_cheby(projUV a, projUV b, double res, projUV *resid, projUV (*func)(projUV),
 				if (ncu[j]) nru = j + 1;	/* update row max */
 				if (ncv[j]) nrv = j + 1;
 			}
-			Ts = makeT(nru, nrv);
-			if (Ts) {
-				Ts->a = a;
-				Ts->b = b;
-				Ts->mu = nru - 1;
-				Ts->mv = nrv - 1;
-				Ts->power = 1;
+			if ((T = makeT(nru, nrv))) {
+				T->a = a;
+				T->b = b;
+				T->mu = nru - 1;
+				T->mv = nrv - 1;
+				T->power = 1;
 				for (i = 0; i < nru; ++i) /* store coefficient rows for u */
-					Ts->cu[i].m = ncu[i];
-					if (Ts->cu[i].m)
-						if ((p = Ts->cu[i].c =
+					if ((T->cu[i].m = ncu[i]))
+						if ((p = T->cu[i].c =
 								(double *)pj_malloc(sizeof(double) * ncu[i])))
 							for (j = 0; j < ncu[i]; ++j)
 								*p++ = (w[i] + j)->u;
 						else
 							goto error;
 				for (i = 0; i < nrv; ++i) /* same for v */
-					Ts->cv[i].m = ncv[i];
-					if (Ts->cv[i].m)
-						if ((p = Ts->cv[i].c =
+					if ((T->cv[i].m = ncv[i]))
+						if ((p = T->cv[i].c =
 								(double *)pj_malloc(sizeof(double) * ncv[i])))
 							for (j = 0; j < ncv[i]; ++j)
 								*p++ = (w[i] + j)->v;
 						else
 							goto error;
 			}
-		} else if ((Ts = makeT(nru, nrv))) {
+		} else if ((T = makeT(nru, nrv))) {
 			/* else make returned Chebyshev coefficient structure */
-			Ts->mu = nru - 1; /* save row degree */
-			Ts->mv = nrv - 1;
-			Ts->a.u = a.u + b.u; /* set argument scaling */
-			Ts->a.v = a.v + b.v;
-			Ts->b.u = 1. / (b.u - a.u);
-			Ts->b.v = 1. / (b.v - a.v);
-			Ts->power = 0;
+			T->mu = nru - 1; /* save row degree */
+			T->mv = nrv - 1;
+			T->a.u = a.u + b.u; /* set argument scaling */
+			T->a.v = a.v + b.v;
+			T->b.u = 1. / (b.u - a.u);
+			T->b.v = 1. / (b.v - a.v);
+			T->power = 0;
 			for (i = 0; i < nru; ++i) /* store coefficient rows for u */
-				Ts->cu[i].m = ncu[i];
-				if (Ts->cu[i].m)
-					if ((p = Ts->cu[i].c =
+				if ((T->cu[i].m = ncu[i])) 
+					if ((p = T->cu[i].c =
 							(double *)pj_malloc(sizeof(double) * ncu[i])))
 						for (j = 0; j < ncu[i]; ++j)
 							*p++ = (w[i] + j)->u;
 					else
 						goto error;
 			for (i = 0; i < nrv; ++i) /* same for v */
-				Ts->cv[i].m = ncv[i];
-				if (Ts->cv[i].m)
-					if ((p = Ts->cv[i].c =
+				if ((T->cv[i].m = ncv[i]))
+					if ((p = T->cv[i].c =
 							(double *)pj_malloc(sizeof(double) * ncv[i])))
 						for (j = 0; j < ncv[i]; ++j)
 							*p++ = (w[i] + j)->v;
@@ -152,18 +144,18 @@ mk_cheby(projUV a, projUV b, double res, projUV *resid, projUV (*func)(projUV),
 	}
 	goto gohome;
 error:
-	if (Ts) { /* pj_dalloc up possible allocations */
-		for (i = 0; i <= Ts->mu; ++i)
-			if (Ts->cu[i].c)
-				pj_dalloc(Ts->cu[i].c);
-		for (i = 0; i <= Ts->mv; ++i)
-			if (Ts->cv[i].c)
-				pj_dalloc(Ts->cv[i].c);
-		pj_dalloc(Ts);
+	if (T) { /* pj_dalloc up possible allocations */
+		for (i = 0; i <= T->mu; ++i)
+			if (T->cu[i].c)
+				pj_dalloc(T->cu[i].c);
+		for (i = 0; i <= T->mv; ++i)
+			if (T->cv[i].c)
+				pj_dalloc(T->cv[i].c);
+		pj_dalloc(T);
 	}
-	Ts = 0;
+	T = 0;
 gohome:
 	freev2((void **) w, nu);
 	pj_dalloc(ncu);
-	return Ts;
+	return T;
 }

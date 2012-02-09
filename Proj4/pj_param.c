@@ -1,16 +1,12 @@
 /* put parameters in linked list and retrieve */
-#ifndef lint
-static const char SCCSID[]="@(#)pj_param.c	4.4	93/06/12	GIE	REL";
-#endif
-#include "projects.h"
+#include <projects.h>
 #include <stdio.h>
 #include <string.h>
 	paralist * /* create parameter list entry */
 pj_mkparam(char *str) {
 	paralist *newitem;
 
-	newitem = (paralist *)pj_malloc(sizeof(paralist) + strlen(str));
-	if (newitem) {
+	if ((newitem = (paralist *)pj_malloc(sizeof(paralist) + strlen(str)))) {
 		newitem->used = 0;
 		newitem->next = 0;
 		if (*str == '+')

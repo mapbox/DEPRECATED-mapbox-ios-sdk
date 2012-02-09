@@ -65,12 +65,12 @@
 }
 
 /// return nil for certain animation keys to block core animation
-- (id <CAAction>)actionForKey:(NSString *)key
-{
-    if ([key isEqualToString:@"position"] || [key isEqualToString:@"bounds"])
-        return nil;
-    else
-        return [super actionForKey:key];
-}
+//- (id <CAAction>)actionForKey:(NSString *)key
+//{
+//    if ([key isEqualToString:@"position"] || [key isEqualToString:@"bounds"])
+//        return nil;
+//    else
+//        return [super actionForKey:key];
+//}
 
 @end
