@@ -41,7 +41,6 @@
 
 	UIImage *redMarkerImage = [UIImage imageNamed:@"marker-red.png"];
 	UIImage *blueMarkerImage = [UIImage imageNamed:@"marker-blue.png"];
-	UIImage *xMarkerImage = [UIImage imageNamed:@"marker-X.png"];
 
 	markerPosition.latitude = center.latitude - ((kNumberRows - 1)/2.0 * kSpacing);
 	int i, j;
@@ -51,23 +50,25 @@
 		for (j = 0; j < kNumberColumns; j++)
         {
 			markerPosition.longitude += kSpacing;
+
 			NSLog(@"Add marker @ {%f,%f}", markerPosition.longitude, markerPosition.latitude);
 
             RMAnnotation *annotation = [RMAnnotation annotationWithMapView:mapView coordinate:markerPosition andTitle:[NSString stringWithFormat:@"%4.1f", markerPosition.longitude]];
-            if ((markerPosition.longitude < -180) ||(markerPosition.longitude > 0)) {
+
+            if ((markerPosition.longitude < -180) || (markerPosition.longitude > 0))
+            {
                 annotation.annotationIcon = redMarkerImage;
                 annotation.anchorPoint = CGPointMake(0.5, 1.0);
-            } else {
+            }
+            else
+            {
                 annotation.annotationIcon = blueMarkerImage;
                 annotation.anchorPoint = CGPointMake(0.5, 1.0);
             }
-            [mapView addAnnotation:annotation];
-
-            annotation = [RMAnnotation annotationWithMapView:mapView coordinate:markerPosition andTitle:nil];
-            annotation.annotationIcon = xMarkerImage;
-            annotation.anchorPoint = CGPointMake(0.5, 0.5);
+ 
             [mapView addAnnotation:annotation];
 		}
+
 		markerPosition.latitude += kSpacing;
 	}
 }
@@ -76,8 +77,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+
     [mapView setDelegate:self];
 	mapView.tileSource = [[[RMOpenStreetMapSource alloc] init] autorelease];
+    mapView.enableClustering = YES;
 
 	center.latitude = 47.5635;
 	center.longitude = 10.20981;
@@ -135,15 +138,25 @@
 	[self updateInfo];
 }
 
+- (void)tapOnAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map
+{
+    if ([annotation.annotationType isEqualToString:kRMClusterAnnotationTypeName])
+    {
+        [map zoomInToNextNativeZoomAt:[map coordinateToPixel:annotation.coordinate] animated:YES];
+    }
+}
+
 - (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
 {
     RMMarker *marker = nil;
-    if ([annotation.annotationType isEqualToString:kRMClusterAnnotationTypeName]) {
+    if ([annotation.annotationType isEqualToString:kRMClusterAnnotationTypeName])
+    {
         marker = [[[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"marker-blue.png"] anchorPoint:annotation.anchorPoint] autorelease];
         if (annotation.title)
             [marker changeLabelUsingText:annotation.title];
-
-    } else {
+    }
+    else
+    {
         marker = [[[RMMarker alloc] initWithUIImage:annotation.annotationIcon anchorPoint:annotation.anchorPoint] autorelease];
         if (annotation.title)
             [marker changeLabelUsingText:annotation.title];
