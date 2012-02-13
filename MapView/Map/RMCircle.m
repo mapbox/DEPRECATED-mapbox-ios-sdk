@@ -150,4 +150,11 @@
     [self updateCirclePath];
 }
 
+- (void)setPosition:(CGPoint)position
+{
+    [super setPosition:position];
+
+    [self updateCirclePath];
+}
+
 @end
