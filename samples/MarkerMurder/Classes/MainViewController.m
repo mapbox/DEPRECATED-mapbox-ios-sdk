@@ -11,6 +11,7 @@
 #import "RMOpenStreetMapSource.h"
 #import "RMMapView.h"
 #import "RMMarker.h"
+#import "RMCircle.h"
 #import "RMProjection.h"
 #import "RMAnnotation.h"
 #import "RMQuadTree.h"
@@ -22,6 +23,7 @@
 
 @synthesize mapView;
 @synthesize infoTextView;
+@synthesize mppLabel;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -36,6 +38,8 @@
 #define kNumberRows 1
 #define kNumberColumns 9
 #define kSpacing 0.1
+
+#define kCircleAnnotationType @"circleAnnotation"
 
 	CLLocationCoordinate2D markerPosition;
 
@@ -71,6 +75,10 @@
 
 		markerPosition.latitude += kSpacing;
 	}
+
+    RMAnnotation *circleAnnotation = [RMAnnotation annotationWithMapView:mapView coordinate:CLLocationCoordinate2DMake(47.4, 10.0) andTitle:@"A Circle"];
+    circleAnnotation.annotationType = kCircleAnnotationType;
+    [mapView addAnnotation:circleAnnotation];
 }
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
@@ -106,10 +114,17 @@
     [self updateInfo];
 }
 
+- (void)viewDidUnload
+{
+    [self setMppLabel:nil];
+    [super viewDidUnload];
+}
+
 - (void)dealloc
 {
     self.infoTextView = nil; 
     self.mapView = nil; 
+    self.mppLabel = nil;
     [super dealloc];
 }
 
@@ -123,6 +138,8 @@
                            mapView.zoom,
 						   [[mapView tileSource] shortAttribution]
 						   ]];
+
+    [mppLabel setText:[NSString stringWithFormat:@"%.0f m", self.mapView.metersPerPixel * 55.0]];
 }
 
 #pragma mark -
@@ -141,25 +158,29 @@
 - (void)tapOnAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map
 {
     if ([annotation.annotationType isEqualToString:kRMClusterAnnotationTypeName])
-    {
         [map zoomInToNextNativeZoomAt:[map coordinateToPixel:annotation.coordinate] animated:YES];
-    }
 }
 
-- (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
+- (RMMapLayer *)mapView:(RMMapView *)aMapView layerForAnnotation:(RMAnnotation *)annotation
 {
-    RMMarker *marker = nil;
+    RMMapLayer *marker = nil;
+
     if ([annotation.annotationType isEqualToString:kRMClusterAnnotationTypeName])
     {
         marker = [[[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"marker-blue.png"] anchorPoint:annotation.anchorPoint] autorelease];
         if (annotation.title)
-            [marker changeLabelUsingText:annotation.title];
+            [(RMMarker *)marker changeLabelUsingText:annotation.title];
+    }
+    else if ([annotation.annotationType isEqualToString:kCircleAnnotationType])
+    {
+        marker = [[[RMCircle alloc] initWithView:aMapView radiusInMeters:10000.0] autorelease];
+        [(RMCircle *)marker setLineWidthInPixels:5.0];
     }
     else
     {
         marker = [[[RMMarker alloc] initWithUIImage:annotation.annotationIcon anchorPoint:annotation.anchorPoint] autorelease];
         if (annotation.title)
-            [marker changeLabelUsingText:annotation.title];
+            [(RMMarker *)marker changeLabelUsingText:annotation.title];
     }
 
     return marker;
