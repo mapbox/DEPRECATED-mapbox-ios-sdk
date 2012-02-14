@@ -27,8 +27,10 @@ typedef enum {
     RMQuadTreeNode *parentNode, *northWest, *northEast, *southWest, *southEast;
     RMQuadTreeNodeType nodeType;
     RMMapView *mapView;
+
     RMAnnotation *cachedClusterAnnotation;
     NSArray *cachedClusterEnclosedAnnotations;
+    NSMutableArray *cachedEnclosedAnnotations, *cachedUnclusteredAnnotations;
 }
 
 @property (nonatomic, readonly) NSArray *annotations;
@@ -68,6 +70,7 @@ typedef enum {
 - (id)initWithMapView:(RMMapView *)aMapView;
 
 - (void)addAnnotation:(RMAnnotation *)annotation;
+- (void)addAnnotations:(NSArray *)annotations;
 - (void)removeAnnotation:(RMAnnotation *)annotation;
 
 - (void)removeAllObjects;

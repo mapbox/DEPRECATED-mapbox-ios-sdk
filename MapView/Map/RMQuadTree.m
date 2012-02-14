@@ -29,6 +29,8 @@
 
 - (void)removeUpwardsAllCachedClusterAnnotations;
 
+- (void)precreateQuadTreeInBounds:(RMProjectedRect)quadTreeBounds withDepth:(NSUInteger)quadTreeDepth;
+
 @end
 
 @implementation RMQuadTreeNode
@@ -51,6 +53,7 @@
     boundingBox = aBoundingBox;
     cachedClusterAnnotation = nil;
     cachedClusterEnclosedAnnotations = nil;
+    cachedEnclosedAnnotations = cachedUnclusteredAnnotations = nil;
 
     double halfWidth = boundingBox.size.width / 2.0, halfHeight = boundingBox.size.height / 2.0;
     northWestBoundingBox = RMProjectedRectMake(boundingBox.origin.x, boundingBox.origin.y + halfHeight, halfWidth, halfHeight);
@@ -82,6 +85,8 @@
     }
 
     [annotations release]; annotations = nil;
+    [cachedEnclosedAnnotations release]; cachedEnclosedAnnotations = nil;
+    [cachedUnclusteredAnnotations release]; cachedUnclusteredAnnotations = nil;
 
     [northWest release]; northWest = nil;
     [northEast release]; northEast = nil;
@@ -146,6 +151,70 @@
         annotation.quadTreeNode = self;
         [self removeUpwardsAllCachedClusterAnnotations];
     }
+}
+
+- (void)precreateQuadTreeInBounds:(RMProjectedRect)quadTreeBounds withDepth:(NSUInteger)quadTreeDepth
+{
+    if (quadTreeDepth == 0 || boundingBox.size.width < (kMinimumQuadTreeElementWidth * 2.0))
+        return;
+
+//    RMLog(@"node in {%.0f,%.0f},{%.0f,%.0f} depth %d", boundingBox.origin.x, boundingBox.origin.y, boundingBox.size.width, boundingBox.size.height, quadTreeDepth);
+
+    @synchronized (cachedClusterAnnotation)
+    {
+        [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
+        [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+    }
+
+    if (RMProjectedRectIntersectsProjectedRect(quadTreeBounds, northWestBoundingBox))
+    {
+        if (!northWest)
+            northWest = [[RMQuadTreeNode alloc] initWithMapView:mapView forParent:self inBoundingBox:northWestBoundingBox];
+
+        [northWest precreateQuadTreeInBounds:quadTreeBounds withDepth:quadTreeDepth-1];
+    }
+
+    if (RMProjectedRectIntersectsProjectedRect(quadTreeBounds, northEastBoundingBox))
+    {
+        if (!northEast)
+            northEast = [[RMQuadTreeNode alloc] initWithMapView:mapView forParent:self inBoundingBox:northEastBoundingBox];
+
+        [northEast precreateQuadTreeInBounds:quadTreeBounds withDepth:quadTreeDepth-1];
+    }
+
+    if (RMProjectedRectIntersectsProjectedRect(quadTreeBounds, southWestBoundingBox))
+    {
+        if (!southWest)
+            southWest = [[RMQuadTreeNode alloc] initWithMapView:mapView forParent:self inBoundingBox:southWestBoundingBox];
+
+        [southWest precreateQuadTreeInBounds:quadTreeBounds withDepth:quadTreeDepth-1];
+    }
+
+    if (RMProjectedRectIntersectsProjectedRect(quadTreeBounds, southEastBoundingBox))
+    {
+        if (!southEast)
+            southEast = [[RMQuadTreeNode alloc] initWithMapView:mapView forParent:self inBoundingBox:southEastBoundingBox];
+
+        [southEast precreateQuadTreeInBounds:quadTreeBounds withDepth:quadTreeDepth-1];
+    }
+
+    if (nodeType == nodeTypeLeaf && [annotations count])
+    {
+        NSArray *immutableAnnotations = nil;
+
+        @synchronized (annotations)
+        {
+            immutableAnnotations = [NSArray arrayWithArray:annotations];
+            [annotations removeAllObjects];
+        }
+
+        for (RMAnnotation *annotationToMove in immutableAnnotations)
+        {
+            [self addAnnotationToChildNodes:annotationToMove];
+        }
+    }
+
+    nodeType = nodeTypeNode;
 }
 
 - (void)addAnnotation:(RMAnnotation *)annotation
@@ -229,45 +298,45 @@
 
 - (NSUInteger)countEnclosedAnnotations
 {
-    NSUInteger count = [annotations count];
-    count += [northWest countEnclosedAnnotations];
-    count += [northEast countEnclosedAnnotations];
-    count += [southWest countEnclosedAnnotations];
-    count += [southEast countEnclosedAnnotations];
-
-    return count;
+    return [self.enclosedAnnotations count];
 }
 
 - (NSArray *)enclosedAnnotations
 {
-    NSMutableArray *enclosedAnnotations = [NSMutableArray arrayWithArray:self.annotations];
-    if (northWest) [enclosedAnnotations addObjectsFromArray:northWest.enclosedAnnotations];
-    if (northEast) [enclosedAnnotations addObjectsFromArray:northEast.enclosedAnnotations];
-    if (southWest) [enclosedAnnotations addObjectsFromArray:southWest.enclosedAnnotations];
-    if (southEast) [enclosedAnnotations addObjectsFromArray:southEast.enclosedAnnotations];
+    if (!cachedEnclosedAnnotations)
+    {
+        cachedEnclosedAnnotations = [[NSMutableArray alloc] initWithArray:self.annotations];
+        if (northWest) [cachedEnclosedAnnotations addObjectsFromArray:northWest.enclosedAnnotations];
+        if (northEast) [cachedEnclosedAnnotations addObjectsFromArray:northEast.enclosedAnnotations];
+        if (southWest) [cachedEnclosedAnnotations addObjectsFromArray:southWest.enclosedAnnotations];
+        if (southEast) [cachedEnclosedAnnotations addObjectsFromArray:southEast.enclosedAnnotations];
+    }
 
-    return enclosedAnnotations;
+    return cachedEnclosedAnnotations;
 }
 
 - (NSArray *)unclusteredAnnotations
 {
-    NSMutableArray *unclusteredAnnotations = [NSMutableArray array];
-
-    @synchronized (annotations)
+    if (!cachedUnclusteredAnnotations)
     {
-        for (RMAnnotation *annotation in annotations)
+        cachedUnclusteredAnnotations = [NSMutableArray new];
+
+        @synchronized (annotations)
         {
-            if (!annotation.clusteringEnabled)
-                [unclusteredAnnotations addObject:annotation];
+            for (RMAnnotation *annotation in annotations)
+            {
+                if (!annotation.clusteringEnabled)
+                    [cachedUnclusteredAnnotations addObject:annotation];
+            }
         }
+
+        if (northWest) [cachedUnclusteredAnnotations addObjectsFromArray:[northWest unclusteredAnnotations]];
+        if (northEast) [cachedUnclusteredAnnotations addObjectsFromArray:[northEast unclusteredAnnotations]];
+        if (southWest) [cachedUnclusteredAnnotations addObjectsFromArray:[southWest unclusteredAnnotations]];
+        if (southEast) [cachedUnclusteredAnnotations addObjectsFromArray:[southEast unclusteredAnnotations]];
     }
 
-    if (northWest) [unclusteredAnnotations addObjectsFromArray:[northWest unclusteredAnnotations]];
-    if (northEast) [unclusteredAnnotations addObjectsFromArray:[northEast unclusteredAnnotations]];
-    if (southWest) [unclusteredAnnotations addObjectsFromArray:[southWest unclusteredAnnotations]];
-    if (southEast) [unclusteredAnnotations addObjectsFromArray:[southEast unclusteredAnnotations]];
-
-    return unclusteredAnnotations;
+    return cachedUnclusteredAnnotations;
 }
 
 - (RMAnnotation *)clusterAnnotation
@@ -466,6 +535,9 @@
         [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
         [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
     }
+
+    [cachedEnclosedAnnotations release]; cachedEnclosedAnnotations = nil;
+    [cachedUnclusteredAnnotations release]; cachedUnclusteredAnnotations = nil;
 }
 
 @end
@@ -498,6 +570,20 @@
     @synchronized (self)
     {
         [rootNode addAnnotation:annotation];
+    }
+}
+
+- (void)addAnnotations:(NSArray *)annotations
+{
+//    RMLog(@"Prepare tree");
+//    [rootNode precreateQuadTreeInBounds:[[RMProjection googleProjection] planetBounds] withDepth:5];
+
+    @synchronized (self)
+    {
+        for (RMAnnotation *annotation in annotations)
+        {
+            [rootNode addAnnotation:annotation];
+        }
     }
 }
 

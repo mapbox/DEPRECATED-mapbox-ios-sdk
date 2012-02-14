@@ -48,7 +48,7 @@
 #pragma mark --- begin constants ----
 
 #define kiPhoneMilimeteresPerPixel .1543
-#define kZoomRectPixelBuffer 100.0
+#define kZoomRectPixelBuffer 150.0
 
 #define kDefaultInitialLatitude 47.56
 #define kDefaultInitialLongitude 10.22
@@ -143,7 +143,7 @@
     boundingMask = RMMapMinWidthBound;
     adjustTilesForRetinaDisplay = NO;
 
-    annotations = [NSMutableArray new];
+    annotations = [NSMutableSet new];
     visibleAnnotations = [NSMutableSet new];
     [self setQuadTree:[[[RMQuadTree alloc] initWithMapView:self] autorelease]];
     enableClustering = positionClusterMarkersAtTheGravityCenter = NO;
@@ -1673,7 +1673,7 @@
 
 - (NSArray *)annotations
 {
-    return [NSArray arrayWithArray:annotations];
+    return [annotations allObjects];
 }
 
 - (void)addAnnotation:(RMAnnotation *)annotation
@@ -1709,11 +1709,8 @@
 {
     @synchronized (annotations)
     {
-        for (RMAnnotation *annotation in newAnnotations)
-        {
-            [annotations addObject:annotation];
-            [self.quadTree addAnnotation:annotation];
-        }
+        [annotations addObjectsFromArray:newAnnotations];
+        [self.quadTree addAnnotations:newAnnotations];
     }
 
     [self correctPositionOfAllAnnotationsIncludingInvisibles:YES wasZoom:NO];
