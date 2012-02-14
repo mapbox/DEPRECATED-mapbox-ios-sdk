@@ -69,16 +69,22 @@ RMProjectedRect  RMTranslateProjectedRectBy(RMProjectedRect rect, RMProjectedSiz
 
 /// \brief The function checks whether two passed projected points are equal.
 bool RMProjectedPointEqualToProjectedPoint(RMProjectedPoint point1, RMProjectedPoint point2);
+
 /// \brief The function returs true if the passed rects intersect each other.
 bool RMProjectedRectIntersectsProjectedRect(RMProjectedRect rect1, RMProjectedRect rect2);
+
 /// \brief The function returns true if rect1 contains rect2
 bool RMProjectedRectContainsProjectedRect(RMProjectedRect rect1, RMProjectedRect rect2);
+
+// Union of two rectangles
+RMProjectedRect RMProjectedRectUnion(RMProjectedRect rect1, RMProjectedRect rect2);
 
 RMProjectedPoint RMProjectedPointMake(double x, double y);
 RMProjectedRect  RMProjectedRectMake(double x, double y, double width, double height);
 RMProjectedSize  RMProjectedSizeMake(double width, double heigth);
 
 RMProjectedRect RMProjectedRectZero();
+bool RMProjectedRectIsZero(RMProjectedRect rect);
 
 double RMEuclideanDistanceBetweenProjectedPoints(RMProjectedPoint point1, RMProjectedPoint point2);
 
