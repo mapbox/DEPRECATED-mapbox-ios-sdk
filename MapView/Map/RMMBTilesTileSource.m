@@ -57,7 +57,9 @@
     if ( ! queue)
         return nil;
 
-    [[queue database] setShouldCacheStatements:YES];
+    [queue inDatabase:^(FMDatabase *db) {
+        [db setShouldCacheStatements:YES];
+    }];
 
 	return self;
 }
