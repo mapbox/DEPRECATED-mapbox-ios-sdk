@@ -211,7 +211,11 @@
         CGPoint translation = [recognizer translationInView:self];
         CGPoint delta = CGPointMake(_lastTranslation.x - translation.x, _lastTranslation.y - translation.y);
         _lastTranslation = translation;
+
+        [CATransaction begin];
+        [CATransaction setAnimationDuration:0];
         [delegate mapOverlayView:self didDragAnnotation:_draggedAnnotation withDelta:delta];
+        [CATransaction commit];
     }
     else if (recognizer.state == UIGestureRecognizerStateEnded && [delegate respondsToSelector:@selector(mapOverlayView:didEndDragAnnotation:)])
     {

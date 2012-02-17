@@ -90,13 +90,15 @@
 
 - (void)configureDBForFirstUse
 {
-    [[[queue database] executeQuery:@"PRAGMA synchronous=OFF"] close];
-    [[[queue database] executeQuery:@"PRAGMA journal_mode=OFF"] close];
-    [[[queue database] executeQuery:@"PRAGMA cache-size=100"] close];
-    [[[queue database] executeQuery:@"PRAGMA count_changes=OFF"] close];
-    [[queue database] executeUpdate:@"CREATE TABLE IF NOT EXISTS ZCACHE (tile_hash INTEGER NOT NULL, cache_key VARCHAR(25) NOT NULL, last_used DOUBLE NOT NULL, data BLOB NOT NULL)"];
-    [[queue database] executeUpdate:@"CREATE UNIQUE INDEX IF NOT EXISTS main_index ON ZCACHE(tile_hash, cache_key)"];
-    [[queue database] executeUpdate:@"CREATE INDEX IF NOT EXISTS last_used_index ON ZCACHE(last_used)"];
+    [queue inDatabase:^(FMDatabase *db) {
+        [[db executeQuery:@"PRAGMA synchronous=OFF"] close];
+        [[db executeQuery:@"PRAGMA journal_mode=OFF"] close];
+        [[db executeQuery:@"PRAGMA cache-size=100"] close];
+        [[db executeQuery:@"PRAGMA count_changes=OFF"] close];
+        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS ZCACHE (tile_hash INTEGER NOT NULL, cache_key VARCHAR(25) NOT NULL, last_used DOUBLE NOT NULL, data BLOB NOT NULL)"];
+        [db executeUpdate:@"CREATE UNIQUE INDEX IF NOT EXISTS main_index ON ZCACHE(tile_hash, cache_key)"];
+        [db executeUpdate:@"CREATE INDEX IF NOT EXISTS last_used_index ON ZCACHE(last_used)"];
+    }];
 }
 
 - (id)initWithDatabase:(NSString *)path
@@ -114,9 +116,9 @@
 
     queue = [[FMDatabaseQueue databaseQueueWithPath:path] retain];
 
-	if (!queue || ![[queue database] open])
+	if (!queue)
 	{
-		RMLog(@"Could not connect to database - %@", [[queue database] lastErrorMessage]);
+		RMLog(@"Could not connect to database");
 
         [[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
 
@@ -124,8 +126,10 @@
         return nil;
 	}
 
-	[[queue database] setCrashOnErrors:TRUE];
-    [[queue database] setShouldCacheStatements:TRUE];
+    [queue inDatabase:^(FMDatabase *db) {
+        [db setCrashOnErrors:TRUE];
+        [db setShouldCacheStatements:TRUE];
+    }];
 
 	[self configureDBForFirstUse];
 

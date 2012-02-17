@@ -80,7 +80,7 @@ typedef enum {
     double metersPerPixel;
     BOOL adjustTilesForRetinaDisplay;
 
-    NSMutableArray *annotations;
+    NSMutableSet   *annotations;
     NSMutableSet   *visibleAnnotations;
     RMQuadTree     *quadTree;
     BOOL            enableClustering, positionClusterMarkersAtTheGravityCenter;
