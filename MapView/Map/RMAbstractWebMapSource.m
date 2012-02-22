@@ -61,7 +61,10 @@
     if (image)
         return image;
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:RMTileRequested object:nil];
+    dispatch_async(dispatch_get_main_queue(), ^(void)
+    {
+        [[NSNotificationCenter defaultCenter] postNotificationName:RMTileRequested object:[NSNumber numberWithUnsignedLongLong:RMTileKey(tile)]];
+    });
 
     [tileCache retain];
 
@@ -93,12 +96,12 @@
 
             if (tileData)
             {
-                dispatch_sync(dispatch_get_main_queue(), ^(void)
+                @synchronized(self)
                 {
                     // safely put into collection array in proper order
                     //
                     [tilesData replaceObjectAtIndex:u withObject:tileData];
-                });
+                };
             }
         });
     }
@@ -135,7 +138,10 @@
 
     [tileCache release];
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:RMTileRetrieved object:nil];
+    dispatch_async(dispatch_get_main_queue(), ^(void)
+    {
+        [[NSNotificationCenter defaultCenter] postNotificationName:RMTileRetrieved object:[NSNumber numberWithUnsignedLongLong:RMTileKey(tile)]];
+    });
 
     if (!image)
         return [RMTileImage errorTile];
