@@ -92,6 +92,10 @@
     mapView.enableClustering = YES;
     mapView.positionClusterMarkersAtTheGravityCenter = YES;
 
+    UIImage *clusterMarkerImage = [UIImage imageNamed:@"marker-blue.png"];
+    mapView.clusterMarkerSize = clusterMarkerImage.size;
+    mapView.clusterAreaSize = CGSizeMake(clusterMarkerImage.size.width * 1.25, clusterMarkerImage.size.height * 1.25);
+
 	center.latitude = 47.5635;
 	center.longitude = 10.20981;
 

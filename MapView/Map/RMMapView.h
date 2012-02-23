@@ -84,7 +84,7 @@ typedef enum {
     NSMutableSet   *visibleAnnotations;
     RMQuadTree     *quadTree;
     BOOL            enableClustering, positionClusterMarkersAtTheGravityCenter;
-    CGSize          clusterMarkerSize;
+    CGSize          clusterMarkerSize, clusterAreaSize;
 
     id <RMTileSource> tileSource;
     RMTileCache *tileCache; // Generic tile cache
@@ -125,6 +125,7 @@ typedef enum {
 @property (nonatomic, assign) BOOL enableClustering;
 @property (nonatomic, assign) BOOL positionClusterMarkersAtTheGravityCenter;
 @property (nonatomic, assign) CGSize clusterMarkerSize;
+@property (nonatomic, assign) CGSize clusterAreaSize;
 
 @property (nonatomic, readonly) RMProjection *projection;
 @property (nonatomic, readonly) id <RMMercatorToTileProjection> mercatorToTileProjection;

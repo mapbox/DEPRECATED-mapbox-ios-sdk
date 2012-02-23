@@ -110,7 +110,7 @@
 @synthesize screenScale;
 @synthesize tileCache;
 @synthesize quadTree;
-@synthesize enableClustering, positionClusterMarkersAtTheGravityCenter, clusterMarkerSize;
+@synthesize enableClustering, positionClusterMarkersAtTheGravityCenter, clusterMarkerSize, clusterAreaSize;
 @synthesize adjustTilesForRetinaDisplay;
 
 #pragma mark -
@@ -148,6 +148,7 @@
     [self setQuadTree:[[[RMQuadTree alloc] initWithMapView:self] autorelease]];
     enableClustering = positionClusterMarkersAtTheGravityCenter = NO;
     clusterMarkerSize = CGSizeMake(100.0, 100.0);
+    clusterAreaSize = CGSizeMake(150.0, 150.0);
 
     [self setTileCache:[[[RMTileCache alloc] init] autorelease]];
     [self setTileSource:newTilesource];
@@ -1536,7 +1537,11 @@
         boundingBox.size.width += 2*boundingBoxBuffer;
         boundingBox.size.height += 2*boundingBoxBuffer;
 
-        NSArray *annotationsToCorrect = [quadTree annotationsInProjectedRect:boundingBox createClusterAnnotations:self.enableClustering withClusterSize:RMProjectedSizeMake(self.clusterMarkerSize.width * self.metersPerPixel, self.clusterMarkerSize.height * self.metersPerPixel) findGravityCenter:self.positionClusterMarkersAtTheGravityCenter];
+        NSArray *annotationsToCorrect = [quadTree annotationsInProjectedRect:boundingBox
+                                                    createClusterAnnotations:self.enableClustering
+                                                    withProjectedClusterSize:RMProjectedSizeMake(self.clusterAreaSize.width * self.metersPerPixel, self.clusterAreaSize.height * self.metersPerPixel)
+                                               andProjectedClusterMarkerSize:RMProjectedSizeMake(self.clusterMarkerSize.width * self.metersPerPixel, self.clusterMarkerSize.height * self.metersPerPixel)
+                                                           findGravityCenter:self.positionClusterMarkersAtTheGravityCenter];
         NSMutableSet *previousVisibleAnnotations = [[NSMutableSet alloc] initWithSet:visibleAnnotations];
 
         for (RMAnnotation *annotation in annotationsToCorrect)
