@@ -296,11 +296,6 @@
     [annotation release];
 }
 
-- (NSUInteger)countEnclosedAnnotations
-{
-    return [self.enclosedAnnotations count];
-}
-
 - (NSArray *)enclosedAnnotations
 {
     if (!cachedEnclosedAnnotations)
@@ -339,6 +334,18 @@
     return cachedUnclusteredAnnotations;
 }
 
+- (NSArray *)enclosedWithoutUnclusteredAnnotations
+{
+    NSArray *unclusteredAnnotations = self.unclusteredAnnotations;
+    if (!unclusteredAnnotations || [unclusteredAnnotations count] == 0)
+        return self.enclosedAnnotations;
+
+    NSMutableArray *enclosedAnnotations = [NSMutableArray arrayWithArray:self.enclosedAnnotations];
+    [enclosedAnnotations removeObjectsInArray:unclusteredAnnotations];
+
+    return enclosedAnnotations;
+}
+
 - (RMAnnotation *)clusterAnnotation
 {
     return cachedClusterAnnotation;
@@ -360,14 +367,15 @@
 {
     if (createClusterAnnotations)
     {
-        double halfWidth = boundingBox.size.width / 2.0;
+        double halfWidth     = boundingBox.size.width / 2.0;
         BOOL forceClustering = (boundingBox.size.width >= clusterSize.width && halfWidth < clusterSize.width);
+
         NSArray *enclosedAnnotations = nil;
 
         // Leaf clustering
-        if (!forceClustering && nodeType == nodeTypeLeaf && [annotations count] > 1)
+        if (forceClustering == NO && nodeType == nodeTypeLeaf && [annotations count] > 1)
         {
-            NSMutableArray *annotationsToCheck = [NSMutableArray arrayWithArray:self.enclosedAnnotations];
+            NSMutableArray *annotationsToCheck = [NSMutableArray arrayWithArray:[self enclosedWithoutUnclusteredAnnotations]];
 
             for (NSInteger i=[annotationsToCheck count]-1; i>0; --i)
             {
@@ -394,7 +402,7 @@
                 }
             }
 
-            forceClustering = [annotationsToCheck count] > 0;
+            forceClustering = ([annotationsToCheck count] > 0);
 
             if (forceClustering)
             {
@@ -411,7 +419,7 @@
         if (forceClustering)
         {
             if (!enclosedAnnotations)
-                enclosedAnnotations = self.enclosedAnnotations;
+                enclosedAnnotations = [self enclosedWithoutUnclusteredAnnotations];
 
             @synchronized (cachedClusterAnnotation)
             {

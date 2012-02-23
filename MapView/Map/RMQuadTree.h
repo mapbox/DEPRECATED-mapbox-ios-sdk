@@ -53,7 +53,6 @@ typedef enum {
 
 // Operations on this node and all subnodes
 @property (nonatomic, readonly) NSArray *enclosedAnnotations;
-@property (nonatomic, readonly) NSUInteger countEnclosedAnnotations;
 @property (nonatomic, readonly) NSArray *unclusteredAnnotations;
 
 @end
