@@ -89,6 +89,7 @@
     [mapView setDelegate:self];
 	mapView.tileSource = [[[RMOpenStreetMapSource alloc] init] autorelease];
     mapView.enableClustering = YES;
+    mapView.positionClusterMarkersAtTheGravityCenter = YES;
 
 	center.latitude = 47.5635;
 	center.longitude = 10.20981;
@@ -100,6 +101,8 @@
 
 	[self updateInfo];
 	[self performSelector:@selector(addMarkers) withObject:nil afterDelay:0.5];
+
+//    [mapView setConstraintsSouthWest:CLLocationCoordinate2DMake(47.0, 10.0) northEeast:CLLocationCoordinate2DMake(48.0, 11.0)];
 }
 
 - (void)didReceiveMemoryWarning

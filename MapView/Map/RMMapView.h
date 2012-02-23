@@ -94,7 +94,6 @@ typedef enum {
     float screenScale;
 
     NSUInteger boundingMask;
-    RMProjectedRect tileSourceProjectedBounds;
 }
 
 @property (nonatomic, assign) id <RMMapViewDelegate> delegate;
@@ -162,9 +161,6 @@ typedef enum {
 
 - (void)moveBy:(CGSize)delta;
 
-- (void)setConstraintsSouthWest:(CLLocationCoordinate2D)southWest northEeast:(CLLocationCoordinate2D)northEast;
-- (void)setProjectedConstraintsSouthWest:(RMProjectedPoint)southWest northEast:(RMProjectedPoint)northEast;
-
 #pragma mark -
 #pragma mark Zoom
 
@@ -205,6 +201,9 @@ typedef enum {
 
 - (BOOL)projectedBounds:(RMProjectedRect)bounds containsPoint:(RMProjectedPoint)point;
 - (BOOL)tileSourceBoundsContainProjectedPoint:(RMProjectedPoint)point;
+
+- (void)setConstraintsSouthWest:(CLLocationCoordinate2D)southWest northEeast:(CLLocationCoordinate2D)northEast;
+- (void)setProjectedConstraintsSouthWest:(RMProjectedPoint)southWest northEast:(RMProjectedPoint)northEast;
 
 #pragma mark -
 #pragma mark Annotations

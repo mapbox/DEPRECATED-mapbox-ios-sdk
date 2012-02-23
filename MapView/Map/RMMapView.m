@@ -96,7 +96,7 @@
     BOOL _delegateHasDidHideLayerForAnnotation;
 
     BOOL _constrainMovement;
-    RMProjectedPoint _northEastConstraint, _southWestConstraint;
+    RMProjectedRect _constrainingProjectedBounds;
 
     float _lastZoom;
     CGPoint _lastContentOffset, _accumulatedDelta;
@@ -423,7 +423,7 @@
         return YES;
     }
 
-    return [self projectedBounds:tileSourceProjectedBounds containsPoint:point];
+    return [self projectedBounds:_constrainingProjectedBounds containsPoint:point];
 }
 
 - (BOOL)tileSourceBoundsContainScreenPoint:(CGPoint)pixelCoordinate
@@ -445,9 +445,8 @@
 
 - (void)setProjectedConstraintsSouthWest:(RMProjectedPoint)southWest northEast:(RMProjectedPoint)northEast
 {
-    _southWestConstraint = southWest;
-    _northEastConstraint = northEast;
     _constrainMovement = YES;
+    _constrainingProjectedBounds = RMProjectedRectMake(southWest.x, southWest.y, northEast.x - southWest.x, northEast.y - southWest.y);
 }
 
 #pragma mark -
@@ -520,53 +519,6 @@
 
 - (void)moveBy:(CGSize)delta
 {
-    if (_constrainMovement)
-    {
-        // calculate new bounds after move
-        RMProjectedRect pBounds = [self projectedBounds];
-        RMProjectedSize XYDelta = [self viewSizeToProjectedSize:delta];
-        CGSize sizeRatio = CGSizeMake(((delta.width == 0) ? 0 : XYDelta.width / delta.width),
-                                      ((delta.height == 0) ? 0 : XYDelta.height / delta.height));
-        RMProjectedRect newBounds = pBounds;
-
-        // move the rect by delta
-        newBounds.origin.x -= XYDelta.width;
-        newBounds.origin.y -= XYDelta.height;
-
-        // see if new bounds are within constrained bounds, and constrain if necessary
-        BOOL constrained = NO;
-
-        if (newBounds.origin.y < _southWestConstraint.y)
-        {
-            newBounds.origin.y = _southWestConstraint.y;
-            constrained = YES;
-        }
-        if (newBounds.origin.y + newBounds.size.height > _northEastConstraint.y)
-        {
-            newBounds.origin.y = _northEastConstraint.y - newBounds.size.height;
-            constrained = YES;
-        }
-        if (newBounds.origin.x < _southWestConstraint.x)
-        {
-            newBounds.origin.x = _southWestConstraint.x;
-            constrained = YES;
-        }
-        if (newBounds.origin.x + newBounds.size.width > _northEastConstraint.x)
-        {
-            newBounds.origin.x = _northEastConstraint.x - newBounds.size.width;
-            constrained = YES;
-        }
-
-        if (constrained)
-        {
-            // Adjust delta to match constraint
-            XYDelta.height = pBounds.origin.y - newBounds.origin.y;
-            XYDelta.width = pBounds.origin.x - newBounds.origin.x;
-            delta = CGSizeMake(((sizeRatio.width == 0) ? 0 : XYDelta.width / sizeRatio.width),
-                               ((sizeRatio.height == 0) ? 0 : XYDelta.height / sizeRatio.height));
-        }
-    }
-
     if (_delegateHasBeforeMapMove)
         [delegate beforeMapMove:self];
 
@@ -846,9 +798,9 @@
             zRect.size.width = screenBounds.size.width * self.metersPerPixel;
             zRect.size.height = screenBounds.size.height * self.metersPerPixel;
 
-            // can zoom only if within bounds
-            canZoom = !(zRect.origin.y < _southWestConstraint.y || zRect.origin.y+zRect.size.height > _northEastConstraint.y ||
-                        zRect.origin.x < _southWestConstraint.x || zRect.origin.x+zRect.size.width > _northEastConstraint.x);
+//            // can zoom only if within bounds
+//            canZoom = !(zRect.origin.y < _southWestConstraint.y || zRect.origin.y+zRect.size.height > _northEastConstraint.y ||
+//                        zRect.origin.x < _southWestConstraint.x || zRect.origin.x+zRect.size.width > _northEastConstraint.x);
         }
 
         if (!canZoom)
@@ -1178,7 +1130,7 @@
 
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(correctPositionOfAllAnnotations) object:nil];
 
-    if (_constrainMovement && ![self projectedBounds:tileSourceProjectedBounds containsPoint:[self centerProjectedPoint]])
+    if (_constrainMovement && ![self projectedBounds:_constrainingProjectedBounds containsPoint:[self centerProjectedPoint]])
     {
         dispatch_async(dispatch_get_main_queue(), ^{
             [mapScrollView setContentOffset:_lastContentOffset animated:NO];
@@ -1242,10 +1194,15 @@
 
     [mercatorToTileProjection release];
     mercatorToTileProjection = [[tileSource mercatorToTileProjection] retain];
-    tileSourceProjectedBounds = (RMProjectedRect)[self projectedRectFromLatitudeLongitudeBounds:[tileSource latitudeLongitudeBoundingBox]];
 
     RMSphericalTrapezium bounds = [tileSource latitudeLongitudeBoundingBox];
-    _constrainMovement = !(bounds.northEast.latitude == 90 && bounds.northEast.longitude == 180 && bounds.southWest.latitude == -90 && bounds.southWest.longitude == -180);
+
+    _constrainMovement = !(bounds.northEast.latitude == 90.0 && bounds.northEast.longitude == 180.0 && bounds.southWest.latitude == -90.0 && bounds.southWest.longitude == -180.0);
+
+    if (_constrainMovement)
+        _constrainingProjectedBounds = (RMProjectedRect)[self projectedRectFromLatitudeLongitudeBounds:bounds];
+    else
+        _constrainingProjectedBounds = projection.planetBounds;
 
     [self setMinZoom:newTileSource.minZoom];
     [self setMaxZoom:newTileSource.maxZoom];
