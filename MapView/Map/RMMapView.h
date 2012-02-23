@@ -188,6 +188,9 @@ typedef enum {
 - (RMProjectedPoint)pixelToProjectedPoint:(CGPoint)pixelCoordinate;
 - (CLLocationCoordinate2D)pixelToCoordinate:(CGPoint)pixelCoordinate;
 
+- (RMProjectedPoint)coordinateToProjectedPoint:(CLLocationCoordinate2D)coordinate;
+- (CLLocationCoordinate2D)projectedPointToCoordinate:(RMProjectedPoint)projectedPoint;
+
 - (RMProjectedSize)viewSizeToProjectedSize:(CGSize)screenSize;
 - (CGSize)projectedSizeToViewSize:(RMProjectedSize)projectedSize;
 

@@ -1394,6 +1394,16 @@
     return [projection projectedPointToCoordinate:[self pixelToProjectedPoint:pixelCoordinate]];
 }
 
+- (RMProjectedPoint)coordinateToProjectedPoint:(CLLocationCoordinate2D)coordinate
+{
+    return [projection coordinateToProjectedPoint:coordinate];
+}
+
+- (CLLocationCoordinate2D)projectedPointToCoordinate:(RMProjectedPoint)projectedPoint
+{
+    return [projection projectedPointToCoordinate:projectedPoint];
+}
+
 - (RMProjectedSize)viewSizeToProjectedSize:(CGSize)screenSize
 {
     return RMProjectedSizeMake(screenSize.width * self.metersPerPixel, screenSize.height * self.metersPerPixel);
