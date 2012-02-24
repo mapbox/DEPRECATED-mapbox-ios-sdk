@@ -463,7 +463,7 @@
                     }
 
                     averageX /= (double)enclosedAnnotationsCount;
-                    averageY /= (double) enclosedAnnotationsCount;
+                    averageY /= (double)enclosedAnnotationsCount;
 
                     double halfClusterMarkerWidth = clusterMarkerSize.width / 2.0,
                            halfClusterMarkerHeight = clusterMarkerSize.height / 2.0;
