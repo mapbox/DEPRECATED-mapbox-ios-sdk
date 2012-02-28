@@ -33,7 +33,7 @@
 #define kDefaultTileSize 256
 #define kDefaultMinTileZoom 0
 #define kDefaultMaxTileZoom 18
-#define kDefaultLatLonBoundingBox ((RMSphericalTrapezium){.northEast = {.latitude = 90, .longitude = 180}, .southWest = {.latitude = -90, .longitude = -180}})
+#define kDefaultLatLonBoundingBox ((RMSphericalTrapezium){.northEast = {.latitude = 90.0, .longitude = 180.0}, .southWest = {.latitude = -90.0, .longitude = -180.0}})
 
 #pragma mark --- end constants ---
 

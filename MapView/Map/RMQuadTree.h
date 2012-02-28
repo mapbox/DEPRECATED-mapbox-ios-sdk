@@ -53,7 +53,6 @@ typedef enum {
 
 // Operations on this node and all subnodes
 @property (nonatomic, readonly) NSArray *enclosedAnnotations;
-@property (nonatomic, readonly) NSUInteger countEnclosedAnnotations;
 @property (nonatomic, readonly) NSArray *unclusteredAnnotations;
 
 @end
@@ -77,6 +76,10 @@ typedef enum {
 
 // Returns all annotations that are either inside of or intersect with boundingBox
 - (NSArray *)annotationsInProjectedRect:(RMProjectedRect)boundingBox;
-- (NSArray *)annotationsInProjectedRect:(RMProjectedRect)boundingBox createClusterAnnotations:(BOOL)createClusterAnnotations withClusterSize:(RMProjectedSize)clusterSize findGravityCenter:(BOOL)findGravityCenter;
+- (NSArray *)annotationsInProjectedRect:(RMProjectedRect)boundingBox
+               createClusterAnnotations:(BOOL)createClusterAnnotations
+               withProjectedClusterSize:(RMProjectedSize)clusterSize
+          andProjectedClusterMarkerSize:(RMProjectedSize)clusterMarkerSize
+                      findGravityCenter:(BOOL)findGravityCenter;
 
 @end
