@@ -1342,7 +1342,15 @@
 
     adjustTilesForRetinaDisplay = doAdjustTilesForRetinaDisplay;
 
-    [self createMapView];
+    // Not so good: this replicates functionality from createMapView
+    int tileSideLength = [[self tileSource] tileSideLength];
+
+    if (adjustTilesForRetinaDisplay && screenScale > 1.0)
+        ((CATiledLayer *)tiledLayerView.layer).tileSize = CGSizeMake(tileSideLength * 2.0, tileSideLength * 2.0);
+    else
+        ((CATiledLayer *)tiledLayerView.layer).tileSize = CGSizeMake(tileSideLength, tileSideLength);
+
+    [self setCenterCoordinate:self.centerCoordinate animated:NO];
 }
 
 - (RMProjection *)projection
