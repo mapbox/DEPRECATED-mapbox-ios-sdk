@@ -446,7 +446,11 @@
 
                 if (enclosedAnnotationsCount < 2)
                 {
-                    [someArray addObjectsFromArray:enclosedAnnotations];
+                    @synchronized (annotations)
+                    {
+                        [someArray addObjectsFromArray:annotations];
+                    }
+
                     return;
                 }
 
