@@ -6,8 +6,6 @@
 #import <UIKit/UIKit.h>
 
 #import "RMMapView.h"
-#import "RMOpenCycleMapSource.h"
-#import "RMOpenStreetMapSource.h"
 
 @interface MainViewController : UIViewController <RMMapViewDelegate>
 {

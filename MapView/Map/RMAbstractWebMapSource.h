@@ -28,10 +28,13 @@
 #import "RMAbstractMercatorTileSource.h"
 #import "RMProjection.h"
 
-#define RMAbstractWebMapSourceRetryCount  3
-#define RMAbstractWebMapSourceWaitSeconds 2
+#define RMAbstractWebMapSourceDefaultRetryCount  3
+#define RMAbstractWebMapSourceDefaultWaitSeconds 15.0
 
 @interface RMAbstractWebMapSource : RMAbstractMercatorTileSource
+
+@property (nonatomic, assign) NSUInteger retryCount;
+@property (nonatomic, assign) NSTimeInterval waitSeconds;
 
 - (NSURL *)URLForTile:(RMTile)tile;
 

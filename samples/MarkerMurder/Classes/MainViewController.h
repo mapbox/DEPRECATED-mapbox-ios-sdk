@@ -14,6 +14,7 @@
 
 @property (nonatomic, retain) IBOutlet RMMapView *mapView;
 @property (nonatomic, retain) IBOutlet UITextView *infoTextView;
+@property (nonatomic, retain) IBOutlet UILabel *mppLabel;
 
 - (void)updateInfo;
 

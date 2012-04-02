@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		16BFBA3714E912DF00F8D07E /* mpp.png in Resources */ = {isa = PBXBuildFile; fileRef = 16BFBA3614E912DF00F8D07E /* mpp.png */; };
 		1D3623260D0F684500981E51 /* MarkerMurderAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* MarkerMurderAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -55,6 +56,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		16BFBA3614E912DF00F8D07E /* mpp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mpp.png; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* MarkerMurderAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkerMurderAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* MarkerMurderAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MarkerMurderAppDelegate.m; sourceTree = "<group>"; };
@@ -178,6 +180,7 @@
 				2B12B8670F84ADA5003AE2BF /* marker-red.png */,
 				2B580E490F8D236100D495B2 /* marker-blue.png */,
 				2B70CB790F856A46002BAF97 /* loading.png */,
+				16BFBA3614E912DF00F8D07E /* mpp.png */,
 				280E754A0DD40C5E005A515E /* FlipsideView.xib */,
 				280E754B0DD40C5E005A515E /* MainView.xib */,
 				280E754C0DD40C5E005A515E /* MainWindow.xib */,
@@ -292,6 +295,7 @@
 				2B70CB7A0F856A46002BAF97 /* loading.png in Resources */,
 				2B580E4A0F8D236100D495B2 /* marker-blue.png in Resources */,
 				2B2BADDB0FA3B48A00EE37AA /* marker-X.png in Resources */,
+				16BFBA3714E912DF00F8D07E /* mpp.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

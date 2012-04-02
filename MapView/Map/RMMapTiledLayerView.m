@@ -79,12 +79,13 @@
     [super dealloc];
 }
 
-- (void)layoutSubviews
+- (void)setNeedsDisplay
 {
     self.contentScaleFactor = 1.0f;
+    [super setNeedsDisplay];
 }
 
--(void)drawRect:(CGRect)rect
+- (void)drawRect:(CGRect)rect
 {
     CGRect bounds = self.bounds;
 

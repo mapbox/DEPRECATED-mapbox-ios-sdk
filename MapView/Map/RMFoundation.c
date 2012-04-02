@@ -127,6 +127,38 @@ RMProjectedRect RMProjectedRectZero()
     return RMProjectedRectMake(0.0, 0.0, 0.0, 0.0);
 }
 
+bool RMProjectedRectIsZero(RMProjectedRect rect)
+{
+    return (rect.origin.x == 0.0) && (rect.origin.y == 0.0) && (rect.size.width == 0.0) && (rect.size.height == 0.0);
+}
+
+#if !defined (RMMIN)
+#define RMMIN(a,b)  ((a) < (b) ? (a) : (b))
+#endif
+
+#if !defined (RMMAX)
+#define RMMAX(a,b)  ((a) > (b) ? (a) : (b))
+#endif
+
+RMProjectedRect RMProjectedRectUnion(RMProjectedRect rect1, RMProjectedRect rect2)
+{
+    bool rect1IsZero = RMProjectedRectIsZero(rect1);
+    bool rect2IsZero = RMProjectedRectIsZero(rect2);
+
+    if (rect1IsZero)
+        return (rect2IsZero ? RMProjectedRectZero() : rect2);
+
+    if (rect2IsZero)
+        return rect1;
+
+    double minX = RMMIN(rect1.origin.x, rect2.origin.x);
+    double minY = RMMIN(rect1.origin.y, rect2.origin.y);
+    double maxX = RMMAX(rect1.origin.x + rect1.size.width, rect2.origin.x + rect2.size.width);
+    double maxY = RMMAX(rect1.origin.y + rect2.size.height, rect2.origin.y + rect2.size.height);
+
+    return RMProjectedRectMake(minX, minY, maxX - minX, maxY - minY);
+}
+
 double RMEuclideanDistanceBetweenProjectedPoints(RMProjectedPoint point1, RMProjectedPoint point2)
 {
     double xd = point2.x - point1.x;

@@ -25,9 +25,16 @@
 - (void)addAnnotation:(RMAnnotation *)annotation;
 - (void)removeAnnotation:(RMAnnotation *)annotation;
 
-- (void)addAnnotationsInBoundingBox:(RMProjectedRect)aBoundingBox toMutableArray:(NSMutableArray *)someArray createClusterAnnotations:(BOOL)createClusterAnnotations withClusterSize:(RMProjectedSize)clusterSize findGravityCenter:(BOOL)findGravityCenter;
+- (void)addAnnotationsInBoundingBox:(RMProjectedRect)aBoundingBox
+                     toMutableArray:(NSMutableArray *)someArray
+           createClusterAnnotations:(BOOL)createClusterAnnotations
+           withProjectedClusterSize:(RMProjectedSize)clusterSize
+      andProjectedClusterMarkerSize:(RMProjectedSize)clusterMarkerSize
+                  findGravityCenter:(BOOL)findGravityCenter;
 
 - (void)removeUpwardsAllCachedClusterAnnotations;
+
+- (void)precreateQuadTreeInBounds:(RMProjectedRect)quadTreeBounds withDepth:(NSUInteger)quadTreeDepth;
 
 @end
 
@@ -51,6 +58,7 @@
     boundingBox = aBoundingBox;
     cachedClusterAnnotation = nil;
     cachedClusterEnclosedAnnotations = nil;
+    cachedEnclosedAnnotations = cachedUnclusteredAnnotations = nil;
 
     double halfWidth = boundingBox.size.width / 2.0, halfHeight = boundingBox.size.height / 2.0;
     northWestBoundingBox = RMProjectedRectMake(boundingBox.origin.x, boundingBox.origin.y + halfHeight, halfWidth, halfHeight);
@@ -66,8 +74,12 @@
 - (void)dealloc
 {
     mapView = nil;
-    [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
-    [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+
+    @synchronized (cachedClusterAnnotation)
+    {
+        [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
+        [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+    }
 
     @synchronized (annotations)
     {
@@ -78,6 +90,8 @@
     }
 
     [annotations release]; annotations = nil;
+    [cachedEnclosedAnnotations release]; cachedEnclosedAnnotations = nil;
+    [cachedUnclusteredAnnotations release]; cachedUnclusteredAnnotations = nil;
 
     [northWest release]; northWest = nil;
     [northEast release]; northEast = nil;
@@ -142,6 +156,70 @@
         annotation.quadTreeNode = self;
         [self removeUpwardsAllCachedClusterAnnotations];
     }
+}
+
+- (void)precreateQuadTreeInBounds:(RMProjectedRect)quadTreeBounds withDepth:(NSUInteger)quadTreeDepth
+{
+    if (quadTreeDepth == 0 || boundingBox.size.width < (kMinimumQuadTreeElementWidth * 2.0))
+        return;
+
+//    RMLog(@"node in {%.0f,%.0f},{%.0f,%.0f} depth %d", boundingBox.origin.x, boundingBox.origin.y, boundingBox.size.width, boundingBox.size.height, quadTreeDepth);
+
+    @synchronized (cachedClusterAnnotation)
+    {
+        [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
+        [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+    }
+
+    if (RMProjectedRectIntersectsProjectedRect(quadTreeBounds, northWestBoundingBox))
+    {
+        if (!northWest)
+            northWest = [[RMQuadTreeNode alloc] initWithMapView:mapView forParent:self inBoundingBox:northWestBoundingBox];
+
+        [northWest precreateQuadTreeInBounds:quadTreeBounds withDepth:quadTreeDepth-1];
+    }
+
+    if (RMProjectedRectIntersectsProjectedRect(quadTreeBounds, northEastBoundingBox))
+    {
+        if (!northEast)
+            northEast = [[RMQuadTreeNode alloc] initWithMapView:mapView forParent:self inBoundingBox:northEastBoundingBox];
+
+        [northEast precreateQuadTreeInBounds:quadTreeBounds withDepth:quadTreeDepth-1];
+    }
+
+    if (RMProjectedRectIntersectsProjectedRect(quadTreeBounds, southWestBoundingBox))
+    {
+        if (!southWest)
+            southWest = [[RMQuadTreeNode alloc] initWithMapView:mapView forParent:self inBoundingBox:southWestBoundingBox];
+
+        [southWest precreateQuadTreeInBounds:quadTreeBounds withDepth:quadTreeDepth-1];
+    }
+
+    if (RMProjectedRectIntersectsProjectedRect(quadTreeBounds, southEastBoundingBox))
+    {
+        if (!southEast)
+            southEast = [[RMQuadTreeNode alloc] initWithMapView:mapView forParent:self inBoundingBox:southEastBoundingBox];
+
+        [southEast precreateQuadTreeInBounds:quadTreeBounds withDepth:quadTreeDepth-1];
+    }
+
+    if (nodeType == nodeTypeLeaf && [annotations count])
+    {
+        NSArray *immutableAnnotations = nil;
+
+        @synchronized (annotations)
+        {
+            immutableAnnotations = [NSArray arrayWithArray:annotations];
+            [annotations removeAllObjects];
+        }
+
+        for (RMAnnotation *annotationToMove in immutableAnnotations)
+        {
+            [self addAnnotationToChildNodes:annotationToMove];
+        }
+    }
+
+    nodeType = nodeTypeNode;
 }
 
 - (void)addAnnotation:(RMAnnotation *)annotation
@@ -223,47 +301,54 @@
     [annotation release];
 }
 
-- (NSUInteger)countEnclosedAnnotations
-{
-    NSUInteger count = [annotations count];
-    count += [northWest countEnclosedAnnotations];
-    count += [northEast countEnclosedAnnotations];
-    count += [southWest countEnclosedAnnotations];
-    count += [southEast countEnclosedAnnotations];
-
-    return count;
-}
-
 - (NSArray *)enclosedAnnotations
 {
-    NSMutableArray *enclosedAnnotations = [NSMutableArray arrayWithArray:self.annotations];
-    if (northWest) [enclosedAnnotations addObjectsFromArray:northWest.enclosedAnnotations];
-    if (northEast) [enclosedAnnotations addObjectsFromArray:northEast.enclosedAnnotations];
-    if (southWest) [enclosedAnnotations addObjectsFromArray:southWest.enclosedAnnotations];
-    if (southEast) [enclosedAnnotations addObjectsFromArray:southEast.enclosedAnnotations];
+    if (!cachedEnclosedAnnotations)
+    {
+        cachedEnclosedAnnotations = [[NSMutableArray alloc] initWithArray:self.annotations];
+        if (northWest) [cachedEnclosedAnnotations addObjectsFromArray:northWest.enclosedAnnotations];
+        if (northEast) [cachedEnclosedAnnotations addObjectsFromArray:northEast.enclosedAnnotations];
+        if (southWest) [cachedEnclosedAnnotations addObjectsFromArray:southWest.enclosedAnnotations];
+        if (southEast) [cachedEnclosedAnnotations addObjectsFromArray:southEast.enclosedAnnotations];
+    }
 
-    return enclosedAnnotations;
+    return cachedEnclosedAnnotations;
 }
 
 - (NSArray *)unclusteredAnnotations
 {
-    NSMutableArray *unclusteredAnnotations = [NSMutableArray array];
-
-    @synchronized (annotations)
+    if (!cachedUnclusteredAnnotations)
     {
-        for (RMAnnotation *annotation in annotations)
+        cachedUnclusteredAnnotations = [NSMutableArray new];
+
+        @synchronized (annotations)
         {
-            if (!annotation.clusteringEnabled)
-                [unclusteredAnnotations addObject:annotation];
+            for (RMAnnotation *annotation in annotations)
+            {
+                if (!annotation.clusteringEnabled)
+                    [cachedUnclusteredAnnotations addObject:annotation];
+            }
         }
+
+        if (northWest) [cachedUnclusteredAnnotations addObjectsFromArray:[northWest unclusteredAnnotations]];
+        if (northEast) [cachedUnclusteredAnnotations addObjectsFromArray:[northEast unclusteredAnnotations]];
+        if (southWest) [cachedUnclusteredAnnotations addObjectsFromArray:[southWest unclusteredAnnotations]];
+        if (southEast) [cachedUnclusteredAnnotations addObjectsFromArray:[southEast unclusteredAnnotations]];
     }
 
-    if (northWest) [unclusteredAnnotations addObjectsFromArray:[northWest unclusteredAnnotations]];
-    if (northEast) [unclusteredAnnotations addObjectsFromArray:[northEast unclusteredAnnotations]];
-    if (southWest) [unclusteredAnnotations addObjectsFromArray:[southWest unclusteredAnnotations]];
-    if (southEast) [unclusteredAnnotations addObjectsFromArray:[southEast unclusteredAnnotations]];
+    return cachedUnclusteredAnnotations;
+}
 
-    return unclusteredAnnotations;
+- (NSArray *)enclosedWithoutUnclusteredAnnotations
+{
+    NSArray *unclusteredAnnotations = self.unclusteredAnnotations;
+    if (!unclusteredAnnotations || [unclusteredAnnotations count] == 0)
+        return self.enclosedAnnotations;
+
+    NSMutableArray *enclosedAnnotations = [NSMutableArray arrayWithArray:self.enclosedAnnotations];
+    [enclosedAnnotations removeObjectsInArray:unclusteredAnnotations];
+
+    return enclosedAnnotations;
 }
 
 - (RMAnnotation *)clusterAnnotation
@@ -273,21 +358,34 @@
 
 - (NSArray *)clusteredAnnotations
 {
-    return cachedClusterEnclosedAnnotations;
+    NSArray *clusteredAnnotations = nil;
+
+    @synchronized (cachedClusterAnnotation)
+    {
+        clusteredAnnotations = [NSArray arrayWithArray:cachedClusterEnclosedAnnotations];
+    }
+
+    return clusteredAnnotations;
 }
 
-- (void)addAnnotationsInBoundingBox:(RMProjectedRect)aBoundingBox toMutableArray:(NSMutableArray *)someArray createClusterAnnotations:(BOOL)createClusterAnnotations withClusterSize:(RMProjectedSize)clusterSize findGravityCenter:(BOOL)findGravityCenter
+- (void)addAnnotationsInBoundingBox:(RMProjectedRect)aBoundingBox
+                     toMutableArray:(NSMutableArray *)someArray
+           createClusterAnnotations:(BOOL)createClusterAnnotations
+           withProjectedClusterSize:(RMProjectedSize)clusterSize
+      andProjectedClusterMarkerSize:(RMProjectedSize)clusterMarkerSize
+                  findGravityCenter:(BOOL)findGravityCenter
 {
     if (createClusterAnnotations)
     {
-        double halfWidth = boundingBox.size.width / 2.0;
+        double halfWidth     = boundingBox.size.width / 2.0;
         BOOL forceClustering = (boundingBox.size.width >= clusterSize.width && halfWidth < clusterSize.width);
+
         NSArray *enclosedAnnotations = nil;
 
         // Leaf clustering
-        if (!forceClustering && nodeType == nodeTypeLeaf && [annotations count] > 1)
+        if (forceClustering == NO && nodeType == nodeTypeLeaf && [annotations count] > 1)
         {
-            NSMutableArray *annotationsToCheck = [NSMutableArray arrayWithArray:self.enclosedAnnotations];
+            NSMutableArray *annotationsToCheck = [NSMutableArray arrayWithArray:[self enclosedWithoutUnclusteredAnnotations]];
 
             for (NSInteger i=[annotationsToCheck count]-1; i>0; --i)
             {
@@ -314,12 +412,15 @@
                 }
             }
 
-            forceClustering = [annotationsToCheck count] > 0;
+            forceClustering = ([annotationsToCheck count] > 0);
 
             if (forceClustering)
             {
-                [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
-                [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+                @synchronized (cachedClusterAnnotation)
+                {
+                    [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
+                    [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+                }
 
                 enclosedAnnotations = [NSArray arrayWithArray:annotationsToCheck];
             }
@@ -328,12 +429,15 @@
         if (forceClustering)
         {
             if (!enclosedAnnotations)
-                enclosedAnnotations = self.enclosedAnnotations;
+                enclosedAnnotations = [self enclosedWithoutUnclusteredAnnotations];
 
-            if (cachedClusterAnnotation && [enclosedAnnotations count] != [cachedClusterEnclosedAnnotations count])
+            @synchronized (cachedClusterAnnotation)
             {
-                [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
-                [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+                if (cachedClusterAnnotation && [enclosedAnnotations count] != [cachedClusterEnclosedAnnotations count])
+                {
+                    [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
+                    [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+                }
             }
 
             if (!cachedClusterAnnotation)
@@ -342,7 +446,11 @@
 
                 if (enclosedAnnotationsCount < 2)
                 {
-                    [someArray addObjectsFromArray:enclosedAnnotations];
+                    @synchronized (annotations)
+                    {
+                        [someArray addObjectsFromArray:annotations];
+                    }
+
                     return;
                 }
 
@@ -359,18 +467,19 @@
                     }
 
                     averageX /= (double)enclosedAnnotationsCount;
-                    averageY /= (double) enclosedAnnotationsCount;
+                    averageY /= (double)enclosedAnnotationsCount;
 
-                    double halfClusterWidth = clusterSize.width / 2.0, halfClusterHeight = clusterSize.height / 2.0;
+                    double halfClusterMarkerWidth = clusterMarkerSize.width / 2.0,
+                           halfClusterMarkerHeight = clusterMarkerSize.height / 2.0;
 
-                    if (averageX - halfClusterWidth < boundingBox.origin.x)
-                        averageX = boundingBox.origin.x + halfClusterWidth;
-                    if (averageX + halfClusterWidth > boundingBox.origin.x + boundingBox.size.width)
-                        averageX = boundingBox.origin.x + boundingBox.size.width - halfClusterWidth;
-                    if (averageY - halfClusterHeight < boundingBox.origin.y)
-                        averageY = boundingBox.origin.y + halfClusterHeight;
-                    if (averageY + halfClusterHeight > boundingBox.origin.y + boundingBox.size.height)
-                        averageY = boundingBox.origin.y + boundingBox.size.height - halfClusterHeight;
+                    if (averageX - halfClusterMarkerWidth < boundingBox.origin.x)
+                        averageX = boundingBox.origin.x + halfClusterMarkerWidth;
+                    if (averageX + halfClusterMarkerWidth > boundingBox.origin.x + boundingBox.size.width)
+                        averageX = boundingBox.origin.x + boundingBox.size.width - halfClusterMarkerWidth;
+                    if (averageY - halfClusterMarkerHeight < boundingBox.origin.y)
+                        averageY = boundingBox.origin.y + halfClusterMarkerHeight;
+                    if (averageY + halfClusterMarkerHeight > boundingBox.origin.y + boundingBox.size.height)
+                        averageY = boundingBox.origin.y + boundingBox.size.height - halfClusterMarkerHeight;
 
                     // TODO: anchorPoint
                     clusterMarkerPosition = RMProjectedPointMake(averageX, averageY);
@@ -421,13 +530,13 @@
     }
 
     if (RMProjectedRectIntersectsProjectedRect(aBoundingBox, northWestBoundingBox))
-        [northWest addAnnotationsInBoundingBox:aBoundingBox toMutableArray:someArray createClusterAnnotations:createClusterAnnotations withClusterSize:clusterSize findGravityCenter:findGravityCenter];
+        [northWest addAnnotationsInBoundingBox:aBoundingBox toMutableArray:someArray createClusterAnnotations:createClusterAnnotations withProjectedClusterSize:clusterSize andProjectedClusterMarkerSize:clusterMarkerSize findGravityCenter:findGravityCenter];
     if (RMProjectedRectIntersectsProjectedRect(aBoundingBox, northEastBoundingBox))
-        [northEast addAnnotationsInBoundingBox:aBoundingBox toMutableArray:someArray createClusterAnnotations:createClusterAnnotations withClusterSize:clusterSize findGravityCenter:findGravityCenter];
+        [northEast addAnnotationsInBoundingBox:aBoundingBox toMutableArray:someArray createClusterAnnotations:createClusterAnnotations withProjectedClusterSize:clusterSize andProjectedClusterMarkerSize:clusterMarkerSize findGravityCenter:findGravityCenter];
     if (RMProjectedRectIntersectsProjectedRect(aBoundingBox, southWestBoundingBox))
-        [southWest addAnnotationsInBoundingBox:aBoundingBox toMutableArray:someArray createClusterAnnotations:createClusterAnnotations withClusterSize:clusterSize findGravityCenter:findGravityCenter];
+        [southWest addAnnotationsInBoundingBox:aBoundingBox toMutableArray:someArray createClusterAnnotations:createClusterAnnotations withProjectedClusterSize:clusterSize andProjectedClusterMarkerSize:clusterMarkerSize findGravityCenter:findGravityCenter];
     if (RMProjectedRectIntersectsProjectedRect(aBoundingBox, southEastBoundingBox))
-        [southEast addAnnotationsInBoundingBox:aBoundingBox toMutableArray:someArray createClusterAnnotations:createClusterAnnotations withClusterSize:clusterSize findGravityCenter:findGravityCenter];
+        [southEast addAnnotationsInBoundingBox:aBoundingBox toMutableArray:someArray createClusterAnnotations:createClusterAnnotations withProjectedClusterSize:clusterSize andProjectedClusterMarkerSize:clusterMarkerSize findGravityCenter:findGravityCenter];
 
     @synchronized (annotations)
     {
@@ -444,8 +553,14 @@
     if (parentNode)
         [parentNode removeUpwardsAllCachedClusterAnnotations];
 
-    [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
-    [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+    @synchronized (cachedClusterAnnotation)
+    {
+        [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
+        [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+    }
+
+    [cachedEnclosedAnnotations release]; cachedEnclosedAnnotations = nil;
+    [cachedUnclusteredAnnotations release]; cachedUnclusteredAnnotations = nil;
 }
 
 @end
@@ -481,6 +596,20 @@
     }
 }
 
+- (void)addAnnotations:(NSArray *)annotations
+{
+//    RMLog(@"Prepare tree");
+//    [rootNode precreateQuadTreeInBounds:[[RMProjection googleProjection] planetBounds] withDepth:5];
+
+    @synchronized (self)
+    {
+        for (RMAnnotation *annotation in annotations)
+        {
+            [rootNode addAnnotation:annotation];
+        }
+    }
+}
+
 - (void)removeAnnotation:(RMAnnotation *)annotation
 {
     @synchronized (self)
@@ -502,16 +631,16 @@
 
 - (NSArray *)annotationsInProjectedRect:(RMProjectedRect)boundingBox
 {
-    return [self annotationsInProjectedRect:boundingBox createClusterAnnotations:NO withClusterSize:RMProjectedSizeMake(0.0, 0.0) findGravityCenter:NO];
+    return [self annotationsInProjectedRect:boundingBox createClusterAnnotations:NO withProjectedClusterSize:RMProjectedSizeMake(0.0, 0.0) andProjectedClusterMarkerSize:RMProjectedSizeMake(0.0, 0.0) findGravityCenter:NO];
 }
 
-- (NSArray *)annotationsInProjectedRect:(RMProjectedRect)boundingBox createClusterAnnotations:(BOOL)createClusterAnnotations withClusterSize:(RMProjectedSize)clusterSize findGravityCenter:(BOOL)findGravityCenter
+- (NSArray *)annotationsInProjectedRect:(RMProjectedRect)boundingBox createClusterAnnotations:(BOOL)createClusterAnnotations withProjectedClusterSize:(RMProjectedSize)clusterSize andProjectedClusterMarkerSize:(RMProjectedSize)clusterMarkerSize findGravityCenter:(BOOL)findGravityCenter
 {
     NSMutableArray *annotations = [NSMutableArray array];
 
     @synchronized (self)
     {
-        [rootNode addAnnotationsInBoundingBox:boundingBox toMutableArray:annotations createClusterAnnotations:createClusterAnnotations withClusterSize:clusterSize findGravityCenter:findGravityCenter];
+        [rootNode addAnnotationsInBoundingBox:boundingBox toMutableArray:annotations createClusterAnnotations:createClusterAnnotations withProjectedClusterSize:clusterSize andProjectedClusterMarkerSize:clusterMarkerSize findGravityCenter:findGravityCenter];
     }
 
     return annotations;

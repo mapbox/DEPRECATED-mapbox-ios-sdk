@@ -48,11 +48,9 @@
 	UIImage *xMarkerImage = [UIImage imageNamed:@"marker-X.png"];
 
 	// if we zoom with bounds after the paths are created, nothing is displayed on the map
-	CLLocationCoordinate2D northeast, southwest;
-	northeast.latitude = 48.885875363989435f;
-	northeast.longitude = 2.338285446166992f;
-	southwest.latitude = 48.860406466081656f;
-	southwest.longitude = 2.2885894775390625;
+	CLLocationCoordinate2D northeast = CLLocationCoordinate2DMake(48.885875363989435f, 2.338285446166992f),
+                           southwest = CLLocationCoordinate2DMake(48.860406466081656f, 2.2885894775390625);
+
 	[mapView zoomWithLatitudeLongitudeBoundsSouthWest:southwest northEast:northeast animated:NO];
 
 	CLLocation *one, *two, *three, *four;
@@ -61,7 +59,7 @@
     three = [[[CLLocation alloc] initWithLatitude:48.87351371451778f longitude:2.2948551177978516f] autorelease];
     four = [[[CLLocation alloc] initWithLatitude:48.86600492029781f longitude:2.3194026947021484f] autorelease];
     NSArray *linePoints = [NSArray arrayWithObjects:one, two, three, four, nil];
-    
+
 	// draw a green path south down an avenue and southeast on Champs-Elysees
     RMAnnotation *pathAnnotation = [RMAnnotation annotationWithMapView:mapView coordinate:one.coordinate andTitle:nil];
     pathAnnotation.annotationType = @"path";

@@ -1,33 +1,25 @@
-Route-Me: iOS map library
--------------------------
+Route-Me: iOS map library (Alpstein fork)
+-----------------------------------------
 
-Route-Me is an open source map library that runs natively on iOS.  It's designed
-to look and feel much like the inbuilt iOS map library, but it's entirely open,
-and works with any map source.
+Route-Me is an open source map library that runs natively on iOS.  It's designed to look and feel much like the built-in iOS map library, but it's entirely open, and works with any map source.
 
-Currently, [OpenStreetMap][1], [Microsoft VirtualEarth][2], [CloudMade][3],
-[OpenAerialMap][4], [OpenCycleMap][5], [SpatialCloud][6], and two offline,
-database-backed formats (DBMap and [MBTiles][7]) are supported as map
-sources.
+Currently, [OpenStreetMap][1], [OpenCycleMap][2], [OpenSeaMap][3], [MapQuest OSM][4], [MapQuest Open Aerial][5] and two offline, database-backed formats (DBMap and [MBTiles][6]) are supported as map sources.
 
-Please note that you are responsible for getting permission to use the map data,
-and for ensuring your use adheres to the relevant terms of use.
+Please note that you are responsible for getting permission to use the map data, and for ensuring your use adheres to the relevant terms of use.
 
 
    [1]: http://www.openstreetmap.org/index.html
-   [2]: http://maps.live.com/
-   [3]: http://www.cloudmade.com/
-   [4]: http://www.openaerialmap.org/
-   [5]: http://www.opencyclemap.org/
-   [6]: http://www.spatialcloud.com/
-   [7]: http://mbtiles.org
+   [2]: http://www.opencyclemap.org/
+   [3]: http://www.openseamap.org/
+   [4]: http://developer.mapquest.com/web/products/open/map
+   [5]: http://developer.mapquest.com/web/products/open/map
+   [6]: http://mbtiles.org
 
 
 Installing
 ----------
 
-As Route-Me is undergoing some significant changes, the recommended course of
-action is to clone a copy of the repository:
+As Route-Me is undergoing some significant changes, the recommended course of action is to clone a copy of the repository:
 
       git://github.com/Alpstein/route-me.git
 
@@ -44,14 +36,13 @@ There are three subdirectories - MapView, Proj4, and samples. Proj4 is a support
 See LicenseRouteMe.txt for license details. In any app that uses the Route-Me library, include the following text on your "preferences" or "about" screen: "Uses Route-Me map library, (c) 2008-2012 Route-Me Contributors". Your data provider will have additional attribution requirements.
 
 
-   [dl]: https://github.com/Alpstein/route-me/zipball/master
+   [dl]: https://github.com/Alpstein/route-me/zipball/release
    
    
 News, Support and Contributing
 ------------------------------
 
-Join our [mailing list][list] for news and to communicate with project members
-and other users:
+Join our [mailing list][list] for news and to communicate with project members and other users:
 
 To report bugs and help fix them, please use the [issue tracker][tracker]
 
@@ -59,8 +50,8 @@ To report bugs and help fix them, please use the [issue tracker][tracker]
 [tracker]: https://github.com/Alpstein/route-me/issues
 
 
-Changes in this fork (Alpstein/route-me)
------------------------------------------
+Major changes in this fork (Alpstein/route-me)
+----------------------------------------------
 
 * RMMapView and RMMapContents have been merged into one file
 
@@ -70,7 +61,7 @@ Changes in this fork (Alpstein/route-me)
 
 * Tile source refactoring
 
-* Support for tile sources with multiple layers
+* Support for tile sources with multiple layers (e.g. OpenSeaMap)
 
 * Numerous performance improvements
 

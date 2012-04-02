@@ -27,11 +27,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    mapView.delegate = self;
 
-    /* -- Uncomment to constrain view
-    [mapView setConstraintsSW:((CLLocationCoordinate2D){-33.942221,150.996094}) 
-                           NE:((CLLocationCoordinate2D){-33.771157,151.32019})]; */
+//    [mapView setConstraintsSouthWest:CLLocationCoordinate2DMake(47.0, 10.0)
+//                          northEeast:CLLocationCoordinate2DMake(48.0, 11.0)];
+
+    mapView.centerCoordinate = CLLocationCoordinate2DMake(47.56, 10.22);
+//    mapView.adjustTilesForRetinaDisplay = YES;
+    mapView.delegate = self;
 
     [self updateInfo];
 }
