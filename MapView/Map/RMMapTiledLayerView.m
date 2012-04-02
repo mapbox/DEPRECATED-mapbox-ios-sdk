@@ -85,11 +85,12 @@
     [super setNeedsDisplay];
 }
 
-- (void)drawRect:(CGRect)rect
+- (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)context
 {
+    CGRect rect   = CGContextGetClipBoundingBox(context);
     CGRect bounds = self.bounds;
 
-//    NSLog(@"drawRect: {{%f,%f},{%f,%f}}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+//    NSLog(@"drawLayer: {{%f,%f},{%f,%f}}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 
     short zoom = log2(bounds.size.width / rect.size.width);
     int x = floor(rect.origin.x / rect.size.width), y = floor(fabs(rect.origin.y / rect.size.height));
@@ -97,8 +98,12 @@
 
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
+    UIGraphicsPushContext(context);
+
     UIImage *tileImage = [[mapView tileSource] imageForTile:RMTileMake(x, y, zoom) inCache:[mapView tileCache]];
     [tileImage drawInRect:rect];
+
+    UIGraphicsPopContext();
 
     [pool release]; pool = nil;
 }
