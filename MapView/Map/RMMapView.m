@@ -1176,82 +1176,25 @@
 #pragma mark -
 #pragma mark Snapshots
 
-- (UIImage *)takeSnapshotForMapBounds:(RMProjectedRect)bounds inRect:(CGRect)snapshotRect includeOverlay:(BOOL)includeOverlay
+- (UIImage *)takeSnapshotAndIncludeOverlay:(BOOL)includeOverlay
 {
-    CLLocationCoordinate2D bottomLeft = [projection projectedPointToCoordinate:bounds.origin];
-    CLLocationCoordinate2D topRight = [projection projectedPointToCoordinate:RMProjectedPointMake(bounds.origin.x + bounds.size.width, bounds.origin.y + bounds.size.height)];
-    CLLocationCoordinate2D topLeft = [projection projectedPointToCoordinate:RMProjectedPointMake(bounds.origin.x, bounds.origin.y + bounds.size.height)];
+    overlayView.hidden = !includeOverlay;
 
-    RMTile bottomLeftTile = [self tileWithCoordinate:bottomLeft andZoom:ceilf(zoom)];
-    RMTile topRightTile   = [self tileWithCoordinate:topRight andZoom:ceilf(zoom)];
-    RMTile topLeftTile    = [self tileWithCoordinate:topLeft andZoom:ceilf(zoom)];
+    UIGraphicsBeginImageContextWithOptions(self.bounds.size, self.opaque, [[UIScreen mainScreen] scale]);
 
-    CATiledLayer *tiledLayer = (CATiledLayer *)tiledLayerView.layer;
-    CGSize tileSize = tiledLayer.tileSize;
-
-    int tilesX = topRightTile.x - bottomLeftTile.x + 1;
-    int tilesY = bottomLeftTile.y - topRightTile.y + 1;
-
-    double scale = (1<<(int)ceilf(zoom));
-    CGFloat zoomFactor = 1.0 - ((ceilf(zoom) - zoom) * 0.50);
-
-	CLLocationCoordinate2D normalizedCoordinate = [self normalizeCoordinate:topLeft];
-
-    CGFloat leftBorder = (((normalizedCoordinate.longitude * scale) - (double)bottomLeftTile.x) * (double)tileSize.width);
-    CGFloat topBorder  = (((normalizedCoordinate.latitude * scale) - (double)topLeftTile.y) * (double)tileSize.height);
-
-    UIGraphicsBeginImageContextWithOptions(self.bounds.size, NO, [[UIScreen mainScreen] scale]);
-
-    CGContextScaleCTM(UIGraphicsGetCurrentContext(), zoomFactor, zoomFactor);
-
-    for (int column=0; column<tilesX; column++)
-    {
-        for (int row=0; row<tilesY; row++)
-        {
-            UIImage *tileImage = [tileSource imageForTile:RMTileMake(bottomLeftTile.x + column, topRightTile.y + row, bottomLeftTile.zoom) inCache:tileCache];
-
-            if (tileImage)
-            {
-                [tileImage drawInRect:CGRectMake(column * tileSize.width - leftBorder,
-                                                 row * tileSize.height - topBorder,
-                                                 tileSize.width,
-                                                 tileSize.height)];
-            }
-        }
-    }
-
-    CGContextScaleCTM(UIGraphicsGetCurrentContext(), 1.0/zoomFactor, 1.0/zoomFactor);
-
-    if (includeOverlay)
-    {
-        UIGraphicsBeginImageContextWithOptions(self.bounds.size, NO, [[UIScreen mainScreen] scale]);
-
-        [overlayView.layer renderInContext:UIGraphicsGetCurrentContext()];
-        UIImage *overlayImage = UIGraphicsGetImageFromCurrentImageContext();
-
-        UIGraphicsEndImageContext();
-
-        [overlayImage drawInRect:CGRectMake(0.0, 0.0, self.bounds.size.width, self.bounds.size.height)];
-    }
-
-    // final image
-    UIImage *finalImage = UIGraphicsGetImageFromCurrentImageContext();
+    [self.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
 
     UIGraphicsEndImageContext();
 
-    if (!CGRectEqualToRect(self.bounds, snapshotRect))
-    {
-        CGImageRef imageRef = CGImageCreateWithImageInRect([finalImage CGImage], snapshotRect);
-        finalImage = [UIImage imageWithCGImage:imageRef];
-        CGImageRelease(imageRef);
-    }
+    overlayView.hidden = NO;
 
-    return finalImage;
+    return image;
 }
 
 - (UIImage *)takeSnapshot
 {
-    return [self takeSnapshotForMapBounds:[self projectedBounds] inRect:self.bounds includeOverlay:YES];
+    return [self takeSnapshotAndIncludeOverlay:YES];
 }
 
 #pragma mark -
