@@ -14,7 +14,6 @@
 @interface RMMapOverlayView ()
 
 - (void)handleDoubleTap:(UIGestureRecognizer *)recognizer;
-- (void)handleTwoFingerDoubleTap:(UIGestureRecognizer *)recognizer;
 
 @end
 
@@ -53,19 +52,13 @@
     UITapGestureRecognizer *singleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)] autorelease];
     [singleTapRecognizer requireGestureRecognizerToFail:doubleTapRecognizer];
 
-    UITapGestureRecognizer *twoFingerDoubleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTwoFingerDoubleTap:)] autorelease];
-    twoFingerDoubleTapRecognizer.numberOfTapsRequired = 2;
-    twoFingerDoubleTapRecognizer.numberOfTouchesRequired = 2;
-
     UITapGestureRecognizer *twoFingerSingleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTwoFingerSingleTap:)] autorelease];
     twoFingerSingleTapRecognizer.numberOfTouchesRequired = 2;
-    [twoFingerSingleTapRecognizer requireGestureRecognizerToFail:twoFingerDoubleTapRecognizer];
 
     UILongPressGestureRecognizer *longPressRecognizer = [[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)] autorelease];
 
     [self addGestureRecognizer:singleTapRecognizer];
     [self addGestureRecognizer:doubleTapRecognizer];
-    [self addGestureRecognizer:twoFingerDoubleTapRecognizer];
     [self addGestureRecognizer:twoFingerSingleTapRecognizer];
     [self addGestureRecognizer:longPressRecognizer];
 
@@ -129,12 +122,6 @@
 {
     if ([delegate respondsToSelector:@selector(mapTiledLayerView:doubleTapAtPoint:)])
         [delegate mapTiledLayerView:self doubleTapAtPoint:[recognizer locationInView:mapView]];
-}
-
-- (void)handleTwoFingerDoubleTap:(UIGestureRecognizer *)recognizer
-{
-    if ([delegate respondsToSelector:@selector(mapTiledLayerView:twoFingerDoubleTapAtPoint:)])
-        [delegate mapTiledLayerView:self twoFingerDoubleTapAtPoint:[recognizer locationInView:mapView]];
 }
 
 @end
