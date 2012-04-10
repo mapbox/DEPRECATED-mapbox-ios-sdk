@@ -68,6 +68,8 @@
 - (void)correctPositionOfAllAnnotations;
 - (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllLayers wasZoom:(BOOL)wasZoom;
 
+- (void)correctMinZoomScaleForBoundingMask;
+
 @end
 
 #pragma mark -
@@ -534,6 +536,28 @@
 
 #pragma mark -
 #pragma mark Zoom
+
+- (void)setBoundingMask:(NSUInteger)mask
+{
+    boundingMask = mask;
+    
+    [self correctMinZoomScaleForBoundingMask];
+}
+
+- (void)correctMinZoomScaleForBoundingMask
+{
+    if (self.boundingMask != RMMapNoMinBound)
+    {
+        CGFloat newMinZoomScale = (self.boundingMask == RMMapMinWidthBound ? self.bounds.size.width : self.bounds.size.height) / ((CATiledLayer *)tiledLayerView.layer).tileSize.width;
+        
+        if (mapScrollView.minimumZoomScale > 0 && newMinZoomScale > mapScrollView.minimumZoomScale)
+        {
+            RMLog(@"clamping min zoom of %f to %f due to %@", log2f(mapScrollView.minimumZoomScale), log2f(newMinZoomScale), (self.boundingMask == RMMapMinWidthBound ? @"RMMapMinWidthBound" : @"RMMapMinHeightBound"));
+            
+            mapScrollView.minimumZoomScale = newMinZoomScale;
+        }
+    }
+}
 
 - (RMProjectedRect)projectedBounds
 {
@@ -1277,6 +1301,8 @@
 //    RMLog(@"New minZoom:%f", newMinZoom);
 
     mapScrollView.minimumZoomScale = exp2f(newMinZoom);
+
+    [self correctMinZoomScaleForBoundingMask];
 }
 
 - (void)setMaxZoom:(float)newMaxZoom
