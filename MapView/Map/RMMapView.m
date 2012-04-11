@@ -256,6 +256,7 @@
         mapScrollView.frame = bounds;
         overlayView.frame = bounds;
         [self correctPositionOfAllAnnotations];
+        [self correctMinZoomScaleForBoundingMask];
     }
 }
 
