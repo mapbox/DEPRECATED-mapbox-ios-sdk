@@ -1199,6 +1199,30 @@
 }
 
 #pragma mark -
+#pragma mark Snapshots
+
+- (UIImage *)takeSnapshotAndIncludeOverlay:(BOOL)includeOverlay
+{
+    overlayView.hidden = !includeOverlay;
+
+    UIGraphicsBeginImageContextWithOptions(self.bounds.size, self.opaque, [[UIScreen mainScreen] scale]);
+
+    [self.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+
+    UIGraphicsEndImageContext();
+
+    overlayView.hidden = NO;
+
+    return image;
+}
+
+- (UIImage *)takeSnapshot
+{
+    return [self takeSnapshotAndIncludeOverlay:YES];
+}
+
+#pragma mark -
 #pragma mark Properties
 
 - (id <RMTileSource>)tileSource
@@ -1467,6 +1491,31 @@
 - (RMProjectedSize)projectedViewSize
 {
     return RMProjectedSizeMake(self.bounds.size.width * self.metersPerPixel, self.bounds.size.height * self.metersPerPixel);
+}
+
+- (CLLocationCoordinate2D)normalizeCoordinate:(CLLocationCoordinate2D)coordinate
+{
+	if (coordinate.longitude > 180.0)
+        coordinate.longitude -= 360.0;
+
+	coordinate.longitude /= 360.0;
+	coordinate.longitude += 0.5;
+	coordinate.latitude = 0.5 - ((log(tan((M_PI_4) + ((0.5 * M_PI * coordinate.latitude) / 180.0))) / M_PI) / 2.0);
+
+	return coordinate;
+}
+
+- (RMTile)tileWithCoordinate:(CLLocationCoordinate2D)coordinate andZoom:(int)tileZoom
+{
+	int scale = (1<<tileZoom);
+	CLLocationCoordinate2D normalizedCoordinate = [self normalizeCoordinate:coordinate];
+
+	RMTile returnTile;
+	returnTile.x = (int)(normalizedCoordinate.longitude * scale);
+	returnTile.y = (int)(normalizedCoordinate.latitude * scale);
+	returnTile.zoom = tileZoom;
+
+	return returnTile;
 }
 
 #pragma mark -
