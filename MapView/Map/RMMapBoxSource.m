@@ -1,8 +1,8 @@
 //
-//  RMTileStreamSource.h
+//  RMMapBoxSource.m
 //
 //  Created by Justin R. Miller on 5/17/11.
-//  Copyright 2011, Development Seed, Inc.
+//  Copyright 2012 MapBox.
 //  All rights reserved.
 //  
 //  Redistribution and use in source and binary forms, with or without
@@ -15,9 +15,9 @@
 //        notice, this list of conditions and the following disclaimer in the
 //        documentation and/or other materials provided with the distribution.
 //  
-//      * Neither the name of Development Seed, Inc., nor the names of its
-//        contributors may be used to endorse or promote products derived from
-//        this software without specific prior written permission.
+//      * Neither the name of MapBox, nor the names of its contributors may be
+//        used to endorse or promote products derived from this software
+//        without specific prior written permission.
 //  
 //  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 //  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -31,9 +31,9 @@
 //  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import "RMTileStreamSource.h"
+#import "RMMapBoxSource.h"
 
-@interface RMTileStreamSource ()
+@interface RMMapBoxSource ()
 
 @property (nonatomic, retain) NSDictionary *infoDictionary;
 
@@ -41,13 +41,34 @@
 
 #pragma mark -
 
-@implementation RMTileStreamSource
+@implementation RMMapBoxSource
 
 @synthesize infoDictionary;
 
+- (id)init
+{
+    return [self initWithReferenceURL:[NSURL URLWithString:@"http://api.tiles.mapbox.com/v2/mapbox.mapbox-streets.json"]];
+}
+
+- (id)initWithTileJSON:(NSString *)tileJSON
+{
+    if (self = [super init])
+    {
+        NSAssert([NSJSONSerialization class], @"JSON serialization not supported by SDK");
+
+        infoDictionary = (NSDictionary *)[[NSJSONSerialization JSONObjectWithData:[tileJSON dataUsingEncoding:NSUTF8StringEncoding]
+                                                                          options:0
+                                                                            error:nil] retain];
+    }
+
+    return self;
+}
+
 - (id)initWithInfo:(NSDictionary *)info
 {
-    if (!(self = [super init]))
+    WarnDeprecated();
+
+    if ( ! (self = [super init]))
         return nil;
 
     infoDictionary = [[NSDictionary dictionaryWithDictionary:info] retain];
@@ -57,7 +78,15 @@
 
 - (id)initWithReferenceURL:(NSURL *)referenceURL
 {
-    return [self initWithInfo:[NSDictionary dictionaryWithContentsOfURL:referenceURL]];
+    id dataObject;
+
+    if ((dataObject = [NSString stringWithContentsOfURL:referenceURL encoding:NSUTF8StringEncoding error:nil]) && dataObject)
+        return [self initWithTileJSON:dataObject];
+
+    else if ((dataObject = [[[NSDictionary alloc] initWithContentsOfURL:referenceURL] autorelease]) && dataObject)
+        return [self initWithInfo:dataObject];
+
+    return nil;
 }
 
 - (void)dealloc
@@ -74,9 +103,18 @@
     //
     NSInteger zoom = tile.zoom;
     NSInteger x    = tile.x;
-    NSInteger y    = pow(2, zoom) - tile.y - 1;
+    NSInteger y    = tile.y;
 
-    NSString *tileURLString = [self.infoDictionary objectForKey:@"tileURL"];
+    if ([self.infoDictionary objectForKey:@"scheme"] && [[self.infoDictionary objectForKey:@"scheme"] isEqual:@"tms"])
+        y = pow(2, zoom) - tile.y - 1;
+
+    NSString *tileURLString;
+
+    if ([self.infoDictionary objectForKey:@"tiles"])
+        tileURLString = [[self.infoDictionary objectForKey:@"tiles"] objectAtIndex:0];
+
+    else
+        tileURLString = [self.infoDictionary objectForKey:@"tileURL"];
 
     tileURLString = [tileURLString stringByReplacingOccurrencesOfString:@"{z}" withString:[[NSNumber numberWithInteger:zoom] stringValue]];
     tileURLString = [tileURLString stringByReplacingOccurrencesOfString:@"{x}" withString:[[NSNumber numberWithInteger:x]    stringValue]];
@@ -97,7 +135,15 @@
 
 - (RMSphericalTrapezium)latitudeLongitudeBoundingBox
 {
-    NSArray *parts = [[self.infoDictionary objectForKey:@"bounds"] componentsSeparatedByString:@","];
+    id bounds = [self.infoDictionary objectForKey:@"bounds"];
+
+    NSArray *parts;
+
+    if ([bounds isKindOfClass:[NSArray class]])
+        parts = bounds;
+
+    else
+        parts = [bounds componentsSeparatedByString:@","];
 
     if ([parts count] == 4)
     {
@@ -115,13 +161,13 @@
         return bounds;
     }
 
-    return kTileStreamDefaultLatLonBoundingBox;
+    return kMapBoxDefaultLatLonBoundingBox;
 }
 
 - (BOOL)coversFullWorld
 {
     RMSphericalTrapezium ownBounds     = [self latitudeLongitudeBoundingBox];
-    RMSphericalTrapezium defaultBounds = kTileStreamDefaultLatLonBoundingBox;
+    RMSphericalTrapezium defaultBounds = kMapBoxDefaultLatLonBoundingBox;
 
     if (ownBounds.southWest.longitude <= defaultBounds.southWest.longitude + 10 && 
         ownBounds.northEast.longitude >= defaultBounds.northEast.longitude - 10)
@@ -137,7 +183,7 @@
 
 - (NSString *)uniqueTilecacheKey
 {
-	return [NSString stringWithFormat:@"%@-%@", [self.infoDictionary objectForKey:@"id"], [self.infoDictionary objectForKey:@"version"]];
+    return [NSString stringWithFormat:@"MapBox-%@-%@", [self.infoDictionary objectForKey:@"id"], [self.infoDictionary objectForKey:@"version"]];
 }
 
 - (NSString *)shortName
