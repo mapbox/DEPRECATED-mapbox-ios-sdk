@@ -150,8 +150,8 @@
 		DD2B375614CF8197008DE8CB /* RMMBTilesTileSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD2B375414CF8197008DE8CB /* RMMBTilesTileSource.m */; };
 		DD8CDB4A14E0507100B73EB9 /* RMMapQuestOSMSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DD8CDB4814E0507100B73EB9 /* RMMapQuestOSMSource.h */; };
 		DD8CDB4B14E0507100B73EB9 /* RMMapQuestOSMSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD8CDB4914E0507100B73EB9 /* RMMapQuestOSMSource.m */; };
-		DD98B6FA14D76B930092882F /* RMTileStreamSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DD98B6F814D76B930092882F /* RMTileStreamSource.h */; };
-		DD98B6FB14D76B930092882F /* RMTileStreamSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD98B6F914D76B930092882F /* RMTileStreamSource.m */; };
+		DD98B6FA14D76B930092882F /* RMMapBoxSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DD98B6F814D76B930092882F /* RMMapBoxSource.h */; };
+		DD98B6FB14D76B930092882F /* RMMapBoxSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD98B6F914D76B930092882F /* RMMapBoxSource.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -301,8 +301,8 @@
 		DD2B375414CF8197008DE8CB /* RMMBTilesTileSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMBTilesTileSource.m; sourceTree = "<group>"; };
 		DD8CDB4814E0507100B73EB9 /* RMMapQuestOSMSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMapQuestOSMSource.h; sourceTree = "<group>"; };
 		DD8CDB4914E0507100B73EB9 /* RMMapQuestOSMSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMapQuestOSMSource.m; sourceTree = "<group>"; };
-		DD98B6F814D76B930092882F /* RMTileStreamSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMTileStreamSource.h; sourceTree = "<group>"; };
-		DD98B6F914D76B930092882F /* RMTileStreamSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMTileStreamSource.m; sourceTree = "<group>"; };
+		DD98B6F814D76B930092882F /* RMMapBoxSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMapBoxSource.h; sourceTree = "<group>"; };
+		DD98B6F914D76B930092882F /* RMMapBoxSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMapBoxSource.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -366,8 +366,8 @@
 				16128CF4148D295300C23C0E /* RMOpenSeaMapSource.m */,
 				B83E64ED0E80E73F001663B6 /* RMOpenStreetMapSource.h */,
 				B83E64EE0E80E73F001663B6 /* RMOpenStreetMapSource.m */,
-				DD98B6F814D76B930092882F /* RMTileStreamSource.h */,
-				DD98B6F914D76B930092882F /* RMTileStreamSource.m */,
+				DD98B6F814D76B930092882F /* RMMapBoxSource.h */,
+				DD98B6F914D76B930092882F /* RMMapBoxSource.m */,
 			);
 			name = "Map sources";
 			sourceTree = "<group>";
@@ -666,7 +666,7 @@
 				DD2B374F14CF814F008DE8CB /* FMDatabasePool.h in Headers */,
 				DD2B375114CF814F008DE8CB /* FMDatabaseQueue.h in Headers */,
 				DD2B375514CF8197008DE8CB /* RMMBTilesTileSource.h in Headers */,
-				DD98B6FA14D76B930092882F /* RMTileStreamSource.h in Headers */,
+				DD98B6FA14D76B930092882F /* RMMapBoxSource.h in Headers */,
 				DD8CDB4A14E0507100B73EB9 /* RMMapQuestOSMSource.h in Headers */,
 				1607499514E120A100D535F5 /* RMGenericMapSource.h in Headers */,
 				16FFF2CB14E3DBF700A170EC /* RMMapQuestOpenAerialSource.h in Headers */,
@@ -883,7 +883,7 @@
 				DD2B375014CF814F008DE8CB /* FMDatabasePool.m in Sources */,
 				DD2B375214CF814F008DE8CB /* FMDatabaseQueue.m in Sources */,
 				DD2B375614CF8197008DE8CB /* RMMBTilesTileSource.m in Sources */,
-				DD98B6FB14D76B930092882F /* RMTileStreamSource.m in Sources */,
+				DD98B6FB14D76B930092882F /* RMMapBoxSource.m in Sources */,
 				DD8CDB4B14E0507100B73EB9 /* RMMapQuestOSMSource.m in Sources */,
 				1607499614E120A100D535F5 /* RMGenericMapSource.m in Sources */,
 				16FFF2CC14E3DBF700A170EC /* RMMapQuestOpenAerialSource.m in Sources */,

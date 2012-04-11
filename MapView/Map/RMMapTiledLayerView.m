@@ -79,10 +79,9 @@
     [super dealloc];
 }
 
-- (void)setNeedsDisplay
+- (void)didMoveToWindow
 {
     self.contentScaleFactor = 1.0f;
-    [super setNeedsDisplay];
 }
 
 - (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)context
