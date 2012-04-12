@@ -351,9 +351,4 @@
     return [NSString stringWithFormat:@"%@ - %@", [self shortName], [self shortAttribution]];
 }
 
-- (void)removeAllCachedImages
-{
-    NSLog(@"*** removeAllCachedImages in %@", [self class]);
-}
-
 @end
