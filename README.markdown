@@ -1,9 +1,11 @@
 MapBox iOS SDK
 --------------
 
-Based on the Route-Me iOS map library (Alpstein fork) with custom MapBox additions. 
+Based on the Route-Me iOS map library (Alpstein fork) with custom [MapBox][mapbox] additions. 
 
 Requires iOS 5 or greater. 
+
+[mapbox]: http://mapbox.com
 
 Route-Me
 --------
@@ -14,7 +16,6 @@ Currently, [OpenStreetMap][1], [OpenCycleMap][2], [OpenSeaMap][3], [MapQuest OSM
 
 Please note that you are responsible for getting permission to use the map data, and for ensuring your use adheres to the relevant terms of use.
 
-
    [1]: http://www.openstreetmap.org/index.html
    [2]: http://www.opencyclemap.org/
    [3]: http://www.openseamap.org/
@@ -23,7 +24,6 @@ Please note that you are responsible for getting permission to use the map data,
    [6]: http://mapbox.com/hosting/api/
    [7]: https://github.com/mapbox/tilestream
    [8]: http://mbtiles.org
-
 
 Installing
 ----------
@@ -34,26 +34,29 @@ As Route-Me is undergoing some significant changes, the recommended course of ac
 
 Or, [download the trunk][dl].
 
-Then, update the submodules (only FMDB at the moment):
+The two main branches are pretty self-explanatory: `release` and `develop`. 
+
+Be sure to update the submodules (only FMDB at the moment):
 
       git submodule update --init
 
 See the 'samples' subdirectory for usage examples.
 
-There are three subdirectories - MapView, Proj4, and samples. Proj4 is a support class used to do map projections. The MapView project contains only the route-me map library. "samples" contains some ready-to-build projects which you may use as starting points for your own applications, and also some engineering test cases. `samples/SampleMap` and `samples/ProgrammaticMap` are the best places to look, to see how to embed a Route-Me map in your application.
+There are three subdirectories - MapView, Proj4, and samples. Proj4 is a support class used to do map projections. The MapView project contains only the Route-Me map library. "samples" contains some ready-to-build projects which you may use as starting points for your own applications, and also some engineering test cases. `samples/SampleMap` and `samples/ProgrammaticMap` are the best places to look, to see how to embed a Route-Me map in your application.
 
 See LicenseRouteMe.txt for license details. In any app that uses the Route-Me library, include the following text on your "preferences" or "about" screen: "Uses Route-Me map library, (c) 2008-2012 Route-Me Contributors". Your data provider will have additional attribution requirements.
 
-
    [dl]: https://github.com/mapbox/mapbox-ios-sdk/zipball/release
-   
-   
+
 News, Support and Contributing
 ------------------------------
 
-Join our [mailing list][list] for news and to communicate with project members and other users:
+The MapBox iOS SDK has a [support resource][support] where you can open cases and browse other developers' discussions about use of the SDK. 
+
+The main Route-Me project has a [mailing list][list] for news and to communicate with project members and other users. 
 
 To report bugs and help fix them, please use the [issue tracker][tracker]
 
+[support]: http://support.mapbox.com/discussions/mapbox-ios-sdk
 [list]: http://groups.google.com/group/route-me-map
 [tracker]: https://github.com/mapbox/mapbox-ios-sdk/issues
