@@ -539,7 +539,7 @@
 - (void)setBoundingMask:(NSUInteger)mask
 {
     boundingMask = mask;
-    
+
     [self correctMinZoomScaleForBoundingMask];
 }
 
@@ -548,11 +548,11 @@
     if (self.boundingMask != RMMapNoMinBound)
     {
         CGFloat newMinZoomScale = (self.boundingMask == RMMapMinWidthBound ? self.bounds.size.width : self.bounds.size.height) / ((CATiledLayer *)tiledLayerView.layer).tileSize.width;
-        
+
         if (mapScrollView.minimumZoomScale > 0 && newMinZoomScale > mapScrollView.minimumZoomScale)
         {
             RMLog(@"clamping min zoom of %f to %f due to %@", log2f(mapScrollView.minimumZoomScale), log2f(newMinZoomScale), (self.boundingMask == RMMapMinWidthBound ? @"RMMapMinWidthBound" : @"RMMapMinHeightBound"));
-            
+
             mapScrollView.minimumZoomScale = newMinZoomScale;
         }
     }
@@ -1189,6 +1189,30 @@
 }
 
 #pragma mark -
+#pragma mark Snapshots
+
+- (UIImage *)takeSnapshotAndIncludeOverlay:(BOOL)includeOverlay
+{
+    overlayView.hidden = !includeOverlay;
+
+    UIGraphicsBeginImageContextWithOptions(self.bounds.size, self.opaque, [[UIScreen mainScreen] scale]);
+
+    [self.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+
+    UIGraphicsEndImageContext();
+
+    overlayView.hidden = NO;
+
+    return image;
+}
+
+- (UIImage *)takeSnapshot
+{
+    return [self takeSnapshotAndIncludeOverlay:YES];
+}
+
+#pragma mark -
 #pragma mark Properties
 
 - (id <RMTileSource>)tileSource
@@ -1457,6 +1481,31 @@
 - (RMProjectedSize)projectedViewSize
 {
     return RMProjectedSizeMake(self.bounds.size.width * self.metersPerPixel, self.bounds.size.height * self.metersPerPixel);
+}
+
+- (CLLocationCoordinate2D)normalizeCoordinate:(CLLocationCoordinate2D)coordinate
+{
+	if (coordinate.longitude > 180.0)
+        coordinate.longitude -= 360.0;
+
+	coordinate.longitude /= 360.0;
+	coordinate.longitude += 0.5;
+	coordinate.latitude = 0.5 - ((log(tan((M_PI_4) + ((0.5 * M_PI * coordinate.latitude) / 180.0))) / M_PI) / 2.0);
+
+	return coordinate;
+}
+
+- (RMTile)tileWithCoordinate:(CLLocationCoordinate2D)coordinate andZoom:(int)tileZoom
+{
+	int scale = (1<<tileZoom);
+	CLLocationCoordinate2D normalizedCoordinate = [self normalizeCoordinate:coordinate];
+
+	RMTile returnTile;
+	returnTile.x = (int)(normalizedCoordinate.longitude * scale);
+	returnTile.y = (int)(normalizedCoordinate.latitude * scale);
+	returnTile.zoom = tileZoom;
+
+	return returnTile;
 }
 
 #pragma mark -
