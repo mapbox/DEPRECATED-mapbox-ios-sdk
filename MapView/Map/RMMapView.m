@@ -151,7 +151,7 @@
     clusterMarkerSize = CGSizeMake(100.0, 100.0);
     clusterAreaSize = CGSizeMake(150.0, 150.0);
 
-    [self setTileCache:[[[RMTileCache alloc] init] autorelease]];
+    [self setTileCache:[[[RMTileCache alloc] initWithExpiryPeriod:1209600] autorelease]];
     [self setTileSource:newTilesource];
 
     [self setBackgroundView:[[[UIView alloc] initWithFrame:[self bounds]] autorelease]];
