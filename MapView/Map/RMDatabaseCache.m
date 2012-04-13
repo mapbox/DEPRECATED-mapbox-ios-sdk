@@ -57,6 +57,7 @@
 	RMCachePurgeStrategy purgeStrategy;
 	NSUInteger capacity;
 	NSUInteger minimalPurge;
+	NSTimeInterval expiryPeriod;
 }
 
 @synthesize databasePath;
@@ -169,6 +170,13 @@
 	minimalPurge = theMinimalPurge;
 }
 
+- (void)setExpiryPeriod:(NSTimeInterval)theExpiryPeriod
+{
+    expiryPeriod = theExpiryPeriod;
+    
+    srand(time(NULL));
+}
+
 - (UIImage *)cachedImage:(RMTile)tile withCacheKey:(NSString *)aCacheKey
 {
 //	RMLog(@"DB cache check for tile %d %d %d", tile.x, tile.y, tile.zoom);
@@ -203,6 +211,28 @@
     if (capacity != 0 && purgeStrategy == RMCachePurgeStrategyLRU)
         [self touchTile:tile withKey:aCacheKey];
 
+    if (expiryPeriod > 0)
+    {
+        if (rand() % 100 == 0)
+        {
+            [writeQueueLock lock];
+            
+            [queue inDatabase:^(FMDatabase *db)
+             {
+                 BOOL result = [db executeUpdate:@"DELETE FROM ZCACHE WHERE last_used < ?", [NSDate dateWithTimeIntervalSinceNow:-expiryPeriod]];
+                 
+                 if (result == NO)
+                     RMLog(@"Error expiring cache");
+                 
+                 [[db executeQuery:@"VACUUM"] close];
+             }];
+            
+            [writeQueueLock unlock];
+            
+            tileCount = [self countTiles];
+        }
+    }
+
 //    RMLog(@"DB cache     hit    tile %d %d %d (%@)", tile.x, tile.y, tile.zoom, [RMTileCache tileHash:tile]);
 
 	return cachedImage;
@@ -217,7 +247,7 @@
     {
         NSUInteger tilesInDb = [self count];
 
-        if (capacity <= tilesInDb)
+        if (capacity <= tilesInDb && expiryPeriod == 0)
             [self purgeTiles:MAX(minimalPurge, 1+tilesInDb-capacity)];
 
 //        RMLog(@"DB cache     insert tile %d %d %d (%@)", tile.x, tile.y, tile.zoom, [RMTileCache tileHash:tile]);
