@@ -58,10 +58,6 @@
 
 - (id)initWithReferenceURL:(NSURL *)referenceURL; // Designated initializer. Point to either a remote TileJSON spec or a local TileJSON or property list.
 
-//
-// You may also use just `init` to get MapBox Streets by default.
-//
-
 - (id)initWithTileJSON:(NSString *)tileJSON;      // Initialize source with TileJSON.
 - (id)initWithInfo:(NSDictionary *)info;          // Initialize source with properly list (deprecated).
 
