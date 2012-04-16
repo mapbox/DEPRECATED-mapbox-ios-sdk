@@ -1,3 +1,6 @@
 [submodule "MapView/Map/FMDB"]
 	path = MapView/Map/FMDB
 	url = https://github.com/ccgus/fmdb.git
+[submodule "MapView/Map/GRMustache"]
+	path = MapView/Map/GRMustache
+	url = https://github.com/groue/GRMustache.git

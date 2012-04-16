@@ -14,7 +14,6 @@
 @interface RMMapOverlayView ()
 
 - (void)handleDoubleTap:(UIGestureRecognizer *)recognizer;
-- (void)handleTwoFingerDoubleTap:(UIGestureRecognizer *)recognizer;
 
 @end
 
@@ -53,19 +52,13 @@
     UITapGestureRecognizer *singleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)] autorelease];
     [singleTapRecognizer requireGestureRecognizerToFail:doubleTapRecognizer];
 
-    UITapGestureRecognizer *twoFingerDoubleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTwoFingerDoubleTap:)] autorelease];
-    twoFingerDoubleTapRecognizer.numberOfTapsRequired = 2;
-    twoFingerDoubleTapRecognizer.numberOfTouchesRequired = 2;
-
     UITapGestureRecognizer *twoFingerSingleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTwoFingerSingleTap:)] autorelease];
     twoFingerSingleTapRecognizer.numberOfTouchesRequired = 2;
-    [twoFingerSingleTapRecognizer requireGestureRecognizerToFail:twoFingerDoubleTapRecognizer];
 
     UILongPressGestureRecognizer *longPressRecognizer = [[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)] autorelease];
 
     [self addGestureRecognizer:singleTapRecognizer];
     [self addGestureRecognizer:doubleTapRecognizer];
-    [self addGestureRecognizer:twoFingerDoubleTapRecognizer];
     [self addGestureRecognizer:twoFingerSingleTapRecognizer];
     [self addGestureRecognizer:longPressRecognizer];
 
@@ -84,20 +77,55 @@
     self.contentScaleFactor = 1.0f;
 }
 
-- (void)drawRect:(CGRect)rect
+- (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)context
 {
+    CGRect rect   = CGContextGetClipBoundingBox(context);
     CGRect bounds = self.bounds;
+    short zoom    = log2(bounds.size.width / rect.size.width);
 
-//    NSLog(@"drawRect: {{%f,%f},{%f,%f}}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-
-    short zoom = log2(bounds.size.width / rect.size.width);
-    int x = floor(rect.origin.x / rect.size.width), y = floor(fabs(rect.origin.y / rect.size.height));
-//    NSLog(@"Tile @ x:%d, y:%d, zoom:%d", x, y, zoom);
+//    NSLog(@"drawLayer: {{%f,%f},{%f,%f}}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-    UIImage *tileImage = [[mapView tileSource] imageForTile:RMTileMake(x, y, zoom) inCache:[mapView tileCache]];
-    [tileImage drawInRect:rect];
+    if (zoom == (short)ceilf(mapView.zoom))
+    {
+        int x = floor(rect.origin.x / rect.size.width),
+            y = floor(fabs(rect.origin.y / rect.size.height));
+
+//        NSLog(@"Tile @ x:%d, y:%d, zoom:%d", x, y, zoom);
+
+        UIGraphicsPushContext(context);
+
+        UIImage *tileImage = [[mapView tileSource] imageForTile:RMTileMake(x, y, zoom) inCache:[mapView tileCache]];
+        [tileImage drawInRect:rect];
+
+        UIGraphicsPopContext();
+    }
+    else // Probably due to renderInContext:
+    {
+        zoom = (short)ceilf(mapView.zoom);
+        CGFloat rectSize = bounds.size.width / powf(2.0, (float)zoom);
+
+        int x1 = floor(rect.origin.x / rectSize),
+            x2 = floor((rect.origin.x + rect.size.width) / rectSize),
+            y1 = floor(fabs(rect.origin.y / rectSize)),
+            y2 = floor(fabs((rect.origin.y + rect.size.height) / rectSize));
+
+//        NSLog(@"Tiles from x1:%d, y1:%d to x2:%d, y2:%d @ zoom %d", x1, y1, x2, y2, zoom);
+
+        UIGraphicsPushContext(context);
+
+        for (int x=x1; x<=x2; ++x)
+        {
+            for (int y=y1; y<=y2; ++y)
+            {
+                UIImage *tileImage = [[mapView tileSource] imageForTile:RMTileMake(x, y, zoom) inCache:[mapView tileCache]];
+                [tileImage drawInRect:CGRectMake(x * rectSize, y * rectSize, rectSize, rectSize)];
+            }
+        }
+
+        UIGraphicsPopContext();
+    }
 
     [pool release]; pool = nil;
 }
@@ -129,12 +157,6 @@
 {
     if ([delegate respondsToSelector:@selector(mapTiledLayerView:doubleTapAtPoint:)])
         [delegate mapTiledLayerView:self doubleTapAtPoint:[recognizer locationInView:mapView]];
-}
-
-- (void)handleTwoFingerDoubleTap:(UIGestureRecognizer *)recognizer
-{
-    if ([delegate respondsToSelector:@selector(mapTiledLayerView:twoFingerDoubleTapAtPoint:)])
-        [delegate mapTiledLayerView:self twoFingerDoubleTapAtPoint:[recognizer locationInView:mapView]];
 }
 
 @end

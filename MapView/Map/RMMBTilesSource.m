@@ -1,8 +1,8 @@
 //
-//  RMMBTilesTileSource.m
+//  RMMBTilesSource.m
 //
 //  Created by Justin R. Miller on 6/18/10.
-//  Copyright 2010, Code Sorcery Workshop, LLC and Development Seed, Inc.
+//  Copyright 2012 MapBox.
 //  All rights reserved.
 //  
 //  Redistribution and use in source and binary forms, with or without
@@ -15,10 +15,9 @@
 //        notice, this list of conditions and the following disclaimer in the
 //        documentation and/or other materials provided with the distribution.
 //  
-//      * Neither the names of Code Sorcery Workshop, LLC or Development Seed,
-//        Inc., nor the names of its contributors may be used to endorse or
-//        promote products derived from this software without specific prior
-//        written permission.
+//      * Neither the name of MapBox, nor the names of its contributors may be
+//        used to endorse or promote products derived from this software
+//        without specific prior written permission.
 //  
 //  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 //  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -32,7 +31,7 @@
 //  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import "RMMBTilesTileSource.h"
+#import "RMMBTilesSource.h"
 #import "RMTileImage.h"
 #import "RMProjection.h"
 #import "RMFractalTileProjection.h"
@@ -40,7 +39,7 @@
 #import "FMDatabase.h"
 #import "FMDatabaseQueue.h"
 
-@implementation RMMBTilesTileSource
+@implementation RMMBTilesSource
 
 - (id)initWithTileSetURL:(NSURL *)tileSetURL
 {
@@ -350,11 +349,6 @@
 - (NSString *)longAttribution
 {
     return [NSString stringWithFormat:@"%@ - %@", [self shortName], [self shortAttribution]];
-}
-
-- (void)removeAllCachedImages
-{
-    NSLog(@"*** removeAllCachedImages in %@", [self class]);
 }
 
 @end

@@ -43,4 +43,10 @@
 	[self.mapView setCenterCoordinate:secondLocation];
 }
 
+- (IBAction)takeSnapshot:(id)sender
+{
+    UIImage *snapshot = [self.mapView takeSnapshot];
+    [UIImagePNGRepresentation(snapshot) writeToFile:[[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"snap.png"] atomically:YES];
+}
+
 @end
