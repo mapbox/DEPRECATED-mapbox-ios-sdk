@@ -45,11 +45,6 @@
 
 @synthesize infoDictionary;
 
-- (id)init
-{
-    return [self initWithReferenceURL:[NSURL URLWithString:@"http://api.tiles.mapbox.com/v2/mapbox.mapbox-streets.json"]];
-}
-
 - (id)initWithTileJSON:(NSString *)tileJSON
 {
     if (self = [super init])
@@ -79,6 +74,12 @@
 - (id)initWithReferenceURL:(NSURL *)referenceURL
 {
     id dataObject;
+
+    if ([[referenceURL pathExtension] isEqualToString:@"jsonp"])
+        referenceURL = [NSURL URLWithString:[[referenceURL absoluteString] stringByReplacingOccurrencesOfString:@".jsonp" 
+                                                                                                     withString:@".json"
+                                                                                                        options:NSAnchoredSearch & NSBackwardsSearch
+                                                                                                          range:NSMakeRange(0, [[referenceURL absoluteString] length])]];
 
     if ((dataObject = [NSString stringWithContentsOfURL:referenceURL encoding:NSUTF8StringEncoding error:nil]) && dataObject)
         return [self initWithTileJSON:dataObject];
