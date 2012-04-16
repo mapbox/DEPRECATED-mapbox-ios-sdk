@@ -65,10 +65,7 @@ typedef enum {
     // This one has its own variable because we want to propagate cache hits down in
     // the cache hierarchy up to the memory cache
     RMMemoryCache *memoryCache;    
-    NSTimeInterval expiryPeriod;
 }
-
-- (id)initWithExpiryPeriod:(NSTimeInterval)period;
 
 + (NSNumber *)tileHash:(RMTile)tile;
 
