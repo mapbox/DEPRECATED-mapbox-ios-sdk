@@ -34,15 +34,22 @@ As Route-Me is undergoing some significant changes, the recommended course of ac
 
 Or, [download the trunk][dl].
 
-Then, update the submodules (only FMDB at the moment):
+Then, update the submodules:
 
       git submodule update --init
 
-See the 'samples' subdirectory for usage examples.
+Example app showing usage:
+
+      https://github.com/mapbox/mapbox-ios-example
+
+More documentation is available: 
+
+      http://mapbox.com/mobile/docs/sdk
+
 
 There are three subdirectories - MapView, Proj4, and samples. Proj4 is a support class used to do map projections. The MapView project contains only the route-me map library. "samples" contains some ready-to-build projects which you may use as starting points for your own applications, and also some engineering test cases. `samples/SampleMap` and `samples/ProgrammaticMap` are the best places to look, to see how to embed a Route-Me map in your application.
 
-See LicenseRouteMe.txt for license details. In any app that uses the Route-Me library, include the following text on your "preferences" or "about" screen: "Uses Route-Me map library, (c) 2008-2012 Route-Me Contributors". Your data provider will have additional attribution requirements.
+See License.txt for license details. In any app that uses the Route-Me library, include the following text on your "preferences" or "about" screen: "Uses Route-Me map library, (c) 2008-2012 Route-Me Contributors". Your data provider will have additional attribution requirements.
 
 
    [dl]: https://github.com/mapbox/mapbox-ios-sdk/zipball/release
