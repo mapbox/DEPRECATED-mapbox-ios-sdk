@@ -60,10 +60,15 @@ News, Support and Contributing
 
 The MapBox iOS SDK has a [support resource][support] where you can open cases and browse other developers' discussions about use of the SDK. 
 
+We have a [basic technical overview][docs] along with the installation instructions. 
+
+MapBox has an IRC channel on `irc.freenode.net` in `#mapbox`. 
+
 The main Route-Me project has a [mailing list][list] for news and to communicate with project members and other users. 
 
 To report bugs and help fix them, please use the [issue tracker][tracker]
 
 [support]: http://support.mapbox.com/discussions/mapbox-ios-sdk
+[docs]: http://mapbox.com/mobile/docs/sdk
 [list]: http://groups.google.com/group/route-me-map
 [tracker]: https://github.com/mapbox/mapbox-ios-sdk/issues
