@@ -80,11 +80,11 @@
                                                                                                      withString:@".json"
                                                                                                         options:NSAnchoredSearch & NSBackwardsSearch
                                                                                                           range:NSMakeRange(0, [[referenceURL absoluteString] length])]];
-
-    if ((dataObject = [NSString stringWithContentsOfURL:referenceURL encoding:NSUTF8StringEncoding error:nil]) && dataObject)
+    
+    if ([[referenceURL pathExtension] isEqualToString:@"json"] && (dataObject = [NSString stringWithContentsOfURL:referenceURL encoding:NSUTF8StringEncoding error:nil]) && dataObject)
         return [self initWithTileJSON:dataObject];
 
-    else if ((dataObject = [[[NSDictionary alloc] initWithContentsOfURL:referenceURL] autorelease]) && dataObject)
+    else if ([[referenceURL pathExtension] isEqualToString:@"plist"] && (dataObject = [[[NSDictionary alloc] initWithContentsOfURL:referenceURL] autorelease]) && dataObject)
         return [self initWithInfo:dataObject];
 
     return nil;
