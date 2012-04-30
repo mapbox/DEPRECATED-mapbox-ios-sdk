@@ -108,8 +108,6 @@
 
 - (NSURL *)URLForTile:(RMTile)tile
 {
-    // flip y value per OSM-style
-    //
     NSInteger zoom = tile.zoom;
     NSInteger x    = tile.x;
     NSInteger y    = tile.y;
