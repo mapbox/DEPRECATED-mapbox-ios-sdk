@@ -7,6 +7,7 @@ Currently, [OpenStreetMap][1], [OpenCycleMap][2], [OpenSeaMap][3], [MapQuest OSM
 
 Please note that you are responsible for getting permission to use the map data, and for ensuring your use adheres to the relevant terms of use.
 
+MapBox users might be interested in the [MapBox fork][7], which includes lots of MapBox specific additions to Route-Me.
 
    [1]: http://www.openstreetmap.org/index.html
    [2]: http://www.opencyclemap.org/
@@ -14,6 +15,7 @@ Please note that you are responsible for getting permission to use the map data,
    [4]: http://developer.mapquest.com/web/products/open/map
    [5]: http://developer.mapquest.com/web/products/open/map
    [6]: http://mbtiles.org
+   [7]: https://github.com/mapbox/mapbox-ios-sdk
 
 
 Installing

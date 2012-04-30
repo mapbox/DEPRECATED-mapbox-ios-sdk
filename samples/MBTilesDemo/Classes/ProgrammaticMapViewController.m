@@ -14,7 +14,7 @@
 #import "RMQuadTree.h"
 
 #import "RMMBTilesTileSource.h"
-#import "RMTileStreamSource.h"
+#import "RMMapBoxSource.h"
 
 @implementation ProgrammaticMapViewController
 {
@@ -119,7 +119,7 @@
         showsLocalTileSource = NO;
 
         NSDictionary *info = [NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"geography-class" ofType:@"plist"]];
-        newTileSource = [[[RMTileStreamSource alloc] initWithInfo:info] autorelease];
+        newTileSource = [[[RMMapBoxSource alloc] initWithInfo:info] autorelease];
     }
     else
     {
