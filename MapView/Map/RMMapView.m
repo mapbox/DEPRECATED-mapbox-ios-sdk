@@ -435,7 +435,7 @@
 
 // ===
 
-- (void)setConstraintsSouthWest:(CLLocationCoordinate2D)southWest northEeast:(CLLocationCoordinate2D)northEast
+- (void)setConstraintsSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast
 {
     RMProjectedPoint projectedSouthWest = [projection coordinateToProjectedPoint:southWest];
     RMProjectedPoint projectedNorthEast = [projection coordinateToProjectedPoint:northEast];
