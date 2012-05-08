@@ -135,11 +135,7 @@
     tiledLayerView = nil;
     overlayView = nil;
 
-    screenScale = 1.0;
-    if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
-    {
-        screenScale = [[[UIScreen mainScreen] valueForKey:@"scale"] floatValue];
-    }
+    screenScale = [UIScreen mainScreen].scale;
 
     boundingMask = RMMapMinWidthBound;
     adjustTilesForRetinaDisplay = NO;
@@ -1392,6 +1388,14 @@
         ((CATiledLayer *)tiledLayerView.layer).tileSize = CGSizeMake(tileSideLength, tileSideLength);
 
     [self setCenterCoordinate:self.centerCoordinate animated:NO];
+}
+
+- (float)adjustedZoomForRetinaDisplay
+{
+    if (!self.adjustTilesForRetinaDisplay && screenScale > 1.0)
+        return [self zoom] + 1.0;
+
+    return [self zoom];
 }
 
 - (RMProjection *)projection
