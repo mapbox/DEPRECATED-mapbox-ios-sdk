@@ -2184,6 +2184,9 @@
     
     userLocation.heading = newHeading;
     
+    if (_delegateHasDidUpdateUserLocation)
+        [delegate mapView:self didUpdateUserLocation:userLocation];
+
     if (newHeading.trueHeading != 0 && userTrackingMode == RMUserTrackingModeFollowWithHeading)
     {
         [UIView animateWithDuration:1.0
