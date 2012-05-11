@@ -28,6 +28,13 @@
     return self;
 }
 
+- (void)dealloc
+{
+    [location release]; location = nil;
+    [heading release]; heading = nil;
+    [super dealloc];
+}
+
 - (BOOL)isUpdating
 {
     return (self.mapView.userTrackingMode != RMUserTrackingModeNone);

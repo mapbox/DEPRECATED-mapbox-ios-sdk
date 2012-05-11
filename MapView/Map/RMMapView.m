@@ -299,6 +299,10 @@
     [projection release]; projection = nil;
     [mercatorToTileProjection release]; mercatorToTileProjection = nil;
     [self setTileCache:nil];
+    [locationManager release]; locationManager = nil;
+    [userLocation release]; userLocation = nil;
+    [userLocationTrackingView release]; userLocationTrackingView = nil;
+    [userHeadingTrackingView release]; userHeadingTrackingView = nil;
     [super dealloc];
 }
 
