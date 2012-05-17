@@ -115,7 +115,8 @@ typedef enum {
 @property (nonatomic, readonly) float screenScale;
 @property (nonatomic, assign)   NSUInteger boundingMask;
 
-@property (nonatomic, assign) BOOL adjustTilesForRetinaDisplay;
+@property (nonatomic, assign)   BOOL adjustTilesForRetinaDisplay;
+@property (nonatomic, readonly) float adjustedZoomForRetinaDisplay; // takes adjustTilesForRetinaDisplay and screen scale into account
 
 @property (nonatomic, assign) float zoom; /// zoom level is clamped to range (minZoom, maxZoom)
 @property (nonatomic, assign) float minZoom;

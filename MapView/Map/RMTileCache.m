@@ -41,13 +41,14 @@
 
 @implementation RMTileCache
 
-- (id)init
+- (id)initWithExpiryPeriod:(NSTimeInterval)period
 {
 	if (!(self = [super init]))
 		return nil;
 
 	caches = [[NSMutableArray alloc] init];
     memoryCache = nil;
+    expiryPeriod = period;
     
 	id cacheCfg = [[RMConfiguration configuration] cacheConfiguration];	
 	if (!cacheCfg)
@@ -85,6 +86,14 @@
 	}
 
 	return self;
+}
+
+- (id)init
+{
+    if (!(self = [self initWithExpiryPeriod:0]))
+        return nil;
+    
+    return self;
 }
 
 - (void)dealloc
@@ -230,11 +239,16 @@
             RMLog(@"minimalPurge must be at least one and at most the cache capacity");
         }
     }
+    
+    NSNumber *expiryPeriodNumber = [cfg objectForKey:@"expiryPeriod"];
+    if (expiryPeriodNumber != nil)
+        expiryPeriod = [expiryPeriodNumber intValue];
 
     RMDatabaseCache *dbCache = [[[RMDatabaseCache alloc] initUsingCacheDir:useCacheDir] autorelease];
     [dbCache setCapacity:capacity];
     [dbCache setPurgeStrategy:strategy];
     [dbCache setMinimalPurge:minimalPurge];
+    [dbCache setExpiryPeriod:expiryPeriod];
 
     return dbCache;
 }

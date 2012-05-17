@@ -87,7 +87,7 @@
 
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-    if (zoom == (short)ceilf(mapView.zoom))
+    if (zoom == (short)ceilf(mapView.adjustedZoomForRetinaDisplay))
     {
         int x = floor(rect.origin.x / rect.size.width),
             y = floor(fabs(rect.origin.y / rect.size.height));
@@ -103,7 +103,7 @@
     }
     else // Probably due to renderInContext:
     {
-        zoom = (short)ceilf(mapView.zoom);
+        zoom = (short)ceilf(mapView.adjustedZoomForRetinaDisplay);
         CGFloat rectSize = bounds.size.width / powf(2.0, (float)zoom);
 
         int x1 = floor(rect.origin.x / rectSize),
