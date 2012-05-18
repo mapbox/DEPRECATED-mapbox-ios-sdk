@@ -2132,10 +2132,6 @@
         [CATransaction setAnimationDuration:2.5];
         [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
         
-        // ensure hide/show only happens on animation boundaries
-        //
-        [CATransaction setCompletionBlock:^(void) { trackingHaloAnnotation.layer.hidden = (newLocation.horizontalAccuracy > 10); }];
-        
         // scale out radially
         //
         CABasicAnimation *boundsAnimation = [CABasicAnimation animationWithKeyPath:@"transform"];
@@ -2172,7 +2168,10 @@
     }
     
     if ([newLocation distanceFromLocation:oldLocation])
+    {
         trackingHaloAnnotation.coordinate = newLocation.coordinate;
+        trackingHaloAnnotation.layer.hidden = (newLocation.horizontalAccuracy > 10);
+    }
 
     if ([newLocation distanceFromLocation:oldLocation])
         userLocation.location = newLocation;
