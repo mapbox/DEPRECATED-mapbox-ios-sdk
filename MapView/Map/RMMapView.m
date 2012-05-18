@@ -1193,7 +1193,10 @@
 
     UIGraphicsBeginImageContextWithOptions(self.bounds.size, self.opaque, [[UIScreen mainScreen] scale]);
 
+    tiledLayerView.useSnapshotRenderer = YES;
     [self.layer renderInContext:UIGraphicsGetCurrentContext()];
+    tiledLayerView.useSnapshotRenderer = NO;
+
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
 
     UIGraphicsEndImageContext();
