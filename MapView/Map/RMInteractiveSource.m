@@ -45,7 +45,86 @@
 
 #include "zlib.h"
 
-#pragma mark Private Utilities
+@protocol RMInteractiveSourcePrivate <RMInteractiveSource>
+
+// This is the stuff that interactive tile sources need to do, but 
+// that you don't interact with in a public way.
+
+@required
+
+- (NSDictionary *)interactivityDictionaryForPoint:(CGPoint)point inMapView:(RMMapView *)mapView;
+- (NSString *)interactivityFormatterTemplate;
+
+@end
+
+#pragma mark RMMapView
+
+@interface RMMapView (RMInteractiveSourcePrivate) <RMInteractiveSourcePrivate>
+
+- (id <RMTileSource, RMInteractiveSource>)interactiveTileSource;
+- (NSDictionary *)interactivityDictionaryForPoint:(CGPoint)point;
+- (NSString *)interactivityFormatterTemplate;
+
+@end
+
+@implementation RMMapView (RMInteractiveSource)
+
+- (id <RMTileSource, RMInteractiveSource>)interactiveTileSource
+{
+    id <RMTileSource, RMInteractiveSource>interactiveTileSource = nil;
+    
+    if ([self.tileSource isKindOfClass:[RMCompositeSource class]])
+    {
+        // currently, we iterate top-down and return the first interactive source
+        //
+        for (id <RMTileSource>source in [[((RMCompositeSource *)self.tileSource).compositeSources reverseObjectEnumerator] allObjects])
+        {
+            if (([source isKindOfClass:[RMMBTilesSource class]] || [source isKindOfClass:[RMMapBoxSource class]]) &&
+                [source conformsToProtocol:@protocol(RMInteractiveSource)]                                        &&
+                [(id <RMInteractiveSource>)source supportsInteractivity])
+            {
+                interactiveTileSource = (id <RMTileSource, RMInteractiveSource>)source;
+                
+                break;
+            }
+        }
+    }
+    else
+    {
+        if (([self.tileSource isKindOfClass:[RMMBTilesSource class]] || [self.tileSource isKindOfClass:[RMMapBoxSource class]]) &&
+            [self.tileSource conformsToProtocol:@protocol(RMInteractiveSource)]                                                 &&
+            [(id <RMInteractiveSource>)self.tileSource supportsInteractivity])
+        {
+            interactiveTileSource = (id <RMTileSource, RMInteractiveSource>)self.tileSource;
+        }
+    }
+    
+    return interactiveTileSource;
+}
+
+- (BOOL)supportsInteractivity
+{
+    return ([self interactiveTileSource] != nil);
+}
+
+- (NSDictionary *)interactivityDictionaryForPoint:(CGPoint)point
+{
+    return [(id <RMInteractiveSourcePrivate>)[self interactiveTileSource] interactivityDictionaryForPoint:point inMapView:self];
+}
+
+- (NSString *)interactivityFormatterTemplate
+{
+    return [(id <RMInteractiveSourcePrivate>)[self interactiveTileSource] interactivityFormatterTemplate];
+}
+
+- (NSString *)formattedOutputOfType:(RMInteractiveSourceOutputType)outputType forPoint:(CGPoint)point
+{
+    return [(id <RMInteractiveSourcePrivate>)[self interactiveTileSource] formattedOutputOfType:outputType forPoint:point inMapView:self];
+}
+
+@end
+
+#pragma mark - Utilities
 
 RMTilePoint RMInteractiveSourceNormalizedTilePointForMapView(CGPoint point, RMMapView *mapView);
 
@@ -91,7 +170,9 @@ RMTilePoint RMInteractiveSourceNormalizedTilePointForMapView(CGPoint point, RMMa
     
     // flip y for TMS and all MBTiles
     //
-    if (([mapView.tileSource isKindOfClass:[RMMapBoxSource class]] && [((RMMapBoxSource *)mapView.tileSource).infoDictionary objectForKey:@"scheme"] && [[((RMMapBoxSource *)mapView.tileSource).infoDictionary objectForKey:@"scheme"] isEqual:@"tms"]) || [mapView.tileSource isKindOfClass:[RMMBTilesSource class]])
+    id <RMTileSource>interactiveSource = [mapView interactiveTileSource];
+    
+    if (([interactiveSource isKindOfClass:[RMMapBoxSource class]] && [((RMMapBoxSource *)interactiveSource).infoDictionary objectForKey:@"scheme"] && [[((RMMapBoxSource *)interactiveSource).infoDictionary objectForKey:@"scheme"] isEqual:@"tms"]) || [interactiveSource isKindOfClass:[RMMBTilesSource class]])
     {
         tileY = pow(2.0, tileZoom) - tileY - 1.0;
     }
@@ -109,18 +190,6 @@ RMTilePoint RMInteractiveSourceNormalizedTilePointForMapView(CGPoint point, RMMa
     
     return tilePoint;
 }
-
-@protocol RMInteractiveSourcePrivate <RMInteractiveSource>
-
-// This is the stuff that interactive tile sources need to do, but 
-// that you don't interact with in a public way.
-
-@required
-
-- (NSDictionary *)interactivityDictionaryForPoint:(CGPoint)point inMapView:(RMMapView *)mapView;
-- (NSString *)interactivityFormatterTemplate;
-
-@end
 
 @interface RMInteractiveSource : NSObject
 
@@ -290,80 +359,7 @@ RMTilePoint RMInteractiveSourceNormalizedTilePointForMapView(CGPoint point, RMMa
 
 @end
 
-#pragma mark -
-#pragma mark RMMapView Interactivity
-
-@interface RMMapView (RMInteractiveSourcePrivate) <RMInteractiveSourcePrivate>
-
-- (id <RMTileSource, RMInteractiveSource>)interactiveTileSource;
-- (NSDictionary *)interactivityDictionaryForPoint:(CGPoint)point;
-- (NSString *)interactivityFormatterTemplate;
-
-@end
-
-@implementation RMMapView (RMInteractiveSource)
-
-- (id <RMTileSource, RMInteractiveSource>)interactiveTileSource
-{
-    id <RMTileSource, RMInteractiveSource>interactiveTileSource = nil;
-    
-    if ([self.tileSource isKindOfClass:[RMCompositeSource class]])
-    {
-        // currently, we iterate top-down and return the first interactive source
-        //
-        for (id <RMTileSource>source in [[((RMCompositeSource *)self.tileSource).compositeSources reverseObjectEnumerator] allObjects])
-        {
-            NSLog(@"checking %@", source);
-            
-            if (([source isKindOfClass:[RMMBTilesSource class]] || [source isKindOfClass:[RMMapBoxSource class]]) &&
-                [source conformsToProtocol:@protocol(RMInteractiveSource)]                                        &&
-                [(id <RMInteractiveSource>)source supportsInteractivity])
-            {
-                interactiveTileSource = (id <RMTileSource, RMInteractiveSource>)source;
-                
-                break;
-            }
-        }
-    }
-    else
-    {
-        if (([self.tileSource isKindOfClass:[RMMBTilesSource class]] || [self.tileSource isKindOfClass:[RMMapBoxSource class]]) &&
-            [self.tileSource conformsToProtocol:@protocol(RMInteractiveSource)]                                                 &&
-            [(id <RMInteractiveSource>)self.tileSource supportsInteractivity])
-        {
-            interactiveTileSource = (id <RMTileSource, RMInteractiveSource>)self.tileSource;
-        }
-    }
-    
-    NSLog(@"determined interactive source as %@", interactiveTileSource);
-    
-    return interactiveTileSource;
-}
-
-- (BOOL)supportsInteractivity
-{
-    return ([self interactiveTileSource] != nil);
-}
-
-- (NSDictionary *)interactivityDictionaryForPoint:(CGPoint)point
-{
-    return [(id <RMInteractiveSourcePrivate>)[self interactiveTileSource] interactivityDictionaryForPoint:point inMapView:self];
-}
-
-- (NSString *)interactivityFormatterTemplate
-{
-    return [(id <RMInteractiveSourcePrivate>)[self interactiveTileSource] interactivityFormatterTemplate];
-}
-
-- (NSString *)formattedOutputOfType:(RMInteractiveSourceOutputType)outputType forPoint:(CGPoint)point
-{
-    return [(id <RMInteractiveSourcePrivate>)[self interactiveTileSource] formattedOutputOfType:outputType forPoint:point inMapView:self];
-}
-
-@end
-
-#pragma mark -
-#pragma mark MBTiles Interactivity
+#pragma mark - MBTiles
 
 @interface RMMBTilesSource (RMInteractiveSourcePrivate) <RMInteractiveSourcePrivate>
 
@@ -499,8 +495,7 @@ RMTilePoint RMInteractiveSourceNormalizedTilePointForMapView(CGPoint point, RMMa
 
 @end
 
-#pragma mark -
-#pragma mark MapBox Interactivity
+#pragma mark - MapBox
 
 @interface RMMapBoxSource (RMInteractiveSourcePrivate) <RMInteractiveSourcePrivate>
 
