@@ -49,9 +49,9 @@ typedef enum {
     RMMapDecelerationOff
 } RMMapDecelerationMode;
 
-#define kRMUserLocationAnnotationTypeName   @"kRMUserLocationAnnotationTypeName"
-#define kRMTrackingHaloAnnotationTypeName   @"kRMTrackingHaloAnnotationTypeName"
-#define kRMAccuracyCircleAnnotationTypeName @"kRMAccuracyCircleAnnotationTypeName"
+#define kRMUserLocationAnnotationTypeName   @"RMUserLocationAnnotation"
+#define kRMTrackingHaloAnnotationTypeName   @"RMTrackingHaloAnnotation"
+#define kRMAccuracyCircleAnnotationTypeName @"RMAccuracyCircleAnnotation"
 
 @class RMProjection;
 @class RMFractalTileProjection;
