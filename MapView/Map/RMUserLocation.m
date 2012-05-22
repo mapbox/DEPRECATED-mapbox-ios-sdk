@@ -24,12 +24,16 @@
     NSAssert([[NSBundle mainBundle] pathForResource:@"TrackingDot" ofType:@"png"], @"Unable to find necessary user location graphical assets (copy from MapView/Map/Resources)");
     
     layer = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDot.png"]];
-    
+
+    annotationType = [kRMUserLocationAnnotationTypeName retain];
+
     return self;
 }
 
 - (void)dealloc
 {
+    [layer release]; layer = nil;
+    [annotationType release]; annotationType = nil;
     [location release]; location = nil;
     [heading release]; heading = nil;
     [super dealloc];

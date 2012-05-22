@@ -60,9 +60,6 @@
 #define kDefaultMaximumZoomLevel 25.0
 #define kDefaultInitialZoomLevel 13.0
 
-#define kRMTrackingHaloAnnotationTypeName   @"kRMTrackingHaloAnnotationTypeName"
-#define kRMAccuracyCircleAnnotationTypeName @"kRMAccuracyCircleAnnotationTypeName"
-
 #pragma mark --- end constants ----
 
 @interface RMMapView (PrivateMethods)
@@ -1682,15 +1679,18 @@
 
         for (RMAnnotation *annotation in previousVisibleAnnotations)
         {
-            if (_delegateHasWillHideLayerForAnnotation)
-                [delegate mapView:self willHideLayerForAnnotation:annotation];
+            if ( ! [[NSArray arrayWithObjects:kRMUserLocationAnnotationTypeName, kRMAccuracyCircleAnnotationTypeName, kRMTrackingHaloAnnotationTypeName, nil] containsObject:annotation.annotationType])
+            {
+                if (_delegateHasWillHideLayerForAnnotation)
+                    [delegate mapView:self willHideLayerForAnnotation:annotation];
 
-            annotation.layer = nil;
+                annotation.layer = nil;
 
-            if (_delegateHasDidHideLayerForAnnotation)
-                [delegate mapView:self didHideLayerForAnnotation:annotation];
+                if (_delegateHasDidHideLayerForAnnotation)
+                    [delegate mapView:self didHideLayerForAnnotation:annotation];
 
-            [visibleAnnotations removeObject:annotation];
+                [visibleAnnotations removeObject:annotation];
+            }
         }
 
         [previousVisibleAnnotations release];
@@ -1730,14 +1730,17 @@
                     }
                     else
                     {
-                        if (_delegateHasWillHideLayerForAnnotation)
-                            [delegate mapView:self willHideLayerForAnnotation:annotation];
+                        if ( ! [[NSArray arrayWithObjects:kRMUserLocationAnnotationTypeName, kRMAccuracyCircleAnnotationTypeName, kRMTrackingHaloAnnotationTypeName, nil] containsObject:annotation.annotationType])
+                        {
+                            if (_delegateHasWillHideLayerForAnnotation)
+                                [delegate mapView:self willHideLayerForAnnotation:annotation];
 
-                        annotation.layer = nil;
-                        [visibleAnnotations removeObject:annotation];
+                            annotation.layer = nil;
+                            [visibleAnnotations removeObject:annotation];
 
-                        if (_delegateHasDidHideLayerForAnnotation)
-                            [delegate mapView:self didHideLayerForAnnotation:annotation];
+                            if (_delegateHasDidHideLayerForAnnotation)
+                                [delegate mapView:self didHideLayerForAnnotation:annotation];
+                        }
                     }
                 }
 //                RMLog(@"%d annotations on screen, %d total", [overlayView sublayersCount], [annotations count]);
@@ -1823,10 +1826,13 @@
     {
         for (RMAnnotation *annotation in annotationsToRemove)
         {
-            [annotations removeObject:annotation];
-            [visibleAnnotations removeObject:annotation];
-            [self.quadTree removeAnnotation:annotation];
-            annotation.layer = nil;
+            if ( ! [[NSArray arrayWithObjects:kRMUserLocationAnnotationTypeName, kRMAccuracyCircleAnnotationTypeName, kRMTrackingHaloAnnotationTypeName, nil] containsObject:annotation.annotationType])
+            {
+                [annotations removeObject:annotation];
+                [visibleAnnotations removeObject:annotation];
+                [self.quadTree removeAnnotation:annotation];
+                annotation.layer = nil;
+            }
        }
     }
 
@@ -1835,19 +1841,7 @@
 
 - (void)removeAllAnnotations
 {
-    @synchronized (annotations)
-    {
-        for (RMAnnotation *annotation in annotations)
-        {
-            // Remove the layer from the screen
-            annotation.layer = nil;
-        }
-    }
-
-    [annotations removeAllObjects];
-    [visibleAnnotations removeAllObjects];
-    [quadTree removeAllObjects];
-    [self correctPositionOfAllAnnotations];
+    [self removeAnnotations:[annotations allObjects]];
 }
 
 - (CGPoint)screenCoordinatesForAnnotation:(RMAnnotation *)annotation
@@ -1886,17 +1880,16 @@
         [locationManager release];
         locationManager = nil;
         
-        [self removeAnnotation:userLocation];
-        self.userLocation = nil;
-        
         if (_delegateHasDidStopLocatingUser)
             [delegate mapViewDidStopLocatingUser:self];
         
         [self setUserTrackingMode:RMUserTrackingModeNone animated:YES];
         
         for (RMAnnotation *annotation in annotations)
-            if ([annotation.annotationType isEqualToString:kRMTrackingHaloAnnotationTypeName] || [annotation.annotationType isEqualToString:kRMAccuracyCircleAnnotationTypeName])
+            if ([[NSArray arrayWithObjects:kRMUserLocationAnnotationTypeName, kRMAccuracyCircleAnnotationTypeName, kRMTrackingHaloAnnotationTypeName, nil] containsObject:annotation.annotationType])
                 [self removeAnnotation:annotation];
+        
+        self.userLocation = nil;
     }    
 }
 
