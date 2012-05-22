@@ -26,6 +26,8 @@
     layer = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDot.png"]];
 
     annotationType = [kRMUserLocationAnnotationTypeName retain];
+    
+    clusteringEnabled = NO;
 
     return self;
 }

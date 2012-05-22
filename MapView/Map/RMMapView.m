@@ -2090,6 +2090,8 @@
         
         accuracyCircleAnnotation.annotationType = kRMAccuracyCircleAnnotationTypeName;
         
+        accuracyCircleAnnotation.clusteringEnabled = NO;
+        
         accuracyCircleAnnotation.layer = [[RMCircle alloc] initWithView:self radiusInMeters:newLocation.horizontalAccuracy];
         
         ((RMCircle *)accuracyCircleAnnotation.layer).lineColor = [UIColor colorWithRed:0.378 green:0.552 blue:0.827 alpha:0.7];
@@ -2117,6 +2119,8 @@
         trackingHaloAnnotation = [RMAnnotation annotationWithMapView:self coordinate:newLocation.coordinate andTitle:nil];
         
         trackingHaloAnnotation.annotationType = kRMTrackingHaloAnnotationTypeName;
+        
+        trackingHaloAnnotation.clusteringEnabled = NO;
         
         // create image marker
         //
