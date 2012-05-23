@@ -1755,15 +1755,13 @@
     {
         [self correctScreenPosition:annotation];
 
-        if ([annotation isAnnotationOnScreen] && [delegate respondsToSelector:@selector(mapView:layerForAnnotation:)])
-        {
+        if (annotation.layer == nil && [annotation isAnnotationOnScreen] && _delegateHasLayerForAnnotation)
             annotation.layer = [delegate mapView:self layerForAnnotation:annotation];
 
-            if (annotation.layer)
-            {
-                [overlayView addSublayer:annotation.layer];
-                [visibleAnnotations addObject:annotation];
-            }
+        if (annotation.layer)
+        {
+            [overlayView addSublayer:annotation.layer];
+            [visibleAnnotations addObject:annotation];
         }
     }
 }
