@@ -1012,6 +1012,9 @@
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
+    if (self.userTrackingMode != RMUserTrackingModeNone)
+        self.userTrackingMode = RMUserTrackingModeNone;
+
     if (_delegateHasBeforeMapMove)
         [delegate beforeMapMove:self];
 }
@@ -1052,6 +1055,9 @@
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
 {
     [self correctPositionOfAllAnnotations];
+
+    if (zoom < 3 && self.userTrackingMode == RMUserTrackingModeFollowWithHeading)
+        self.userTrackingMode = RMUserTrackingModeFollow;
 
     if (_delegateHasAfterMapZoom)
         [delegate afterMapZoom:self];
@@ -2010,40 +2016,6 @@
         }
     }
 
-    if (userTrackingMode != RMUserTrackingModeNone)
-    {
-        UIPanGestureRecognizer *trackingPan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureWhileTracking:)];
-        trackingPan.delegate = self;
-        [self addGestureRecognizer:trackingPan];
-        
-        UIPinchGestureRecognizer *trackingPinch = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureWhileTracking:)];
-        trackingPinch.delegate = self;
-        [self addGestureRecognizer:trackingPinch];
-        
-        UITapGestureRecognizer *trackingDoubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureWhileTracking:)];
-        trackingDoubleTap.delegate = self;
-        trackingDoubleTap.numberOfTapsRequired = 2;
-        [self addGestureRecognizer:trackingDoubleTap];
-        
-        UITapGestureRecognizer *trackingTwoFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureWhileTracking:)];
-        trackingTwoFingerTap.delegate = self;
-        trackingTwoFingerTap.numberOfTouchesRequired = 2;
-        [self addGestureRecognizer:trackingTwoFingerTap];
-    }
-    else
-    {
-        for (UIGestureRecognizer *gesture in self.gestureRecognizers)
-        {
-            if ([gesture.delegate isEqual:self])
-            {
-                [self removeGestureRecognizer:gesture];
-                gesture.delegate = nil;
-                [gesture release];
-                gesture = nil;
-            }
-        }
-    }
-    
     if (_delegateHasDidChangeUserTrackingMode)
         [delegate mapView:self didChangeUserTrackingMode:userTrackingMode animated:animated];
 }
@@ -2061,7 +2033,7 @@
             [delegate mapView:self didUpdateUserLocation:userLocation];
     }
     
-    if (userTrackingMode != RMUserTrackingModeNone)
+    if (userTrackingMode != RMUserTrackingModeNone && (fabsf([self screenCoordinatesForAnnotation:userLocation].x - self.center.x) > 2 || fabsf([self screenCoordinatesForAnnotation:userLocation].y - self.center.y) > 2))
     {
         float delta = newLocation.horizontalAccuracy / 110000;
         
@@ -2209,16 +2181,6 @@
     
     if (_delegateHasDidFailToLocateUserWithError)
         [delegate mapView:self didFailToLocateUserWithError:error];
-}
-
-- (void)handleGestureWhileTracking:(UIGestureRecognizer *)gesture
-{
-    self.userTrackingMode = RMUserTrackingModeNone;
-}
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-{
-    return YES;
 }
 
 @end

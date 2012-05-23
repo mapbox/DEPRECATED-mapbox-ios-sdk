@@ -67,7 +67,7 @@ typedef enum {
 @protocol RMTileSource;
 @protocol RMMapTiledLayerViewDelegate;
 
-@interface RMMapView : UIView <UIScrollViewDelegate, RMMapOverlayViewDelegate, RMMapTiledLayerViewDelegate, CLLocationManagerDelegate, UIGestureRecognizerDelegate>
+@interface RMMapView : UIView <UIScrollViewDelegate, RMMapOverlayViewDelegate, RMMapTiledLayerViewDelegate, CLLocationManagerDelegate>
 {
     id <RMMapViewDelegate> delegate;
 
