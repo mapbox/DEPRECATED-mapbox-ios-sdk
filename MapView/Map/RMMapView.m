@@ -1153,7 +1153,7 @@
 
 - (void)mapTiledLayerView:(RMMapTiledLayerView *)aTiledLayerView twoFingerSingleTapAtPoint:(CGPoint)aPoint
 {
-    [self zoomOutToNextNativeZoomAt:aPoint animated:YES];
+    [self zoomOutToNextNativeZoomAt:self.center animated:YES];
 
     if (_delegateHasSingleTapTwoFingersOnMap)
         [delegate singleTapTwoFingersOnMap:self at:aPoint];
