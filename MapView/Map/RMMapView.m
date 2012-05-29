@@ -2035,7 +2035,7 @@
     
     if (self.userTrackingMode != RMUserTrackingModeNone && (fabsf([self screenCoordinatesForAnnotation:userLocation].x - self.center.x) > 2 || fabsf([self screenCoordinatesForAnnotation:userLocation].y - self.center.y) > 2))
     {
-        float delta = newLocation.horizontalAccuracy / 110000;
+        float delta = newLocation.horizontalAccuracy / 110000; // approx. meter per degree latitude
         
         CLLocationCoordinate2D southWest = CLLocationCoordinate2DMake(newLocation.coordinate.latitude  - delta, 
                                                                       newLocation.coordinate.longitude - delta);
