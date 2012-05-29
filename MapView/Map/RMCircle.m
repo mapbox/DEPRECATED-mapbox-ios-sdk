@@ -57,6 +57,8 @@
     shapeLayer = [[CAShapeLayer alloc] init];
     [self addSublayer:shapeLayer];
 
+    [self addAnimation:[CABasicAnimation animationWithKeyPath:@"sublayers"] forKey:@"sublayers"];
+    
     mapView = aMapView;
     radiusInMeters = newRadiusInMeters;
 
@@ -102,6 +104,9 @@
 
     CGFloat offset = floorf(-lineWidthInPixels / 2.0f) - 2;
     CGRect newBoundsRect = CGRectInset(rectangle, offset, offset);
+    
+    BOOL sizeChanged = ( ! isnan(newBoundsRect.size.width) && ! isnan(newBoundsRect.size.height) && ! CGSizeEqualToSize(self.bounds.size, newBoundsRect.size));
+        
     [self setBounds:newBoundsRect];
 
     //	DLog(@"Circle Rectangle: %f, %f, %f, %f", rectangle.origin.x, rectangle.origin.y, rectangle.size.width, rectangle.size.height);
@@ -110,10 +115,26 @@
     CGPathAddEllipseInRect(newPath, NULL, rectangle);
     circlePath = newPath;
 
-    [self.shapeLayer setPath:newPath];
-    [self.shapeLayer setFillColor:[fillColor CGColor]];
-    [self.shapeLayer setStrokeColor:[lineColor CGColor]];
-    [self.shapeLayer setLineWidth:lineWidthInPixels];
+    if (sizeChanged)
+    {
+        CAShapeLayer *newShapeLayer = [[[CAShapeLayer alloc] init] autorelease];
+        
+        [newShapeLayer setPath:newPath];
+        [newShapeLayer setFillColor:[fillColor CGColor]];
+        [newShapeLayer setStrokeColor:[lineColor CGColor]];
+        [newShapeLayer setLineWidth:lineWidthInPixels];
+        
+        [self addSublayer:newShapeLayer];
+        [self.shapeLayer removeFromSuperlayer];
+        self.shapeLayer = newShapeLayer;
+    }
+    else
+    {
+        [self.shapeLayer setPath:newPath];
+        [self.shapeLayer setFillColor:[fillColor CGColor]];
+        [self.shapeLayer setStrokeColor:[lineColor CGColor]];
+        [self.shapeLayer setLineWidth:lineWidthInPixels];
+    }
 }
 
 #pragma mark - Accessors
