@@ -2033,7 +2033,7 @@
             [delegate mapView:self didUpdateUserLocation:userLocation];
     }
     
-    if (userTrackingMode != RMUserTrackingModeNone && (fabsf([self screenCoordinatesForAnnotation:userLocation].x - self.center.x) > 2 || fabsf([self screenCoordinatesForAnnotation:userLocation].y - self.center.y) > 2))
+    if (self.userTrackingMode != RMUserTrackingModeNone && (fabsf([self screenCoordinatesForAnnotation:userLocation].x - self.center.x) > 2 || fabsf([self screenCoordinatesForAnnotation:userLocation].y - self.center.y) > 2))
     {
         float delta = newLocation.horizontalAccuracy / 110000;
         
@@ -2165,7 +2165,7 @@
     if (_delegateHasDidUpdateUserLocation)
         [delegate mapView:self didUpdateUserLocation:userLocation];
 
-    if (newHeading.trueHeading != 0 && userTrackingMode == RMUserTrackingModeFollowWithHeading)
+    if (newHeading.trueHeading != 0 && self.userTrackingMode == RMUserTrackingModeFollowWithHeading)
     {
         [UIView animateWithDuration:1.0
                               delay:0.0
@@ -2177,10 +2177,13 @@
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
-    userTrackingMode = RMUserTrackingModeNone;
-    
-    if (_delegateHasDidFailToLocateUserWithError)
-        [delegate mapView:self didFailToLocateUserWithError:error];
+    if ([error code] != kCLErrorLocationUnknown)
+    {
+        self.userTrackingMode = RMUserTrackingModeNone;
+        
+        if (_delegateHasDidFailToLocateUserWithError)
+            [delegate mapView:self didFailToLocateUserWithError:error];
+    }
 }
 
 @end
