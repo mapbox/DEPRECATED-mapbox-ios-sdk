@@ -143,6 +143,9 @@
 
 - (void)addImage:(UIImage *)image forTile:(RMTile)tile withCacheKey:(NSString *)aCacheKey
 {
+    if (!image || !aCacheKey)
+        return;
+
     [memoryCache addImage:image forTile:tile withCacheKey:aCacheKey];
 
     @synchronized (caches)

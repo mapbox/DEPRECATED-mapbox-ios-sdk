@@ -106,10 +106,12 @@
 
     CALayer *hit = [self.layer hitTest:point];
 
-    if (!hit || ![hit isKindOfClass:[RMMarker class]])
+    RMAnnotation *hitAnnotation = [self findAnnotationInLayer:hit];
+    
+    if (!hit || !hitAnnotation || ![hitAnnotation.layer isKindOfClass:[RMMarker class]])
         return NO;
 
-    return ((RMMarker *)hit).annotation.enabled;
+    return hitAnnotation.enabled;
 }
 
 - (RMAnnotation *)findAnnotationInLayer:(CALayer *)layer
