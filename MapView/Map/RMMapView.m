@@ -2147,6 +2147,9 @@
         trackingHaloAnnotation.coordinate = newLocation.coordinate;
 
     userLocation.layer.hidden = (trackingHaloAnnotation.coordinate.latitude == 0 && trackingHaloAnnotation.coordinate.longitude == 0);
+    
+    accuracyCircleAnnotation.layer.hidden = newLocation.horizontalAccuracy <= 10;
+    
     trackingHaloAnnotation.layer.hidden = ((trackingHaloAnnotation.coordinate.latitude == 0 && trackingHaloAnnotation.coordinate.longitude == 0) || newLocation.horizontalAccuracy > 10);
     
     if ( ! [annotations containsObject:userLocation])
