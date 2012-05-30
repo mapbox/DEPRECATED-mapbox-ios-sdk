@@ -57,8 +57,6 @@
     shapeLayer = [[CAShapeLayer alloc] init];
     [self addSublayer:shapeLayer];
 
-    [self addAnimation:[CABasicAnimation animationWithKeyPath:@"sublayers"] forKey:@"sublayers"];
-    
     mapView = aMapView;
     radiusInMeters = newRadiusInMeters;
 
@@ -105,8 +103,6 @@
     CGFloat offset = floorf(-lineWidthInPixels / 2.0f) - 2;
     CGRect newBoundsRect = CGRectInset(rectangle, offset, offset);
     
-    BOOL sizeChanged = ( ! isnan(newBoundsRect.size.width) && ! isnan(newBoundsRect.size.height) && ! CGSizeEqualToSize(self.bounds.size, newBoundsRect.size));
-        
     [self setBounds:newBoundsRect];
 
     //	DLog(@"Circle Rectangle: %f, %f, %f, %f", rectangle.origin.x, rectangle.origin.y, rectangle.size.width, rectangle.size.height);
@@ -115,26 +111,23 @@
     CGPathAddEllipseInRect(newPath, NULL, rectangle);
     circlePath = newPath;
 
-    if (sizeChanged)
+    // animate the path change if we're in an animation block
+    //
+    if ([CATransaction animationDuration] > 0)
     {
-        CAShapeLayer *newShapeLayer = [[[CAShapeLayer alloc] init] autorelease];
+        CABasicAnimation *pathAnimation = [CABasicAnimation animationWithKeyPath:@"path"];
         
-        [newShapeLayer setPath:newPath];
-        [newShapeLayer setFillColor:[fillColor CGColor]];
-        [newShapeLayer setStrokeColor:[lineColor CGColor]];
-        [newShapeLayer setLineWidth:lineWidthInPixels];
+        pathAnimation.duration  = [CATransaction animationDuration];
+        pathAnimation.fromValue = [NSValue valueWithPointer:self.shapeLayer.path];
+        pathAnimation.toValue   = [NSValue valueWithPointer:newPath];
         
-        [self addSublayer:newShapeLayer];
-        [self.shapeLayer removeFromSuperlayer];
-        self.shapeLayer = newShapeLayer;
+        [self.shapeLayer addAnimation:pathAnimation forKey:@"animatePath"];
     }
-    else
-    {
-        [self.shapeLayer setPath:newPath];
-        [self.shapeLayer setFillColor:[fillColor CGColor]];
-        [self.shapeLayer setStrokeColor:[lineColor CGColor]];
-        [self.shapeLayer setLineWidth:lineWidthInPixels];
-    }
+
+    [self.shapeLayer setPath:newPath];
+    [self.shapeLayer setFillColor:[fillColor CGColor]];
+    [self.shapeLayer setStrokeColor:[lineColor CGColor]];
+    [self.shapeLayer setLineWidth:lineWidthInPixels];
 }
 
 #pragma mark - Accessors
