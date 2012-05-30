@@ -72,7 +72,10 @@ typedef enum {
     
     _mapView = [mapView retain];
     
-    [_mapView addObserver:self forKeyPath:@"userTrackingMode" options:NSKeyValueObservingOptionNew context:nil];
+    [_mapView addObserver:self forKeyPath:@"userTrackingMode"      options:NSKeyValueObservingOptionNew context:nil];
+    [_mapView addObserver:self forKeyPath:@"userLocation.location" options:NSKeyValueObservingOptionNew context:nil];
+    
+    state = RMUserTrackingButtonStateLocation;
     
     [self updateAppearance];
     
@@ -85,6 +88,7 @@ typedef enum {
     [buttonImageView release]; buttonImageView = nil;
     [activityView release]; activityView = nil;
     [_mapView removeObserver:self forKeyPath:@"userTrackingMode"];
+    [_mapView removeObserver:self forKeyPath:@"userLocation.location"];
     [_mapView release]; _mapView = nil;
     
     [super dealloc];
@@ -97,10 +101,12 @@ typedef enum {
     if ( ! [newMapView isEqual:_mapView])
     {
         [_mapView removeObserver:self forKeyPath:@"userTrackingMode"];
+        [_mapView removeObserver:self forKeyPath:@"userLocation.location"];
         [_mapView release];
 
         _mapView = [newMapView retain];
-        [_mapView addObserver:self forKeyPath:@"userTrackingMode" options:NSKeyValueObservingOptionNew context:nil];
+        [_mapView addObserver:self forKeyPath:@"userTrackingMode"      options:NSKeyValueObservingOptionNew context:nil];
+        [_mapView addObserver:self forKeyPath:@"userLocation.location" options:NSKeyValueObservingOptionNew context:nil];
         
         [self updateAppearance];
     }
@@ -124,40 +130,49 @@ typedef enum {
 
 - (void)updateAppearance
 {
+    // "selection" state
+    //
     segmentedControl.selectedSegmentIndex = (_mapView.userTrackingMode == RMUserTrackingModeNone ? UISegmentedControlNoSegment : 0);
     
-    if ( ! _mapView.userLocation || ! _mapView.userLocation.location)
+    // activity/image state
+    //
+    if (_mapView.userTrackingMode != RMUserTrackingModeNone && ( ! _mapView.userLocation || ! _mapView.userLocation.location || (_mapView.userLocation.location.coordinate.latitude == 0 && _mapView.userLocation.location.coordinate.longitude == 0)))
     {
-        if (state != RMUserTrackingButtonStateActivity)
-        {
-            [UIView animateWithDuration:0.25
-                             animations:^(void)
+        // if we should be tracking but don't yet have a location, show activity
+        //
+        [UIView animateWithDuration:0.25
+                              delay:0.0
+                            options:UIViewAnimationOptionBeginFromCurrentState
+                         animations:^(void)
+                         {
+                             buttonImageView.transform = CGAffineTransformMakeScale(0.01, 0.01);
+                             activityView.transform    = CGAffineTransformMakeScale(0.01, 0.01);                                 
+                         }
+                         completion:^(BOOL finished)
+                         {
+                             buttonImageView.hidden = YES;
+                             
+                             [activityView startAnimating];
+                             
+                             [UIView animateWithDuration:0.25 animations:^(void)
                              {
-                                 buttonImageView.transform = CGAffineTransformMakeScale(0.01, 0.01);
-                                 activityView.transform    = CGAffineTransformMakeScale(0.01, 0.01);                                 
-                             }
-                             completion:^(BOOL finished)
-                             {
-                                 buttonImageView.hidden = YES;
-                                 
-                                 [activityView startAnimating];
-                                 
-                                 [UIView animateWithDuration:0.25 animations:^(void)
-                                 {
-                                     buttonImageView.transform = CGAffineTransformIdentity;
-                                     activityView.transform    = CGAffineTransformIdentity;
-                                 }];
+                                 buttonImageView.transform = CGAffineTransformIdentity;
+                                 activityView.transform    = CGAffineTransformIdentity;
                              }];
-            
-            state = RMUserTrackingButtonStateActivity;
-        }
+                         }];
+        
+        state = RMUserTrackingButtonStateActivity;
     }
     else
     {
         if ((_mapView.userTrackingMode != RMUserTrackingModeFollowWithHeading && state != RMUserTrackingButtonStateLocation) ||
             (_mapView.userTrackingMode == RMUserTrackingModeFollowWithHeading && state != RMUserTrackingButtonStateHeading))
         {
+            // if image state doesn't match mode, update it
+            //
             [UIView animateWithDuration:0.25
+                                  delay:0.0
+                                options:UIViewAnimationOptionBeginFromCurrentState
                              animations:^(void)
                              {
                                  buttonImageView.transform = CGAffineTransformMakeScale(0.01, 0.01);

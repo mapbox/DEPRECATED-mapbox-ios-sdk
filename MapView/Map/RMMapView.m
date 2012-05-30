@@ -2144,11 +2144,11 @@
     }
     
     if ([newLocation distanceFromLocation:oldLocation])
-    {
         trackingHaloAnnotation.coordinate = newLocation.coordinate;
-        trackingHaloAnnotation.layer.hidden = (newLocation.horizontalAccuracy > 10);
-    }
 
+    userLocation.layer.hidden = (trackingHaloAnnotation.coordinate.latitude == 0 && trackingHaloAnnotation.coordinate.longitude == 0);
+    trackingHaloAnnotation.layer.hidden = ((trackingHaloAnnotation.coordinate.latitude == 0 && trackingHaloAnnotation.coordinate.longitude == 0) || newLocation.horizontalAccuracy > 10);
+    
     if ( ! [annotations containsObject:userLocation])
         [self addAnnotation:userLocation];
 }
