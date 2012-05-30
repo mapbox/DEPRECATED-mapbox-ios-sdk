@@ -1968,6 +1968,9 @@
             
             [locationManager stopUpdatingHeading];
 
+            if (self.userLocation)
+                [self locationManager:locationManager didUpdateToLocation:self.userLocation.location fromLocation:self.userLocation.location];
+
             if (userLocationTrackingView || userHeadingTrackingView)
             {
                 [userLocationTrackingView removeFromSuperview];
@@ -2010,6 +2013,9 @@
             
             [self addSubview:userLocationTrackingView];
             
+            if (self.userLocation)
+                [self locationManager:locationManager didUpdateToLocation:self.userLocation.location fromLocation:self.userLocation.location];
+
             [locationManager startUpdatingHeading];
             
             break;
