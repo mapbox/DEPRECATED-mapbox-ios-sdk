@@ -2143,9 +2143,6 @@
         trackingHaloAnnotation.layer.hidden = (newLocation.horizontalAccuracy > 10);
     }
 
-    if ([newLocation distanceFromLocation:oldLocation])
-        userLocation.location = newLocation;
-
     if ( ! [annotations containsObject:userLocation])
         [self addAnnotation:userLocation];
 }
