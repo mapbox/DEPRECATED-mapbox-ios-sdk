@@ -2022,7 +2022,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
-    if ( ! showsUserLocation)
+    if ( ! showsUserLocation || mapScrollView.isDragging)
         return;
     
     if ([newLocation distanceFromLocation:oldLocation])
@@ -2154,7 +2154,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
 {
-    if ( ! showsUserLocation)
+    if ( ! showsUserLocation || mapScrollView.isDragging)
         return;
     
     userLocation.heading = newHeading;
