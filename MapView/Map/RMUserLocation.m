@@ -50,9 +50,11 @@
 {
     if ([newLocation distanceFromLocation:location])
     {
+        [self willChangeValueForKey:@"location"];
         [location release];
         location = [newLocation retain];
         self.coordinate = location.coordinate;
+        [self didChangeValueForKey:@"location"];
     }
 }
 
@@ -60,8 +62,10 @@
 {
     if (newHeading.trueHeading != heading.trueHeading)
     {
+        [self willChangeValueForKey:@"heading"];
         [heading release];
         heading = [newHeading retain];
+        [self didChangeValueForKey:@"heading"];
     }
 }
 
