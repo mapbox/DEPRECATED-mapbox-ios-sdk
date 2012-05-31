@@ -53,12 +53,12 @@
 #define kiPhoneMilimeteresPerPixel .1543
 #define kZoomRectPixelBuffer 150.0
 
-#define kDefaultInitialLatitude 47.56
-#define kDefaultInitialLongitude 10.22
+#define kDefaultInitialLatitude  38.913175
+#define kDefaultInitialLongitude -77.032458
 
 #define kDefaultMinimumZoomLevel 0.0
 #define kDefaultMaximumZoomLevel 25.0
-#define kDefaultInitialZoomLevel 13.0
+#define kDefaultInitialZoomLevel 11.0
 
 #pragma mark --- end constants ----
 
@@ -269,10 +269,15 @@
     // only change if the frame changes and not during initialization
     if (!CGRectEqualToRect(r, frame))
     {
+        RMProjectedPoint centerPoint = [self centerProjectedPoint];
+
         CGRect bounds = CGRectMake(0, 0, frame.size.width, frame.size.height);
         backgroundView.frame = bounds;
         mapScrollView.frame = bounds;
         overlayView.frame = bounds;
+
+        [self setCenterProjectedPoint:centerPoint animated:NO];
+
         [self correctPositionOfAllAnnotations];
         [self correctMinZoomScaleForBoundingMask];
     }
