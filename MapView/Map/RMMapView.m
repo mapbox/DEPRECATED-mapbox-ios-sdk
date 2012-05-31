@@ -435,7 +435,7 @@
 
 // ===
 
-- (void)setConstraintsSouthWest:(CLLocationCoordinate2D)southWest northEeast:(CLLocationCoordinate2D)northEast
+- (void)setConstraintsSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast
 {
     RMProjectedPoint projectedSouthWest = [projection coordinateToProjectedPoint:southWest];
     RMProjectedPoint projectedNorthEast = [projection coordinateToProjectedPoint:northEast];
@@ -1122,7 +1122,7 @@
 
 - (void)mapTiledLayerView:(RMMapTiledLayerView *)aTiledLayerView twoFingerDoubleTapAtPoint:(CGPoint)aPoint
 {
-    [self zoomOutToNextNativeZoomAt:aPoint animated:YES];
+    [self zoomOutToNextNativeZoomAt:self.center animated:YES];
 
     if (_delegateHasDoubleTapTwoFingersOnMap)
         [delegate doubleTapTwoFingersOnMap:self at:aPoint];
@@ -1130,7 +1130,7 @@
 
 - (void)mapTiledLayerView:(RMMapTiledLayerView *)aTiledLayerView twoFingerSingleTapAtPoint:(CGPoint)aPoint
 {
-    [self zoomOutToNextNativeZoomAt:aPoint animated:YES];
+    [self zoomOutToNextNativeZoomAt:self.center animated:YES];
 
     if (_delegateHasSingleTapTwoFingersOnMap)
         [delegate singleTapTwoFingersOnMap:self at:aPoint];
@@ -1755,15 +1755,13 @@
     {
         [self correctScreenPosition:annotation];
 
-        if ([annotation isAnnotationOnScreen] && [delegate respondsToSelector:@selector(mapView:layerForAnnotation:)])
-        {
+        if (annotation.layer == nil && [annotation isAnnotationOnScreen] && _delegateHasLayerForAnnotation)
             annotation.layer = [delegate mapView:self layerForAnnotation:annotation];
 
-            if (annotation.layer)
-            {
-                [overlayView addSublayer:annotation.layer];
-                [visibleAnnotations addObject:annotation];
-            }
+        if (annotation.layer)
+        {
+            [overlayView addSublayer:annotation.layer];
+            [visibleAnnotations addObject:annotation];
         }
     }
 }
