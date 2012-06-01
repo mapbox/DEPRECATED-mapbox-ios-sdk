@@ -963,6 +963,7 @@
 
     [mapScrollView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:NULL];
     [mapScrollView setZoomScale:exp2f([self zoom]) animated:NO];
+    [self setDecelerationMode:decelerationMode];
 
     _lastZoom = [self zoom];
     _lastContentOffset = mapScrollView.contentOffset;
@@ -1153,7 +1154,10 @@
 {
     RMProjectedRect planetBounds = projection.planetBounds;
     metersPerPixel = planetBounds.size.width / mapScrollView.contentSize.width;
+
     zoom = log2f(mapScrollView.zoomScale);
+    zoom = (zoom > maxZoom) ? maxZoom : zoom;
+    zoom = (zoom < minZoom) ? minZoom : zoom;
 
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(correctPositionOfAllAnnotations) object:nil];
 
@@ -1239,6 +1243,9 @@
     if (tileSource == newTileSource)
         return;
 
+    int previousTileSideLength = [tileSource tileSideLength];
+    RMProjectedPoint centerPoint = [self centerProjectedPoint];
+
     [tileSource cancelAllDownloads];
     [tileSource autorelease];
     tileSource = [newTileSource retain];
@@ -1262,9 +1269,19 @@
     [self setMaxZoom:newTileSource.maxZoom];
     [self setZoom:[self zoom]]; // setZoom clamps zoom level to min/max limits
 
-    // Reload the map with the new tilesource
-    tiledLayerView.layer.contents = nil;
-    [tiledLayerView.layer setNeedsDisplay];
+    if (previousTileSideLength == 0 || previousTileSideLength == [tileSource tileSideLength])
+    {
+        // Reload the map with the new tilesource
+        tiledLayerView.layer.contents = nil;
+        [tiledLayerView.layer setNeedsDisplay];
+    }
+    else
+    {
+        // Recreate the map layer
+        [self createMapView];
+    }
+
+    [self setCenterProjectedPoint:centerPoint animated:NO];
 }
 
 - (UIView *)backgroundView
@@ -1397,15 +1414,11 @@
 
     adjustTilesForRetinaDisplay = doAdjustTilesForRetinaDisplay;
 
-    // Not so good: this replicates functionality from createMapView
-    int tileSideLength = [[self tileSource] tileSideLength];
+    RMProjectedPoint centerPoint = [self centerProjectedPoint];
 
-    if (adjustTilesForRetinaDisplay && screenScale > 1.0)
-        ((CATiledLayer *)tiledLayerView.layer).tileSize = CGSizeMake(tileSideLength * 2.0, tileSideLength * 2.0);
-    else
-        ((CATiledLayer *)tiledLayerView.layer).tileSize = CGSizeMake(tileSideLength, tileSideLength);
+    [self createMapView];
 
-    [self setCenterCoordinate:self.centerCoordinate animated:NO];
+    [self setCenterProjectedPoint:centerPoint animated:NO];
 }
 
 - (float)adjustedZoomForRetinaDisplay
