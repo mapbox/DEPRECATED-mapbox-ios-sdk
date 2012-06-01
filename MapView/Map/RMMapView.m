@@ -2157,7 +2157,7 @@
     if ([newLocation distanceFromLocation:oldLocation])
         trackingHaloAnnotation.coordinate = newLocation.coordinate;
 
-    userLocation.layer.hidden = (trackingHaloAnnotation.coordinate.latitude == 0 && trackingHaloAnnotation.coordinate.longitude == 0);
+    userLocation.layer.hidden = ((trackingHaloAnnotation.coordinate.latitude == 0 && trackingHaloAnnotation.coordinate.longitude == 0) || self.userTrackingMode == RMUserTrackingModeFollowWithHeading);
     
     accuracyCircleAnnotation.layer.hidden = newLocation.horizontalAccuracy <= 10;
     
