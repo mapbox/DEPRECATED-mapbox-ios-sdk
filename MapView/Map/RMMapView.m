@@ -922,7 +922,6 @@
 - (void)createMapView
 {
     [overlayView removeFromSuperview]; [overlayView release]; overlayView = nil;
-    [visibleAnnotations removeAllObjects];
 
     [tiledLayerView removeFromSuperview]; [tiledLayerView release]; tiledLayerView = nil;
 
@@ -978,6 +977,9 @@
     overlayView.delegate = self;
 
     [self insertSubview:overlayView aboveSubview:mapScrollView];
+
+    [visibleAnnotations removeAllObjects];
+    [self correctPositionOfAllAnnotations];
 }
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
