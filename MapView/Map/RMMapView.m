@@ -2050,21 +2050,29 @@
             [delegate mapView:self didUpdateUserLocation:userLocation];
     }
     
-    if (self.userTrackingMode != RMUserTrackingModeNone && (fabsf([self screenCoordinatesForAnnotation:userLocation].x - self.center.x) > 2 || fabsf([self screenCoordinatesForAnnotation:userLocation].y - self.center.y) > 2))
+    if (self.userTrackingMode != RMUserTrackingModeNone)
     {
-        float delta = newLocation.horizontalAccuracy / 110000; // approx. meter per degree latitude
-        
-        CLLocationCoordinate2D southWest = CLLocationCoordinate2DMake(newLocation.coordinate.latitude  - delta, 
-                                                                      newLocation.coordinate.longitude - delta);
-        
-        CLLocationCoordinate2D northEast = CLLocationCoordinate2DMake(newLocation.coordinate.latitude  + delta, 
-                                                                      newLocation.coordinate.longitude + delta);
+        // zoom centered on user location unless we're already centered there (or very close)
+        //
+        CGPoint mapCenterPoint    = [self convertPoint:self.center fromView:self.superview];
+        CGPoint userLocationPoint = [self screenCoordinatesForAnnotation:userLocation];
 
-        if (northEast.latitude  != [self latitudeLongitudeBoundingBox].northEast.latitude  ||
-            northEast.longitude != [self latitudeLongitudeBoundingBox].northEast.longitude ||
-            southWest.latitude  != [self latitudeLongitudeBoundingBox].southWest.latitude  ||
-            southWest.longitude != [self latitudeLongitudeBoundingBox].southWest.longitude)
-            [self zoomWithLatitudeLongitudeBoundsSouthWest:southWest northEast:northEast animated:YES];
+        if (fabsf(userLocationPoint.x - mapCenterPoint.x) > 2 || fabsf(userLocationPoint.y - mapCenterPoint.y > 2))
+        {
+            float delta = newLocation.horizontalAccuracy / 110000; // approx. meter per degree latitude
+            
+            CLLocationCoordinate2D southWest = CLLocationCoordinate2DMake(newLocation.coordinate.latitude  - delta, 
+                                                                          newLocation.coordinate.longitude - delta);
+            
+            CLLocationCoordinate2D northEast = CLLocationCoordinate2DMake(newLocation.coordinate.latitude  + delta, 
+                                                                          newLocation.coordinate.longitude + delta);
+
+            if (northEast.latitude  != [self latitudeLongitudeBoundingBox].northEast.latitude  ||
+                northEast.longitude != [self latitudeLongitudeBoundingBox].northEast.longitude ||
+                southWest.latitude  != [self latitudeLongitudeBoundingBox].southWest.latitude  ||
+                southWest.longitude != [self latitudeLongitudeBoundingBox].southWest.longitude)
+                [self zoomWithLatitudeLongitudeBoundsSouthWest:southWest northEast:northEast animated:YES];
+        }
     }
 
     RMAnnotation *accuracyCircleAnnotation = nil;
