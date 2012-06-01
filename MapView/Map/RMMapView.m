@@ -754,6 +754,9 @@
 
 - (void)zoomInToNextNativeZoomAt:(CGPoint)pivot animated:(BOOL)animated
 {
+    if (self.userTrackingMode != RMUserTrackingModeNone)
+        self.userTrackingMode = RMUserTrackingModeNone;
+    
     // Calculate rounded zoom
     float newZoom = fmin(ceilf([self zoom]) + 0.99, [self maxZoom]);
 
@@ -1059,6 +1062,9 @@
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
 {
+    if (self.userTrackingMode != RMUserTrackingModeNone && scrollView.pinchGestureRecognizer.state == UIGestureRecognizerStateChanged)
+        self.userTrackingMode = RMUserTrackingModeNone;
+    
     [self correctPositionOfAllAnnotations];
 
     if (zoom < 3 && self.userTrackingMode == RMUserTrackingModeFollowWithHeading)
