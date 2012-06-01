@@ -2024,6 +2024,9 @@
             
             [self addSubview:userLocationTrackingView];
             
+            if (self.zoom < 3)
+                [self zoomByFactor:exp2f(3 - [self zoom]) near:self.center animated:YES];
+
             if (self.userLocation)
                 [self locationManager:locationManager didUpdateToLocation:self.userLocation.location fromLocation:self.userLocation.location];
 
