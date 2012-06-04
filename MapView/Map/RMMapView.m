@@ -753,7 +753,7 @@
 
 - (void)zoomInToNextNativeZoomAt:(CGPoint)pivot animated:(BOOL)animated
 {
-    if (self.userTrackingMode != RMUserTrackingModeNone)
+    if (self.userTrackingMode != RMUserTrackingModeNone && ! CGPointEqualToPoint(pivot, self.center))
         self.userTrackingMode = RMUserTrackingModeNone;
     
     // Calculate rounded zoom
@@ -1166,7 +1166,14 @@
 
 - (void)mapTiledLayerView:(RMMapTiledLayerView *)aTiledLayerView doubleTapAtPoint:(CGPoint)aPoint
 {
-    [self zoomInToNextNativeZoomAt:aPoint animated:YES];
+    if (self.userTrackingMode != RMUserTrackingModeNone && CGRectContainsPoint(CGRectMake(self.center.x - 75, self.center.y - 75, 150, 150), aPoint))
+    {
+        [self zoomInToNextNativeZoomAt:self.center animated:YES];
+    }
+    else
+    {
+        [self zoomInToNextNativeZoomAt:aPoint animated:YES];
+    }
 
     if (_delegateHasDoubleTapOnMap)
         [delegate doubleTapOnMap:self at:aPoint];
