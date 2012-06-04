@@ -513,7 +513,7 @@
 
 //    RMLog(@"setMapCenterProjectedPoint: {%f,%f} -> {%.0f,%.0f}", centerProjectedPoint.x, centerProjectedPoint.y, mapScrollView.contentOffset.x, mapScrollView.contentOffset.y);
 
-    if (_delegateHasAfterMapMove)
+    if (_delegateHasAfterMapMove && !animated)
         [delegate afterMapMove:self];
 
     [self correctPositionOfAllAnnotations];
