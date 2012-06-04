@@ -922,6 +922,7 @@
 {
     [overlayView removeFromSuperview]; [overlayView release]; overlayView = nil;
 
+    tiledLayerView.layer.contents = nil;
     [tiledLayerView removeFromSuperview]; [tiledLayerView release]; tiledLayerView = nil;
 
     [mapScrollView removeObserver:self forKeyPath:@"contentOffset"];
@@ -960,7 +961,7 @@
     [mapScrollView addSubview:tiledLayerView];
 
     [mapScrollView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:NULL];
-    [mapScrollView setZoomScale:exp2f([self zoom]) animated:NO];
+    mapScrollView.zoomScale = exp2f([self zoom]);
 
     [self setDecelerationMode:decelerationMode];
 
@@ -1251,7 +1252,6 @@
     if (tileSource == newTileSource)
         return;
 
-//    int previousTileSideLength = [tileSource tileSideLength];
     RMProjectedPoint centerPoint = [self centerProjectedPoint];
 
     [tileSource cancelAllDownloads];
@@ -1277,17 +1277,8 @@
     [self setMaxZoom:newTileSource.maxZoom];
     [self setZoom:[self zoom]]; // setZoom clamps zoom level to min/max limits
 
-//    if (previousTileSideLength == 0 || previousTileSideLength == [tileSource tileSideLength])
-//    {
-//        // Reload the map with the new tilesource
-//        tiledLayerView.layer.contents = nil;
-//        [tiledLayerView.layer setNeedsDisplay];
-//    }
-//    else
-//    {
-        // Recreate the map layer
-        [self createMapView];
-//    }
+    // Recreate the map layer
+    [self createMapView];
 
     [self setCenterProjectedPoint:centerPoint animated:NO];
 }
