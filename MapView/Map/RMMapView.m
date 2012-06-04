@@ -149,7 +149,6 @@
     clusterAreaSize = CGSizeMake(150.0, 150.0);
 
     [self setTileCache:[[[RMTileCache alloc] init] autorelease]];
-    [self setTileSource:newTilesource];
 
     [self setBackgroundView:[[[UIView alloc] initWithFrame:[self bounds]] autorelease]];
     if (backgroundImage)
@@ -161,7 +160,7 @@
     [self setMaxZoom:maxZoomLevel];
     [self setZoom:initialZoomLevel];
 
-    [self createMapView];
+    [self setTileSource:newTilesource];
     [self setCenterCoordinate:initialCenterCoordinate animated:NO];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
