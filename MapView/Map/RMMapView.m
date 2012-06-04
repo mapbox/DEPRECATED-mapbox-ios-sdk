@@ -1831,7 +1831,7 @@
     [self correctPositionOfAllAnnotations];
 }
 
-- (CGPoint)screenCoordinatesForAnnotation:(RMAnnotation *)annotation
+- (CGPoint)mapPositionForAnnotation:(RMAnnotation *)annotation
 {
     [self correctScreenPosition:annotation];
     return annotation.position;
