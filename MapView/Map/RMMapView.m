@@ -1062,10 +1062,7 @@
     }
     else
     {
-        [self zoomInToNextNativeZoomAt:aPoint animated:YES];
-
-        if (_delegateHasDoubleTapOnMap)
-            [delegate doubleTapOnMap:self at:aPoint];
+        [self mapTiledLayerView:tiledLayerView doubleTapAtPoint:aPoint];
     }
 }
 
@@ -1090,10 +1087,7 @@
     }
     else
     {
-        [self zoomInToNextNativeZoomAt:aPoint animated:YES];
-
-        if (_delegateHasDoubleTapOnMap)
-            [delegate doubleTapOnMap:self at:aPoint];
+        [self mapTiledLayerView:tiledLayerView doubleTapAtPoint:aPoint];
     }
 }
 
