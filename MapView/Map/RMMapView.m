@@ -1011,6 +1011,12 @@
         [delegate afterMapMove:self];
 }
 
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
+{
+    if (_delegateHasAfterMapMove)
+        [delegate afterMapMove:self];
+}
+
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
 {
     _mapScrollViewIsZooming = YES;
