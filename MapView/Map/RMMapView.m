@@ -479,8 +479,8 @@
 
     RMProjectedRect planetBounds = projection.planetBounds;
     RMProjectedPoint normalizedProjectedPoint;
-    normalizedProjectedPoint.x = (center.x * self.metersPerPixel) - fabs(planetBounds.origin.x);
-    normalizedProjectedPoint.y = (center.y * self.metersPerPixel) - fabs(planetBounds.origin.y);
+    normalizedProjectedPoint.x = (center.x * metersPerPixel) - fabs(planetBounds.origin.x);
+    normalizedProjectedPoint.y = (center.y * metersPerPixel) - fabs(planetBounds.origin.y);
 
 //    RMLog(@"centerProjectedPoint: {%f,%f}", normalizedProjectedPoint.x, normalizedProjectedPoint.y);
 
@@ -507,8 +507,8 @@
 	normalizedProjectedPoint.x = centerProjectedPoint.x + fabs(planetBounds.origin.x);
 	normalizedProjectedPoint.y = centerProjectedPoint.y + fabs(planetBounds.origin.y);
 
-    [mapScrollView setContentOffset:CGPointMake(normalizedProjectedPoint.x / self.metersPerPixel - mapScrollView.bounds.size.width/2.0,
-                                                mapScrollView.contentSize.height - ((normalizedProjectedPoint.y / self.metersPerPixel) + mapScrollView.bounds.size.height/2.0))
+    [mapScrollView setContentOffset:CGPointMake(normalizedProjectedPoint.x / metersPerPixel - mapScrollView.bounds.size.width/2.0,
+                                                mapScrollView.contentSize.height - ((normalizedProjectedPoint.y / metersPerPixel) + mapScrollView.bounds.size.height/2.0))
                            animated:animated];
 
 //    RMLog(@"setMapCenterProjectedPoint: {%f,%f} -> {%.0f,%.0f}", centerProjectedPoint.x, centerProjectedPoint.y, mapScrollView.contentOffset.x, mapScrollView.contentOffset.y);
@@ -566,10 +566,10 @@
 
     RMProjectedRect planetBounds = projection.planetBounds;
     RMProjectedRect normalizedProjectedRect;
-    normalizedProjectedRect.origin.x = (bottomLeft.x * self.metersPerPixel) - fabs(planetBounds.origin.x);
-    normalizedProjectedRect.origin.y = (bottomLeft.y * self.metersPerPixel) - fabs(planetBounds.origin.y);
-    normalizedProjectedRect.size.width = mapScrollView.bounds.size.width * self.metersPerPixel;
-    normalizedProjectedRect.size.height = mapScrollView.bounds.size.height * self.metersPerPixel;
+    normalizedProjectedRect.origin.x = (bottomLeft.x * metersPerPixel) - fabs(planetBounds.origin.x);
+    normalizedProjectedRect.origin.y = (bottomLeft.y * metersPerPixel) - fabs(planetBounds.origin.y);
+    normalizedProjectedRect.size.width = mapScrollView.bounds.size.width * metersPerPixel;
+    normalizedProjectedRect.size.height = mapScrollView.bounds.size.height * metersPerPixel;
 
     return normalizedProjectedRect;
 }
@@ -587,10 +587,10 @@
 	normalizedProjectedPoint.y = boundsRect.origin.y + fabs(planetBounds.origin.y);
 
     float zoomScale = mapScrollView.zoomScale;
-    CGRect zoomRect = CGRectMake((normalizedProjectedPoint.x / self.metersPerPixel) / zoomScale,
-                                 ((planetBounds.size.height - normalizedProjectedPoint.y - boundsRect.size.height) / self.metersPerPixel) / zoomScale,
-                                 (boundsRect.size.width / self.metersPerPixel) / zoomScale,
-                                 (boundsRect.size.height / self.metersPerPixel) / zoomScale);
+    CGRect zoomRect = CGRectMake((normalizedProjectedPoint.x / metersPerPixel) / zoomScale,
+                                 ((planetBounds.size.height - normalizedProjectedPoint.y - boundsRect.size.height) / metersPerPixel) / zoomScale,
+                                 (boundsRect.size.width / metersPerPixel) / zoomScale,
+                                 (boundsRect.size.height / metersPerPixel) / zoomScale);
     [mapScrollView zoomToRect:zoomRect animated:animated];
 }
 
@@ -599,7 +599,7 @@
     if (boundingMask == RMMapNoMinBound)
         return zoomFactor;
 
-    double newMetersPerPixel = self.metersPerPixel / zoomFactor;
+    double newMetersPerPixel = metersPerPixel / zoomFactor;
 
     RMProjectedRect mercatorBounds = [projection planetBounds];
 
@@ -613,7 +613,7 @@
         if (newMapContentsWidth < screenBoundsWidth)
         {
             // Calculate new zoom facter so that it does not shrink the map any further.
-            mapContentWidth = mercatorBounds.size.width / self.metersPerPixel;
+            mapContentWidth = mercatorBounds.size.width / metersPerPixel;
             zoomFactor = screenBoundsWidth / mapContentWidth;
         }
     }
@@ -628,7 +628,7 @@
         if (newMapContentsHeight < screenBoundsHeight)
         {
             // Calculate new zoom facter so that it does not shrink the map any further.
-            mapContentHeight = mercatorBounds.size.height / self.metersPerPixel;
+            mapContentHeight = mercatorBounds.size.height / metersPerPixel;
             zoomFactor = screenBoundsHeight / mapContentHeight;
         }
     }
@@ -808,21 +808,21 @@
 
             // this is copied from [RMMercatorToScreenBounds zoomScreenByFactor]
             // First we move the origin to the pivot...
-            origin.x += center.x * self.metersPerPixel;
-            origin.y += (screenBounds.size.height - center.y) * self.metersPerPixel;
+            origin.x += center.x * metersPerPixel;
+            origin.y += (screenBounds.size.height - center.y) * metersPerPixel;
 
             // Then scale by 1/factor
-            self.metersPerPixel /= _zoomFactor;
+            metersPerPixel /= _zoomFactor;
 
             // Then translate back
-            origin.x -= center.x * self.metersPerPixel;
-            origin.y -= (screenBounds.size.height - center.y) * self.metersPerPixel;
+            origin.x -= center.x * metersPerPixel;
+            origin.y -= (screenBounds.size.height - center.y) * metersPerPixel;
 
             // calculate new bounds
             RMProjectedRect zRect;
             zRect.origin = origin;
-            zRect.size.width = screenBounds.size.width * self.metersPerPixel;
-            zRect.size.height = screenBounds.size.height * self.metersPerPixel;
+            zRect.size.width = screenBounds.size.width * metersPerPixel;
+            zRect.size.height = screenBounds.size.height * metersPerPixel;
 
 //            // can zoom only if within bounds
 //            canZoom = !(zRect.origin.y < _southWestConstraint.y || zRect.origin.y+zRect.size.height > _northEastConstraint.y ||
@@ -1052,7 +1052,7 @@
     else
     {
         if (_delegateHasSingleTapOnMap)
-            [delegate singleTapOnMap:self at:aPoint];   
+            [delegate singleTapOnMap:self at:aPoint];
     }
 }
 
@@ -1327,12 +1327,12 @@
 
 - (double)scaledMetersPerPixel
 {
-    return self.metersPerPixel / screenScale;
+    return metersPerPixel / screenScale;
 }
 
 - (double)scaleDenominator
 {
-    double routemeMetersPerPixel = self.metersPerPixel;
+    double routemeMetersPerPixel = metersPerPixel;
     double iphoneMillimetersPerPixel = kiPhoneMilimeteresPerPixel;
     double truescaleDenominator = routemeMetersPerPixel / (0.001 * iphoneMillimetersPerPixel);
 
@@ -1449,7 +1449,7 @@
 	normalizedProjectedPoint.y = projectedPoint.y + fabs(planetBounds.origin.y);
 
     // \bug: There is a rounding error here for high zoom levels
-    CGPoint projectedPixel = CGPointMake((normalizedProjectedPoint.x / self.metersPerPixel) - mapScrollView.contentOffset.x, (mapScrollView.contentSize.height - (normalizedProjectedPoint.y / self.metersPerPixel)) - mapScrollView.contentOffset.y);
+    CGPoint projectedPixel = CGPointMake((normalizedProjectedPoint.x / metersPerPixel) - mapScrollView.contentOffset.x, (mapScrollView.contentSize.height - (normalizedProjectedPoint.y / metersPerPixel)) - mapScrollView.contentOffset.y);
 
 //    RMLog(@"pointToPixel: {%f,%f} -> {%f,%f}", projectedPoint.x, projectedPoint.y, projectedPixel.x, projectedPixel.y);
 
@@ -1465,8 +1465,8 @@
 {
     RMProjectedRect planetBounds = projection.planetBounds;
     RMProjectedPoint normalizedProjectedPoint;
-    normalizedProjectedPoint.x = ((pixelCoordinate.x + mapScrollView.contentOffset.x) * self.metersPerPixel) - fabs(planetBounds.origin.x);
-    normalizedProjectedPoint.y = ((mapScrollView.contentSize.height - mapScrollView.contentOffset.y - pixelCoordinate.y) * self.metersPerPixel) - fabs(planetBounds.origin.y);
+    normalizedProjectedPoint.x = ((pixelCoordinate.x + mapScrollView.contentOffset.x) * metersPerPixel) - fabs(planetBounds.origin.x);
+    normalizedProjectedPoint.y = ((mapScrollView.contentSize.height - mapScrollView.contentOffset.y - pixelCoordinate.y) * metersPerPixel) - fabs(planetBounds.origin.y);
 
 //    RMLog(@"pixelToPoint: {%f,%f} -> {%f,%f}", pixelCoordinate.x, pixelCoordinate.y, normalizedProjectedPoint.x, normalizedProjectedPoint.y);
 
@@ -1490,12 +1490,12 @@
 
 - (RMProjectedSize)viewSizeToProjectedSize:(CGSize)screenSize
 {
-    return RMProjectedSizeMake(screenSize.width * self.metersPerPixel, screenSize.height * self.metersPerPixel);
+    return RMProjectedSizeMake(screenSize.width * metersPerPixel, screenSize.height * metersPerPixel);
 }
 
 - (CGSize)projectedSizeToViewSize:(RMProjectedSize)projectedSize
 {
-    return CGSizeMake(projectedSize.width / self.metersPerPixel, projectedSize.height / self.metersPerPixel);
+    return CGSizeMake(projectedSize.width / metersPerPixel, projectedSize.height / metersPerPixel);
 }
 
 - (RMProjectedPoint)projectedOrigin
@@ -1504,8 +1504,8 @@
 
     RMProjectedRect planetBounds = projection.planetBounds;
     RMProjectedPoint normalizedProjectedPoint;
-    normalizedProjectedPoint.x = (origin.x * self.metersPerPixel) - fabs(planetBounds.origin.x);
-    normalizedProjectedPoint.y = (origin.y * self.metersPerPixel) - fabs(planetBounds.origin.y);
+    normalizedProjectedPoint.x = (origin.x * metersPerPixel) - fabs(planetBounds.origin.x);
+    normalizedProjectedPoint.y = (origin.y * metersPerPixel) - fabs(planetBounds.origin.y);
 
 //    RMLog(@"projectedOrigin: {%f,%f}", normalizedProjectedPoint.x, normalizedProjectedPoint.y);
 
@@ -1514,7 +1514,7 @@
 
 - (RMProjectedSize)projectedViewSize
 {
-    return RMProjectedSizeMake(self.bounds.size.width * self.metersPerPixel, self.bounds.size.height * self.metersPerPixel);
+    return RMProjectedSizeMake(self.bounds.size.width * metersPerPixel, self.bounds.size.height * metersPerPixel);
 }
 
 - (CLLocationCoordinate2D)normalizeCoordinate:(CLLocationCoordinate2D)coordinate
@@ -1600,7 +1600,7 @@
 	normalizedProjectedPoint.x = annotation.projectedLocation.x + fabs(planetBounds.origin.x);
 	normalizedProjectedPoint.y = annotation.projectedLocation.y + fabs(planetBounds.origin.y);
 
-    annotation.position = CGPointMake((normalizedProjectedPoint.x / self.metersPerPixel) - mapScrollView.contentOffset.x, mapScrollView.contentSize.height - (normalizedProjectedPoint.y / self.metersPerPixel) - mapScrollView.contentOffset.y);
+    annotation.position = CGPointMake((normalizedProjectedPoint.x / metersPerPixel) - mapScrollView.contentOffset.x, mapScrollView.contentSize.height - (normalizedProjectedPoint.y / metersPerPixel) - mapScrollView.contentOffset.y);
 //    RMLog(@"Change annotation at {%f,%f} in mapView {%f,%f}", annotation.position.x, annotation.position.y, mapScrollView.contentSize.width, mapScrollView.contentSize.height);
 }
 
@@ -1639,7 +1639,7 @@
         }
 
         RMProjectedRect boundingBox = [self projectedBounds];
-        double boundingBoxBuffer = kZoomRectPixelBuffer * self.metersPerPixel;
+        double boundingBoxBuffer = kZoomRectPixelBuffer * metersPerPixel;
         boundingBox.origin.x -= boundingBoxBuffer;
         boundingBox.origin.y -= boundingBoxBuffer;
         boundingBox.size.width += 2*boundingBoxBuffer;
@@ -1647,8 +1647,8 @@
 
         NSArray *annotationsToCorrect = [quadTree annotationsInProjectedRect:boundingBox
                                                     createClusterAnnotations:self.enableClustering
-                                                    withProjectedClusterSize:RMProjectedSizeMake(self.clusterAreaSize.width * self.metersPerPixel, self.clusterAreaSize.height * self.metersPerPixel)
-                                               andProjectedClusterMarkerSize:RMProjectedSizeMake(self.clusterMarkerSize.width * self.metersPerPixel, self.clusterMarkerSize.height * self.metersPerPixel)
+                                                    withProjectedClusterSize:RMProjectedSizeMake(self.clusterAreaSize.width * metersPerPixel, self.clusterAreaSize.height * metersPerPixel)
+                                               andProjectedClusterMarkerSize:RMProjectedSizeMake(self.clusterMarkerSize.width * metersPerPixel, self.clusterMarkerSize.height * metersPerPixel)
                                                            findGravityCenter:self.positionClusterMarkersAtTheGravityCenter];
         NSMutableSet *previousVisibleAnnotations = [[NSMutableSet alloc] initWithSet:visibleAnnotations];
 
