@@ -243,7 +243,7 @@ typedef enum {
 - (void)removeAnnotations:(NSArray *)annotations;
 - (void)removeAllAnnotations;
 
-- (CGPoint)screenCoordinatesForAnnotation:(RMAnnotation *)annotation;
+- (CGPoint)mapPositionForAnnotation:(RMAnnotation *)annotation;
 
 #pragma mark -
 #pragma mark Cache
