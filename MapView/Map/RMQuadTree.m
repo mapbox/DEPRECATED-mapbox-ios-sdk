@@ -448,7 +448,7 @@
                 {
                     @synchronized (annotations)
                     {
-                        [someArray addObjectsFromArray:annotations];
+                        [someArray addObjectsFromArray:enclosedAnnotations];
                     }
 
                     return;
