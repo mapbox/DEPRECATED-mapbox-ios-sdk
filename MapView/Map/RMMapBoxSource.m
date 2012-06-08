@@ -49,8 +49,6 @@
 {
     if (self = [super init])
     {
-        NSAssert([NSJSONSerialization class], @"JSON serialization not supported by SDK");
-
         infoDictionary = (NSDictionary *)[[NSJSONSerialization JSONObjectWithData:[tileJSON dataUsingEncoding:NSUTF8StringEncoding]
                                                                           options:0
                                                                             error:nil] retain];
@@ -80,12 +78,22 @@
                                                                                                      withString:@".json"
                                                                                                         options:NSAnchoredSearch & NSBackwardsSearch
                                                                                                           range:NSMakeRange(0, [[referenceURL absoluteString] length])]];
-
-    if ((dataObject = [NSString stringWithContentsOfURL:referenceURL encoding:NSUTF8StringEncoding error:nil]) && dataObject)
+    
+    if ([[referenceURL pathExtension] isEqualToString:@"json"] && (dataObject = [NSString stringWithContentsOfURL:referenceURL encoding:NSUTF8StringEncoding error:nil]) && dataObject)
         return [self initWithTileJSON:dataObject];
 
-    else if ((dataObject = [[[NSDictionary alloc] initWithContentsOfURL:referenceURL] autorelease]) && dataObject)
-        return [self initWithInfo:dataObject];
+    else if ([[referenceURL pathExtension] isEqualToString:@"plist"])
+    {
+        NSMutableDictionary *mutableInfoDictionary = [NSMutableDictionary dictionaryWithContentsOfURL:referenceURL];
+        
+        if (mutableInfoDictionary)
+        {
+            if ( ! [mutableInfoDictionary objectForKey:@"scheme"])
+                [mutableInfoDictionary setObject:@"tms" forKey:@"scheme"]; // assume older plists are TMS, not XYZ per TileJSON default
+        
+            return [self initWithInfo:mutableInfoDictionary];
+        }
+    }
 
     return nil;
 }
@@ -100,8 +108,6 @@
 
 - (NSURL *)URLForTile:(RMTile)tile
 {
-    // flip y value per OSM-style
-    //
     NSInteger zoom = tile.zoom;
     NSInteger x    = tile.x;
     NSInteger y    = tile.y;

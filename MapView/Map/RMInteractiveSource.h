@@ -33,10 +33,9 @@
 //  Based on the UTFGrid specification: https://github.com/mapbox/utfgrid-spec
 //
 
+#import "RMMapView.h"
 #import "RMMBTilesSource.h"
 #import "RMMapBoxSource.h"
-
-@class RMMapView;
 
 // Interactivity currently supports two types of output: 'teaser'
 // and 'full'. Ideal for master/detail interfaces or for showing
@@ -46,6 +45,31 @@ typedef enum {
     RMInteractiveSourceOutputTypeTeaser = 0,
     RMInteractiveSourceOutputTypeFull   = 1,
 } RMInteractiveSourceOutputType;
+
+@protocol RMInteractiveMapView 
+
+@required
+
+// Query if a map view supports interactivity features.
+//
+- (BOOL)supportsInteractivity;
+
+// Get the HTML-formatted output for a given point on a given map view.
+//
+- (NSString *)formattedOutputOfType:(RMInteractiveSourceOutputType)outputType forPoint:(CGPoint)point;
+
+@end
+
+#pragma mark -
+
+@interface RMMapView (RMInteractiveSource) <RMInteractiveMapView>
+
+- (BOOL)supportsInteractivity;
+- (NSString *)formattedOutputOfType:(RMInteractiveSourceOutputType)outputType forPoint:(CGPoint)point;
+
+@end
+
+#pragma mark -
 
 @protocol RMInteractiveSource
 

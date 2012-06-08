@@ -20,6 +20,7 @@
 @implementation RMMapTiledLayerView
 
 @synthesize delegate;
+@synthesize useSnapshotRenderer;
 
 + (Class)layerClass
 {
@@ -41,6 +42,8 @@
     self.userInteractionEnabled = YES;
     self.multipleTouchEnabled = YES;
     self.opaque = NO;
+
+    self.useSnapshotRenderer = NO;
 
     CATiledLayer *tiledLayer = [self tiledLayer];
     tiledLayer.levelsOfDetail = [[mapView tileSource] maxZoom];
@@ -87,23 +90,9 @@
 
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-    if (zoom == (short)ceilf(mapView.zoom))
+    if (self.useSnapshotRenderer)
     {
-        int x = floor(rect.origin.x / rect.size.width),
-            y = floor(fabs(rect.origin.y / rect.size.height));
-
-//        NSLog(@"Tile @ x:%d, y:%d, zoom:%d", x, y, zoom);
-
-        UIGraphicsPushContext(context);
-
-        UIImage *tileImage = [[mapView tileSource] imageForTile:RMTileMake(x, y, zoom) inCache:[mapView tileCache]];
-        [tileImage drawInRect:rect];
-
-        UIGraphicsPopContext();
-    }
-    else // Probably due to renderInContext:
-    {
-        zoom = (short)ceilf(mapView.zoom);
+        zoom = (short)ceilf(mapView.adjustedZoomForRetinaDisplay);
         CGFloat rectSize = bounds.size.width / powf(2.0, (float)zoom);
 
         int x1 = floor(rect.origin.x / rectSize),
@@ -123,6 +112,20 @@
                 [tileImage drawInRect:CGRectMake(x * rectSize, y * rectSize, rectSize, rectSize)];
             }
         }
+
+        UIGraphicsPopContext();
+    }
+    else
+    {
+        int x = floor(rect.origin.x / rect.size.width),
+            y = floor(fabs(rect.origin.y / rect.size.height));
+
+//        NSLog(@"Tile @ x:%d, y:%d, zoom:%d", x, y, zoom);
+
+        UIGraphicsPushContext(context);
+
+        UIImage *tileImage = [[mapView tileSource] imageForTile:RMTileMake(x, y, zoom) inCache:[mapView tileCache]];
+        [tileImage drawInRect:rect];
 
         UIGraphicsPopContext();
     }

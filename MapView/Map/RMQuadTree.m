@@ -77,8 +77,8 @@
 
     @synchronized (cachedClusterAnnotation)
     {
-        [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
         [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+        [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
     }
 
     @synchronized (annotations)
@@ -167,8 +167,8 @@
 
     @synchronized (cachedClusterAnnotation)
     {
-        [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
         [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+        [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
     }
 
     if (RMProjectedRectIntersectsProjectedRect(quadTreeBounds, northWestBoundingBox))
@@ -418,8 +418,8 @@
             {
                 @synchronized (cachedClusterAnnotation)
                 {
-                    [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
                     [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+                    [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
                 }
 
                 enclosedAnnotations = [NSArray arrayWithArray:annotationsToCheck];
@@ -435,8 +435,8 @@
             {
                 if (cachedClusterAnnotation && [enclosedAnnotations count] != [cachedClusterEnclosedAnnotations count])
                 {
-                    [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
                     [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+                    [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
                 }
             }
 
@@ -448,7 +448,7 @@
                 {
                     @synchronized (annotations)
                     {
-                        [someArray addObjectsFromArray:annotations];
+                        [someArray addObjectsFromArray:enclosedAnnotations];
                     }
 
                     return;
@@ -555,8 +555,8 @@
 
     @synchronized (cachedClusterAnnotation)
     {
-        [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
         [cachedClusterEnclosedAnnotations release]; cachedClusterEnclosedAnnotations = nil;
+        [cachedClusterAnnotation release]; cachedClusterAnnotation = nil;
     }
 
     [cachedEnclosedAnnotations release]; cachedEnclosedAnnotations = nil;
@@ -615,15 +615,6 @@
     @synchronized (self)
     {
         [annotation.quadTreeNode removeAnnotation:annotation];
-    }
-}
-
-- (void)removeAllObjects
-{
-    @synchronized (self)
-    {
-        [rootNode release];
-        rootNode = [[RMQuadTreeNode alloc] initWithMapView:mapView forParent:nil inBoundingBox:[[RMProjection googleProjection] planetBounds]];
     }
 }
 

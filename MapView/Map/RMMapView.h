@@ -49,6 +49,10 @@ typedef enum {
     RMMapDecelerationOff
 } RMMapDecelerationMode;
 
+#define kRMUserLocationAnnotationTypeName   @"RMUserLocationAnnotation"
+#define kRMTrackingHaloAnnotationTypeName   @"RMTrackingHaloAnnotation"
+#define kRMAccuracyCircleAnnotationTypeName @"RMAccuracyCircleAnnotation"
+
 @class RMProjection;
 @class RMFractalTileProjection;
 @class RMTileCache;
@@ -57,12 +61,13 @@ typedef enum {
 @class RMMarker;
 @class RMAnnotation;
 @class RMQuadTree;
+@class RMUserLocation;
 
 @protocol RMMercatorToTileProjection;
 @protocol RMTileSource;
 @protocol RMMapTiledLayerViewDelegate;
 
-@interface RMMapView : UIView <UIScrollViewDelegate, RMMapOverlayViewDelegate, RMMapTiledLayerViewDelegate>
+@interface RMMapView : UIView <UIScrollViewDelegate, RMMapOverlayViewDelegate, RMMapTiledLayerViewDelegate, CLLocationManagerDelegate>
 {
     id <RMMapViewDelegate> delegate;
 
@@ -94,6 +99,14 @@ typedef enum {
     float screenScale;
 
     NSUInteger boundingMask;
+    
+    CLLocationManager *locationManager;
+    RMUserLocation *userLocation;
+    BOOL showsUserLocation;
+    RMUserTrackingMode userTrackingMode;
+    
+    UIImageView *userLocationTrackingView;
+    UIImageView *userHeadingTrackingView;
 }
 
 @property (nonatomic, assign) id <RMMapViewDelegate> delegate;
@@ -115,7 +128,8 @@ typedef enum {
 @property (nonatomic, readonly) float screenScale;
 @property (nonatomic, assign)   NSUInteger boundingMask;
 
-@property (nonatomic, assign) BOOL adjustTilesForRetinaDisplay;
+@property (nonatomic, assign)   BOOL adjustTilesForRetinaDisplay;
+@property (nonatomic, readonly) float adjustedZoomForRetinaDisplay; // takes adjustTilesForRetinaDisplay and screen scale into account
 
 @property (nonatomic, assign) float zoom; /// zoom level is clamped to range (minZoom, maxZoom)
 @property (nonatomic, assign) float minZoom;
@@ -134,6 +148,11 @@ typedef enum {
 @property (nonatomic, retain) RMTileCache *tileCache;
 
 @property (nonatomic, retain) UIView *backgroundView;
+
+@property (nonatomic) BOOL showsUserLocation;
+@property (nonatomic, readonly, retain) RMUserLocation *userLocation;
+@property (nonatomic, readonly, getter=isUserLocationVisible) BOOL userLocationVisible;
+@property (nonatomic) RMUserTrackingMode userTrackingMode;
 
 #pragma mark -
 #pragma mark Initializers
@@ -209,7 +228,7 @@ typedef enum {
 - (BOOL)projectedBounds:(RMProjectedRect)bounds containsPoint:(RMProjectedPoint)point;
 - (BOOL)tileSourceBoundsContainProjectedPoint:(RMProjectedPoint)point;
 
-- (void)setConstraintsSouthWest:(CLLocationCoordinate2D)southWest northEeast:(CLLocationCoordinate2D)northEast;
+- (void)setConstraintsSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast;
 - (void)setProjectedConstraintsSouthWest:(RMProjectedPoint)southWest northEast:(RMProjectedPoint)northEast;
 
 #pragma mark -
@@ -224,7 +243,7 @@ typedef enum {
 - (void)removeAnnotations:(NSArray *)annotations;
 - (void)removeAllAnnotations;
 
-- (CGPoint)screenCoordinatesForAnnotation:(RMAnnotation *)annotation;
+- (CGPoint)mapPositionForAnnotation:(RMAnnotation *)annotation;
 
 #pragma mark -
 #pragma mark Cache
@@ -237,5 +256,10 @@ typedef enum {
 
 - (UIImage *)takeSnapshot;
 - (UIImage *)takeSnapshotAndIncludeOverlay:(BOOL)includeOverlay;
+
+#pragma mark -
+#pragma mark User Location
+
+- (void)setUserTrackingMode:(RMUserTrackingMode)mode animated:(BOOL)animated;
 
 @end

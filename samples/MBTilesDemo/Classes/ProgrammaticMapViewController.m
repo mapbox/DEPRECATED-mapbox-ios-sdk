@@ -13,8 +13,8 @@
 #import "RMAnnotation.h"
 #import "RMQuadTree.h"
 
-#import "RMMBTilesTileSource.h"
-#import "RMTileStreamSource.h"
+#import "RMMBTilesSource.h"
+#import "RMMapBoxSource.h"
 
 @implementation ProgrammaticMapViewController
 {
@@ -84,7 +84,7 @@
     showsLocalTileSource = YES;
 
     NSURL *tilesURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"control-room-0.2.0" ofType:@"mbtiles"]];
-    RMMBTilesTileSource *tileSource = [[[RMMBTilesTileSource alloc] initWithTileSetURL:tilesURL] autorelease];
+    RMMBTilesSource *tileSource = [[[RMMBTilesSource alloc] initWithTileSetURL:tilesURL] autorelease];
 
 	self.mapView = [[[RMMapView alloc] initWithFrame:CGRectMake(10, 20, 300, 340)
                                        andTilesource:tileSource
@@ -119,14 +119,14 @@
         showsLocalTileSource = NO;
 
         NSDictionary *info = [NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"geography-class" ofType:@"plist"]];
-        newTileSource = [[[RMTileStreamSource alloc] initWithInfo:info] autorelease];
+        newTileSource = [[[RMMapBoxSource alloc] initWithInfo:info] autorelease];
     }
     else
     {
         showsLocalTileSource = YES;
 
         NSURL *tilesURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"control-room-0.2.0" ofType:@"mbtiles"]];
-        newTileSource = [[[RMMBTilesTileSource alloc] initWithTileSetURL:tilesURL] autorelease];
+        newTileSource = [[[RMMBTilesSource alloc] initWithTileSetURL:tilesURL] autorelease];
     }
 
     self.mapView.tileSource = newTileSource;
