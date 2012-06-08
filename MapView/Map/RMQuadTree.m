@@ -618,15 +618,6 @@
     }
 }
 
-- (void)removeAllObjects
-{
-    @synchronized (self)
-    {
-        [rootNode release];
-        rootNode = [[RMQuadTreeNode alloc] initWithMapView:mapView forParent:nil inBoundingBox:[[RMProjection googleProjection] planetBounds]];
-    }
-}
-
 #pragma mark -
 
 - (NSArray *)annotationsInProjectedRect:(RMProjectedRect)boundingBox
