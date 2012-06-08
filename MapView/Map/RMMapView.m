@@ -47,7 +47,6 @@
 
 #pragma mark --- begin constants ----
 
-#define kiPhoneMilimeteresPerPixel .1543
 #define kZoomRectPixelBuffer 150.0
 
 #define kDefaultInitialLatitude 47.56
@@ -1332,13 +1331,26 @@
     return metersPerPixel / screenScale;
 }
 
+// From http://stackoverflow.com/questions/610193/calculating-pixel-size-on-an-iphone
+#define kiPhone3MillimeteresPerPixel 0.1558282
+#define kiPhone4MillimetersPerPixel (0.0779 * 2.0)
+
+#define iPad1MillimetersPerPixel 0.1924
+#define iPad3MillimetersPerPixel (0.09621 * 2.0)
+
 - (double)scaleDenominator
 {
-    double routemeMetersPerPixel = metersPerPixel;
-    double iphoneMillimetersPerPixel = kiPhoneMilimeteresPerPixel;
-    double truescaleDenominator = routemeMetersPerPixel / (0.001 * iphoneMillimetersPerPixel);
+    double iphoneMillimetersPerPixel;
 
-    return truescaleDenominator;
+    BOOL deviceIsIPhone = ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone);
+    BOOL deviceHasRetinaDisplay = (screenScale > 1.0);
+
+    if (deviceHasRetinaDisplay)
+        iphoneMillimetersPerPixel = (deviceIsIPhone ? kiPhone4MillimetersPerPixel : iPad3MillimetersPerPixel);
+    else
+        iphoneMillimetersPerPixel = (deviceIsIPhone ? kiPhone3MillimeteresPerPixel : iPad1MillimetersPerPixel);
+
+    return ((metersPerPixel * 1000.0) / iphoneMillimetersPerPixel);
 }
 
 - (void)setMinZoom:(float)newMinZoom
