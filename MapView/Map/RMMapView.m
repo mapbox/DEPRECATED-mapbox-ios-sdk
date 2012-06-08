@@ -1074,6 +1074,10 @@
     {
         [delegate tapOnLabelForAnnotation:anAnnotation onMap:self];
     }
+    else if (_delegateHasTapOnAnnotation && anAnnotation)
+    {
+        [delegate tapOnAnnotation:anAnnotation onMap:self];
+    }
     else
     {
         if (_delegateHasSingleTapOnMap)
@@ -1086,6 +1090,10 @@
     if (_delegateHasDoubleTapOnLabelForAnnotation && anAnnotation)
     {
         [delegate doubleTapOnLabelForAnnotation:anAnnotation onMap:self];
+    }
+    else if (_delegateHasDoubleTapOnAnnotation && anAnnotation)
+    {
+        [delegate doubleTapOnAnnotation:anAnnotation onMap:self];
     }
     else
     {
