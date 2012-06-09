@@ -141,11 +141,11 @@
     NSString *cachePath = [NSString stringWithFormat:@"%@/%@", kCachesPath, [imageURL lastPathComponent]];
     
     if ((image = [UIImage imageWithContentsOfFile:cachePath]) && image)
-        return [[RMMarker alloc] initWithUIImage:image];
+        return [self initWithUIImage:image];
     
     [[NSFileManager defaultManager] createFileAtPath:cachePath contents:[NSData dataWithContentsOfURL:imageURL] attributes:nil];
     
-    return [[RMMarker alloc] initWithUIImage:[UIImage imageWithContentsOfFile:cachePath]];
+    return [self initWithUIImage:[UIImage imageWithContentsOfFile:cachePath]];
 }
 
 - (void)dealloc
