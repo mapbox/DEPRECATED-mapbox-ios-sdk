@@ -31,6 +31,12 @@
 
 @class RMMarkerStyle;
 
+typedef enum {
+    RMMarkerMapBoxImageSizeSmall,
+    RMMarkerMapBoxImageSizeMedium,
+    RMMarkerMapBoxImageSizeLarge
+} RMMarkerMapBoxImageSize;
+
 /// one marker drawn on the map. Note that RMMarker ultimately descends from CALayer, and has an image contents.
 /// RMMarker inherits "position" and "anchorPoint" from CALayer.
 @interface RMMarker : RMMapLayer
@@ -56,6 +62,14 @@
 /// referenced to upper left corner, y increasing top to bottom. To put the image's upper right corner on the marker's 
 /// #projectedLocation, use an anchor point of (1.0, 0.0);
 - (id)initWithUIImage:(UIImage *)image anchorPoint:(CGPoint)anchorPoint;
+
+/// fetches, caches, and uses remote MapBox marker images (default is a medium, empty, gray pin)
+- (id)initWithMapBoxMarkerImage;
+- (id)initWithMapBoxMarkerImage:(NSString *)symbolName;
+- (id)initWithMapBoxMarkerImage:(NSString *)symbolName tintColor:(UIColor *)color;
+- (id)initWithMapBoxMarkerImage:(NSString *)symbolName tintColor:(UIColor *)color size:(RMMarkerMapBoxImageSize)size;
+- (id)initWithMapBoxMarkerImage:(NSString *)symbolName tintColorHex:(NSString *)colorHex;
+- (id)initWithMapBoxMarkerImage:(NSString *)symbolName tintColorHex:(NSString *)colorHex sizeString:(NSString *)sizeString;
 
 /// changes the labelView to a UILabel with supplied #text and default marker font, using existing text foreground/background color.
 - (void)changeLabelUsingText:(NSString *)text;

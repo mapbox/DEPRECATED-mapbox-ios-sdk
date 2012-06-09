@@ -36,6 +36,8 @@
 
 #define defaultMarkerAnchorPoint CGPointMake(0.5, 0.5)
 
+#define kCachesPath [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0]
+
 + (UIFont *)defaultFont
 {
     return [UIFont systemFontOfSize:15];
@@ -72,6 +74,78 @@
     self.label = nil;
 
     return self;
+}
+
+- (id)initWithMapBoxMarkerImage
+{
+    return [self initWithMapBoxMarkerImage:nil tintColor:nil size:RMMarkerMapBoxImageSizeMedium];
+}
+
+- (id)initWithMapBoxMarkerImage:(NSString *)symbolName
+{
+    return [self initWithMapBoxMarkerImage:symbolName tintColor:nil size:RMMarkerMapBoxImageSizeMedium];
+}
+
+- (id)initWithMapBoxMarkerImage:(NSString *)symbolName tintColor:(UIColor *)color
+{
+    return [self initWithMapBoxMarkerImage:symbolName tintColor:color size:RMMarkerMapBoxImageSizeMedium];
+}
+
+- (id)initWithMapBoxMarkerImage:(NSString *)symbolName tintColor:(UIColor *)color size:(RMMarkerMapBoxImageSize)size
+{
+    NSString *sizeString;
+    
+    switch (size)
+    {
+        case RMMarkerMapBoxImageSizeSmall:
+            sizeString = @"small";
+            break;
+        
+        case RMMarkerMapBoxImageSizeMedium:
+        default:
+            sizeString = @"medium";
+            break;
+        
+        case RMMarkerMapBoxImageSizeLarge:
+            sizeString = @"large";
+            break;
+    }
+    
+    NSString *colorHex;
+    
+    if (color)
+    {
+        CGFloat red, green, blue, alpha;
+
+        if ([color getRed:&red green:&green blue:&blue alpha:&alpha])
+            colorHex = [NSString stringWithFormat:@"%02x%02x%02x", ((NSUInteger)red * 255), ((NSUInteger)green * 255), ((NSUInteger)blue * 255)];
+    }
+    
+    return [self initWithMapBoxMarkerImage:symbolName tintColorHex:colorHex sizeString:sizeString];
+}
+
+- (id)initWithMapBoxMarkerImage:(NSString *)symbolName tintColorHex:(NSString *)colorHex
+{
+    return [self initWithMapBoxMarkerImage:symbolName tintColorHex:colorHex sizeString:@"medium"];
+}
+
+- (id)initWithMapBoxMarkerImage:(NSString *)symbolName tintColorHex:(NSString *)colorHex sizeString:(NSString *)sizeString
+{
+    NSURL *imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://a.tiles.mapbox.com/v3/marker/pin-%@%@%@.png", 
+                                               (sizeString ? [sizeString substringToIndex:1] : @"m"), 
+                                               (symbolName ? [@"-" stringByAppendingString:symbolName] : nil), 
+                                               (colorHex   ? [@"+" stringByAppendingString:[colorHex stringByReplacingOccurrencesOfString:@"#" withString:@""]] : nil)]];
+    
+    UIImage *image;
+    
+    NSString *cachePath = [NSString stringWithFormat:@"%@/%@", kCachesPath, [imageURL lastPathComponent]];
+    
+    if ((image = [UIImage imageWithContentsOfFile:cachePath]) && image)
+        return [[RMMarker alloc] initWithUIImage:image];
+    
+    [[NSFileManager defaultManager] createFileAtPath:cachePath contents:[NSData dataWithContentsOfURL:imageURL] attributes:nil];
+    
+    return [[RMMarker alloc] initWithUIImage:[UIImage imageWithContentsOfFile:cachePath]];
 }
 
 - (void)dealloc
