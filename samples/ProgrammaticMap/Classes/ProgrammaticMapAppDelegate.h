@@ -11,10 +11,6 @@
 @class ProgrammaticMapViewController;
 
 @interface ProgrammaticMapAppDelegate : NSObject <UIApplicationDelegate>
-{
-    UIWindow *window;
-    ProgrammaticMapViewController *viewController;
-}
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 @property (nonatomic, retain) IBOutlet ProgrammaticMapViewController *viewController;

@@ -23,7 +23,7 @@
 
 @synthesize mapView;
 @synthesize infoTextView;
-@synthesize mppLabel;
+@synthesize mppLabel, mppImage;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -88,7 +88,6 @@
     [super viewDidLoad];
 
     [mapView setDelegate:self];
-	mapView.tileSource = [[[RMOpenStreetMapSource alloc] init] autorelease];
     mapView.enableClustering = YES;
     mapView.positionClusterMarkersAtTheGravityCenter = YES;
 
@@ -107,7 +106,7 @@
 	[self updateInfo];
 	[self performSelector:@selector(addMarkers) withObject:nil afterDelay:0.5];
 
-//    [mapView setConstraintsSouthWest:CLLocationCoordinate2DMake(47.0, 10.0) northEeast:CLLocationCoordinate2DMake(48.0, 11.0)];
+//    [mapView setConstraintsSouthWest:CLLocationCoordinate2DMake(47.0, 10.0) northEast:CLLocationCoordinate2DMake(48.0, 11.0)];
 }
 
 - (void)didReceiveMemoryWarning
@@ -140,14 +139,15 @@
 {
     CLLocationCoordinate2D mapCenter = [mapView centerCoordinate];
 
-    [infoTextView setText:[NSString stringWithFormat:@"Longitude : %f\nLatitude : %f\nZoom level : %.2f\n%@", 
+    [infoTextView setText:[NSString stringWithFormat:@"Longitude : %f\nLatitude : %f\nZoom level : %.2f\nScale : 1:%.0f\n%@",
                            mapCenter.longitude,
                            mapCenter.latitude,
                            mapView.zoom,
+                           mapView.scaleDenominator,
 						   [[mapView tileSource] shortAttribution]
 						   ]];
 
-    [mppLabel setText:[NSString stringWithFormat:@"%.0f m", self.mapView.metersPerPixel * 55.0]];
+    [mppLabel setText:[NSString stringWithFormat:@"%.0f m", mapView.metersPerPixel * mppImage.bounds.size.width]];
 }
 
 #pragma mark -

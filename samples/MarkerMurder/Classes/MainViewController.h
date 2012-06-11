@@ -7,14 +7,11 @@
 #import "RMMapView.h"
 
 @interface MainViewController : UIViewController <RMMapViewDelegate>
-{
-	IBOutlet RMMapView *mapView;
-	IBOutlet UITextView *infoTextView;
-}
 
 @property (nonatomic, retain) IBOutlet RMMapView *mapView;
 @property (nonatomic, retain) IBOutlet UITextView *infoTextView;
 @property (nonatomic, retain) IBOutlet UILabel *mppLabel;
+@property (nonatomic, retain) IBOutlet UIImageView *mppImage;
 
 - (void)updateInfo;
 

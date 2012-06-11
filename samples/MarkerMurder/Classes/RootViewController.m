@@ -15,33 +15,29 @@
 @synthesize flipsideViewController;
 
 - (void)viewDidLoad
-{    
+{
     [super viewDidLoad];
-    MainViewController *viewController = [[MainViewController alloc] initWithNibName:@"MainView" bundle:nil];
+
+    MainViewController *viewController = [[[MainViewController alloc] initWithNibName:@"MainView" bundle:nil] autorelease];
     self.mainViewController = viewController;
-    [viewController release];
 
     [self.view insertSubview:mainViewController.view belowSubview:infoButton];
 }
 
 - (void)loadFlipsideViewController
-{    
-    FlipsideViewController *viewController = [[FlipsideViewController alloc] initWithNibName:@"FlipsideView" bundle:nil];
+{
+    FlipsideViewController *viewController = [[[FlipsideViewController alloc] initWithNibName:@"FlipsideView" bundle:nil] autorelease];
     self.flipsideViewController = viewController;
-    [viewController release];
 
     // Set up the navigation bar
-    UINavigationBar *aNavigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0.0, 0.0, 320.0, 44.0)];
+    UINavigationBar *aNavigationBar = [[[UINavigationBar alloc] initWithFrame:CGRectMake(0.0, 0.0, 320.0, 44.0)] autorelease];
     aNavigationBar.barStyle = UIBarStyleBlackOpaque;
     self.flipsideNavigationBar = aNavigationBar;
-    [aNavigationBar release];
 
-    UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(toggleView)];
-    UINavigationItem *navigationItem = [[UINavigationItem alloc] initWithTitle:@"SampleMap"];
+    UIBarButtonItem *buttonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(toggleView)] autorelease];
+    UINavigationItem *navigationItem = [[[UINavigationItem alloc] initWithTitle:@"SampleMap"] autorelease];
     navigationItem.rightBarButtonItem = buttonItem;
     [flipsideNavigationBar pushNavigationItem:navigationItem animated:NO];
-    [navigationItem release];
-    [buttonItem release];
 }
 
 - (IBAction)toggleView
@@ -60,7 +56,8 @@
     [UIView setAnimationDuration:1];
     [UIView setAnimationTransition:([mainView superview] ? UIViewAnimationTransitionFlipFromRight : UIViewAnimationTransitionFlipFromLeft) forView:self.view cache:YES];
 
-    if ([mainView superview] != nil) {
+    if ([mainView superview] != nil)
+    {
         [flipsideViewController viewWillAppear:YES];
         [mainViewController viewWillDisappear:YES];
         [mainView removeFromSuperview];
@@ -69,8 +66,9 @@
         [self.view insertSubview:flipsideNavigationBar aboveSubview:flipsideView];
         [mainViewController viewDidDisappear:YES];
         [flipsideViewController viewDidAppear:YES];
-
-    } else {
+    }
+    else
+    {
         [mainViewController viewWillAppear:YES];
         [flipsideViewController viewWillDisappear:YES];
         [flipsideView removeFromSuperview];
@@ -80,6 +78,7 @@
         [flipsideViewController viewDidDisappear:YES];
         [mainViewController viewDidAppear:YES];
     }
+
     [UIView commitAnimations];
 }
 
@@ -92,10 +91,10 @@
 
 - (void)dealloc
 {
-    [infoButton release];
-    [flipsideNavigationBar release];
-    [mainViewController release];
-    [flipsideViewController release];
+    self.infoButton = nil;
+    self.flipsideNavigationBar = nil;
+    self.mainViewController = nil;
+    self.flipsideViewController = nil;
     [super dealloc];
 }
 

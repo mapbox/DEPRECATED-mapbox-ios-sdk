@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		16F357341585DB08003A3AD9 /* mpp.png in Resources */ = {isa = PBXBuildFile; fileRef = 16F357331585DB08003A3AD9 /* mpp.png */; };
 		1D3623260D0F684500981E51 /* ProgrammaticMapAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* ProgrammaticMapAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -46,6 +47,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		16F357331585DB08003A3AD9 /* mpp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = mpp.png; path = ../MarkerMurder/mpp.png; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* ProgrammaticMapAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgrammaticMapAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* ProgrammaticMapAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProgrammaticMapAppDelegate.m; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 				2899E5210DE3E06400AC0155 /* ProgrammaticMapViewController.xib */,
 				28AD733E0D9D9553002E5188 /* MainWindow.xib */,
 				8D1107310486CEB800E47090 /* Info.plist */,
+				16F357331585DB08003A3AD9 /* mpp.png */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -234,6 +237,7 @@
 			files = (
 				28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */,
 				2899E5220DE3E06400AC0155 /* ProgrammaticMapViewController.xib in Resources */,
+				16F357341585DB08003A3AD9 /* mpp.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
