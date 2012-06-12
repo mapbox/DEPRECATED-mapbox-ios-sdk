@@ -33,6 +33,9 @@
 
 #import "RMMapBoxSource.h"
 
+#import "RMMapView.h"
+#import "RMAnnotation.h"
+
 @interface RMMapBoxSource ()
 
 @property (nonatomic, retain) NSDictionary *infoDictionary;
@@ -47,13 +50,54 @@
 
 - (id)initWithTileJSON:(NSString *)tileJSON
 {
+    return [self initWithTileJSON:tileJSON enablingDataOnMapView:nil];
+}
+
+- (id)initWithTileJSON:(NSString *)tileJSON enablingDataOnMapView:(RMMapView *)mapView
+{
     if (self = [super init])
     {
         infoDictionary = (NSDictionary *)[[NSJSONSerialization JSONObjectWithData:[tileJSON dataUsingEncoding:NSUTF8StringEncoding]
                                                                           options:0
                                                                             error:nil] retain];
+        
+        id dataObject;
+        
+        if (mapView && (dataObject = [infoDictionary objectForKey:@"data"]) && dataObject)
+        {
+            if ([dataObject isKindOfClass:[NSArray class]] && [[dataObject objectAtIndex:0] isKindOfClass:[NSString class]])
+            {
+                NSURL *dataURL = [NSURL URLWithString:[dataObject objectAtIndex:0]];
+                
+                NSData *jsonData;
+                
+                if (dataURL && (jsonData = [NSData dataWithContentsOfURL:dataURL]) && jsonData)
+                {
+                    id jsonObject;
+                    
+                    if ((jsonObject = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:nil]) && [jsonObject isKindOfClass:[NSDictionary class]])
+                    {
+                        for (NSDictionary *feature in [jsonObject objectForKey:@"features"])
+                        {
+                            NSDictionary *properties = [feature objectForKey:@"properties"];
+                            
+                            CLLocationCoordinate2D coordinate = {
+                                .longitude = [[[[feature objectForKey:@"geometry"] objectForKey:@"coordinates"] objectAtIndex:0] floatValue],
+                                .latitude  = [[[[feature objectForKey:@"geometry"] objectForKey:@"coordinates"] objectAtIndex:1] floatValue]
+                            };
+                            
+                            RMAnnotation *pointAnnotation = [RMAnnotation annotationWithMapView:mapView coordinate:coordinate andTitle:[properties objectForKey:@"title"]];
+                            
+                            pointAnnotation.userInfo = properties;
+                            
+                            [mapView addAnnotation:pointAnnotation];
+                        }
+                    }
+                }
+            }
+        }
     }
-
+    
     return self;
 }
 
@@ -71,8 +115,13 @@
 
 - (id)initWithReferenceURL:(NSURL *)referenceURL
 {
-    id dataObject;
+    return [self initWithReferenceURL:referenceURL enablingDataOnMapView:nil];
+}
 
+- (id)initWithReferenceURL:(NSURL *)referenceURL enablingDataOnMapView:(RMMapView *)mapView
+{
+    id dataObject;
+    
     if ([[referenceURL pathExtension] isEqualToString:@"jsonp"])
         referenceURL = [NSURL URLWithString:[[referenceURL absoluteString] stringByReplacingOccurrencesOfString:@".jsonp" 
                                                                                                      withString:@".json"
@@ -80,8 +129,8 @@
                                                                                                           range:NSMakeRange(0, [[referenceURL absoluteString] length])]];
     
     if ([[referenceURL pathExtension] isEqualToString:@"json"] && (dataObject = [NSString stringWithContentsOfURL:referenceURL encoding:NSUTF8StringEncoding error:nil]) && dataObject)
-        return [self initWithTileJSON:dataObject];
-
+        return [self initWithTileJSON:dataObject enablingDataOnMapView:mapView];
+    
     else if ([[referenceURL pathExtension] isEqualToString:@"plist"])
     {
         NSMutableDictionary *mutableInfoDictionary = [NSMutableDictionary dictionaryWithContentsOfURL:referenceURL];
