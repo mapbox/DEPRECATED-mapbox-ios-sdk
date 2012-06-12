@@ -349,17 +349,28 @@
 #pragma mark -
 #pragma mark Bounds
 
-- (BOOL)projectedBounds:(RMProjectedRect)bounds containsPoint:(RMProjectedPoint)point
+- (RMProjectedRect)fitProjectedRect:(RMProjectedRect)rect1 intoRect:(RMProjectedRect)rect2
 {
-    if (bounds.origin.x > point.x ||
-        bounds.origin.x + bounds.size.width < point.x ||
-        bounds.origin.y > point.y ||
-        bounds.origin.y + bounds.size.height < point.y)
-    {
-        return NO;
-    }
+    if (rect1.size.width > rect2.size.width || rect1.size.height > rect2.size.height)
+        return rect2;
 
-    return YES;
+    RMProjectedRect fittedRect = RMProjectedRectMake(0.0, 0.0, rect1.size.width, rect1.size.height);
+
+    if (rect1.origin.x < rect2.origin.x)
+        fittedRect.origin.x = rect2.origin.x;
+    else if (rect1.origin.x + rect1.size.width > rect2.origin.x + rect2.size.width)
+        fittedRect.origin.x = (rect2.origin.x + rect2.size.width) - rect1.size.width;
+    else
+        fittedRect.origin.x = rect1.origin.x;
+
+    if (rect1.origin.y < rect2.origin.y)
+        fittedRect.origin.y = rect2.origin.y;
+    else if (rect1.origin.y + rect1.size.height > rect2.origin.y + rect2.size.height)
+        fittedRect.origin.y = (rect2.origin.y + rect2.size.height) - rect1.size.height;
+    else
+        fittedRect.origin.y = rect1.origin.y;
+
+    return fittedRect;
 }
 
 - (RMProjectedRect)projectedRectFromLatitudeLongitudeBounds:(RMSphericalTrapezium)bounds
@@ -426,7 +437,7 @@
         return YES;
     }
 
-    return [self projectedBounds:_constrainingProjectedBounds containsPoint:point];
+    return RMProjectedRectContainsProjectedPoint(_constrainingProjectedBounds, point);
 }
 
 - (BOOL)tileSourceBoundsContainScreenPoint:(CGPoint)pixelCoordinate
@@ -450,6 +461,8 @@
 {
     _constrainMovement = YES;
     _constrainingProjectedBounds = RMProjectedRectMake(southWest.x, southWest.y, northEast.x - southWest.x, northEast.y - southWest.y);
+
+    mapScrollView.constraintsDelegate = self;
 }
 
 #pragma mark -
@@ -493,9 +506,6 @@
 
 - (void)setCenterProjectedPoint:(RMProjectedPoint)centerProjectedPoint animated:(BOOL)animated
 {
-    if (![self tileSourceBoundsContainProjectedPoint:centerProjectedPoint])
-        return;
-
     if (_delegateHasBeforeMapMove)
         [delegate beforeMapMove:self];
 
@@ -580,6 +590,9 @@
 
 - (void)setProjectedBounds:(RMProjectedRect)boundsRect animated:(BOOL)animated
 {
+    if (_constrainMovement)
+        boundsRect = [self fitProjectedRect:boundsRect intoRect:_constrainingProjectedBounds];
+
     RMProjectedRect planetBounds = projection.planetBounds;
 	RMProjectedPoint normalizedProjectedPoint;
 	normalizedProjectedPoint.x = boundsRect.origin.x + fabs(planetBounds.origin.x);
@@ -932,7 +945,7 @@
     int tileSideLength = [[self tileSource] tileSideLength];
     CGSize contentSize = CGSizeMake(tileSideLength, tileSideLength); // zoom level 1
 
-    mapScrollView = [[UIScrollView alloc] initWithFrame:[self bounds]];
+    mapScrollView = [[RMMapScrollView alloc] initWithFrame:[self bounds]];
     mapScrollView.delegate = self;
     mapScrollView.opaque = NO;
     mapScrollView.backgroundColor = [UIColor clearColor];
@@ -948,25 +961,23 @@
     tiledLayerView.delegate = self;
 
     if (self.adjustTilesForRetinaDisplay && screenScale > 1.0)
-    {
-        RMLog(@"adjustTiles");
         ((CATiledLayer *)tiledLayerView.layer).tileSize = CGSizeMake(tileSideLength * 2.0, tileSideLength * 2.0);
-    }
     else
-    {
         ((CATiledLayer *)tiledLayerView.layer).tileSize = CGSizeMake(tileSideLength, tileSideLength);
-    }
 
     [mapScrollView addSubview:tiledLayerView];
-
-    [mapScrollView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:NULL];
-    mapScrollView.zoomScale = exp2f([self zoom]);
-
-    [self setDecelerationMode:decelerationMode];
 
     _lastZoom = [self zoom];
     _lastContentOffset = mapScrollView.contentOffset;
     _accumulatedDelta = CGPointMake(0.0, 0.0);
+
+    [mapScrollView addObserver:self forKeyPath:@"contentOffset" options:(NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld) context:NULL];
+    if (_constrainMovement)
+        mapScrollView.constraintsDelegate = self;
+
+    mapScrollView.zoomScale = exp2f([self zoom]);
+
+    [self setDecelerationMode:decelerationMode];
 
     if (backgroundView)
         [self insertSubview:mapScrollView aboveSubview:backgroundView];
@@ -1160,8 +1171,72 @@
 
 // Detect dragging/zooming
 
+- (CGPoint)scrollView:(RMMapScrollView *)aScrollView correctedOffsetForContentOffset:(CGPoint)aContentOffset
+{
+    if ( ! _constrainMovement)
+        return aContentOffset;
+
+    RMProjectedRect planetBounds = projection.planetBounds;
+    double currentMetersPerPixel = planetBounds.size.width / aScrollView.contentSize.width;
+
+    CGPoint bottomLeft = CGPointMake(aContentOffset.x,
+                                     aScrollView.contentSize.height - (aContentOffset.y + aScrollView.bounds.size.height));
+
+    RMProjectedRect normalizedProjectedRect;
+    normalizedProjectedRect.origin.x = (bottomLeft.x * currentMetersPerPixel) - fabs(planetBounds.origin.x);
+    normalizedProjectedRect.origin.y = (bottomLeft.y * currentMetersPerPixel) - fabs(planetBounds.origin.y);
+    normalizedProjectedRect.size.width = aScrollView.bounds.size.width * currentMetersPerPixel;
+    normalizedProjectedRect.size.height = aScrollView.bounds.size.height * currentMetersPerPixel;
+
+    if (RMProjectedRectContainsProjectedRect(_constrainingProjectedBounds, normalizedProjectedRect))
+        return aContentOffset;
+
+    RMProjectedRect fittedProjectedRect = [self fitProjectedRect:normalizedProjectedRect intoRect:_constrainingProjectedBounds];
+
+    RMProjectedPoint normalizedProjectedPoint;
+	normalizedProjectedPoint.x = fittedProjectedRect.origin.x + fabs(planetBounds.origin.x);
+	normalizedProjectedPoint.y = fittedProjectedRect.origin.y + fabs(planetBounds.origin.y);
+
+    CGPoint correctedContentOffset = CGPointMake(normalizedProjectedPoint.x / currentMetersPerPixel,
+                                                 aScrollView.contentSize.height - ((normalizedProjectedPoint.y / currentMetersPerPixel) + aScrollView.bounds.size.height));
+    return correctedContentOffset;
+}
+
+- (CGSize)scrollView:(RMMapScrollView *)aScrollView correctedSizeForContentSize:(CGSize)aContentSize
+{
+    if ( ! _constrainMovement)
+        return aContentSize;
+
+    RMProjectedRect planetBounds = projection.planetBounds;
+    double currentMetersPerPixel = planetBounds.size.width / aContentSize.width;
+
+    RMProjectedSize projectedSize;
+    projectedSize.width = aScrollView.bounds.size.width * currentMetersPerPixel;
+    projectedSize.height = aScrollView.bounds.size.height * currentMetersPerPixel;
+
+    if (RMProjectedSizeContainsProjectedSize(_constrainingProjectedBounds.size, projectedSize))
+        return aContentSize;
+
+    CGFloat factor = 1.0;
+    if (projectedSize.width > _constrainingProjectedBounds.size.width)
+        factor = (projectedSize.width / _constrainingProjectedBounds.size.width);
+    else
+        factor = (projectedSize.height / _constrainingProjectedBounds.size.height);
+
+    // \bug: Move this to RMMapScrollView
+    aScrollView.zoomScale *= factor;
+
+    return CGSizeMake(aContentSize.width * factor, aContentSize.height * factor);
+}
+
 - (void)observeValueForKeyPath:(NSString *)aKeyPath ofObject:(id)anObject change:(NSDictionary *)change context:(void *)context
 {
+    NSValue *oldValue = [change objectForKey:NSKeyValueChangeOldKey],
+            *newValue = [change objectForKey:NSKeyValueChangeNewKey];
+
+    if (CGPointEqualToPoint([oldValue CGPointValue], [newValue CGPointValue]))
+        return;
+
     RMProjectedRect planetBounds = projection.planetBounds;
     metersPerPixel = planetBounds.size.width / mapScrollView.contentSize.width;
 
@@ -1170,15 +1245,6 @@
     zoom = (zoom < minZoom) ? minZoom : zoom;
 
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(correctPositionOfAllAnnotations) object:nil];
-
-    if (_constrainMovement && ![self projectedBounds:_constrainingProjectedBounds containsPoint:[self centerProjectedPoint]])
-    {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [mapScrollView setContentOffset:_lastContentOffset animated:NO];
-        });
-
-        return;
-    }
 
     if (zoom == _lastZoom)
     {
