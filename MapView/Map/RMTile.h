@@ -74,6 +74,6 @@ uint64_t RMTileKey(RMTile tile);
 RMTileRect RMTileRectRound(RMTileRect rect);
 
 /// Dump a description of the tile to the console
-void RMTileDump(RMTile tile);
+void RMLogTile(RMTile tile);
 
 #endif

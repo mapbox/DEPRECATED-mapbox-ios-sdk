@@ -97,7 +97,7 @@ RMTileRect RMTileRectRound(RMTileRect rect)
 }
 
 // Dump a description of the tile to the console
-void RMTileDump(RMTile tile)
+void RMLogTile(RMTile tile)
 {
     printf("Tile at (%d,%d), zoom %hi\n", tile.x, tile.y, tile.zoom);
 }
