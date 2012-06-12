@@ -102,6 +102,8 @@
     float _lastZoom;
     CGPoint _lastContentOffset, _accumulatedDelta;
     BOOL _mapScrollViewIsZooming;
+
+    BOOL _enableDragging, _enableBouncing;
 }
 
 @synthesize decelerationMode;
@@ -124,7 +126,8 @@
                                minZoomLevel:(float)minZoomLevel
                             backgroundImage:(UIImage *)backgroundImage
 {
-	_constrainMovement = NO;
+    _constrainMovement = _enableBouncing = NO;
+    _enableDragging = YES;
 
     self.backgroundColor = [UIColor grayColor];
 
@@ -952,6 +955,9 @@
     mapScrollView.showsVerticalScrollIndicator = NO;
     mapScrollView.showsHorizontalScrollIndicator = NO;
     mapScrollView.scrollsToTop = NO;
+    mapScrollView.scrollEnabled = _enableDragging;
+    mapScrollView.bounces = _enableBouncing;
+    mapScrollView.bouncesZoom = _enableBouncing;
     mapScrollView.contentSize = contentSize;
     mapScrollView.minimumZoomScale = exp2f([self minZoom]);
     mapScrollView.maximumZoomScale = exp2f([self maxZoom]);
@@ -1478,12 +1484,25 @@
 
 - (BOOL)enableDragging
 {
-    return mapScrollView.scrollEnabled;
+    return _enableDragging;
 }
 
 - (void)setEnableDragging:(BOOL)enableDragging
 {
+    _enableDragging = enableDragging;
     mapScrollView.scrollEnabled = enableDragging;
+}
+
+- (BOOL)enableBouncing
+{
+    return _enableBouncing;
+}
+
+- (void)setEnableBouncing:(BOOL)enableBouncing
+{
+    _enableBouncing = enableBouncing;
+    mapScrollView.bounces = enableBouncing;
+    mapScrollView.bouncesZoom = enableBouncing;
 }
 
 - (void)setAdjustTilesForRetinaDisplay:(BOOL)doAdjustTilesForRetinaDisplay
