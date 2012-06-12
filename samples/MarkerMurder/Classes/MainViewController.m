@@ -90,7 +90,12 @@
     [mapView setDelegate:self];
     mapView.enableClustering = YES;
     mapView.positionClusterMarkersAtTheGravityCenter = YES;
-    [mapView setConstraintsSouthWest:CLLocationCoordinate2DMake(47.0, 10.0) northEast:CLLocationCoordinate2DMake(48.0, 11.0)];
+
+//    mapView.adjustTilesForRetinaDisplay = YES;
+//    mapView.decelerationMode = RMMapDecelerationOff;
+//    mapView.enableBouncing = NO;
+//    mapView.enableDragging = YES;
+//    [mapView setConstraintsSouthWest:CLLocationCoordinate2DMake(47.0, 10.0) northEast:CLLocationCoordinate2DMake(48.0, 11.0)];
 
     UIImage *clusterMarkerImage = [UIImage imageNamed:@"marker-blue.png"];
     mapView.clusterMarkerSize = clusterMarkerImage.size;
