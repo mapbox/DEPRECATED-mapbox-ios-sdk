@@ -78,6 +78,12 @@
 // HTML-formatted legend for this source, if any
 - (NSString *)legend;
 
+// Suggested starting center coordinate
+- (CLLocationCoordinate2D)centerCoordinate;
+
+// Suggested starting center zoom
+- (float)centerZoom;
+
 // Regional or global coverage?
 - (BOOL)coversFullWorld;
 

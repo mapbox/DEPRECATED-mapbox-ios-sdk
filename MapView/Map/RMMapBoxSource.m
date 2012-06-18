@@ -249,6 +249,27 @@
     return [self.infoDictionary objectForKey:@"legend"];
 }
 
+- (CLLocationCoordinate2D)centerCoordinate
+{
+    if ([self.infoDictionary objectForKey:@"center"])
+    {
+        return CLLocationCoordinate2DMake([[[self.infoDictionary objectForKey:@"center"] objectAtIndex:1] doubleValue], 
+                                          [[[self.infoDictionary objectForKey:@"center"] objectAtIndex:0] doubleValue]);
+    }
+    
+    return CLLocationCoordinate2DMake(0, 0);
+}
+
+- (float)centerZoom
+{
+    if ([self.infoDictionary objectForKey:@"center"])
+    {
+        return [[[self.infoDictionary objectForKey:@"center"] objectAtIndex:2] floatValue];
+    }
+    
+    return roundf(([self maxZoom] + [self minZoom]) / 2);
+}
+
 - (NSString *)uniqueTilecacheKey
 {
     return [NSString stringWithFormat:@"MapBox-%@-%@", [self.infoDictionary objectForKey:@"id"], [self.infoDictionary objectForKey:@"version"]];
