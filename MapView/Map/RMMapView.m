@@ -48,6 +48,8 @@
 
 #import "RMUserLocation.h"
 
+#import "RMAttributionViewController.h"
+
 #pragma mark --- begin constants ----
 
 #define kiPhoneMilimeteresPerPixel .1543
@@ -304,6 +306,7 @@
     [userLocation release]; userLocation = nil;
     [userLocationTrackingView release]; userLocationTrackingView = nil;
     [userHeadingTrackingView release]; userHeadingTrackingView = nil;
+    [attributionButton release]; attributionButton = nil;
     [super dealloc];
 }
 
@@ -2232,6 +2235,47 @@
         
         if (_delegateHasDidFailToLocateUserWithError)
             [delegate mapView:self didFailToLocateUserWithError:error];
+    }
+}
+
+#pragma mark -
+#pragma mark Attribution
+
+- (UIViewController *)viewControllerPresentingAttribution
+{
+    return viewControllerPresentingAttribution;
+}
+
+- (void)setViewControllerPresentingAttribution:(UIViewController *)viewController
+{
+    viewControllerPresentingAttribution = viewController;
+    
+    if (self.viewControllerPresentingAttribution && ! attributionButton)
+    {
+        attributionButton = [[UIButton buttonWithType:UIButtonTypeInfoLight] retain];
+        
+        attributionButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
+        
+        [attributionButton addTarget:self action:@selector(showAttribution:) forControlEvents:UIControlEventTouchUpInside];
+        
+        attributionButton.frame = CGRectMake(self.bounds.size.width  - 30, 
+                                             self.bounds.size.height - 30, 
+                                             attributionButton.bounds.size.width, 
+                                             attributionButton.bounds.size.height);
+
+        [self addSubview:attributionButton];
+    }
+}
+
+- (void)showAttribution:(id)sender
+{
+    if (self.viewControllerPresentingAttribution)
+    {
+        RMAttributionViewController *attributionViewController = [[RMAttributionViewController alloc] initWithMapView:self];
+        
+        attributionViewController.modalTransitionStyle = UIModalTransitionStylePartialCurl;
+        
+        [self.viewControllerPresentingAttribution presentModalViewController:attributionViewController animated:YES];
     }
 }
 
