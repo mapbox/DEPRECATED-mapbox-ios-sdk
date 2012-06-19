@@ -33,6 +33,9 @@
 
 #import "RMMapBoxSource.h"
 
+#import "RMMapView.h"
+#import "RMAnnotation.h"
+
 @interface RMMapBoxSource ()
 
 @property (nonatomic, retain) NSDictionary *infoDictionary;
@@ -47,13 +50,66 @@
 
 - (id)initWithTileJSON:(NSString *)tileJSON
 {
+    return [self initWithTileJSON:tileJSON enablingDataOnMapView:nil];
+}
+
+- (id)initWithTileJSON:(NSString *)tileJSON enablingDataOnMapView:(RMMapView *)mapView
+{
     if (self = [super init])
     {
         infoDictionary = (NSDictionary *)[[NSJSONSerialization JSONObjectWithData:[tileJSON dataUsingEncoding:NSUTF8StringEncoding]
                                                                           options:0
                                                                             error:nil] retain];
+        
+        id dataObject;
+        
+        if (mapView && (dataObject = [infoDictionary objectForKey:@"data"]) && dataObject)
+        {
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(void)
+            {
+                if ([dataObject isKindOfClass:[NSArray class]] && [[dataObject objectAtIndex:0] isKindOfClass:[NSString class]])
+                {
+                    NSURL *dataURL = [NSURL URLWithString:[dataObject objectAtIndex:0]];
+                    
+                    NSMutableString *jsonString;
+                    
+                    if (dataURL && (jsonString = [NSMutableString stringWithContentsOfURL:dataURL encoding:NSUTF8StringEncoding error:nil]) && jsonString)
+                    {
+                        if ([jsonString hasPrefix:@"grid("])
+                        {
+                            [jsonString replaceCharactersInRange:NSMakeRange(0, 5)                       withString:@""];
+                            [jsonString replaceCharactersInRange:NSMakeRange([jsonString length] - 2, 2) withString:@""];
+                        }
+                        
+                        id jsonObject;
+                        
+                        if ((jsonObject = [NSJSONSerialization JSONObjectWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil]) && [jsonObject isKindOfClass:[NSDictionary class]])
+                        {
+                            for (NSDictionary *feature in [jsonObject objectForKey:@"features"])
+                            {
+                                NSDictionary *properties = [feature objectForKey:@"properties"];
+                                
+                                CLLocationCoordinate2D coordinate = {
+                                    .longitude = [[[[feature objectForKey:@"geometry"] objectForKey:@"coordinates"] objectAtIndex:0] floatValue],
+                                    .latitude  = [[[[feature objectForKey:@"geometry"] objectForKey:@"coordinates"] objectAtIndex:1] floatValue]
+                                };
+                                
+                                RMAnnotation *pointAnnotation = [RMAnnotation annotationWithMapView:mapView coordinate:coordinate andTitle:[properties objectForKey:@"title"]];
+                                
+                                pointAnnotation.userInfo = properties;
+                                
+                                dispatch_async(dispatch_get_main_queue(), ^(void)
+                                {
+                                    [mapView addAnnotation:pointAnnotation];
+                                });                                
+                            }
+                        }
+                    }
+                }
+            });            
+        }
     }
-
+    
     return self;
 }
 
@@ -71,8 +127,13 @@
 
 - (id)initWithReferenceURL:(NSURL *)referenceURL
 {
-    id dataObject;
+    return [self initWithReferenceURL:referenceURL enablingDataOnMapView:nil];
+}
 
+- (id)initWithReferenceURL:(NSURL *)referenceURL enablingDataOnMapView:(RMMapView *)mapView
+{
+    id dataObject;
+    
     if ([[referenceURL pathExtension] isEqualToString:@"jsonp"])
         referenceURL = [NSURL URLWithString:[[referenceURL absoluteString] stringByReplacingOccurrencesOfString:@".jsonp" 
                                                                                                      withString:@".json"
@@ -80,8 +141,8 @@
                                                                                                           range:NSMakeRange(0, [[referenceURL absoluteString] length])]];
     
     if ([[referenceURL pathExtension] isEqualToString:@"json"] && (dataObject = [NSString stringWithContentsOfURL:referenceURL encoding:NSUTF8StringEncoding error:nil]) && dataObject)
-        return [self initWithTileJSON:dataObject];
-
+        return [self initWithTileJSON:dataObject enablingDataOnMapView:mapView];
+    
     else if ([[referenceURL pathExtension] isEqualToString:@"plist"])
     {
         NSMutableDictionary *mutableInfoDictionary = [NSMutableDictionary dictionaryWithContentsOfURL:referenceURL];
@@ -186,6 +247,27 @@
 - (NSString *)legend
 {
     return [self.infoDictionary objectForKey:@"legend"];
+}
+
+- (CLLocationCoordinate2D)centerCoordinate
+{
+    if ([self.infoDictionary objectForKey:@"center"])
+    {
+        return CLLocationCoordinate2DMake([[[self.infoDictionary objectForKey:@"center"] objectAtIndex:1] doubleValue], 
+                                          [[[self.infoDictionary objectForKey:@"center"] objectAtIndex:0] doubleValue]);
+    }
+    
+    return CLLocationCoordinate2DMake(0, 0);
+}
+
+- (float)centerZoom
+{
+    if ([self.infoDictionary objectForKey:@"center"])
+    {
+        return [[[self.infoDictionary objectForKey:@"center"] objectAtIndex:2] floatValue];
+    }
+    
+    return roundf(([self maxZoom] + [self minZoom]) / 2);
 }
 
 - (NSString *)uniqueTilecacheKey
