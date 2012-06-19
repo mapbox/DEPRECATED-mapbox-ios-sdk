@@ -117,12 +117,17 @@
         self.layer = nil;
 }
 
-- (void)setPosition:(CGPoint)aPosition
+- (void)setPosition:(CGPoint)aPosition animated:(BOOL)animated
 {
     position = aPosition;
 
     if (layer)
-        layer.position = aPosition;
+        [layer setPosition:aPosition animated:animated];
+}
+
+- (void)setPosition:(CGPoint)aPosition
+{
+    [self setPosition:aPosition animated:YES];
 }
 
 - (RMMapLayer *)layer

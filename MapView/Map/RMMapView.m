@@ -65,7 +65,7 @@
 - (void)createMapView;
 
 - (void)correctPositionOfAllAnnotations;
-- (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllLayers wasZoom:(BOOL)wasZoom;
+- (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllLayers animated:(BOOL)animated;
 
 - (void)correctMinZoomScaleForBoundingMask;
 
@@ -1267,14 +1267,14 @@
         else
         {
             if (_mapScrollViewIsZooming)
-                [self correctPositionOfAllAnnotationsIncludingInvisibles:NO wasZoom:YES];
+                [self correctPositionOfAllAnnotationsIncludingInvisibles:NO animated:YES];
             else
                 [self correctPositionOfAllAnnotations];
         }
     }
     else
     {
-        [self correctPositionOfAllAnnotationsIncludingInvisibles:NO wasZoom:YES];
+        [self correctPositionOfAllAnnotationsIncludingInvisibles:NO animated:YES];
         _lastZoom = zoom;
     }
 
@@ -1692,31 +1692,35 @@
 #pragma mark -
 #pragma mark Annotations
 
-- (void)correctScreenPosition:(RMAnnotation *)annotation
+- (void)correctScreenPosition:(RMAnnotation *)annotation animated:(BOOL)animated
 {
     RMProjectedRect planetBounds = projection.planetBounds;
 	RMProjectedPoint normalizedProjectedPoint;
 	normalizedProjectedPoint.x = annotation.projectedLocation.x + fabs(planetBounds.origin.x);
 	normalizedProjectedPoint.y = annotation.projectedLocation.y + fabs(planetBounds.origin.y);
 
-    annotation.position = CGPointMake((normalizedProjectedPoint.x / metersPerPixel) - mapScrollView.contentOffset.x, mapScrollView.contentSize.height - (normalizedProjectedPoint.y / metersPerPixel) - mapScrollView.contentOffset.y);
+    CGPoint newPosition = CGPointMake((normalizedProjectedPoint.x / metersPerPixel) - mapScrollView.contentOffset.x,
+                                      mapScrollView.contentSize.height - (normalizedProjectedPoint.y / metersPerPixel) - mapScrollView.contentOffset.y);
+
+    [annotation setPosition:newPosition animated:animated];
+
 //    RMLog(@"Change annotation at {%f,%f} in mapView {%f,%f}", annotation.position.x, annotation.position.y, mapScrollView.contentSize.width, mapScrollView.contentSize.height);
 }
 
-- (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllAnnotations wasZoom:(BOOL)wasZoom
+- (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllAnnotations animated:(BOOL)animated
 {
     // Prevent blurry movements
     [CATransaction begin];
 
     // Synchronize marker movement with the map scroll view
-    if (wasZoom && !mapScrollView.isZooming)
+    if (animated && !mapScrollView.isZooming)
     {
         [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
         [CATransaction setAnimationDuration:0.30];
     }
     else
     {
-        [CATransaction setAnimationDuration:0.0];
+        [CATransaction setDisableActions:YES];
     }
 
     _accumulatedDelta.x = 0.0;
@@ -1728,7 +1732,7 @@
         if (!correctAllAnnotations || _mapScrollViewIsZooming)
         {
             for (RMAnnotation *annotation in visibleAnnotations)
-                [self correctScreenPosition:annotation];
+                [self correctScreenPosition:annotation animated:animated];
 
 //            RMLog(@"%d annotations corrected", [visibleAnnotations count]);
 
@@ -1765,7 +1769,7 @@
                 [visibleAnnotations addObject:annotation];
             }
 
-            [self correctScreenPosition:annotation];
+            [self correctScreenPosition:annotation animated:animated];
 
             [previousVisibleAnnotations removeObject:annotation];
         }
@@ -1797,7 +1801,7 @@
             {
                 for (RMAnnotation *annotation in annotations)
                 {
-                    [self correctScreenPosition:annotation];
+                    [self correctScreenPosition:annotation animated:animated];
 
                     if ([annotation isAnnotationWithinBounds:[self bounds]])
                     {
@@ -1835,7 +1839,7 @@
             else
             {
                 for (RMAnnotation *annotation in visibleAnnotations)
-                    [self correctScreenPosition:annotation];
+                    [self correctScreenPosition:annotation animated:animated];
 
 //                RMLog(@"%d annotations corrected", [visibleAnnotations count]);
             }
@@ -1847,7 +1851,7 @@
 
 - (void)correctPositionOfAllAnnotations
 {
-    [self correctPositionOfAllAnnotationsIncludingInvisibles:YES wasZoom:NO];
+    [self correctPositionOfAllAnnotationsIncludingInvisibles:YES animated:NO];
 }
 
 - (NSArray *)annotations
@@ -1869,7 +1873,7 @@
     }
     else
     {
-        [self correctScreenPosition:annotation];
+        [self correctScreenPosition:annotation animated:NO];
 
         if (annotation.layer == nil && [annotation isAnnotationOnScreen] && _delegateHasLayerForAnnotation)
             annotation.layer = [delegate mapView:self layerForAnnotation:annotation];
@@ -1890,7 +1894,7 @@
         [self.quadTree addAnnotations:newAnnotations];
     }
 
-    [self correctPositionOfAllAnnotationsIncludingInvisibles:YES wasZoom:NO];
+    [self correctPositionOfAllAnnotationsIncludingInvisibles:YES animated:NO];
 }
 
 - (void)removeAnnotation:(RMAnnotation *)annotation
@@ -1942,7 +1946,7 @@
 
 - (CGPoint)mapPositionForAnnotation:(RMAnnotation *)annotation
 {
-    [self correctScreenPosition:annotation];
+    [self correctScreenPosition:annotation animated:NO];
     return annotation.position;
 }
 
