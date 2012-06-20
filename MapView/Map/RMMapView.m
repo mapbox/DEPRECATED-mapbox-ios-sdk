@@ -33,6 +33,7 @@
 #import "RMProjection.h"
 #import "RMMarker.h"
 #import "RMPath.h"
+#import "RMShape.h"
 #import "RMAnnotation.h"
 #import "RMQuadTree.h"
 
@@ -101,6 +102,7 @@
 
     float _lastZoom;
     CGPoint _lastContentOffset, _accumulatedDelta;
+    CGSize _lastContentSize;
     BOOL _mapScrollViewIsZooming;
 
     BOOL _enableDragging, _enableBouncing;
@@ -465,7 +467,7 @@
     _constrainMovement = YES;
     _constrainingProjectedBounds = RMProjectedRectMake(southWest.x, southWest.y, northEast.x - southWest.x, northEast.y - southWest.y);
 
-    mapScrollView.constraintsDelegate = self;
+    mapScrollView.mapScrollViewDelegate = self;
 }
 
 #pragma mark -
@@ -976,10 +978,10 @@
     _lastZoom = [self zoom];
     _lastContentOffset = mapScrollView.contentOffset;
     _accumulatedDelta = CGPointMake(0.0, 0.0);
+    _lastContentSize = mapScrollView.contentSize;
 
     [mapScrollView addObserver:self forKeyPath:@"contentOffset" options:(NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld) context:NULL];
-    if (_constrainMovement)
-        mapScrollView.constraintsDelegate = self;
+    mapScrollView.mapScrollViewDelegate = self;
 
     mapScrollView.zoomScale = exp2f([self zoom]);
 
@@ -1240,8 +1242,27 @@
     NSValue *oldValue = [change objectForKey:NSKeyValueChangeOldKey],
             *newValue = [change objectForKey:NSKeyValueChangeNewKey];
 
-    if (CGPointEqualToPoint([oldValue CGPointValue], [newValue CGPointValue]))
+    CGPoint oldContentOffset = [oldValue CGPointValue],
+            newContentOffset = [newValue CGPointValue];
+
+    if (CGPointEqualToPoint(oldContentOffset, newContentOffset))
         return;
+
+    // The first offset during zooming out (animated) is always garbage
+    if (_mapScrollViewIsZooming == YES &&
+        mapScrollView.zooming == NO &&
+        _lastContentSize.width > mapScrollView.contentSize.width &&
+        (newContentOffset.y - oldContentOffset.y) == 0.0)
+    {
+        _lastContentOffset = mapScrollView.contentOffset;
+        _lastContentSize = mapScrollView.contentSize;
+
+        return;
+    }
+
+//    RMLog(@"contentOffset: {%.0f,%.0f} -> {%.1f,%.1f} (%.0f,%.0f)", oldContentOffset.x, oldContentOffset.y, newContentOffset.x, newContentOffset.y, newContentOffset.x - oldContentOffset.x, newContentOffset.y - oldContentOffset.y);
+//    RMLog(@"contentSize: {%.0f,%.0f} -> {%.0f,%.0f}", _lastContentSize.width, _lastContentSize.height, mapScrollView.contentSize.width, mapScrollView.contentSize.height);
+//    RMLog(@"isZooming: %d, scrollview.zooming: %d", _mapScrollViewIsZooming, mapScrollView.zooming);
 
     RMProjectedRect planetBounds = projection.planetBounds;
     metersPerPixel = planetBounds.size.width / mapScrollView.contentSize.width;
@@ -1274,11 +1295,12 @@
     }
     else
     {
-        [self correctPositionOfAllAnnotationsIncludingInvisibles:NO animated:YES];
+        [self correctPositionOfAllAnnotationsIncludingInvisibles:NO animated:(_mapScrollViewIsZooming && !mapScrollView.zooming)];
         _lastZoom = zoom;
     }
 
     _lastContentOffset = mapScrollView.contentOffset;
+    _lastContentSize = mapScrollView.contentSize;
 
     // Don't do anything stupid here or your scrolling experience will suck
     if (_delegateHasMapViewRegionDidChange)
@@ -1702,9 +1724,9 @@
     CGPoint newPosition = CGPointMake((normalizedProjectedPoint.x / metersPerPixel) - mapScrollView.contentOffset.x,
                                       mapScrollView.contentSize.height - (normalizedProjectedPoint.y / metersPerPixel) - mapScrollView.contentOffset.y);
 
-    [annotation setPosition:newPosition animated:animated];
-
 //    RMLog(@"Change annotation at {%f,%f} in mapView {%f,%f}", annotation.position.x, annotation.position.y, mapScrollView.contentSize.width, mapScrollView.contentSize.height);
+
+    [annotation setPosition:newPosition animated:animated];
 }
 
 - (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllAnnotations animated:(BOOL)animated

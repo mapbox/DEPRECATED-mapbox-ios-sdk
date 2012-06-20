@@ -10,28 +10,28 @@
 
 @implementation RMMapScrollView
 
-@synthesize constraintsDelegate;
+@synthesize mapScrollViewDelegate;
 
 - (void)setContentOffset:(CGPoint)contentOffset
 {
-    if (self.constraintsDelegate)
-        contentOffset = [self.constraintsDelegate scrollView:self correctedOffsetForContentOffset:contentOffset];
+    if (self.mapScrollViewDelegate)
+        contentOffset = [self.mapScrollViewDelegate scrollView:self correctedOffsetForContentOffset:contentOffset];
 
     [super setContentOffset:contentOffset];
 }
 
 - (void)setContentOffset:(CGPoint)contentOffset animated:(BOOL)animated
 {
-    if (self.constraintsDelegate)
-        contentOffset = [self.constraintsDelegate scrollView:self correctedOffsetForContentOffset:contentOffset];
+    if (self.mapScrollViewDelegate)
+        contentOffset = [self.mapScrollViewDelegate scrollView:self correctedOffsetForContentOffset:contentOffset];
 
     [super setContentOffset:contentOffset animated:animated];
 }
 
 - (void)setContentSize:(CGSize)contentSize
 {
-    if (self.constraintsDelegate)
-        contentSize = [self.constraintsDelegate scrollView:self correctedSizeForContentSize:contentSize];
+    if (self.mapScrollViewDelegate)
+        contentSize = [self.mapScrollViewDelegate scrollView:self correctedSizeForContentSize:contentSize];
 
     [super setContentSize:contentSize];
 }

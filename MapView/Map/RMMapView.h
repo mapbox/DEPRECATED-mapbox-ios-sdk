@@ -62,10 +62,10 @@ typedef enum {
 
 @protocol RMMercatorToTileProjection;
 @protocol RMTileSource;
-@protocol UIScrollViewConstraintsDelegate;
+@protocol RMMapScrollViewDelegate;
 
 @interface RMMapView : UIView <UIScrollViewDelegate, RMMapOverlayViewDelegate,
-                               RMMapTiledLayerViewDelegate, UIScrollViewConstraintsDelegate>
+                               RMMapTiledLayerViewDelegate, RMMapScrollViewDelegate>
 {
     id <RMMapViewDelegate> delegate;
 

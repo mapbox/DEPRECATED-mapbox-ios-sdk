@@ -10,7 +10,7 @@
 
 @class RMMapScrollView;
 
-@protocol UIScrollViewConstraintsDelegate <NSObject>
+@protocol RMMapScrollViewDelegate <NSObject>
 
 - (CGPoint)scrollView:(RMMapScrollView *)aScrollView correctedOffsetForContentOffset:(CGPoint)aContentOffset;
 - (CGSize)scrollView:(RMMapScrollView *)aScrollView correctedSizeForContentSize:(CGSize)aContentSize;
@@ -19,6 +19,6 @@
 
 @interface RMMapScrollView : UIScrollView
 
-@property (nonatomic, assign) id <UIScrollViewConstraintsDelegate> constraintsDelegate;
+@property (nonatomic, assign) id <RMMapScrollViewDelegate> mapScrollViewDelegate;
 
 @end
