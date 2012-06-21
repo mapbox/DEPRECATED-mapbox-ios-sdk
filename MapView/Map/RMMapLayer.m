@@ -66,7 +66,7 @@
 
 - (void)setPosition:(CGPoint)position animated:(BOOL)animated
 {
-    super.position = position;
+    [self setPosition:position];
 }
 
 /// return nil for certain animation keys to block core animation
