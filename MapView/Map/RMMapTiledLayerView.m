@@ -179,6 +179,38 @@
             }
         }
 
+        if (mapView.debugTiles)
+        {
+            UIGraphicsBeginImageContext(tileImage.size);
+
+            CGContextRef debugContext = UIGraphicsGetCurrentContext();
+            
+            CGRect debugRect = CGRectMake(0, 0, tileImage.size.width, tileImage.size.height);
+            
+            [tileImage drawInRect:debugRect];
+            
+            CGColorRef color = CGColorCreateCopyWithAlpha([[UIColor redColor] CGColor], 0.25);
+            
+            UIFont *font = [UIFont systemFontOfSize:36];
+            
+            CGContextSetStrokeColorWithColor(debugContext, color);
+            CGContextSetLineWidth(debugContext, 5);
+            
+            CGContextStrokeRect(debugContext, debugRect);
+            
+            CGContextSetFillColorWithColor(debugContext, color);
+            
+            NSString *debugString = [NSString stringWithFormat:@"%i,%i,%i", zoom, x, y];
+            
+            CGSize debugSize = [debugString sizeWithFont:font];
+            
+            [debugString drawInRect:CGRectMake(5, 5, debugSize.width, debugSize.height) withFont:font];
+            
+            tileImage = UIGraphicsGetImageFromCurrentImageContext();
+
+            UIGraphicsEndImageContext();
+        }
+        
         [tileImage drawInRect:rect];
 
         UIGraphicsPopContext();
