@@ -69,12 +69,9 @@ typedef enum {
 {
     id <RMMapViewDelegate> delegate;
 
-    /// projection objects to convert from latitude/longitude to meters,
-    /// from projected meters to tile coordinates
     RMProjection *projection;
     RMFractalTileProjection *mercatorToTileProjection;
 
-    /// subview for the background image displayed while tiles are loading. Set its contents by providing your own "loading.png".
     UIView *backgroundView;
     RMMapScrollView *mapScrollView;
     RMMapTiledLayerView *tiledLayerView;
@@ -92,10 +89,10 @@ typedef enum {
     id <RMTileSource> tileSource;
     RMTileCache *tileCache; // Generic tile cache
 
-    /// minimum and maximum zoom number allowed for the view. #minZoom and #maxZoom must be within the limits of #tileSource but can be stricter; they are clamped to tilesource limits if needed.
     float minZoom, maxZoom, zoom;
     float screenScale;
 
+    NSUInteger missingTilesDepth;
     NSUInteger boundingMask;
 }
 
@@ -117,14 +114,19 @@ typedef enum {
 @property (nonatomic, readonly) double scaledMetersPerPixel;
 @property (nonatomic, readonly) double scaleDenominator; /// The denominator in a cartographic scale like 1/24000, 1/50000, 1/2000000.
 @property (nonatomic, readonly) float screenScale;
-@property (nonatomic, assign)   NSUInteger boundingMask;
 
 @property (nonatomic, assign)   BOOL adjustTilesForRetinaDisplay;
 @property (nonatomic, readonly) float adjustedZoomForRetinaDisplay; // takes adjustTilesForRetinaDisplay and screen scale into account
 
-@property (nonatomic, assign) float zoom; /// zoom level is clamped to range (minZoom, maxZoom)
+/// minimum and maximum zoom number allowed for the view. #minZoom and #maxZoom must be within the limits of #tileSource but can be stricter; they are clamped to tilesource limits (minZoom, maxZoom) if needed.
+@property (nonatomic, assign) float zoom;
 @property (nonatomic, assign) float minZoom;
 @property (nonatomic, assign) float maxZoom;
+
+/// take missing tiles from lower zoom levels, up to #missingTilesDepth zoom levels (defaults to 0, which disables this feature)
+@property (nonatomic, assign) NSUInteger missingTilesDepth;
+
+@property (nonatomic, assign)   NSUInteger boundingMask;
 
 @property (nonatomic, retain) RMQuadTree *quadTree;
 @property (nonatomic, assign) BOOL enableClustering;
@@ -132,12 +134,14 @@ typedef enum {
 @property (nonatomic, assign) CGSize clusterMarkerSize;
 @property (nonatomic, assign) CGSize clusterAreaSize;
 
+/// projection objects to convert from latitude/longitude to meters, from projected meters to tile coordinates
 @property (nonatomic, readonly) RMProjection *projection;
 @property (nonatomic, readonly) id <RMMercatorToTileProjection> mercatorToTileProjection;
 
 @property (nonatomic, retain) id <RMTileSource> tileSource;
 @property (nonatomic, retain) RMTileCache *tileCache;
 
+/// subview for the background image displayed while tiles are loading.
 @property (nonatomic, retain) UIView *backgroundView;
 
 #pragma mark -

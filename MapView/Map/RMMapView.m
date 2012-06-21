@@ -117,6 +117,7 @@
 @synthesize quadTree;
 @synthesize enableClustering, positionClusterMarkersAtTheGravityCenter, clusterMarkerSize, clusterAreaSize;
 @synthesize adjustTilesForRetinaDisplay;
+@synthesize missingTilesDepth;
 
 #pragma mark -
 #pragma mark Initialization
@@ -144,6 +145,7 @@
 
     boundingMask = RMMapMinWidthBound;
     adjustTilesForRetinaDisplay = NO;
+    missingTilesDepth = 0;
 
     annotations = [NSMutableSet new];
     visibleAnnotations = [NSMutableSet new];
