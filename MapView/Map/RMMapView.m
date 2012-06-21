@@ -118,6 +118,7 @@
 @synthesize enableClustering, positionClusterMarkersAtTheGravityCenter, clusterMarkerSize, clusterAreaSize;
 @synthesize adjustTilesForRetinaDisplay;
 @synthesize missingTilesDepth;
+@synthesize debugTiles;
 
 #pragma mark -
 #pragma mark Initialization
@@ -1559,6 +1560,15 @@
 - (RMFractalTileProjection *)mercatorToTileProjection
 {
     return [[mercatorToTileProjection retain] autorelease];
+}
+
+- (void)setDebugTiles:(BOOL)shouldDebug;
+{
+    debugTiles = shouldDebug;
+    
+    tiledLayerView.layer.contents = nil;
+    
+    [tiledLayerView.layer setNeedsDisplay];
 }
 
 #pragma mark -
