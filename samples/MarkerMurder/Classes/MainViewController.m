@@ -96,6 +96,7 @@
 //    mapView.decelerationMode = RMMapDecelerationOff;
 //    mapView.enableBouncing = NO;
 //    mapView.enableDragging = YES;
+//    mapView.debugTiles = YES;
 //    [mapView setConstraintsSouthWest:CLLocationCoordinate2DMake(47.0, 10.0) northEast:CLLocationCoordinate2DMake(48.0, 11.0)];
 
     UIImage *clusterMarkerImage = [UIImage imageNamed:@"marker-blue.png"];

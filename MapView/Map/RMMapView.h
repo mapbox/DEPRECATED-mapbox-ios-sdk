@@ -143,6 +143,8 @@ typedef enum {
 /// subview for the background image displayed while tiles are loading.
 @property (nonatomic, retain) UIView *backgroundView;
 
+@property (nonatomic, assign) BOOL debugTiles;
+
 #pragma mark - Initializers
 
 - (id)initWithFrame:(CGRect)frame andTilesource:(id <RMTileSource>)newTilesource;
