@@ -36,6 +36,7 @@
 #import "RMMapOverlayView.h"
 #import "RMMapTiledLayerView.h"
 #import "RMMapScrollView.h"
+#import "RMTileSourcesContainer.h"
 
 // constants for boundingMask
 enum {
@@ -74,7 +75,6 @@ typedef enum {
 
     UIView *backgroundView;
     RMMapScrollView *mapScrollView;
-    RMMapTiledLayerView *tiledLayerView;
     RMMapOverlayView *overlayView;
 
     double metersPerPixel;
@@ -86,7 +86,6 @@ typedef enum {
     BOOL            enableClustering, positionClusterMarkersAtTheGravityCenter;
     CGSize          clusterMarkerSize, clusterAreaSize;
 
-    id <RMTileSource> tileSource;
     RMTileCache *tileCache; // Generic tile cache
 
     float minZoom, maxZoom, zoom;
@@ -138,14 +137,13 @@ typedef enum {
 @property (nonatomic, readonly) RMProjection *projection;
 @property (nonatomic, readonly) id <RMMercatorToTileProjection> mercatorToTileProjection;
 
-@property (nonatomic, retain) id <RMTileSource> tileSource;
 @property (nonatomic, retain) RMTileCache *tileCache;
+@property (nonatomic, readonly) RMTileSourcesContainer *tileSourcesContainer;
 
 /// subview for the background image displayed while tiles are loading.
 @property (nonatomic, retain) UIView *backgroundView;
 
-#pragma mark -
-#pragma mark Initializers
+#pragma mark - Initializers
 
 - (id)initWithFrame:(CGRect)frame andTilesource:(id <RMTileSource>)newTilesource;
 
@@ -160,8 +158,7 @@ typedef enum {
 
 - (void)setFrame:(CGRect)frame;
 
-#pragma mark -
-#pragma mark Movement
+#pragma mark - Movement
 
 /// recenter the map on #coordinate, expressed as CLLocationCoordinate2D (latitude/longitude)
 - (void)setCenterCoordinate:(CLLocationCoordinate2D)coordinate animated:(BOOL)animated;
@@ -171,8 +168,7 @@ typedef enum {
 
 - (void)moveBy:(CGSize)delta;
 
-#pragma mark -
-#pragma mark Zoom
+#pragma mark - Zoom
 
 /// recenter the map on #boundsRect, expressed in projected meters
 - (void)setProjectedBounds:(RMProjectedRect)boundsRect animated:(BOOL)animated;
@@ -189,8 +185,7 @@ typedef enum {
 
 - (void)setMetersPerPixel:(double)newMetersPerPixel animated:(BOOL)animated;
 
-#pragma mark -
-#pragma mark Conversions
+#pragma mark - Conversions
 
 - (CGPoint)projectedPointToPixel:(RMProjectedPoint)projectedPoint;
 - (CGPoint)coordinateToPixel:(CLLocationCoordinate2D)coordinate;
@@ -212,16 +207,14 @@ typedef enum {
 /// returns the smallest bounding box containing a rectangular region of the view
 - (RMSphericalTrapezium)latitudeLongitudeBoundingBoxFor:(CGRect) rect;
 
-#pragma mark -
-#pragma mark Bounds
+#pragma mark - Bounds
 
 - (BOOL)tileSourceBoundsContainProjectedPoint:(RMProjectedPoint)point;
 
 - (void)setConstraintsSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast;
 - (void)setProjectedConstraintsSouthWest:(RMProjectedPoint)southWest northEast:(RMProjectedPoint)northEast;
 
-#pragma mark -
-#pragma mark Annotations
+#pragma mark - Annotations
 
 - (NSArray *)annotations;
 
@@ -234,14 +227,27 @@ typedef enum {
 
 - (CGPoint)mapPositionForAnnotation:(RMAnnotation *)annotation;
 
-#pragma mark -
-#pragma mark Cache
+#pragma mark - TileSources
+
+- (id <RMTileSource>)tileSource; // the first tile source, for backwards compatibility
+- (NSArray *)tileSources;
+
+- (BOOL)setTileSource:(id <RMTileSource>)tileSource; // replaces all tilesources with the new tilesource
+
+- (BOOL)addTileSource:(id <RMTileSource>)tileSource;
+- (BOOL)addTileSource:(id<RMTileSource>)tileSource atIndex:(NSUInteger)index;
+
+- (void)removeTileSource:(id <RMTileSource>)tileSource;
+- (void)removeTileSourceAtIndex:(NSUInteger)index;
+
+- (void)moveTileSourceAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
+
+#pragma mark - Cache
 
 ///  Clear all images from the #tileSource's caching system.
 -(void)removeAllCachedImages;
 
-#pragma mark -
-#pragma mark Snapshots
+#pragma mark - Snapshots
 
 - (UIImage *)takeSnapshot;
 - (UIImage *)takeSnapshotAndIncludeOverlay:(BOOL)includeOverlay;

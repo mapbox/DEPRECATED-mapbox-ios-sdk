@@ -20,6 +20,10 @@
 @end
 
 @implementation RMMapTiledLayerView
+{
+    RMMapView *mapView;
+    id <RMTileSource> tileSource;
+}
 
 @synthesize delegate;
 @synthesize useSnapshotRenderer;
@@ -34,12 +38,13 @@
     return (CATiledLayer *)self.layer;
 }
 
-- (id)initWithFrame:(CGRect)frame mapView:(RMMapView *)aMapView
+- (id)initWithFrame:(CGRect)frame mapView:(RMMapView *)aMapView forTileSource:(id <RMTileSource>)aTileSource
 {
     if (!(self = [super initWithFrame:frame]))
         return nil;
 
     mapView = [aMapView retain];
+    tileSource = [aTileSource retain];
 
     self.userInteractionEnabled = YES;
     self.multipleTouchEnabled = YES;
@@ -48,7 +53,7 @@
     self.useSnapshotRenderer = NO;
 
     CATiledLayer *tiledLayer = [self tiledLayer];
-    size_t levelsOf2xMagnification = mapView.tileSource.maxZoom;
+    size_t levelsOf2xMagnification = mapView.tileSourcesContainer.maxZoom;
     if (mapView.adjustTilesForRetinaDisplay) levelsOf2xMagnification += 1;
     tiledLayer.levelsOfDetail = levelsOf2xMagnification;
     tiledLayer.levelsOfDetailBias = levelsOf2xMagnification;
@@ -80,7 +85,8 @@
 
 - (void)dealloc
 {
-    [[mapView tileSource] cancelAllDownloads];
+    [tileSource cancelAllDownloads];
+    [tileSource release]; tileSource = nil;
     [mapView release]; mapView = nil;
     [super dealloc];
 }
@@ -118,7 +124,7 @@
         {
             for (int y=y1; y<=y2; ++y)
             {
-                UIImage *tileImage = [[mapView tileSource] imageForTile:RMTileMake(x, y, zoom) inCache:[mapView tileCache]];
+                UIImage *tileImage = [tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[mapView tileCache]];
                 [tileImage drawInRect:CGRectMake(x * rectSize, y * rectSize, rectSize, rectSize)];
             }
         }
@@ -134,7 +140,7 @@
 
         UIGraphicsPushContext(context);
 
-        UIImage *tileImage = [[mapView tileSource] imageForTile:RMTileMake(x, y, zoom) inCache:[mapView tileCache]];
+        UIImage *tileImage = [tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[mapView tileCache]];
 
         if ( ! tileImage)
         {
@@ -147,14 +153,14 @@
                 NSUInteger currentTileDepth = 1, currentZoom = zoom - currentTileDepth;
 
                 // tries to return lower zoom level tiles if a tile cannot be found
-                while ( !tileImage && currentZoom >= mapView.tileSource.minZoom && currentTileDepth <= mapView.missingTilesDepth)
+                while ( !tileImage && currentZoom >= mapView.tileSourcesContainer.minZoom && currentTileDepth <= mapView.missingTilesDepth)
                 {
                     float nextX = x / powf(2.0, (float)currentTileDepth),
                           nextY = y / powf(2.0, (float)currentTileDepth);
                     float nextTileX = floor(nextX),
                           nextTileY = floor(nextY);
 
-                    tileImage = [[mapView tileSource] imageForTile:RMTileMake((int)nextTileX, (int)nextTileY, currentZoom) inCache:[mapView tileCache]];
+                    tileImage = [tileSource imageForTile:RMTileMake((int)nextTileX, (int)nextTileY, currentZoom) inCache:[mapView tileCache]];
 
                     if (tileImage)
                     {
