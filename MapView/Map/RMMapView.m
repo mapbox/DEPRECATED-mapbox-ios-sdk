@@ -1982,7 +1982,15 @@
             [UIView animateWithDuration:(animated ? 0.5 : 0.0)
                                   delay:0.0
                                 options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveEaseInOut
-                             animations:^(void) { mapScrollView.transform = CGAffineTransformIdentity; }
+                             animations:^(void)
+                             {
+                                 mapScrollView.transform = CGAffineTransformIdentity;
+                                 overlayView.transform   = CGAffineTransformIdentity;
+                                 
+                                 for (RMAnnotation *annotation in annotations)
+                                     if ( ! annotation.isUserLocationAnnotation)
+                                         annotation.layer.transform = CATransform3DIdentity;
+                             }
                              completion:nil];
 
             if (userLocationTrackingView || userHeadingTrackingView)
@@ -2017,7 +2025,15 @@
             [UIView animateWithDuration:(animated ? 0.5 : 0.0)
                                   delay:0.0
                                 options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveEaseInOut
-                             animations:^(void) { mapScrollView.transform = CGAffineTransformIdentity; }
+                             animations:^(void)
+                             {
+                                 mapScrollView.transform = CGAffineTransformIdentity;
+                                 overlayView.transform   = CGAffineTransformIdentity;
+                                 
+                                 for (RMAnnotation *annotation in annotations)
+                                     if ( ! annotation.isUserLocationAnnotation)
+                                         annotation.layer.transform = CATransform3DIdentity;
+                             }
                              completion:nil];
             
             userLocation.layer.hidden = NO;
@@ -2223,11 +2239,27 @@
 
     if (newHeading.trueHeading != 0 && self.userTrackingMode == RMUserTrackingModeFollowWithHeading)
     {
+        [CATransaction begin];
+        [CATransaction setAnimationDuration:1.0];
+        [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+        
         [UIView animateWithDuration:1.0
                               delay:0.0
                             options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveEaseInOut
-                         animations:^(void) { mapScrollView.transform = CGAffineTransformMakeRotation((M_PI / -180) * newHeading.trueHeading); }
+                         animations:^(void)
+                         {
+                             CGFloat angle = (M_PI / -180) * newHeading.trueHeading;
+                             
+                             mapScrollView.transform = CGAffineTransformMakeRotation(angle);
+                             overlayView.transform   = CGAffineTransformMakeRotation(angle);
+                             
+                             for (RMAnnotation *annotation in annotations)
+                                 if ( ! annotation.isUserLocationAnnotation)
+                                     annotation.layer.transform = CATransform3DMakeAffineTransform(CGAffineTransformMakeRotation(-angle));
+                         }
                          completion:nil];
+        
+        [CATransaction commit];
     }
 }
 
