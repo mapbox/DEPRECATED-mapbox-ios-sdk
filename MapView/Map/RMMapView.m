@@ -1200,16 +1200,16 @@
 
 // Detect dragging/zooming
 
-- (CGPoint)scrollView:(RMMapScrollView *)aScrollView correctedOffsetForContentOffset:(CGPoint)aContentOffset
+- (void)scrollView:(RMMapScrollView *)aScrollView correctedContentOffset:(inout CGPoint *)aContentOffset
 {
     if ( ! _constrainMovement)
-        return aContentOffset;
+        return;
 
     RMProjectedRect planetBounds = projection.planetBounds;
     double currentMetersPerPixel = planetBounds.size.width / aScrollView.contentSize.width;
 
-    CGPoint bottomLeft = CGPointMake(aContentOffset.x,
-                                     aScrollView.contentSize.height - (aContentOffset.y + aScrollView.bounds.size.height));
+    CGPoint bottomLeft = CGPointMake((*aContentOffset).x,
+                                     aScrollView.contentSize.height - ((*aContentOffset).y + aScrollView.bounds.size.height));
 
     RMProjectedRect normalizedProjectedRect;
     normalizedProjectedRect.origin.x = (bottomLeft.x * currentMetersPerPixel) - fabs(planetBounds.origin.x);
@@ -1218,7 +1218,7 @@
     normalizedProjectedRect.size.height = aScrollView.bounds.size.height * currentMetersPerPixel;
 
     if (RMProjectedRectContainsProjectedRect(_constrainingProjectedBounds, normalizedProjectedRect))
-        return aContentOffset;
+        return;
 
     RMProjectedRect fittedProjectedRect = [self fitProjectedRect:normalizedProjectedRect intoRect:_constrainingProjectedBounds];
 
@@ -1228,23 +1228,23 @@
 
     CGPoint correctedContentOffset = CGPointMake(normalizedProjectedPoint.x / currentMetersPerPixel,
                                                  aScrollView.contentSize.height - ((normalizedProjectedPoint.y / currentMetersPerPixel) + aScrollView.bounds.size.height));
-    return correctedContentOffset;
+    *aContentOffset = correctedContentOffset;
 }
 
-- (CGSize)scrollView:(RMMapScrollView *)aScrollView correctedSizeForContentSize:(CGSize)aContentSize
+- (void)scrollView:(RMMapScrollView *)aScrollView correctedContentSize:(inout CGSize *)aContentSize
 {
     if ( ! _constrainMovement)
-        return aContentSize;
+        return;
 
     RMProjectedRect planetBounds = projection.planetBounds;
-    double currentMetersPerPixel = planetBounds.size.width / aContentSize.width;
+    double currentMetersPerPixel = planetBounds.size.width / (*aContentSize).width;
 
     RMProjectedSize projectedSize;
     projectedSize.width = aScrollView.bounds.size.width * currentMetersPerPixel;
     projectedSize.height = aScrollView.bounds.size.height * currentMetersPerPixel;
 
     if (RMProjectedSizeContainsProjectedSize(_constrainingProjectedBounds.size, projectedSize))
-        return aContentSize;
+        return;
 
     CGFloat factor = 1.0;
     if (projectedSize.width > _constrainingProjectedBounds.size.width)
@@ -1255,7 +1255,7 @@
     // \bug: Move this to RMMapScrollView
     aScrollView.zoomScale *= factor;
 
-    return CGSizeMake(aContentSize.width * factor, aContentSize.height * factor);
+    *aContentSize = CGSizeMake((*aContentSize).width * factor, (*aContentSize).height * factor);
 }
 
 - (void)observeValueForKeyPath:(NSString *)aKeyPath ofObject:(id)anObject change:(NSDictionary *)change context:(void *)context

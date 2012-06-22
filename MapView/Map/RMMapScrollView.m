@@ -15,7 +15,7 @@
 - (void)setContentOffset:(CGPoint)contentOffset
 {
     if (self.mapScrollViewDelegate)
-        contentOffset = [self.mapScrollViewDelegate scrollView:self correctedOffsetForContentOffset:contentOffset];
+        [self.mapScrollViewDelegate scrollView:self correctedContentOffset:&contentOffset];
 
     [super setContentOffset:contentOffset];
 }
@@ -23,7 +23,7 @@
 - (void)setContentOffset:(CGPoint)contentOffset animated:(BOOL)animated
 {
     if (self.mapScrollViewDelegate)
-        contentOffset = [self.mapScrollViewDelegate scrollView:self correctedOffsetForContentOffset:contentOffset];
+        [self.mapScrollViewDelegate scrollView:self correctedContentOffset:&contentOffset];
 
     [super setContentOffset:contentOffset animated:animated];
 }
@@ -31,7 +31,7 @@
 - (void)setContentSize:(CGSize)contentSize
 {
     if (self.mapScrollViewDelegate)
-        contentSize = [self.mapScrollViewDelegate scrollView:self correctedSizeForContentSize:contentSize];
+        [self.mapScrollViewDelegate scrollView:self correctedContentSize:&contentSize];
 
     [super setContentSize:contentSize];
 }
