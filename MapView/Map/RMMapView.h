@@ -242,6 +242,9 @@ typedef enum {
 
 - (void)moveTileSourceAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
 
+- (void)setHidden:(BOOL)isHidden forTileSource:(id <RMTileSource>)tileSource;
+- (void)setHidden:(BOOL)isHidden forTileSourceAtIndex:(NSUInteger)index;
+
 #pragma mark - Cache
 
 ///  Clear all images from the #tileSource's caching system.

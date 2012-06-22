@@ -1479,6 +1479,30 @@
     [self setCenterProjectedPoint:centerPoint animated:NO];
 }
 
+- (void)setHidden:(BOOL)isHidden forTileSource:(id <RMTileSource>)tileSource
+{
+    NSArray *tileSources = [self tileSources];
+
+    for (NSUInteger i=0; i<[tileSources count]; ++i)
+    {
+        id <RMTileSource> currentTileSource = [tileSources objectAtIndex:i];
+
+        if (tileSource == currentTileSource)
+        {
+            [self setHidden:isHidden forTileSourceAtIndex:i];
+            break;
+        }
+    }
+}
+
+- (void)setHidden:(BOOL)isHidden forTileSourceAtIndex:(NSUInteger)index
+{
+    if (index >= [_tiledLayersSuperview.subviews count])
+        return;
+
+    ((RMMapTiledLayerView *)[_tiledLayersSuperview.subviews objectAtIndex:index]).hidden = isHidden;
+}
+
 #pragma mark - Properties
 
 - (UIView *)backgroundView

@@ -9,6 +9,7 @@
 #import "MainView.h"
 
 #import "RMOpenStreetMapSource.h"
+#import "RMOpenSeaMapLayer.h"
 #import "RMMapView.h"
 #import "RMMarker.h"
 #import "RMCircle.h"
@@ -111,6 +112,22 @@
 
 	[self updateInfo];
 	[self performSelector:@selector(addMarkers) withObject:nil afterDelay:0.5];
+
+//    double delayInSeconds = 5.0;
+//    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+//    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+//        [mapView addTileSource:[[[RMOpenSeaMapLayer alloc] init] autorelease]];
+//
+//        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+//        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+//            [mapView setHidden:YES forTileSourceAtIndex:1];
+//
+//            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+//            dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+//                [mapView setHidden:NO forTileSourceAtIndex:1];
+//            });
+//        });
+//    });
 }
 
 - (void)didReceiveMemoryWarning
