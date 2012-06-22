@@ -115,8 +115,6 @@
 
 - (id)initWithInfo:(NSDictionary *)info
 {
-    WarnDeprecated();
-
     if ( ! (self = [super init]))
         return nil;
 
