@@ -1720,7 +1720,7 @@
 
         for (RMAnnotation *annotation in previousVisibleAnnotations)
         {
-            if ( ! [[NSArray arrayWithObjects:kRMUserLocationAnnotationTypeName, kRMAccuracyCircleAnnotationTypeName, kRMTrackingHaloAnnotationTypeName, nil] containsObject:annotation.annotationType])
+            if ( ! annotation.isUserLocationAnnotation)
             {
                 if (_delegateHasWillHideLayerForAnnotation)
                     [delegate mapView:self willHideLayerForAnnotation:annotation];
@@ -1771,7 +1771,7 @@
                     }
                     else
                     {
-                        if ( ! [[NSArray arrayWithObjects:kRMUserLocationAnnotationTypeName, kRMAccuracyCircleAnnotationTypeName, kRMTrackingHaloAnnotationTypeName, nil] containsObject:annotation.annotationType])
+                        if ( ! annotation.isUserLocationAnnotation)
                         {
                             if (_delegateHasWillHideLayerForAnnotation)
                                 [delegate mapView:self willHideLayerForAnnotation:annotation];
@@ -1867,7 +1867,7 @@
     {
         for (RMAnnotation *annotation in annotationsToRemove)
         {
-            if ( ! [[NSArray arrayWithObjects:kRMUserLocationAnnotationTypeName, kRMAccuracyCircleAnnotationTypeName, kRMTrackingHaloAnnotationTypeName, nil] containsObject:annotation.annotationType])
+            if ( ! annotation.isUserLocationAnnotation)
             {
                 [annotations removeObject:annotation];
                 [visibleAnnotations removeObject:annotation];
@@ -1927,7 +1927,7 @@
         [self setUserTrackingMode:RMUserTrackingModeNone animated:YES];
         
         for (RMAnnotation *annotation in annotations)
-            if ([[NSArray arrayWithObjects:kRMUserLocationAnnotationTypeName, kRMAccuracyCircleAnnotationTypeName, kRMTrackingHaloAnnotationTypeName, nil] containsObject:annotation.annotationType])
+            if ( ! annotation.isUserLocationAnnotation)
                 [self removeAnnotation:annotation];
         
         self.userLocation = nil;
@@ -2118,6 +2118,8 @@
         
         accuracyCircleAnnotation.layer = [[RMCircle alloc] initWithView:self radiusInMeters:newLocation.horizontalAccuracy];
         
+        accuracyCircleAnnotation.isUserLocationAnnotation = YES;
+        
         ((RMCircle *)accuracyCircleAnnotation.layer).lineColor = [UIColor colorWithRed:0.378 green:0.552 blue:0.827 alpha:0.7];
         ((RMCircle *)accuracyCircleAnnotation.layer).fillColor = [UIColor colorWithRed:0.378 green:0.552 blue:0.827 alpha:0.15];
         
@@ -2149,6 +2151,8 @@
         // create image marker
         //
         trackingHaloAnnotation.layer = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDotHalo.png"]];
+        
+        trackingHaloAnnotation.isUserLocationAnnotation = YES;
         
         [CATransaction begin];
         [CATransaction setAnimationDuration:2.5];

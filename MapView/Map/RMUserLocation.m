@@ -69,4 +69,9 @@
     }
 }
 
+- (BOOL)isUserLocationAnnotation
+{
+    return YES;
+}
+
 @end
