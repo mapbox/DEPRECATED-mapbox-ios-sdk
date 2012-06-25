@@ -39,13 +39,13 @@
 #import "RMTileSourcesContainer.h"
 
 // constants for boundingMask
-enum {
+enum : NSUInteger {
     RMMapNoMinBound		= 0, // Map can be zoomed out past view limits
     RMMapMinHeightBound	= 1, // Minimum map height when zooming out restricted to view height
     RMMapMinWidthBound	= 2  // Minimum map width when zooming out restricted to view width (default)
 };
 
-typedef enum {
+typedef enum : NSUInteger {
     RMMapDecelerationNormal,
     RMMapDecelerationFast,
     RMMapDecelerationOff

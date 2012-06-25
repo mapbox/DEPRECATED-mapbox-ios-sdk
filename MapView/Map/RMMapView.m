@@ -310,7 +310,7 @@
 {
 	CGRect bounds = [self bounds];
 
-	return [NSString stringWithFormat:@"MapView at %.0f,%.0f-%.0f,%.0f", bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height];
+	return [NSString stringWithFormat:@"MapView at {%.0f,%.0f}-{%.0f,%.0f}", bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height];
 }
 
 #pragma mark -
@@ -1484,16 +1484,14 @@
 {
     NSArray *tileSources = [self tileSources];
 
-    for (NSUInteger i=0; i<[tileSources count]; ++i)
-    {
-        id <RMTileSource> currentTileSource = [tileSources objectAtIndex:i];
-
+    [tileSources enumerateObjectsUsingBlock:^(id <RMTileSource> currentTileSource, NSUInteger index, BOOL *stop)
+     {
         if (tileSource == currentTileSource)
         {
-            [self setHidden:isHidden forTileSourceAtIndex:i];
-            break;
+            [self setHidden:isHidden forTileSourceAtIndex:index];
+            *stop = YES;
         }
-    }
+     }];
 }
 
 - (void)setHidden:(BOOL)isHidden forTileSourceAtIndex:(NSUInteger)index

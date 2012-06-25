@@ -10,7 +10,7 @@
 
 @class RMAnnotation, RMMapView;
 
-typedef enum {
+typedef enum : short {
     nodeTypeLeaf,
     nodeTypeNode
 } RMQuadTreeNodeType;
