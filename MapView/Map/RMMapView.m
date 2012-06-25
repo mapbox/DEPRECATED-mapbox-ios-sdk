@@ -90,6 +90,14 @@
 
 #pragma mark -
 
+@interface RMAnnotation (PrivateMethods)
+
+@property (nonatomic, assign) BOOL isUserLocationAnnotation;
+
+@end
+
+#pragma mark -
+
 @implementation RMMapView
 {
     BOOL _delegateHasBeforeMapMove;
