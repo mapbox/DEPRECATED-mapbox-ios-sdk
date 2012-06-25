@@ -214,6 +214,8 @@
 
             tileImage = UIGraphicsGetImageFromCurrentImageContext();
 
+            CFRelease(color);
+
             UIGraphicsEndImageContext();
         }
 

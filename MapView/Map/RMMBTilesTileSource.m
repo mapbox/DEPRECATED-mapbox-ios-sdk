@@ -44,7 +44,7 @@
 
 - (id)initWithTileSetURL:(NSURL *)tileSetURL
 {
-	if ( ! [super init])
+	if ( ! (self = [super init]))
 		return nil;
 
 	tileProjection = [[RMFractalTileProjection alloc] initFromProjection:[self projection] 
