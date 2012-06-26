@@ -1253,9 +1253,6 @@
     else
         factor = (projectedSize.height / _constrainingProjectedBounds.size.height);
 
-    // \bug: Move this to RMMapScrollView
-    aScrollView.zoomScale *= factor;
-
     *aContentSize = CGSizeMake((*aContentSize).width * factor, (*aContentSize).height * factor);
 }
 

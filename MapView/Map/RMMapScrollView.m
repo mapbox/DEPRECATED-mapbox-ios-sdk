@@ -30,10 +30,21 @@
 
 - (void)setContentSize:(CGSize)contentSize
 {
+    CGFloat factor = 1.0;
+
     if (self.mapScrollViewDelegate)
+    {
+        CGSize previousContentSize = contentSize;
+
         [self.mapScrollViewDelegate scrollView:self correctedContentSize:&contentSize];
 
+        factor = contentSize.width / previousContentSize.width;
+    }
+
     [super setContentSize:contentSize];
+
+    if (factor != 1.0)
+        self.zoomScale *= factor;
 }
 
 @end
