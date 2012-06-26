@@ -150,7 +150,7 @@
         layer = aLayer;
         [layer retain];
         layer.annotation = self;
-        layer.position = self.position;
+        [layer setPosition:self.position animated:NO];
     }
 }
 
