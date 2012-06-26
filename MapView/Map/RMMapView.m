@@ -679,7 +679,7 @@
         return NO;
 }
 
-- (void)zoomContentByFactor:(float)zoomFactor near:(CGPoint)pivot animated:(BOOL)animated
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)pivot animated:(BOOL)animated
 {
     if (![self tileSourceBoundsContainScreenPoint:pivot])
         return;
@@ -765,7 +765,7 @@
     }
 
 //    RMLog(@"zoom in from:%f to:%f by factor:%f around {%f,%f}", [self zoom], newZoom, factor, pivot.x, pivot.y);
-    [self zoomContentByFactor:factor near:pivot animated:animated];
+    [self zoomByFactor:factor near:pivot animated:animated];
 }
 
 - (void)zoomOutToNextNativeZoomAt:(CGPoint)pivot
@@ -790,80 +790,7 @@
     }
 
 //    RMLog(@"zoom out from:%f to:%f by factor:%f around {%f,%f}", [self zoom], newZoom, factor, pivot.x, pivot.y);
-    [self zoomContentByFactor:factor near:pivot animated:animated];
-}
-
-- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center animated:(BOOL)animated
-{
-    if (_constrainMovement)
-    {
-        // check that bounds after zoom don't exceed map constraints
-        float _zoomFactor = [self adjustedZoomForCurrentBoundingMask:zoomFactor];
-        float zoomDelta = log2f(_zoomFactor);
-        float targetZoom = zoomDelta + [self zoom];
-
-        BOOL canZoom = NO;
-
-        if (targetZoom == [self zoom])
-        {
-            //OK... . I could even do a return here.. but it will hamper with future logic..
-            canZoom = YES;
-        }
-
-        // clamp zoom to remain below or equal to maxZoom after zoomAfter will be applied
-        if (targetZoom > [self maxZoom])
-            zoomFactor = exp2f([self maxZoom] - [self zoom]);
-
-        // clamp zoom to remain above or equal to minZoom after zoomAfter will be applied
-        if (targetZoom < [self minZoom])
-            zoomFactor = 1/exp2f([self zoom] - [self minZoom]);
-
-        // bools for syntactical sugar to understand the logic in the if statement below
-        BOOL zoomAtMax = ([self zoom] == [self maxZoom]);
-        BOOL zoomAtMin = ([self zoom] == [self minZoom]);
-        BOOL zoomGreaterMin = ([self zoom] > [self minZoom]);
-        BOOL zoomLessMax = ([self zoom] < [ self maxZoom]);
-
-        //zooming in zoomFactor > 1
-        //zooming out zoomFactor < 1
-        if ((zoomGreaterMin && zoomLessMax) || (zoomAtMax && zoomFactor<1) || (zoomAtMin && zoomFactor>1))
-        {
-            // if I'm here it means I could zoom, now we have to see what will happen after zoom
-            // get copies of mercatorRoScreenProjection's data
-            RMProjectedPoint origin = [self projectedOrigin];
-            CGRect screenBounds = self.bounds;
-
-            // this is copied from [RMMercatorToScreenBounds zoomScreenByFactor]
-            // First we move the origin to the pivot...
-            origin.x += center.x * metersPerPixel;
-            origin.y += (screenBounds.size.height - center.y) * metersPerPixel;
-
-            // Then scale by 1/factor
-            metersPerPixel /= _zoomFactor;
-
-            // Then translate back
-            origin.x -= center.x * metersPerPixel;
-            origin.y -= (screenBounds.size.height - center.y) * metersPerPixel;
-
-            // calculate new bounds
-            RMProjectedRect zRect;
-            zRect.origin = origin;
-            zRect.size.width = screenBounds.size.width * metersPerPixel;
-            zRect.size.height = screenBounds.size.height * metersPerPixel;
-
-//            // can zoom only if within bounds
-//            canZoom = !(zRect.origin.y < _southWestConstraint.y || zRect.origin.y+zRect.size.height > _northEastConstraint.y ||
-//                        zRect.origin.x < _southWestConstraint.x || zRect.origin.x+zRect.size.width > _northEastConstraint.x);
-        }
-
-        if (!canZoom)
-        {
-            RMLog(@"Zooming will move map out of bounds: no zoom");
-            return;
-        }
-    }
-
-    [self zoomContentByFactor:zoomFactor near:center animated:animated];
+    [self zoomByFactor:factor near:pivot animated:animated];
 }
 
 #pragma mark -
@@ -1206,6 +1133,18 @@
     if ( ! _constrainMovement)
         return;
 
+    if (CGPointEqualToPoint(_lastContentOffset, *aContentOffset))
+        return;
+
+    // The first offset during zooming out (animated) is always garbage
+    if (_mapScrollViewIsZooming == YES &&
+        mapScrollView.zooming == NO &&
+        _lastContentSize.width > mapScrollView.contentSize.width &&
+        ((*aContentOffset).y - _lastContentOffset.y) == 0.0)
+    {
+        return;
+    }
+
     RMProjectedRect planetBounds = projection.planetBounds;
     double currentMetersPerPixel = planetBounds.size.width / aScrollView.contentSize.width;
 
@@ -1252,9 +1191,6 @@
         factor = (projectedSize.width / _constrainingProjectedBounds.size.width);
     else
         factor = (projectedSize.height / _constrainingProjectedBounds.size.height);
-
-    // \bug: Move this to RMMapScrollView
-    aScrollView.zoomScale *= factor;
 
     *aContentSize = CGSizeMake((*aContentSize).width * factor, (*aContentSize).height * factor);
 }
@@ -1543,7 +1479,7 @@
 {
     double factor = self.metersPerPixel / newMetersPerPixel;
 
-    [self zoomContentByFactor:factor near:CGPointMake(self.bounds.size.width/2.0, self.bounds.size.height/2.0) animated:animated];
+    [self zoomByFactor:factor near:CGPointMake(self.bounds.size.width/2.0, self.bounds.size.height/2.0) animated:animated];
 }
 
 - (double)scaledMetersPerPixel
