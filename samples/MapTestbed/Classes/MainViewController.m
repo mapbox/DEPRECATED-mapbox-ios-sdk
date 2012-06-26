@@ -8,6 +8,7 @@
 
 #import "MainView.h"
 #import "RMPath.h"
+#import "RMShape.h"
 #import "RMMarker.h"
 #import "RMAnnotation.h"
 
@@ -29,7 +30,7 @@
 {
     [super viewDidLoad];
     mapView.delegate = self;
-	mapView.decelerationMode = RMMapDecelerationFast;
+	mapView.decelerationMode = RMMapDecelerationNormal;
     [self updateInfo];
 }
 
@@ -88,16 +89,14 @@
 
 - (RMMapLayer *)mapView:(RMMapView *)aMapView layerForAnnotation:(RMAnnotation *)annotation
 {
-    if ([annotation.annotationType isEqualToString:@"path"]) {
-        RMPath *testPath = [[[RMPath alloc] initWithView:aMapView] autorelease];
+    if ([annotation.annotationType isEqualToString:@"path"])
+    {
+//        RMPath *testPath = [[[RMPath alloc] initWithView:aMapView] autorelease];
+        RMShape *testPath = [[[RMShape alloc] initWithView:aMapView] autorelease];
         [testPath setLineColor:[annotation.userInfo objectForKey:@"lineColor"]];
         [testPath setFillColor:[annotation.userInfo objectForKey:@"fillColor"]];
         [testPath setLineWidth:[[annotation.userInfo objectForKey:@"lineWidth"] floatValue]];
-
-        CGPathDrawingMode drawingMode = kCGPathStroke;
-        if ([annotation.userInfo containsObject:@"pathDrawingMode"])
-            drawingMode = [[annotation.userInfo objectForKey:@"pathDrawingMode"] intValue];
-        [testPath setDrawingMode:drawingMode];
+//        testPath.scaleLineWidth = YES;
 
         if ([[annotation.userInfo objectForKey:@"closePath"] boolValue])
             [testPath closePath];
@@ -109,7 +108,9 @@
 
         return testPath;
     }
-    if ([annotation.annotationType isEqualToString:@"marker"]) {
+
+    if ([annotation.annotationType isEqualToString:@"marker"])
+    {
         return [[[RMMarker alloc] initWithUIImage:annotation.annotationIcon anchorPoint:annotation.anchorPoint] autorelease];
     }
 

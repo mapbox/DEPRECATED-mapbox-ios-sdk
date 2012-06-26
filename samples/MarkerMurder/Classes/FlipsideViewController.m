@@ -45,13 +45,12 @@
     [zoomLevel setText:[NSString stringWithFormat:@"%.1f", [self mapView].zoom]];
     [maxZoom setText:[NSString stringWithFormat:@"%.1f", [self mapView].maxZoom]];
     [minZoom setText:[NSString stringWithFormat:@"%.1f", [self mapView].minZoom]];
-
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
     CLLocationCoordinate2D newMapCenter;
-    
+
     newMapCenter.latitude = [[centerLatitude text] doubleValue];
     newMapCenter.longitude = [[centerLongitude text] doubleValue];
     [[self mapView] setCenterCoordinate:newMapCenter animated:NO];
@@ -60,7 +59,8 @@
     [[self mapView] setMinZoom:[[minZoom text] floatValue]];
 }
 
-- (void)dealloc {
+- (void)dealloc
+{
     self.centerLatitude = nil;
     self.centerLongitude = nil;
     self.zoomLevel = nil;

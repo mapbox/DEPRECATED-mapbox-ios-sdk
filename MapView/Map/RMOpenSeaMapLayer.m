@@ -1,7 +1,7 @@
 //
-//  RMMapLayer.m
+//  RMOpenSeaMapLayer.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,57 +25,54 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import "RMMapLayer.h"
-#import "RMPixel.h"
+#import "RMOpenSeaMapLayer.h"
 
-@implementation RMMapLayer
-
-@synthesize annotation;
-@synthesize projectedLocation;
-@synthesize enableDragging;
-@synthesize userInfo;
+@implementation RMOpenSeaMapLayer
 
 - (id)init
 {
 	if (!(self = [super init]))
-		return nil;
+        return nil;
 
-    self.annotation = nil;
-    self.enableDragging = NO;
+    // http://wiki.openstreetmap.org/index.php/FAQ#What_is_the_map_scale_for_a_particular_zoom_level_of_the_map.3F
+    [self setMaxZoom:18];
+    [self setMinZoom:1];
 
 	return self;
 }
 
-- (id)initWithLayer:(id)layer
+- (NSArray *)URLsForTile:(RMTile)tile
 {
-    if (!(self = [super initWithLayer:layer]))
-        return nil;
+	NSAssert4(((tile.zoom >= self.minZoom) && (tile.zoom <= self.maxZoom)),
+			  @"%@ tried to retrieve tile with zoomLevel %d, outside source's defined range %f to %f",
+			  self, tile.zoom, self.minZoom, self.maxZoom);
 
-    self.annotation = nil;
-    self.userInfo = nil;
-
-    return self;
+	return [NSArray arrayWithObject:[NSURL URLWithString:[NSString stringWithFormat:@"http://tiles.openseamap.org/seamark/%d/%d/%d.png", tile.zoom, tile.x, tile.y]]];
 }
 
-- (void)dealloc
+- (NSString *)uniqueTilecacheKey
 {
-    self.annotation = nil;
-    self.userInfo = nil;
-    [super dealloc];
+	return @"OpenSeaMapLayer";
 }
 
-- (void)setPosition:(CGPoint)position animated:(BOOL)animated
+- (NSString *)shortName
 {
-    [self setPosition:position];
+	return @"Open Sea Map";
 }
 
-/// return nil for certain animation keys to block core animation
-//- (id <CAAction>)actionForKey:(NSString *)key
-//{
-//    if ([key isEqualToString:@"position"] || [key isEqualToString:@"bounds"])
-//        return nil;
-//    else
-//        return [super actionForKey:key];
-//}
+- (NSString *)longDescription
+{
+	return @"Open Sea Map/Open Street Map, the free wiki world map, provides freely usable map data for all parts of the world, under the Creative Commons Attribution-Share Alike 2.0 license.";
+}
+
+- (NSString *)shortAttribution
+{
+	return @"© OpenStreetMap CC-BY-SA";
+}
+
+- (NSString *)longAttribution
+{
+	return @"Map data © OpenStreetMap, licensed under Creative Commons Share Alike By Attribution.";
+}
 
 @end

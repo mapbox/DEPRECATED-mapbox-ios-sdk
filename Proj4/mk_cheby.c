@@ -98,21 +98,23 @@ mk_cheby(projUV a, projUV b, double res, projUV *resid, projUV (*func)(projUV),
 				T->mv = nrv - 1;
 				T->power = 1;
 				for (i = 0; i < nru; ++i) /* store coefficient rows for u */
-					if ((T->cu[i].m = ncu[i]))
+					if ((T->cu[i].m = ncu[i])) {
 						if ((p = T->cu[i].c =
 								(double *)pj_malloc(sizeof(double) * ncu[i])))
 							for (j = 0; j < ncu[i]; ++j)
 								*p++ = (w[i] + j)->u;
 						else
 							goto error;
+                    }
 				for (i = 0; i < nrv; ++i) /* same for v */
-					if ((T->cv[i].m = ncv[i]))
+					if ((T->cv[i].m = ncv[i])) {
 						if ((p = T->cv[i].c =
 								(double *)pj_malloc(sizeof(double) * ncv[i])))
 							for (j = 0; j < ncv[i]; ++j)
 								*p++ = (w[i] + j)->v;
 						else
 							goto error;
+                    }
 			}
 		} else if ((T = makeT(nru, nrv))) {
 			/* else make returned Chebyshev coefficient structure */
@@ -124,21 +126,23 @@ mk_cheby(projUV a, projUV b, double res, projUV *resid, projUV (*func)(projUV),
 			T->b.v = 1. / (b.v - a.v);
 			T->power = 0;
 			for (i = 0; i < nru; ++i) /* store coefficient rows for u */
-				if ((T->cu[i].m = ncu[i])) 
+				if ((T->cu[i].m = ncu[i])) {
 					if ((p = T->cu[i].c =
 							(double *)pj_malloc(sizeof(double) * ncu[i])))
 						for (j = 0; j < ncu[i]; ++j)
 							*p++ = (w[i] + j)->u;
 					else
 						goto error;
+                }
 			for (i = 0; i < nrv; ++i) /* same for v */
-				if ((T->cv[i].m = ncv[i]))
+				if ((T->cv[i].m = ncv[i])) {
 					if ((p = T->cv[i].c =
 							(double *)pj_malloc(sizeof(double) * ncv[i])))
 						for (j = 0; j < ncv[i]; ++j)
 							*p++ = (w[i] + j)->v;
 					else
 						goto error;
+                }
 		} else
 			goto error;
 	}

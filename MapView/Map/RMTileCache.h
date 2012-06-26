@@ -32,7 +32,7 @@
 
 @class RMTileImage, RMMemoryCache;
 
-typedef enum {
+typedef enum : short {
 	RMCachePurgeStrategyLRU,
 	RMCachePurgeStrategyFIFO,
 } RMCachePurgeStrategy;
@@ -58,15 +58,6 @@ typedef enum {
 #pragma mark -
 
 @interface RMTileCache : NSObject <RMTileCache>
-{
-	NSMutableArray *caches;
-
-    // The memory cache, if we have one
-    // This one has its own variable because we want to propagate cache hits down in
-    // the cache hierarchy up to the memory cache
-    RMMemoryCache *memoryCache;    
-    NSTimeInterval expiryPeriod;
-}
 
 - (id)initWithExpiryPeriod:(NSTimeInterval)period;
 

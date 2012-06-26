@@ -1,7 +1,7 @@
 //
-//  RMPath.h
+//  RMShape.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -32,69 +32,35 @@
 
 @class RMMapView;
 
-@interface RMPath : RMMapLayer
+@interface RMShape : RMMapLayer
 {
-    BOOL isFirstPoint;
-
-    /// The color of the line, or the outline if a polygon
-    UIColor *lineColor;
-    /// The color of polygon's fill.
-    UIColor *fillColor;
-
-    CGMutablePathRef path;
     CGRect pathBoundingBox;
-    BOOL ignorePathUpdates;
-    CGRect previousBounds;
 
     /// Width of the line, in pixels
     float lineWidth;
 
-    /*! Drawing mode of the path; Choices are
-     kCGPathFill,
-     kCGPathEOFill,
-     kCGPathStroke,
-     kCGPathFillStroke,
-     kCGPathEOFillStroke */
-    CGPathDrawingMode drawingMode;
-
-    //Line cap and join styles
-    CGLineCap lineCap;
-    CGLineJoin lineJoin;
-
     // Line dash style
-    CGFloat *_lineDashLengths;
-    CGFloat *_scaledLineDashLengths;
-    size_t _lineDashCount;
+    NSArray *lineDashLengths;
     CGFloat lineDashPhase;
-
-    // Line shadow
-    CGFloat shadowBlur;
-    CGSize shadowOffset;
-    BOOL enableShadow;
 
     BOOL scaleLineWidth;
     BOOL scaleLineDash; // if YES line dashes will be scaled to keep a constant size if the layer is zoomed
-
-    float renderedScale;
-    RMMapView *mapView;
 }
 
-/// DEPRECATED. Use RMShape instead.
-- (id)initWithView:(RMMapView *)aMapView __attribute__ ((deprecated));;
+- (id)initWithView:(RMMapView *)aMapView;
 
-@property (nonatomic, assign) CGPathDrawingMode drawingMode;
-@property (nonatomic, assign) CGLineCap lineCap;
-@property (nonatomic, assign) CGLineJoin lineJoin;
+@property (nonatomic, retain) NSString *fillRule;
+@property (nonatomic, retain) NSString *lineCap;
+@property (nonatomic, retain) NSString *lineJoin;
+@property (nonatomic, retain) UIColor *lineColor;
+@property (nonatomic, retain) UIColor *fillColor;
+
 @property (nonatomic, assign) NSArray *lineDashLengths;
 @property (nonatomic, assign) CGFloat lineDashPhase;
 @property (nonatomic, assign) BOOL scaleLineDash;
 @property (nonatomic, assign) float lineWidth;
 @property (nonatomic, assign) BOOL	scaleLineWidth;
-@property (nonatomic, assign) CGFloat shadowBlur;
-@property (nonatomic, assign) CGSize shadowOffset;
-@property (nonatomic, assign) BOOL enableShadow;
-@property (nonatomic, retain) UIColor *lineColor;
-@property (nonatomic, retain) UIColor *fillColor;
+
 @property (nonatomic, readonly) CGRect pathBoundingBox;
 
 - (void)moveToProjectedPoint:(RMProjectedPoint)projectedPoint;
@@ -106,7 +72,7 @@
 - (void)addLineToCoordinate:(CLLocationCoordinate2D)coordinate;
 
 // Change the path without recalculating the geometry (performance!)
-- (void)performBatchOperations:(void (^)(RMPath *aPath))block;
+- (void)performBatchOperations:(void (^)(RMShape *aPath))block;
 
 /// This closes the path, connecting the last point to the first.
 /// After this action, no further points can be added to the path.

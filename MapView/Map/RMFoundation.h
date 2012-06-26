@@ -62,19 +62,24 @@ typedef struct {
 } RMSphericalTrapezium;
 #endif
 
+#pragma mark -
+
 RMProjectedPoint RMScaleProjectedPointAboutPoint(RMProjectedPoint point, float factor, RMProjectedPoint pivot);
 RMProjectedRect  RMScaleProjectedRectAboutPoint(RMProjectedRect rect, float factor, RMProjectedPoint pivot);
 RMProjectedPoint RMTranslateProjectedPointBy(RMProjectedPoint point, RMProjectedSize delta);
 RMProjectedRect  RMTranslateProjectedRectBy(RMProjectedRect rect, RMProjectedSize delta);
 
-/// \brief The function checks whether two passed projected points are equal.
+#pragma mark -
+
 bool RMProjectedPointEqualToProjectedPoint(RMProjectedPoint point1, RMProjectedPoint point2);
 
-/// \brief The function returs true if the passed rects intersect each other.
 bool RMProjectedRectIntersectsProjectedRect(RMProjectedRect rect1, RMProjectedRect rect2);
-
-/// \brief The function returns true if rect1 contains rect2
 bool RMProjectedRectContainsProjectedRect(RMProjectedRect rect1, RMProjectedRect rect2);
+bool RMProjectedRectContainsProjectedPoint(RMProjectedRect rect, RMProjectedPoint point);
+
+bool RMProjectedSizeContainsProjectedSize(RMProjectedSize size1, RMProjectedSize size2);
+
+#pragma mark -
 
 // Union of two rectangles
 RMProjectedRect RMProjectedRectUnion(RMProjectedRect rect1, RMProjectedRect rect2);
@@ -86,6 +91,13 @@ RMProjectedSize  RMProjectedSizeMake(double width, double heigth);
 RMProjectedRect RMProjectedRectZero();
 bool RMProjectedRectIsZero(RMProjectedRect rect);
 
+#pragma mark -
+
 double RMEuclideanDistanceBetweenProjectedPoints(RMProjectedPoint point1, RMProjectedPoint point2);
+
+#pragma mark -
+
+void RMLogProjectedPoint(RMProjectedPoint point);
+void RMLogProjectedRect(RMProjectedRect rect);
 
 #endif

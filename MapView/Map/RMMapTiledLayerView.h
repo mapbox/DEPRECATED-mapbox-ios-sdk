@@ -6,6 +6,8 @@
 //  Copyright (c) 2011 Alpstein. All rights reserved.
 //
 
+#import "RMTileSource.h"
+
 @class RMMapView, RMMapTiledLayerView;
 
 @protocol RMMapTiledLayerViewDelegate <NSObject>
@@ -21,15 +23,11 @@
 @end
 
 @interface RMMapTiledLayerView : UIView
-{
-    id <RMMapTiledLayerViewDelegate> delegate;
-    RMMapView *mapView;
-}
 
 @property (nonatomic, assign) id <RMMapTiledLayerViewDelegate> delegate;
 
 @property (nonatomic, assign) BOOL useSnapshotRenderer;
 
-- (id)initWithFrame:(CGRect)frame mapView:(RMMapView *)aMapView;
+- (id)initWithFrame:(CGRect)frame mapView:(RMMapView *)aMapView forTileSource:(id <RMTileSource>)aTileSource;
 
 @end

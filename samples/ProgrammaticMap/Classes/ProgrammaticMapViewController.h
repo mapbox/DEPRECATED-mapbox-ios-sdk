@@ -7,15 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "RMMapView.h"
 
-@class RMMapView;
+@interface ProgrammaticMapViewController : UIViewController <RMMapViewDelegate>
 
-@interface ProgrammaticMapViewController : UIViewController
-{
-	RMMapView *mapView;
-}
-
-@property(nonatomic,retain)RMMapView *mapView;
+@property (nonatomic, retain) RMMapView *mapView;
 
 - (IBAction)doTheTest:(id)sender;
 - (IBAction)takeSnapshot:(id)sender;

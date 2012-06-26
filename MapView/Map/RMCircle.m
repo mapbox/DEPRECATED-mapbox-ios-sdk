@@ -35,7 +35,7 @@
 
 @interface RMCircle ()
 
-- (void)updateCirclePath;
+- (void)updateCirclePathAnimated:(BOOL)animated;
 
 @end
 
@@ -68,7 +68,7 @@
     enableDragging = YES;
 
     circlePath = NULL;
-    [self updateCirclePath];
+    [self updateCirclePathAnimated:NO];
 
     return self;
 }
@@ -85,7 +85,7 @@
 
 #pragma mark -
 
-- (void)updateCirclePath
+- (void)updateCirclePathAnimated:(BOOL)animated
 {
     CGPathRelease(circlePath); circlePath = NULL;
 
@@ -102,7 +102,7 @@
 
     CGFloat offset = floorf(-lineWidthInPixels / 2.0f) - 2;
     CGRect newBoundsRect = CGRectInset(rectangle, offset, offset);
-    
+
     [self setBounds:newBoundsRect];
 
     //	DLog(@"Circle Rectangle: %f, %f, %f, %f", rectangle.origin.x, rectangle.origin.y, rectangle.size.width, rectangle.size.height);
@@ -113,14 +113,14 @@
 
     // animate the path change if we're in an animation block
     //
-    if ([CATransaction animationDuration] > 0)
+    if (animated)
     {
         CABasicAnimation *pathAnimation = [CABasicAnimation animationWithKeyPath:@"path"];
-        
+
         pathAnimation.duration  = [CATransaction animationDuration];
         pathAnimation.fromValue = [NSValue valueWithPointer:self.shapeLayer.path];
         pathAnimation.toValue   = [NSValue valueWithPointer:newPath];
-        
+
         [self.shapeLayer addAnimation:pathAnimation forKey:@"animatePath"];
     }
 
@@ -138,7 +138,7 @@
     {
         [lineColor release];
         lineColor = [newLineColor retain];
-        [self updateCirclePath];
+        [self updateCirclePathAnimated:NO];
     }
 }
 
@@ -148,27 +148,27 @@
     {
         [fillColor release];
         fillColor = [newFillColor retain];
-        [self updateCirclePath];
+        [self updateCirclePathAnimated:NO];
     }
 }
 
 - (void)setRadiusInMeters:(CGFloat)newRadiusInMeters
 {
     radiusInMeters = newRadiusInMeters;
-    [self updateCirclePath];
+    [self updateCirclePathAnimated:NO];
 }
 
 - (void)setLineWidthInPixels:(CGFloat)newLineWidthInPixels
 {
     lineWidthInPixels = newLineWidthInPixels;
-    [self updateCirclePath];
+    [self updateCirclePathAnimated:NO];
 }
 
-- (void)setPosition:(CGPoint)position
+- (void)setPosition:(CGPoint)position animated:(BOOL)animated
 {
-    [super setPosition:position];
+    [self setPosition:position];
 
-    [self updateCirclePath];
+    [self updateCirclePathAnimated:animated];
 }
 
 @end

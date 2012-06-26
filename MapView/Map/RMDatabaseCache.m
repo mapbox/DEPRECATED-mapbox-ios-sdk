@@ -128,7 +128,7 @@
 	}
 
     [queue inDatabase:^(FMDatabase *db) {
-        [db setCrashOnErrors:TRUE];
+        [db setCrashOnErrors:NO];
         [db setShouldCacheStatements:TRUE];
     }];
 

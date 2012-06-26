@@ -1,7 +1,7 @@
 //
-//  RMMemoryCache.h
+//  RMOpenSeaMapLayer.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,15 +25,14 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import <Foundation/Foundation.h>
-#import "RMTile.h"
-#import "RMTileCache.h"
+#import "RMAbstractWebMapSource.h"
 
-@interface RMMemoryCache : NSObject <RMTileCache>
+/*!
+ \brief Subclass of RMAbstractMercatorWebSource for access to the OpenSeaMap Layer over OpenStreetMap.
 
-- (id)initWithCapacity:(NSUInteger)aCapacity;
+ Provides key-based access to tiles from the OpenSeaMap layer.
+ */
 
-/// Remove the least-recently used image from cache, if cache is at or over capacity. Removes only 1 image.
-- (void)makeSpaceInCache;
+@interface RMOpenSeaMapLayer : RMAbstractWebMapSource
 
 @end

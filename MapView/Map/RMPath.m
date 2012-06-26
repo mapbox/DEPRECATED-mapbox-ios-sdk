@@ -423,7 +423,7 @@
     }
 }
 
-- (void)setPosition:(CGPoint)newPosition
+- (void)setPosition:(CGPoint)newPosition animated:(BOOL)animated
 {
     if (CGPointEqualToPoint(newPosition, super.position) && CGRectEqualToRect(self.bounds, previousBounds)) return;
 
