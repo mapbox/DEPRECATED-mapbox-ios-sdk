@@ -1133,6 +1133,18 @@
     if ( ! _constrainMovement)
         return;
 
+    if (CGPointEqualToPoint(_lastContentOffset, *aContentOffset))
+        return;
+
+    // The first offset during zooming out (animated) is always garbage
+    if (_mapScrollViewIsZooming == YES &&
+        mapScrollView.zooming == NO &&
+        _lastContentSize.width > mapScrollView.contentSize.width &&
+        ((*aContentOffset).y - _lastContentOffset.y) == 0.0)
+    {
+        return;
+    }
+
     RMProjectedRect planetBounds = projection.planetBounds;
     double currentMetersPerPixel = planetBounds.size.width / aScrollView.contentSize.width;
 
