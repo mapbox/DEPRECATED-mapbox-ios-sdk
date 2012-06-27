@@ -124,6 +124,7 @@
 @synthesize decelerationMode = _decelerationMode;
 
 @synthesize boundingMask = _boundingMask;
+@synthesize zoomingInPivotsAroundCenter = _zoomingInPivotsAroundCenter;
 @synthesize minZoom = _minZoom, maxZoom = _maxZoom;
 @synthesize screenScale = _screenScale;
 @synthesize tileCache = _tileCache;
@@ -145,7 +146,7 @@
                                minZoomLevel:(float)minZoomLevel
                             backgroundImage:(UIImage *)backgroundImage
 {
-    _constrainMovement = _enableBouncing = NO;
+    _constrainMovement = _enableBouncing = _zoomingInPivotsAroundCenter = NO;
     _enableDragging = YES;
 
     self.backgroundColor = [UIColor grayColor];
@@ -1114,7 +1115,10 @@
 
 - (void)mapTiledLayerView:(RMMapTiledLayerView *)aTiledLayerView doubleTapAtPoint:(CGPoint)aPoint
 {
-    [self zoomInToNextNativeZoomAt:aPoint animated:YES];
+    if (self.zoomingInPivotsAroundCenter)
+        [self zoomInToNextNativeZoomAt:[self convertPoint:self.center fromView:self.superview] animated:YES];
+    else
+        [self zoomInToNextNativeZoomAt:aPoint animated:YES];
 
     if (_delegateHasDoubleTapOnMap)
         [_delegate doubleTapOnMap:self at:aPoint];

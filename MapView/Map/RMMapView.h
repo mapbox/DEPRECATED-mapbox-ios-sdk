@@ -73,6 +73,7 @@ typedef enum : NSUInteger {
 
 @property (nonatomic, assign) BOOL enableDragging;
 @property (nonatomic, assign) BOOL enableBouncing;
+@property (nonatomic, assign) BOOL zoomingInPivotsAroundCenter;
 @property (nonatomic, assign) RMMapDecelerationMode decelerationMode;
 
 @property (nonatomic, assign)   double metersPerPixel;
