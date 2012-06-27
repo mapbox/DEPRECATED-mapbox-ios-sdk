@@ -58,8 +58,8 @@
         .southWest = {.latitude = -90.0, .longitude = -180.0}
     });
 
-    _minZoom = FLT_MIN;
-    _maxZoom = FLT_MAX;
+    _minZoom = kRMTileSourcesContainerMaxZoom;
+    _maxZoom = kRMTileSourcesContainerMinZoom;
     _tileSideLength = 0;
 
     return self;
@@ -127,10 +127,10 @@
     if ( ! _mercatorToTileProjection)
         _mercatorToTileProjection = [newFractalTileProjection retain];
 
-    // FIXME: This should be the min and max values of all tile sources, so that individual tilesources
+    // minZoom and maxZoom are the min and max values of all tile sources, so that individual tilesources
     // could have a smaller zoom level range
-    _minZoom = MAX(_minZoom, [tileSource minZoom]);
-    _maxZoom = MIN(_maxZoom, [tileSource maxZoom]);
+    self.minZoom = MIN(_minZoom, [tileSource minZoom]);
+    self.maxZoom = MAX(_maxZoom, [tileSource maxZoom]);
 
     if (_tileSideLength == 0)
     {
@@ -247,8 +247,8 @@
             .southWest = {.latitude = -90.0, .longitude = -180.0}
         });
 
-        _minZoom = FLT_MIN;
-        _maxZoom = FLT_MAX;
+        _minZoom = kRMTileSourcesContainerMaxZoom;
+        _maxZoom = kRMTileSourcesContainerMinZoom;
         _tileSideLength = 0;
     }
 
@@ -280,9 +280,25 @@
     return _minZoom;
 }
 
+- (void)setMinZoom:(float)minZoom
+{
+    if (minZoom < kRMTileSourcesContainerMinZoom)
+        minZoom = kRMTileSourcesContainerMinZoom;
+
+    _minZoom = minZoom;
+}
+
 - (float)maxZoom
 {
     return _maxZoom;
+}
+
+- (void)setMaxZoom:(float)maxZoom
+{
+    if (maxZoom > kRMTileSourcesContainerMaxZoom)
+        maxZoom = kRMTileSourcesContainerMaxZoom;
+
+    _maxZoom = maxZoom;
 }
 
 - (NSUInteger)tileSideLength

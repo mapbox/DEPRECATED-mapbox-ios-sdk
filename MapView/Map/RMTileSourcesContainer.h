@@ -28,13 +28,16 @@
 
 #import "RMTileSource.h"
 
+#define kRMTileSourcesContainerMinZoom 0
+#define kRMTileSourcesContainerMaxZoom 255
+
 @interface RMTileSourcesContainer : NSObject
 
 @property (nonatomic, readonly) NSArray *tileSources;
 
-// These are the minimum and maximum zoom levels across all tile sources
-@property (nonatomic, readonly) float minZoom;
-@property (nonatomic, readonly) float maxZoom;
+// These are the minimum and maximum zoom levels across all tile sources.
+@property (nonatomic, assign) float minZoom;
+@property (nonatomic, assign) float maxZoom;
 
 // These properties are (and have to be) equal across all tile sources
 @property (nonatomic, readonly) NSUInteger tileSideLength;
