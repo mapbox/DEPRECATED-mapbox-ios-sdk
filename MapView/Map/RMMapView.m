@@ -888,6 +888,8 @@
 
 - (void)createMapView
 {
+    [_tileSourcesContainer cancelAllDownloads];
+
     [_overlayView removeFromSuperview]; [_overlayView release]; _overlayView = nil;
 
     for (RMMapTiledLayerView *tiledLayerView in _tiledLayersSuperview.subviews)
@@ -925,7 +927,7 @@
 
     for (id <RMTileSource> tileSource in _tileSourcesContainer.tileSources)
     {
-        RMMapTiledLayerView *tiledLayerView = [[[RMMapTiledLayerView alloc] initWithFrame:CGRectMake(0.0, 0.0, contentSize.width, contentSize.height) mapView:self forTileSource:tileSource] autorelease];
+        RMMapTiledLayerView *tiledLayerView = [[RMMapTiledLayerView alloc] initWithFrame:CGRectMake(0.0, 0.0, contentSize.width, contentSize.height) mapView:self forTileSource:tileSource];
         tiledLayerView.delegate = self;
 
         if (self.adjustTilesForRetinaDisplay && _screenScale > 1.0)
