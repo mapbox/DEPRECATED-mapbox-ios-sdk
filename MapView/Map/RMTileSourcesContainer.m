@@ -31,6 +31,7 @@
 @implementation RMTileSourcesContainer
 {
     NSMutableArray *_tileSources;
+    NSRecursiveLock *_tileSourcesLock;
 
     RMProjection *_projection;
     RMFractalTileProjection *_mercatorToTileProjection;
@@ -47,6 +48,7 @@
         return nil;
 
     _tileSources = [NSMutableArray new];
+    _tileSourcesLock = [NSRecursiveLock new];
 
     _projection = nil;
     _mercatorToTileProjection = nil;
@@ -66,6 +68,7 @@
 - (void)dealloc
 {
     [_tileSources release]; _tileSources = nil;
+    [_tileSourcesLock release]; _tileSourcesLock = nil;
     [_projection release]; _projection = nil;
     [_mercatorToTileProjection release]; _mercatorToTileProjection = nil;
     [super dealloc];
@@ -75,13 +78,27 @@
 
 - (NSArray *)tileSources
 {
-    return [[_tileSources copy] autorelease];
+    NSArray *tileSources = nil;
+
+    [_tileSourcesLock lock];
+    tileSources = [_tileSources copy];
+    [_tileSourcesLock unlock];
+
+    return [tileSources autorelease];
 }
 
 - (BOOL)setTileSource:(id <RMTileSource>)tileSource
 {
+    BOOL result;
+
+    [_tileSourcesLock lock];
+
     [self removeAllTileSources];
-    return [self addTileSource:tileSource];
+    result = [self addTileSource:tileSource];
+
+    [_tileSourcesLock unlock];
+
+    return result;
 }
 
 - (BOOL)addTileSource:(id <RMTileSource>)tileSource
@@ -91,6 +108,8 @@
 
 - (BOOL)addTileSource:(id<RMTileSource>)tileSource atIndex:(NSUInteger)index
 {
+    [_tileSourcesLock lock];
+
     RMProjection *newProjection = [tileSource projection];
     RMFractalTileProjection *newFractalTileProjection = [tileSource mercatorToTileProjection];
 
@@ -101,12 +120,15 @@
     else if (_projection != newProjection)
     {
         NSLog(@"The tilesource '%@' has a different projection than the tilesource container", [tileSource shortName]);
+        [_tileSourcesLock unlock];
         return NO;
     }
 
     if ( ! _mercatorToTileProjection)
         _mercatorToTileProjection = [newFractalTileProjection retain];
 
+    // FIXME: This should be the min and max values of all tile sources, so that individual tilesources
+    // could have a smaller zoom level range
     _minZoom = MAX(_minZoom, [tileSource minZoom]);
     _maxZoom = MIN(_maxZoom, [tileSource maxZoom]);
 
@@ -117,6 +139,7 @@
     else if (_tileSideLength != [tileSource tileSideLength])
     {
         NSLog(@"The tilesource '%@' has a different tile side length than the tilesource container", [tileSource shortName]);
+        [_tileSourcesLock unlock];
         return NO;
     }
 
@@ -137,6 +160,8 @@
     else
         [_tileSources insertObject:tileSource atIndex:index];
 
+    [_tileSourcesLock unlock];
+
     RMLog(@"Added the tilesource '%@' to the container", [tileSource shortName]);
 
     return YES;
@@ -145,26 +170,38 @@
 - (void)removeTileSource:(id <RMTileSource>)tileSource
 {
     [tileSource cancelAllDownloads];
-    [_tileSources removeObject:tileSource];
+
+    [_tileSourcesLock lock];
 
     RMLog(@"Removed the tilesource '%@' from the container", [tileSource shortName]);
+
+    [_tileSources removeObject:tileSource];
 
     if ([_tileSources count] == 0)
     {
         [self removeAllTileSources]; // cleanup
     }
+
+    [_tileSourcesLock unlock];
 }
 
 - (void)removeTileSourceAtIndex:(NSUInteger)index
 {
+    [_tileSourcesLock lock];
+
     if (index >= [_tileSources count])
+    {
+        [_tileSourcesLock unlock];
         return;
+    }
 
     id <RMTileSource> tileSource = [_tileSources objectAtIndex:index];
     [tileSource cancelAllDownloads];
     [_tileSources removeObject:tileSource];
 
     RMLog(@"Removed the tilesource '%@' from the container", [tileSource shortName]);
+
+    [_tileSourcesLock unlock];
 }
 
 - (void)moveTileSourceAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
@@ -172,8 +209,13 @@
     if (fromIndex == toIndex)
         return;
 
+    [_tileSourcesLock lock];
+
     if (fromIndex >= [_tileSources count])
+    {
+        [_tileSourcesLock unlock];
         return;
+    }
 
     id tileSource = [[_tileSources objectAtIndex:fromIndex] retain];
     [_tileSources removeObjectAtIndex:fromIndex];
@@ -184,10 +226,14 @@
         [_tileSources insertObject:tileSource atIndex:toIndex];
 
     [tileSource autorelease];
+
+    [_tileSourcesLock unlock];
 }
 
 - (void)removeAllTileSources
 {
+    [_tileSourcesLock lock];
+
     [self cancelAllDownloads];
     [_tileSources removeAllObjects];
 
@@ -205,12 +251,18 @@
         _maxZoom = FLT_MAX;
         _tileSideLength = 0;
     }
+
+    [_tileSourcesLock unlock];
 }
 
 - (void)cancelAllDownloads
 {
+    [_tileSourcesLock lock];
+
     for (id <RMTileSource>tileSource in _tileSources)
         [tileSource cancelAllDownloads];
+
+    [_tileSourcesLock unlock];
 }
 
 - (RMFractalTileProjection *)mercatorToTileProjection
@@ -245,8 +297,12 @@
 
 - (void)didReceiveMemoryWarning
 {
+    [_tileSourcesLock lock];
+
     for (id <RMTileSource>tileSource in _tileSources)
         [tileSource didReceiveMemoryWarning];
+
+    [_tileSourcesLock unlock];
 }
 
 @end
