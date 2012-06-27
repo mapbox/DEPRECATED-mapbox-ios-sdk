@@ -190,14 +190,11 @@ typedef enum : NSUInteger {
 @property (nonatomic, retain)   RMTileCache *tileCache;
 @property (nonatomic, readonly) RMTileSourcesContainer *tileSourcesContainer;
 
-@property (nonatomic, readonly) id <RMTileSource> tileSource; // the first tile source, for backwards compatibility
-@property (nonatomic, readonly) NSArray *tileSources;
+@property (nonatomic, retain) id <RMTileSource> tileSource; // the first tile source, for backwards compatibility
+@property (nonatomic, retain) NSArray *tileSources;
 
-- (BOOL)setTileSource:(id <RMTileSource>)tileSource; // replaces all tilesources with the new tilesource
-- (BOOL)setTileSources:(NSArray *)tileSources;
-
-- (BOOL)addTileSource:(id <RMTileSource>)tileSource;
-- (BOOL)addTileSource:(id<RMTileSource>)tileSource atIndex:(NSUInteger)index;
+- (void)addTileSource:(id <RMTileSource>)tileSource;
+- (void)addTileSource:(id<RMTileSource>)tileSource atIndex:(NSUInteger)index;
 
 - (void)removeTileSource:(id <RMTileSource>)tileSource;
 - (void)removeTileSourceAtIndex:(NSUInteger)index;

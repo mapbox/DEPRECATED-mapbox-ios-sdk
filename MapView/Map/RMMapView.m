@@ -1338,16 +1338,16 @@
     return [_tileSourcesContainer tileSources];
 }
 
-- (BOOL)setTileSource:(id <RMTileSource>)tileSource
+- (void)setTileSource:(id <RMTileSource>)tileSource
 {
     [_tileSourcesContainer removeAllTileSources];
-    return [self addTileSource:tileSource];
+    [self addTileSource:tileSource];
 }
 
-- (BOOL)setTileSources:(NSArray *)tileSources
+- (void)setTileSources:(NSArray *)tileSources
 {
     if ( ! [_tileSourcesContainer setTileSources:tileSources])
-        return NO;
+        return;
 
     RMProjectedPoint centerPoint = [self centerProjectedPoint];
 
@@ -1374,22 +1374,20 @@
     [self createMapView];
 
     [self setCenterProjectedPoint:centerPoint animated:NO];
-
-    return YES;
 }
 
-- (BOOL)addTileSource:(id <RMTileSource>)tileSource
+- (void)addTileSource:(id <RMTileSource>)tileSource
 {
-    return [self addTileSource:tileSource atIndex:-1];
+    [self addTileSource:tileSource atIndex:-1];
 }
 
-- (BOOL)addTileSource:(id<RMTileSource>)newTileSource atIndex:(NSUInteger)index
+- (void)addTileSource:(id<RMTileSource>)newTileSource atIndex:(NSUInteger)index
 {
     if ([_tileSourcesContainer.tileSources containsObject:newTileSource])
-        return YES;
+        return;
 
     if ( ! [_tileSourcesContainer addTileSource:newTileSource atIndex:index])
-        return NO;
+        return;
 
     RMProjectedPoint centerPoint = [self centerProjectedPoint];
 
@@ -1416,8 +1414,6 @@
     [self createMapView];
 
     [self setCenterProjectedPoint:centerPoint animated:NO];
-
-    return YES;
 }
 
 - (void)removeTileSource:(id <RMTileSource>)tileSource
