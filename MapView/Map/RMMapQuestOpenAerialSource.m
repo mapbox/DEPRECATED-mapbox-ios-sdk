@@ -34,8 +34,8 @@
     if (!(self = [super init]))
         return nil;
 
-    [self setMaxZoom:11];
-    [self setMinZoom:1];
+    self.minZoom = 1;
+    self.maxZoom = 11;
 
 	return self;
 }

@@ -1,7 +1,7 @@
 //
 // RMDBMapSource.h
 //
-// Copyright (c) 2009, Frank Schroeder, SharpMind GbR
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,11 +29,6 @@
 #import "RMProjection.h"
 
 @interface RMDBMapSource : RMAbstractMercatorTileSource
-{
-    NSString *uniqueTilecacheKey;
-}
-
-@property (nonatomic, retain) NSString *uniqueTilecacheKey;
 
 - (id)initWithPath:(NSString *)path;
 

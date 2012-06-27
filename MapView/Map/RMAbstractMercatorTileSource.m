@@ -1,7 +1,7 @@
 //
-//  RMMercatorWebSource.m
+//  RMAbstractMercatorTileSource.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -31,64 +31,41 @@
 #import "RMProjection.h"
 
 @implementation RMAbstractMercatorTileSource
+{
+    RMFractalTileProjection *_tileProjection;
+}
+
+@synthesize minZoom = _minZoom, maxZoom = _maxZoom;
 
 - (id)init
 {
-	if (!(self = [super init]))
-		return nil;
+    if (!(self = [super init]))
+        return nil;
 
-    minZoom = kDefaultMinTileZoom;
-    maxZoom = kDefaultMaxTileZoom;
-    tileSideLength = kDefaultTileSize;
-    
-	return self;
+    _tileProjection = nil;
+
+    // http://wiki.openstreetmap.org/index.php/FAQ#What_is_the_map_scale_for_a_particular_zoom_level_of_the_map.3F
+    self.minZoom = kDefaultMinTileZoom;
+    self.maxZoom = kDefaultMaxTileZoom;
+
+    return self;
 }
 
 - (void)dealloc
 {
-	[tileProjection release]; tileProjection = nil;
-	[super dealloc];
-}
-
-- (int)tileSideLength
-{
-	return tileSideLength;
-}
-
-- (void)setTileSideLength:(NSUInteger)aTileSideLength
-{
-    tileSideLength = aTileSideLength;
-}
-
-- (float)minZoom
-{
-	return minZoom;
-}
-
-- (void)setMinZoom:(NSUInteger)aMinZoom
-{
-    minZoom = aMinZoom;
-}
-
-- (float)maxZoom
-{
-	return maxZoom;
-}
-
-- (void)setMaxZoom:(NSUInteger)aMaxZoom
-{
-    maxZoom = aMaxZoom;
+    [_tileProjection release]; _tileProjection = nil;
+    [super dealloc];
 }
 
 - (RMSphericalTrapezium)latitudeLongitudeBoundingBox
 {
-	return kDefaultLatLonBoundingBox;
+    return kDefaultLatLonBoundingBox;
 }
 
 - (UIImage *)imageForTile:(RMTile)tile inCache:(RMTileCache *)tileCache
 {
-	@throw [NSException exceptionWithName:@"RMAbstractMethodInvocation"
-                                   reason:@"imageForTile: invoked on AbstractMercatorWebSource. Override this method when instantiating abstract class."
+    @throw [NSException exceptionWithName:@"RMAbstractMethodInvocation"
+                                   reason:@"imageForTile:inCache: invoked on RMAbstractMercatorTileSource. Override this method when instantiating an abstract class."
                                  userInfo:nil];
 }    
 
@@ -96,39 +73,47 @@
 {
 }
 
-- (RMFractalTileProjection *)mercatorToTileProjection
-{
-    if (!tileProjection) {
-        tileProjection = [[RMFractalTileProjection alloc] initFromProjection:[self projection]
-                                                              tileSideLength:[self tileSideLength]
-                                                                     maxZoom:[self maxZoom]
-                                                                     minZoom:[self minZoom]];
-    }
-
-	return tileProjection;
-}
-
 - (RMProjection *)projection
 {
-	return [RMProjection googleProjection];
+    return [RMProjection googleProjection];
+}
+
+- (RMFractalTileProjection *)mercatorToTileProjection
+{
+    if ( ! _tileProjection)
+    {
+        _tileProjection = [[RMFractalTileProjection alloc] initFromProjection:self.projection
+                                                               tileSideLength:self.tileSideLength
+                                                                      maxZoom:self.maxZoom
+                                                                      minZoom:self.minZoom];
+    }
+
+    return [[_tileProjection retain] autorelease];
 }
 
 - (void)didReceiveMemoryWarning
 {
-	LogMethod();		
+    LogMethod();
+}
+
+#pragma mark -
+
+- (NSUInteger)tileSideLength
+{
+    return kDefaultTileSize;
 }
 
 - (NSString *)uniqueTilecacheKey
 {
-	@throw [NSException exceptionWithName:@"RMAbstractMethodInvocation"
-                                   reason:@"uniqueTilecacheKey invoked on AbstractMercatorWebSource. Override this method when instantiating abstract class."
+    @throw [NSException exceptionWithName:@"RMAbstractMethodInvocation"
+                                   reason:@"uniqueTilecacheKey invoked on RMAbstractMercatorTileSource. Override this method when instantiating an abstract class."
                                  userInfo:nil];
 }
 
 - (NSString *)shortName
 {
-	@throw [NSException exceptionWithName:@"RMAbstractMethodInvocation"
-                                   reason:@"shortName invoked on AbstractMercatorWebSource. Override this method when instantiating abstract class."
+    @throw [NSException exceptionWithName:@"RMAbstractMethodInvocation"
+                                   reason:@"shortName invoked on RMAbstractMercatorTileSource. Override this method when instantiating an abstract class."
                                  userInfo:nil];
 }
 
@@ -139,8 +124,8 @@
 
 - (NSString *)shortAttribution
 {
-	@throw [NSException exceptionWithName:@"RMAbstractMethodInvocation"
-                                   reason:@"shortAttribution invoked on AbstractMercatorWebSource. Override this method when instantiating abstract class."
+    @throw [NSException exceptionWithName:@"RMAbstractMethodInvocation"
+                                   reason:@"shortAttribution invoked on RMAbstractMercatorTileSource. Override this method when instantiating an abstract class."
                                  userInfo:nil];
 }
 

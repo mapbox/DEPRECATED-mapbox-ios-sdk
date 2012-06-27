@@ -29,42 +29,45 @@
 
 @implementation RMGenericMapSource
 {
-    NSString *host, *tileCacheKey;
+    NSString *_host, *_uniqueTilecacheKey;
 }
 
-- (id)initWithHost:(NSString *)mapSourceHost tileCacheKey:(NSString *)mapSourceTileCacheKey minZoom:(float)mapSourceMinZoom maxZoom:(float)mapSourceMaxZoom
+- (id)initWithHost:(NSString *)host tileCacheKey:(NSString *)tileCacheKey minZoom:(float)minZoom maxZoom:(float)maxZoom
 {
-	if (!(self = [super init]))
+    if (!(self = [super init]))
         return nil;
 
-    host = [mapSourceHost retain];
-    tileCacheKey = [mapSourceTileCacheKey retain];
+    NSAssert(host != nil, @"Empty host parameter not allowed");
+    NSAssert(tileCacheKey != nil, @"Empty tileCacheKey paramter not allowed");
 
-    [self setMaxZoom:maxZoom];
-    [self setMinZoom:minZoom];
+    _host = [host retain];
+    _uniqueTilecacheKey = [tileCacheKey retain];
 
-	return self;
+    self.minZoom = minZoom;
+    self.maxZoom = maxZoom;
+
+    return self;
 }
 
 - (void)dealloc
 {
-    [host release]; host = nil;
-    [tileCacheKey release]; tileCacheKey = nil;
+    [_uniqueTilecacheKey release]; _uniqueTilecacheKey = nil;
+    [_host release]; _host = nil;
     [super dealloc];
 }
 
 - (NSURL *)URLForTile:(RMTile)tile
 {
-	NSAssert4(((tile.zoom >= self.minZoom) && (tile.zoom <= self.maxZoom)),
-			  @"%@ tried to retrieve tile with zoomLevel %d, outside source's defined range %f to %f", 
-			  self, tile.zoom, self.minZoom, self.maxZoom);
+    NSAssert4(((tile.zoom >= self.minZoom) && (tile.zoom <= self.maxZoom)),
+              @"%@ tried to retrieve tile with zoomLevel %d, outside source's defined range %f to %f",
+              self, tile.zoom, self.minZoom, self.maxZoom);
 
-	return [NSURL URLWithString:[NSString stringWithFormat:@"http://%@/%d/%d/%d.png", host, tile.zoom, tile.x, tile.y]];
+    return [NSURL URLWithString:[NSString stringWithFormat:@"http://%@/%d/%d/%d.png", _host, tile.zoom, tile.x, tile.y]];
 }
 
 - (NSString *)uniqueTilecacheKey
 {
-	return tileCacheKey;
+    return _uniqueTilecacheKey;
 }
 
 - (NSString *)shortName
