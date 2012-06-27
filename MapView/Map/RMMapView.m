@@ -1344,6 +1344,40 @@
     return [self addTileSource:tileSource];
 }
 
+- (BOOL)setTileSources:(NSArray *)tileSources
+{
+    if ( ! [_tileSourcesContainer setTileSources:tileSources])
+        return NO;
+
+    RMProjectedPoint centerPoint = [self centerProjectedPoint];
+
+    [_projection release];
+    _projection = [[_tileSourcesContainer projection] retain];
+
+    [_mercatorToTileProjection release];
+    _mercatorToTileProjection = [[_tileSourcesContainer mercatorToTileProjection] retain];
+
+    RMSphericalTrapezium bounds = [_tileSourcesContainer latitudeLongitudeBoundingBox];
+
+    _constrainMovement = !(bounds.northEast.latitude == 90.0 && bounds.northEast.longitude == 180.0 && bounds.southWest.latitude == -90.0 && bounds.southWest.longitude == -180.0);
+
+    if (_constrainMovement)
+        _constrainingProjectedBounds = (RMProjectedRect)[self projectedRectFromLatitudeLongitudeBounds:bounds];
+    else
+        _constrainingProjectedBounds = _projection.planetBounds;
+
+    [self setMinZoom:_tileSourcesContainer.minZoom];
+    [self setMaxZoom:_tileSourcesContainer.maxZoom];
+    [self setZoom:[self zoom]]; // setZoom clamps zoom level to min/max limits
+
+    // Recreate the map layer
+    [self createMapView];
+
+    [self setCenterProjectedPoint:centerPoint animated:NO];
+
+    return YES;
+}
+
 - (BOOL)addTileSource:(id <RMTileSource>)tileSource
 {
     return [self addTileSource:tileSource atIndex:-1];

@@ -101,6 +101,22 @@
     return result;
 }
 
+- (BOOL)setTileSources:(NSArray *)tileSources
+{
+    BOOL result = YES;
+
+    [_tileSourcesLock lock];
+
+    [self removeAllTileSources];
+
+    for (id <RMTileSource> tileSource in tileSources)
+        result &= [self addTileSource:tileSource];
+
+    [_tileSourcesLock unlock];
+
+    return result;
+}
+
 - (BOOL)addTileSource:(id <RMTileSource>)tileSource
 {
     return [self addTileSource:tileSource atIndex:-1];

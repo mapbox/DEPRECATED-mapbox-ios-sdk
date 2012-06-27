@@ -194,6 +194,7 @@ typedef enum : NSUInteger {
 @property (nonatomic, readonly) NSArray *tileSources;
 
 - (BOOL)setTileSource:(id <RMTileSource>)tileSource; // replaces all tilesources with the new tilesource
+- (BOOL)setTileSources:(NSArray *)tileSources;
 
 - (BOOL)addTileSource:(id <RMTileSource>)tileSource;
 - (BOOL)addTileSource:(id<RMTileSource>)tileSource atIndex:(NSUInteger)index;

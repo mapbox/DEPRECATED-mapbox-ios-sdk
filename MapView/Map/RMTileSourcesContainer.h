@@ -50,6 +50,7 @@
 #pragma mark -
 
 - (BOOL)setTileSource:(id <RMTileSource>)tileSource;
+- (BOOL)setTileSources:(NSArray *)tileSources;
 
 - (BOOL)addTileSource:(id <RMTileSource>)tileSource;
 - (BOOL)addTileSource:(id<RMTileSource>)tileSource atIndex:(NSUInteger)index;
