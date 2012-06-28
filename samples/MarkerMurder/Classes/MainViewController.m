@@ -114,6 +114,11 @@
 	[self updateInfo];
 	[self performSelector:@selector(addMarkers) withObject:nil afterDelay:0.5];
 
+//    [mapView setTileSources:@[
+//     [[[RMOpenStreetMapSource alloc] init] autorelease],
+//     [[[RMOpenSeaMapLayer alloc] init] autorelease]
+//     ]];
+
 //    double delayInSeconds = 5.0;
 //    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
 //    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){

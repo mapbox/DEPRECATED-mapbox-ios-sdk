@@ -1,7 +1,7 @@
 //
 //  RMTileSource.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -38,31 +38,31 @@
 
 @protocol RMMercatorToTileProjection;
 
+#pragma mark -
+
 @protocol RMTileSource <NSObject>
+
+// min and max zoom can be set externally since you might want to constrain the zoom level range
+@property (nonatomic, assign) float minZoom;
+@property (nonatomic, assign) float maxZoom;
+
+@property (nonatomic, readonly) RMFractalTileProjection *mercatorToTileProjection;
+@property (nonatomic, readonly) RMProjection *projection;
+
+@property (nonatomic, readonly) RMSphericalTrapezium latitudeLongitudeBoundingBox;
+
+@property (nonatomic, readonly) NSString *uniqueTilecacheKey;
+@property (nonatomic, readonly) NSUInteger tileSideLength;
+
+@property (nonatomic, readonly) NSString *shortName;
+@property (nonatomic, readonly) NSString *longDescription;
+@property (nonatomic, readonly) NSString *shortAttribution;
+@property (nonatomic, readonly) NSString *longAttribution;
+
+#pragma mark -
 
 - (UIImage *)imageForTile:(RMTile)tile inCache:(RMTileCache *)tileCache;
 - (void)cancelAllDownloads;
-
-- (RMFractalTileProjection *)mercatorToTileProjection;
-- (RMProjection *)projection;
-
-- (float)minZoom;
-- (void)setMinZoom:(NSUInteger)aMinZoom;
-
-- (float)maxZoom;
-- (void)setMaxZoom:(NSUInteger)aMaxZoom;
-
-- (int)tileSideLength;
-- (void)setTileSideLength:(NSUInteger)aTileSideLength;
-
-- (RMSphericalTrapezium)latitudeLongitudeBoundingBox;
-
-- (NSString *)uniqueTilecacheKey;
-
-- (NSString *)shortName;
-- (NSString *)longDescription;
-- (NSString *)shortAttribution;
-- (NSString *)longAttribution;
 
 - (void)didReceiveMemoryWarning;
 

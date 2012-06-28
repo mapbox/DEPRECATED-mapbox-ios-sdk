@@ -27,12 +27,6 @@
 
 #import "RMAbstractWebMapSource.h"
 
-/*! 
- \brief Subclass of RMAbstractWebMapSource for access to the Open Cycle Map project's development server.
- 
- Provides key-based access to tiles from the Open Cycle Map project. 
- */
-
 @interface RMOpenCycleMapSource : RMAbstractWebMapSource
 
 @end

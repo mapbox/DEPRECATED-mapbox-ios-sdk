@@ -1,7 +1,7 @@
 //
-//  RMMercatorWebSource.h
+//  RMAbstractMercatorTileSource.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -38,13 +38,5 @@
 #pragma mark --- end constants ---
 
 @interface RMAbstractMercatorTileSource : NSObject <RMTileSource>
-{
-	RMFractalTileProjection *tileProjection;
-
-	// supported zoom levels
-	float minZoom;
-	float maxZoom;
-	int tileSideLength;
-}
 
 @end

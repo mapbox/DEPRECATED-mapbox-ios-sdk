@@ -1,7 +1,7 @@
 //
-// RMWebMapSource.m
+// RMAbstractWebMapSource.m
 //
-// Copyright (c) 2009, Frank Schroeder, SharpMind GbR
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -45,8 +45,8 @@
 
 - (NSURL *)URLForTile:(RMTile)tile
 {
-	@throw [NSException exceptionWithName:@"RMAbstractMethodInvocation"
-                                   reason:@"URLForTile: invoked on AbstractMercatorWebSource. Override this method when instantiating abstract class."
+    @throw [NSException exceptionWithName:@"RMAbstractMethodInvocation"
+                                   reason:@"URLForTile: invoked on RMAbstractWebMapSource. Override this method when instantiating an abstract class."
                                  userInfo:nil];
 }
 
@@ -74,74 +74,67 @@
 
     NSArray *URLs = [self URLsForTile:tile];
 
-    if ([URLs count] > 1)
+    // fill up collection array with placeholders
+    //
+    NSMutableArray *tilesData = [NSMutableArray arrayWithCapacity:[URLs count]];
+
+    for (NSUInteger p = 0; p < [URLs count]; ++p)
+        [tilesData addObject:[NSNull null]];
+
+    dispatch_group_t fetchGroup = dispatch_group_create();
+
+    for (NSUInteger u = 0; u < [URLs count]; ++u)
     {
-        // fill up collection array with placeholders
-        //
-        NSMutableArray *tilesData = [NSMutableArray arrayWithCapacity:[URLs count]];
+        NSURL *currentURL = [URLs objectAtIndex:u];
 
-        for (int p = 0; p < [URLs count]; ++p)
-            [tilesData addObject:[NSNull null]];
-
-        dispatch_group_t fetchGroup = dispatch_group_create();
-
-        for (int u = 0; u < [URLs count]; ++u)
+        dispatch_group_async(fetchGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void)
         {
-            NSURL *currentURL = [URLs objectAtIndex:u];
+            NSData *tileData = nil;
 
-            dispatch_group_async(fetchGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void)
+            for (NSUInteger try = 0; tileData == nil && try < self.retryCount; ++try)
             {
-                NSData *tileData = nil;
+                NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:currentURL];
+                [request setTimeoutInterval:(self.waitSeconds / (CGFloat)self.retryCount)];
+                tileData = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
+            }
 
-                for (int try = 0; tileData == nil && try < self.retryCount; ++try)
+            if (tileData)
+            {
+                @synchronized(self)
                 {
-                    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:currentURL];
-                    [request setTimeoutInterval:(self.waitSeconds / (CGFloat)self.retryCount)];
-                    tileData = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
-                }
+                    // safely put into collection array in proper order
+                    //
+                    [tilesData replaceObjectAtIndex:u withObject:tileData];
+                };
+            }
+        });
+    }
 
-                if (tileData)
-                {
-                    @synchronized(self)
-                    {
-                        // safely put into collection array in proper order
-                        //
-                        [tilesData replaceObjectAtIndex:u withObject:tileData];
-                    };
-                }
-            });
-        }
+    // wait for whole group of fetches (with retries) to finish, then clean up
+    //
+    dispatch_group_wait(fetchGroup, dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * self.waitSeconds));
+    dispatch_release(fetchGroup);
 
-        // wait for whole group of fetches (with retries) to finish, then clean up
-        //
-        dispatch_group_wait(fetchGroup, dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * self.waitSeconds));
-        dispatch_release(fetchGroup);
-
-        // composite the collected images together
-        //
-        for (NSData *tileData in tilesData)
+    // composite the collected images together
+    //
+    for (NSData *tileData in tilesData)
+    {
+        if (tileData && [tileData isKindOfClass:[NSData class]] && [tileData length])
         {
-            if (tileData && [tileData isKindOfClass:[NSData class]] && [tileData length])
+            if (image != nil)
             {
-                if (image != nil)
-                {
-                    UIGraphicsBeginImageContext(image.size);
-                    [image drawAtPoint:CGPointMake(0,0)];
-                    [[UIImage imageWithData:tileData] drawAtPoint:CGPointMake(0,0)];
+                UIGraphicsBeginImageContext(image.size);
+                [image drawAtPoint:CGPointMake(0,0)];
+                [[UIImage imageWithData:tileData] drawAtPoint:CGPointMake(0,0)];
 
-                    image = UIGraphicsGetImageFromCurrentImageContext();
-                    UIGraphicsEndImageContext();
-                }
-                else
-                {
-                    image = [UIImage imageWithData:tileData];
-                }
+                image = UIGraphicsGetImageFromCurrentImageContext();
+                UIGraphicsEndImageContext();
+            }
+            else
+            {
+                image = [UIImage imageWithData:tileData];
             }
         }
-    }
-    else
-    {
-        image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[URLs objectAtIndex:0]]];
     }
     
     if (image)
