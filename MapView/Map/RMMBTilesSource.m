@@ -42,7 +42,6 @@
 @implementation RMMBTilesSource
 {
     RMFractalTileProjection *tileProjection;
-    FMDatabaseQueue *queue;
 }
 
 - (id)initWithTileSetURL:(NSURL *)tileSetURL

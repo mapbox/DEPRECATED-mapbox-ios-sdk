@@ -126,9 +126,6 @@
     BOOL _delegateHasDidFailToLocateUserWithError;
     BOOL _delegateHasDidChangeUserTrackingMode;
 
-    RMTileSourcesContainer *_tileSourcesContainer;
-    UIView *_tiledLayersSuperview;
-
     UIView *_backgroundView;
     RMMapScrollView *_mapScrollView;
     RMMapOverlayView *_overlayView;
@@ -419,11 +416,11 @@
     _delegateHasWillHideLayerForAnnotation = [_delegate respondsToSelector:@selector(mapView:willHideLayerForAnnotation:)];
     _delegateHasDidHideLayerForAnnotation = [_delegate respondsToSelector:@selector(mapView:didHideLayerForAnnotation:)];
 
-    _delegateHasWillStartLocatingUser = [delegate respondsToSelector:@selector(mapViewWillStartLocatingUser:)];
-    _delegateHasDidStopLocatingUser = [delegate respondsToSelector:@selector(mapViewDidStopLocatingUser:)];
-    _delegateHasDidUpdateUserLocation = [delegate respondsToSelector:@selector(mapView:didUpdateUserLocation:)];
-    _delegateHasDidFailToLocateUserWithError = [delegate respondsToSelector:@selector(mapView:didFailToLocateUserWithError:)];
-    _delegateHasDidChangeUserTrackingMode = [delegate respondsToSelector:@selector(mapView:didChangeUserTrackingMode:animated:)];
+    _delegateHasWillStartLocatingUser = [_delegate respondsToSelector:@selector(mapViewWillStartLocatingUser:)];
+    _delegateHasDidStopLocatingUser = [_delegate respondsToSelector:@selector(mapViewDidStopLocatingUser:)];
+    _delegateHasDidUpdateUserLocation = [_delegate respondsToSelector:@selector(mapView:didUpdateUserLocation:)];
+    _delegateHasDidFailToLocateUserWithError = [_delegate respondsToSelector:@selector(mapView:didFailToLocateUserWithError:)];
+    _delegateHasDidChangeUserTrackingMode = [_delegate respondsToSelector:@selector(mapView:didChangeUserTrackingMode:animated:)];
 }
 
 #pragma mark -
@@ -1087,7 +1084,7 @@
     
     [self correctPositionOfAllAnnotations];
 
-    if (zoom < 3 && self.userTrackingMode == RMUserTrackingModeFollowWithHeading)
+    if (_zoom < 3 && self.userTrackingMode == RMUserTrackingModeFollowWithHeading)
         self.userTrackingMode = RMUserTrackingModeFollow;
 
     if (_delegateHasAfterMapZoom)
@@ -1184,7 +1181,7 @@
 
 - (void)mapTiledLayerView:(RMMapTiledLayerView *)aTiledLayerView doubleTapAtPoint:(CGPoint)aPoint
 {
-    if ((self.userTrackingMode != RMUserTrackingModeNone && CGRectContainsPoint(CGRectMake(self.center.x - 75, self.center.y - 75, 150, 150), aPoint) || self.zoomingInPivotsAroundCenter)
+    if ((self.userTrackingMode != RMUserTrackingModeNone && CGRectContainsPoint(CGRectMake(self.center.x - 75, self.center.y - 75, 150, 150), aPoint)) || self.zoomingInPivotsAroundCenter)
         [self zoomInToNextNativeZoomAt:[self convertPoint:self.center fromView:self.superview] animated:YES];
     else
         [self zoomInToNextNativeZoomAt:aPoint animated:YES];
@@ -1409,13 +1406,8 @@
 {
     if ( ! [_tileSourcesContainer setTileSources:tileSources])
         return;
-}
 
-- (BOOL)setTileSource:(id <RMTileSource>)tileSource
-{
-    [_tileSourcesContainer removeAllTileSources];
-    return [self addTileSource:tileSource];
-}
+    RMProjectedPoint centerPoint = [self centerProjectedPoint];
 
     [_projection release];
     _projection = [[_tileSourcesContainer projection] retain];
@@ -1480,80 +1472,6 @@
     [self createMapView];
 
     [self setCenterProjectedPoint:centerPoint animated:NO];
-
-    return YES;
-}
-
-- (void)removeTileSource:(id <RMTileSource>)tileSource
-{
-    RMProjectedPoint centerPoint = [self centerProjectedPoint];
-
-    [_tileSourcesContainer removeTileSource:tileSource];
-
-    if ([_tileSourcesContainer.tileSources count] == 0)
-    {
-        [projection release];
-        [mercatorToTileProjection release];
-        _constrainMovement = NO;
-    }
-
-    // Recreate the map layer
-    [self createMapView];
-
-    [self setCenterProjectedPoint:centerPoint animated:NO];
-}
-
-- (void)removeTileSourceAtIndex:(NSUInteger)index
-{
-    RMProjectedPoint centerPoint = [self centerProjectedPoint];
-
-    [_tileSourcesContainer removeTileSourceAtIndex:index];
-
-    if ([_tileSourcesContainer.tileSources count] == 0)
-    {
-        [projection release];
-        [mercatorToTileProjection release];
-        _constrainMovement = NO;
-    }
-
-    // Recreate the map layer
-    [self createMapView];
-
-    [self setCenterProjectedPoint:centerPoint animated:NO];
-}
-
-- (void)moveTileSourceAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
-{
-    RMProjectedPoint centerPoint = [self centerProjectedPoint];
-
-    [_tileSourcesContainer moveTileSourceAtIndex:fromIndex toIndex:toIndex];
-
-    // Recreate the map layer
-    [self createMapView];
-
-    [self setCenterProjectedPoint:centerPoint animated:NO];
-}
-
-- (void)setHidden:(BOOL)isHidden forTileSource:(id <RMTileSource>)tileSource
-{
-    NSArray *tileSources = [self tileSources];
-
-    [tileSources enumerateObjectsUsingBlock:^(id <RMTileSource> currentTileSource, NSUInteger index, BOOL *stop)
-     {
-        if (tileSource == currentTileSource)
-        {
-            [self setHidden:isHidden forTileSourceAtIndex:index];
-            *stop = YES;
-        }
-     }];
-}
-
-- (void)setHidden:(BOOL)isHidden forTileSourceAtIndex:(NSUInteger)index
-{
-    if (index >= [_tiledLayersSuperview.subviews count])
-        return;
-
-    ((RMMapTiledLayerView *)[_tiledLayersSuperview.subviews objectAtIndex:index]).hidden = isHidden;
 }
 
 - (void)removeTileSource:(id <RMTileSource>)tileSource
@@ -1814,17 +1732,6 @@
 - (void)setDebugTiles:(BOOL)shouldDebug;
 {
     _debugTiles = shouldDebug;
-
-    for (RMMapTiledLayerView *tiledLayerView in _tiledLayersSuperview.subviews)
-    {
-        tiledLayerView.layer.contents = nil;
-        [tiledLayerView.layer setNeedsDisplay];
-    }
-}
-
-- (void)setDebugTiles:(BOOL)shouldDebug;
-{
-    debugTiles = shouldDebug;
 
     for (RMMapTiledLayerView *tiledLayerView in _tiledLayersSuperview.subviews)
     {
@@ -2235,7 +2142,7 @@
 
 - (void)removeAllAnnotations
 {
-    [self removeAnnotations:[annotations allObjects]];
+    [self removeAnnotations:[_annotations allObjects]];
 }
 
 - (CGPoint)mapPositionForAnnotation:(RMAnnotation *)annotation
@@ -2257,7 +2164,7 @@
     if (newShowsUserLocation)
     {
         if (_delegateHasWillStartLocatingUser)
-            [delegate mapViewWillStartLocatingUser:self];
+            [_delegate mapViewWillStartLocatingUser:self];
         
         self.userLocation = [RMUserLocation annotationWithMapView:self coordinate:CLLocationCoordinate2DMake(0, 0) andTitle:nil];
         
@@ -2275,13 +2182,13 @@
         locationManager = nil;
         
         if (_delegateHasDidStopLocatingUser)
-            [delegate mapViewDidStopLocatingUser:self];
+            [_delegate mapViewDidStopLocatingUser:self];
         
         [self setUserTrackingMode:RMUserTrackingModeNone animated:YES];
         
         NSMutableArray *annotationsToRemove = [NSMutableArray array];
         
-        for (RMAnnotation *annotation in annotations)
+        for (RMAnnotation *annotation in _annotations)
             if (annotation.isUserLocationAnnotation)
                 [annotationsToRemove addObject:annotation];
         
@@ -2342,10 +2249,10 @@
                                 options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveEaseInOut
                              animations:^(void)
                              {
-                                 mapScrollView.transform = CGAffineTransformIdentity;
-                                 overlayView.transform   = CGAffineTransformIdentity;
+                                 _mapScrollView.transform = CGAffineTransformIdentity;
+                                 _overlayView.transform   = CGAffineTransformIdentity;
                                  
-                                 for (RMAnnotation *annotation in annotations)
+                                 for (RMAnnotation *annotation in _annotations)
                                      if ( ! annotation.isUserLocationAnnotation)
                                          annotation.layer.transform = CATransform3DIdentity;
                              }
@@ -2385,10 +2292,10 @@
                                 options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveEaseInOut
                              animations:^(void)
                              {
-                                 mapScrollView.transform = CGAffineTransformIdentity;
-                                 overlayView.transform   = CGAffineTransformIdentity;
+                                 _mapScrollView.transform = CGAffineTransformIdentity;
+                                 _overlayView.transform   = CGAffineTransformIdentity;
                                  
-                                 for (RMAnnotation *annotation in annotations)
+                                 for (RMAnnotation *annotation in _annotations)
                                      if ( ! annotation.isUserLocationAnnotation)
                                          annotation.layer.transform = CATransform3DIdentity;
                              }
@@ -2435,12 +2342,12 @@
     }
 
     if (_delegateHasDidChangeUserTrackingMode)
-        [delegate mapView:self didChangeUserTrackingMode:userTrackingMode animated:animated];
+        [_delegate mapView:self didChangeUserTrackingMode:userTrackingMode animated:animated];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
-    if ( ! showsUserLocation || mapScrollView.isDragging)
+    if ( ! showsUserLocation || _mapScrollView.isDragging)
         return;
     
     if ([newLocation distanceFromLocation:oldLocation])
@@ -2448,7 +2355,7 @@
         userLocation.location = newLocation;
 
         if (_delegateHasDidUpdateUserLocation)
-            [delegate mapView:self didUpdateUserLocation:userLocation];
+            [_delegate mapView:self didUpdateUserLocation:userLocation];
     }
     
     if (self.userTrackingMode != RMUserTrackingModeNone)
@@ -2478,7 +2385,7 @@
 
     RMAnnotation *accuracyCircleAnnotation = nil;
     
-    for (RMAnnotation *annotation in annotations)
+    for (RMAnnotation *annotation in _annotations)
         if ([annotation.annotationType isEqualToString:kRMAccuracyCircleAnnotationTypeName])
             accuracyCircleAnnotation = annotation;
     
@@ -2510,7 +2417,7 @@
 
     RMAnnotation *trackingHaloAnnotation = nil;
     
-    for (RMAnnotation *annotation in annotations)
+    for (RMAnnotation *annotation in _annotations)
         if ([annotation.annotationType isEqualToString:kRMTrackingHaloAnnotationTypeName])
             trackingHaloAnnotation = annotation;
     
@@ -2576,7 +2483,7 @@
     
     trackingHaloAnnotation.layer.hidden = ((trackingHaloAnnotation.coordinate.latitude == 0 && trackingHaloAnnotation.coordinate.longitude == 0) || newLocation.horizontalAccuracy > 10);
     
-    if ( ! [annotations containsObject:userLocation])
+    if ( ! [_annotations containsObject:userLocation])
         [self addAnnotation:userLocation];
 }
 
@@ -2587,13 +2494,13 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
 {
-    if ( ! showsUserLocation || mapScrollView.isDragging)
+    if ( ! showsUserLocation || _mapScrollView.isDragging)
         return;
     
     userLocation.heading = newHeading;
     
     if (_delegateHasDidUpdateUserLocation)
-        [delegate mapView:self didUpdateUserLocation:userLocation];
+        [_delegate mapView:self didUpdateUserLocation:userLocation];
 
     if (newHeading.trueHeading != 0 && self.userTrackingMode == RMUserTrackingModeFollowWithHeading)
     {
@@ -2608,10 +2515,10 @@
                          {
                              CGFloat angle = (M_PI / -180) * newHeading.trueHeading;
                              
-                             mapScrollView.transform = CGAffineTransformMakeRotation(angle);
-                             overlayView.transform   = CGAffineTransformMakeRotation(angle);
+                             _mapScrollView.transform = CGAffineTransformMakeRotation(angle);
+                             _overlayView.transform   = CGAffineTransformMakeRotation(angle);
                              
-                             for (RMAnnotation *annotation in annotations)
+                             for (RMAnnotation *annotation in _annotations)
                                  if ( ! annotation.isUserLocationAnnotation)
                                      annotation.layer.transform = CATransform3DMakeAffineTransform(CGAffineTransformMakeRotation(-angle));
                          }
@@ -2628,7 +2535,7 @@
         self.userTrackingMode = RMUserTrackingModeNone;
         
         if (_delegateHasDidFailToLocateUserWithError)
-            [delegate mapView:self didFailToLocateUserWithError:error];
+            [_delegate mapView:self didFailToLocateUserWithError:error];
     }
 }
 
