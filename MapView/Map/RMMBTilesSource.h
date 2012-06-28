@@ -1,5 +1,5 @@
 //
-//  RMMBTilesTileSource.h
+//  RMMBTilesSource.h
 //
 //  Created by Justin R. Miller on 6/18/10.
 //  Copyright 2010, Code Sorcery Workshop, LLC and Development Seed, Inc.
@@ -45,7 +45,7 @@
 #define kMBTilesDefaultMaxTileZoom 22
 #define kMBTilesDefaultLatLonBoundingBox ((RMSphericalTrapezium){.northEast = {.latitude = 90, .longitude = 180}, .southWest = {.latitude = -90, .longitude = -180}})
 
-@interface RMMBTilesTileSource : NSObject <RMTileSource>
+@interface RMMBTilesSource : NSObject <RMTileSource>
 
 - (id)initWithTileSetURL:(NSURL *)tileSetURL;
 
