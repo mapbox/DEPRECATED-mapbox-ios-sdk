@@ -50,4 +50,6 @@
 @property (nonatomic, assign) BOOL enableDragging;
 @property (nonatomic, retain) id userInfo;
 
+- (void)setPosition:(CGPoint)position animated:(BOOL)animated;
+
 @end

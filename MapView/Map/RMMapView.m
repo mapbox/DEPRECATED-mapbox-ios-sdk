@@ -34,6 +34,7 @@
 #import "RMMarker.h"
 #import "RMPath.h"
 #import "RMCircle.h"
+#import "RMShape.h"
 #import "RMAnnotation.h"
 #import "RMQuadTree.h"
 
@@ -52,7 +53,6 @@
 
 #pragma mark --- begin constants ----
 
-#define kiPhoneMilimeteresPerPixel .1543
 #define kZoomRectPixelBuffer 150.0
 
 #define kDefaultInitialLatitude  38.913175
@@ -72,7 +72,7 @@
 - (void)createMapView;
 
 - (void)correctPositionOfAllAnnotations;
-- (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllLayers wasZoom:(BOOL)wasZoom;
+- (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllLayers animated:(BOOL)animated;
 
 - (void)correctMinZoomScaleForBoundingMask;
 
@@ -130,7 +130,10 @@
 
     float _lastZoom;
     CGPoint _lastContentOffset, _accumulatedDelta;
+    CGSize _lastContentSize;
     BOOL _mapScrollViewIsZooming;
+
+    BOOL _enableDragging, _enableBouncing;
 }
 
 @synthesize decelerationMode;
@@ -154,7 +157,8 @@
                                minZoomLevel:(float)minZoomLevel
                             backgroundImage:(UIImage *)backgroundImage
 {
-	_constrainMovement = NO;
+    _constrainMovement = _enableBouncing = NO;
+    _enableDragging = YES;
 
     self.backgroundColor = [UIColor grayColor];
 
@@ -391,17 +395,28 @@
 #pragma mark -
 #pragma mark Bounds
 
-- (BOOL)projectedBounds:(RMProjectedRect)bounds containsPoint:(RMProjectedPoint)point
+- (RMProjectedRect)fitProjectedRect:(RMProjectedRect)rect1 intoRect:(RMProjectedRect)rect2
 {
-    if (bounds.origin.x > point.x ||
-        bounds.origin.x + bounds.size.width < point.x ||
-        bounds.origin.y > point.y ||
-        bounds.origin.y + bounds.size.height < point.y)
-    {
-        return NO;
-    }
+    if (rect1.size.width > rect2.size.width || rect1.size.height > rect2.size.height)
+        return rect2;
 
-    return YES;
+    RMProjectedRect fittedRect = RMProjectedRectMake(0.0, 0.0, rect1.size.width, rect1.size.height);
+
+    if (rect1.origin.x < rect2.origin.x)
+        fittedRect.origin.x = rect2.origin.x;
+    else if (rect1.origin.x + rect1.size.width > rect2.origin.x + rect2.size.width)
+        fittedRect.origin.x = (rect2.origin.x + rect2.size.width) - rect1.size.width;
+    else
+        fittedRect.origin.x = rect1.origin.x;
+
+    if (rect1.origin.y < rect2.origin.y)
+        fittedRect.origin.y = rect2.origin.y;
+    else if (rect1.origin.y + rect1.size.height > rect2.origin.y + rect2.size.height)
+        fittedRect.origin.y = (rect2.origin.y + rect2.size.height) - rect1.size.height;
+    else
+        fittedRect.origin.y = rect1.origin.y;
+
+    return fittedRect;
 }
 
 - (RMProjectedRect)projectedRectFromLatitudeLongitudeBounds:(RMSphericalTrapezium)bounds
@@ -468,7 +483,7 @@
         return YES;
     }
 
-    return [self projectedBounds:_constrainingProjectedBounds containsPoint:point];
+    return RMProjectedRectContainsProjectedPoint(_constrainingProjectedBounds, point);
 }
 
 - (BOOL)tileSourceBoundsContainScreenPoint:(CGPoint)pixelCoordinate
@@ -492,6 +507,8 @@
 {
     _constrainMovement = YES;
     _constrainingProjectedBounds = RMProjectedRectMake(southWest.x, southWest.y, northEast.x - southWest.x, northEast.y - southWest.y);
+
+    mapScrollView.mapScrollViewDelegate = self;
 }
 
 #pragma mark -
@@ -535,9 +552,6 @@
 
 - (void)setCenterProjectedPoint:(RMProjectedPoint)centerProjectedPoint animated:(BOOL)animated
 {
-    if (![self tileSourceBoundsContainProjectedPoint:centerProjectedPoint])
-        return;
-
     if (_delegateHasBeforeMapMove)
         [delegate beforeMapMove:self];
 
@@ -622,6 +636,9 @@
 
 - (void)setProjectedBounds:(RMProjectedRect)boundsRect animated:(BOOL)animated
 {
+    if (_constrainMovement)
+        boundsRect = [self fitProjectedRect:boundsRect intoRect:_constrainingProjectedBounds];
+
     RMProjectedRect planetBounds = projection.planetBounds;
 	RMProjectedPoint normalizedProjectedPoint;
 	normalizedProjectedPoint.x = boundsRect.origin.x + fabs(planetBounds.origin.x);
@@ -977,13 +994,16 @@
     int tileSideLength = [[self tileSource] tileSideLength];
     CGSize contentSize = CGSizeMake(tileSideLength, tileSideLength); // zoom level 1
 
-    mapScrollView = [[UIScrollView alloc] initWithFrame:[self bounds]];
+    mapScrollView = [[RMMapScrollView alloc] initWithFrame:[self bounds]];
     mapScrollView.delegate = self;
     mapScrollView.opaque = NO;
     mapScrollView.backgroundColor = [UIColor clearColor];
     mapScrollView.showsVerticalScrollIndicator = NO;
     mapScrollView.showsHorizontalScrollIndicator = NO;
     mapScrollView.scrollsToTop = NO;
+    mapScrollView.scrollEnabled = _enableDragging;
+    mapScrollView.bounces = _enableBouncing;
+    mapScrollView.bouncesZoom = _enableBouncing;
     mapScrollView.contentSize = contentSize;
     mapScrollView.minimumZoomScale = exp2f([self minZoom]);
     mapScrollView.maximumZoomScale = exp2f([self maxZoom]);
@@ -994,25 +1014,23 @@
     tiledLayerView.delegate = self;
 
     if (self.adjustTilesForRetinaDisplay && screenScale > 1.0)
-    {
-        RMLog(@"adjustTiles");
         ((CATiledLayer *)tiledLayerView.layer).tileSize = CGSizeMake(tileSideLength * 2.0, tileSideLength * 2.0);
-    }
     else
-    {
         ((CATiledLayer *)tiledLayerView.layer).tileSize = CGSizeMake(tileSideLength, tileSideLength);
-    }
 
     [mapScrollView addSubview:tiledLayerView];
-
-    [mapScrollView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:NULL];
-    mapScrollView.zoomScale = exp2f([self zoom]);
-
-    [self setDecelerationMode:decelerationMode];
 
     _lastZoom = [self zoom];
     _lastContentOffset = mapScrollView.contentOffset;
     _accumulatedDelta = CGPointMake(0.0, 0.0);
+    _lastContentSize = mapScrollView.contentSize;
+
+    [mapScrollView addObserver:self forKeyPath:@"contentOffset" options:(NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld) context:NULL];
+    mapScrollView.mapScrollViewDelegate = self;
+
+    mapScrollView.zoomScale = exp2f([self zoom]);
+
+    [self setDecelerationMode:decelerationMode];
 
     if (backgroundView)
         [self insertSubview:mapScrollView aboveSubview:backgroundView];
@@ -1214,8 +1232,91 @@
 
 // Detect dragging/zooming
 
+- (CGPoint)scrollView:(RMMapScrollView *)aScrollView correctedOffsetForContentOffset:(CGPoint)aContentOffset
+{
+    if ( ! _constrainMovement)
+        return aContentOffset;
+
+    RMProjectedRect planetBounds = projection.planetBounds;
+    double currentMetersPerPixel = planetBounds.size.width / aScrollView.contentSize.width;
+
+    CGPoint bottomLeft = CGPointMake(aContentOffset.x,
+                                     aScrollView.contentSize.height - (aContentOffset.y + aScrollView.bounds.size.height));
+
+    RMProjectedRect normalizedProjectedRect;
+    normalizedProjectedRect.origin.x = (bottomLeft.x * currentMetersPerPixel) - fabs(planetBounds.origin.x);
+    normalizedProjectedRect.origin.y = (bottomLeft.y * currentMetersPerPixel) - fabs(planetBounds.origin.y);
+    normalizedProjectedRect.size.width = aScrollView.bounds.size.width * currentMetersPerPixel;
+    normalizedProjectedRect.size.height = aScrollView.bounds.size.height * currentMetersPerPixel;
+
+    if (RMProjectedRectContainsProjectedRect(_constrainingProjectedBounds, normalizedProjectedRect))
+        return aContentOffset;
+
+    RMProjectedRect fittedProjectedRect = [self fitProjectedRect:normalizedProjectedRect intoRect:_constrainingProjectedBounds];
+
+    RMProjectedPoint normalizedProjectedPoint;
+	normalizedProjectedPoint.x = fittedProjectedRect.origin.x + fabs(planetBounds.origin.x);
+	normalizedProjectedPoint.y = fittedProjectedRect.origin.y + fabs(planetBounds.origin.y);
+
+    CGPoint correctedContentOffset = CGPointMake(normalizedProjectedPoint.x / currentMetersPerPixel,
+                                                 aScrollView.contentSize.height - ((normalizedProjectedPoint.y / currentMetersPerPixel) + aScrollView.bounds.size.height));
+    return correctedContentOffset;
+}
+
+- (CGSize)scrollView:(RMMapScrollView *)aScrollView correctedSizeForContentSize:(CGSize)aContentSize
+{
+    if ( ! _constrainMovement)
+        return aContentSize;
+
+    RMProjectedRect planetBounds = projection.planetBounds;
+    double currentMetersPerPixel = planetBounds.size.width / aContentSize.width;
+
+    RMProjectedSize projectedSize;
+    projectedSize.width = aScrollView.bounds.size.width * currentMetersPerPixel;
+    projectedSize.height = aScrollView.bounds.size.height * currentMetersPerPixel;
+
+    if (RMProjectedSizeContainsProjectedSize(_constrainingProjectedBounds.size, projectedSize))
+        return aContentSize;
+
+    CGFloat factor = 1.0;
+    if (projectedSize.width > _constrainingProjectedBounds.size.width)
+        factor = (projectedSize.width / _constrainingProjectedBounds.size.width);
+    else
+        factor = (projectedSize.height / _constrainingProjectedBounds.size.height);
+
+    // \bug: Move this to RMMapScrollView
+    aScrollView.zoomScale *= factor;
+
+    return CGSizeMake(aContentSize.width * factor, aContentSize.height * factor);
+}
+
 - (void)observeValueForKeyPath:(NSString *)aKeyPath ofObject:(id)anObject change:(NSDictionary *)change context:(void *)context
 {
+    NSValue *oldValue = [change objectForKey:NSKeyValueChangeOldKey],
+            *newValue = [change objectForKey:NSKeyValueChangeNewKey];
+
+    CGPoint oldContentOffset = [oldValue CGPointValue],
+            newContentOffset = [newValue CGPointValue];
+
+    if (CGPointEqualToPoint(oldContentOffset, newContentOffset))
+        return;
+
+    // The first offset during zooming out (animated) is always garbage
+    if (_mapScrollViewIsZooming == YES &&
+        mapScrollView.zooming == NO &&
+        _lastContentSize.width > mapScrollView.contentSize.width &&
+        (newContentOffset.y - oldContentOffset.y) == 0.0)
+    {
+        _lastContentOffset = mapScrollView.contentOffset;
+        _lastContentSize = mapScrollView.contentSize;
+
+        return;
+    }
+
+//    RMLog(@"contentOffset: {%.0f,%.0f} -> {%.1f,%.1f} (%.0f,%.0f)", oldContentOffset.x, oldContentOffset.y, newContentOffset.x, newContentOffset.y, newContentOffset.x - oldContentOffset.x, newContentOffset.y - oldContentOffset.y);
+//    RMLog(@"contentSize: {%.0f,%.0f} -> {%.0f,%.0f}", _lastContentSize.width, _lastContentSize.height, mapScrollView.contentSize.width, mapScrollView.contentSize.height);
+//    RMLog(@"isZooming: %d, scrollview.zooming: %d", _mapScrollViewIsZooming, mapScrollView.zooming);
+
     RMProjectedRect planetBounds = projection.planetBounds;
     metersPerPixel = planetBounds.size.width / mapScrollView.contentSize.width;
 
@@ -1224,15 +1325,6 @@
     zoom = (zoom < minZoom) ? minZoom : zoom;
 
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(correctPositionOfAllAnnotations) object:nil];
-
-    if (_constrainMovement && ![self projectedBounds:_constrainingProjectedBounds containsPoint:[self centerProjectedPoint]])
-    {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [mapScrollView setContentOffset:_lastContentOffset animated:NO];
-        });
-
-        return;
-    }
 
     if (zoom == _lastZoom)
     {
@@ -1249,18 +1341,19 @@
         else
         {
             if (_mapScrollViewIsZooming)
-                [self correctPositionOfAllAnnotationsIncludingInvisibles:NO wasZoom:YES];
+                [self correctPositionOfAllAnnotationsIncludingInvisibles:NO animated:YES];
             else
                 [self correctPositionOfAllAnnotations];
         }
     }
     else
     {
-        [self correctPositionOfAllAnnotationsIncludingInvisibles:NO wasZoom:YES];
+        [self correctPositionOfAllAnnotationsIncludingInvisibles:NO animated:(_mapScrollViewIsZooming && !mapScrollView.zooming)];
         _lastZoom = zoom;
     }
 
     _lastContentOffset = mapScrollView.contentOffset;
+    _lastContentSize = mapScrollView.contentSize;
 
     // Don't do anything stupid here or your scrolling experience will suck
     if (_delegateHasMapViewRegionDidChange)
@@ -1385,13 +1478,26 @@
     return metersPerPixel / screenScale;
 }
 
+// From http://stackoverflow.com/questions/610193/calculating-pixel-size-on-an-iphone
+#define kiPhone3MillimeteresPerPixel 0.1558282
+#define kiPhone4MillimetersPerPixel (0.0779 * 2.0)
+
+#define iPad1MillimetersPerPixel 0.1924
+#define iPad3MillimetersPerPixel (0.09621 * 2.0)
+
 - (double)scaleDenominator
 {
-    double routemeMetersPerPixel = metersPerPixel;
-    double iphoneMillimetersPerPixel = kiPhoneMilimeteresPerPixel;
-    double truescaleDenominator = routemeMetersPerPixel / (0.001 * iphoneMillimetersPerPixel);
+    double iphoneMillimetersPerPixel;
 
-    return truescaleDenominator;
+    BOOL deviceIsIPhone = ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone);
+    BOOL deviceHasRetinaDisplay = (screenScale > 1.0);
+
+    if (deviceHasRetinaDisplay)
+        iphoneMillimetersPerPixel = (deviceIsIPhone ? kiPhone4MillimetersPerPixel : iPad3MillimetersPerPixel);
+    else
+        iphoneMillimetersPerPixel = (deviceIsIPhone ? kiPhone3MillimeteresPerPixel : iPad1MillimetersPerPixel);
+
+    return ((metersPerPixel * 1000.0) / iphoneMillimetersPerPixel);
 }
 
 - (void)setMinZoom:(float)newMinZoom
@@ -1453,12 +1559,25 @@
 
 - (BOOL)enableDragging
 {
-    return mapScrollView.scrollEnabled;
+    return _enableDragging;
 }
 
 - (void)setEnableDragging:(BOOL)enableDragging
 {
+    _enableDragging = enableDragging;
     mapScrollView.scrollEnabled = enableDragging;
+}
+
+- (BOOL)enableBouncing
+{
+    return _enableBouncing;
+}
+
+- (void)setEnableBouncing:(BOOL)enableBouncing
+{
+    _enableBouncing = enableBouncing;
+    mapScrollView.bounces = enableBouncing;
+    mapScrollView.bouncesZoom = enableBouncing;
 }
 
 - (void)setAdjustTilesForRetinaDisplay:(BOOL)doAdjustTilesForRetinaDisplay
@@ -1648,31 +1767,35 @@
 #pragma mark -
 #pragma mark Annotations
 
-- (void)correctScreenPosition:(RMAnnotation *)annotation
+- (void)correctScreenPosition:(RMAnnotation *)annotation animated:(BOOL)animated
 {
     RMProjectedRect planetBounds = projection.planetBounds;
 	RMProjectedPoint normalizedProjectedPoint;
 	normalizedProjectedPoint.x = annotation.projectedLocation.x + fabs(planetBounds.origin.x);
 	normalizedProjectedPoint.y = annotation.projectedLocation.y + fabs(planetBounds.origin.y);
 
-    annotation.position = CGPointMake((normalizedProjectedPoint.x / metersPerPixel) - mapScrollView.contentOffset.x, mapScrollView.contentSize.height - (normalizedProjectedPoint.y / metersPerPixel) - mapScrollView.contentOffset.y);
+    CGPoint newPosition = CGPointMake((normalizedProjectedPoint.x / metersPerPixel) - mapScrollView.contentOffset.x,
+                                      mapScrollView.contentSize.height - (normalizedProjectedPoint.y / metersPerPixel) - mapScrollView.contentOffset.y);
+
 //    RMLog(@"Change annotation at {%f,%f} in mapView {%f,%f}", annotation.position.x, annotation.position.y, mapScrollView.contentSize.width, mapScrollView.contentSize.height);
+
+    [annotation setPosition:newPosition animated:animated];
 }
 
-- (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllAnnotations wasZoom:(BOOL)wasZoom
+- (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllAnnotations animated:(BOOL)animated
 {
     // Prevent blurry movements
     [CATransaction begin];
 
     // Synchronize marker movement with the map scroll view
-    if (wasZoom && !mapScrollView.isZooming)
+    if (animated && !mapScrollView.isZooming)
     {
         [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
         [CATransaction setAnimationDuration:0.30];
     }
     else
     {
-        [CATransaction setAnimationDuration:0.0];
+        [CATransaction setDisableActions:YES];
     }
 
     _accumulatedDelta.x = 0.0;
@@ -1684,7 +1807,7 @@
         if (!correctAllAnnotations || _mapScrollViewIsZooming)
         {
             for (RMAnnotation *annotation in visibleAnnotations)
-                [self correctScreenPosition:annotation];
+                [self correctScreenPosition:annotation animated:animated];
 
 //            RMLog(@"%d annotations corrected", [visibleAnnotations count]);
 
@@ -1721,7 +1844,7 @@
                 [visibleAnnotations addObject:annotation];
             }
 
-            [self correctScreenPosition:annotation];
+            [self correctScreenPosition:annotation animated:animated];
 
             [previousVisibleAnnotations removeObject:annotation];
         }
@@ -1756,7 +1879,7 @@
             {
                 for (RMAnnotation *annotation in annotations)
                 {
-                    [self correctScreenPosition:annotation];
+                    [self correctScreenPosition:annotation animated:animated];
 
                     if ([annotation isAnnotationWithinBounds:[self bounds]])
                     {
@@ -1797,7 +1920,7 @@
             else
             {
                 for (RMAnnotation *annotation in visibleAnnotations)
-                    [self correctScreenPosition:annotation];
+                    [self correctScreenPosition:annotation animated:animated];
 
 //                RMLog(@"%d annotations corrected", [visibleAnnotations count]);
             }
@@ -1809,7 +1932,7 @@
 
 - (void)correctPositionOfAllAnnotations
 {
-    [self correctPositionOfAllAnnotationsIncludingInvisibles:YES wasZoom:NO];
+    [self correctPositionOfAllAnnotationsIncludingInvisibles:YES animated:NO];
 }
 
 - (NSArray *)annotations
@@ -1831,7 +1954,7 @@
     }
     else
     {
-        [self correctScreenPosition:annotation];
+        [self correctScreenPosition:annotation animated:NO];
 
         if (annotation.layer == nil && [annotation isAnnotationOnScreen] && _delegateHasLayerForAnnotation)
             annotation.layer = [delegate mapView:self layerForAnnotation:annotation];
@@ -1852,7 +1975,7 @@
         [self.quadTree addAnnotations:newAnnotations];
     }
 
-    [self correctPositionOfAllAnnotationsIncludingInvisibles:YES wasZoom:NO];
+    [self correctPositionOfAllAnnotationsIncludingInvisibles:YES animated:NO];
 }
 
 - (void)removeAnnotation:(RMAnnotation *)annotation
@@ -1895,7 +2018,7 @@
 
 - (CGPoint)mapPositionForAnnotation:(RMAnnotation *)annotation
 {
-    [self correctScreenPosition:annotation];
+    [self correctScreenPosition:annotation animated:NO];
     return annotation.position;
 }
 

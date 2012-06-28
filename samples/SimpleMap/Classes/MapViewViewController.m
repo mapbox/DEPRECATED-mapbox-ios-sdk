@@ -122,7 +122,7 @@
 - (void)tapOnLabelForAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map
 {
 	NSLog(@"Label <%@, RC:%d> tapped for marker <%@, RC:%d>",  ((RMMarker *)annotation.layer).label, [((RMMarker *)annotation.layer).label retainCount], (RMMarker *)annotation.layer, [(RMMarker *)annotation.layer retainCount]);
-	[(RMMarker *)annotation.layer changeLabelUsingText:[NSString stringWithFormat:@"Tapped! (%U)", ++tapCount]];
+	[(RMMarker *)annotation.layer changeLabelUsingText:[NSString stringWithFormat:@"Tapped! (%d)", ++tapCount]];
 }
 
 // Implement viewDidLoad to do additional setup after loading the view.

@@ -30,10 +30,6 @@
 #import "RMTileCache.h"
 
 @interface RMMemoryCache : NSObject <RMTileCache>
-{
-	NSMutableDictionary *cache;
-	NSUInteger capacity;
-}
 
 - (id)initWithCapacity:(NSUInteger)aCapacity;
 

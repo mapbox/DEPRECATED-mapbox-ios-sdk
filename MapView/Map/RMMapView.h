@@ -35,6 +35,7 @@
 #import "RMProjection.h"
 #import "RMMapOverlayView.h"
 #import "RMMapTiledLayerView.h"
+#import "RMMapScrollView.h"
 
 // constants for boundingMask
 enum {
@@ -58,6 +59,7 @@ typedef enum {
 @class RMTileCache;
 @class RMMapLayer;
 @class RMMapTiledLayerView;
+@class RMMapScrollView;
 @class RMMarker;
 @class RMAnnotation;
 @class RMQuadTree;
@@ -65,9 +67,9 @@ typedef enum {
 
 @protocol RMMercatorToTileProjection;
 @protocol RMTileSource;
-@protocol RMMapTiledLayerViewDelegate;
+@protocol RMMapScrollViewDelegate;
 
-@interface RMMapView : UIView <UIScrollViewDelegate, RMMapOverlayViewDelegate, RMMapTiledLayerViewDelegate, CLLocationManagerDelegate>
+@interface RMMapView : UIView <UIScrollViewDelegate, RMMapOverlayViewDelegate, RMMapTiledLayerViewDelegate, RMMapScrollViewDelegate, CLLocationManagerDelegate>
 {
     id <RMMapViewDelegate> delegate;
 
@@ -78,7 +80,7 @@ typedef enum {
 
     /// subview for the background image displayed while tiles are loading. Set its contents by providing your own "loading.png".
     UIView *backgroundView;
-    UIScrollView *mapScrollView;
+    RMMapScrollView *mapScrollView;
     RMMapTiledLayerView *tiledLayerView;
     RMMapOverlayView *overlayView;
 
@@ -116,6 +118,7 @@ typedef enum {
 
 // View properties
 @property (nonatomic, assign) BOOL enableDragging;
+@property (nonatomic, assign) BOOL enableBouncing;
 @property (nonatomic, assign) RMMapDecelerationMode decelerationMode;
 
 @property (nonatomic, assign) CLLocationCoordinate2D centerCoordinate;
@@ -230,7 +233,6 @@ typedef enum {
 #pragma mark -
 #pragma mark Bounds
 
-- (BOOL)projectedBounds:(RMProjectedRect)bounds containsPoint:(RMProjectedPoint)point;
 - (BOOL)tileSourceBoundsContainProjectedPoint:(RMProjectedPoint)point;
 
 - (void)setConstraintsSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast;

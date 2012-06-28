@@ -27,6 +27,7 @@
 
 #import "RMFoundation.h"
 #import <math.h>
+#import <stdio.h>
 
 bool RMProjectedPointEqualToProjectedPoint(RMProjectedPoint point1, RMProjectedPoint point2)
 {
@@ -62,6 +63,24 @@ bool RMProjectedRectContainsProjectedRect(RMProjectedRect rect1, RMProjectedRect
 	double maxY2 = rect2.origin.y + rect2.size.height;
 
     return ((minX2 >= minX1 && maxX2 <= maxX1) && (minY2 >= minY1 && maxY2 <= maxY1));
+}
+
+bool RMProjectedRectContainsProjectedPoint(RMProjectedRect rect, RMProjectedPoint point)
+{
+    if (rect.origin.x > point.x ||
+        rect.origin.x + rect.size.width < point.x ||
+        rect.origin.y > point.y ||
+        rect.origin.y + rect.size.height < point.y)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+bool RMProjectedSizeContainsProjectedSize(RMProjectedSize size1, RMProjectedSize size2)
+{
+    return (size1.width >= size2.width && size1.height >= size2.height);
 }
 
 RMProjectedPoint RMScaleProjectedPointAboutPoint(RMProjectedPoint point, float factor, RMProjectedPoint pivot)
@@ -159,10 +178,23 @@ RMProjectedRect RMProjectedRectUnion(RMProjectedRect rect1, RMProjectedRect rect
     return RMProjectedRectMake(minX, minY, maxX - minX, maxY - minY);
 }
 
+// apparently, this doesn't work well with coordinates on a sphere, but it might be appropriate for a quick estimation
 double RMEuclideanDistanceBetweenProjectedPoints(RMProjectedPoint point1, RMProjectedPoint point2)
 {
     double xd = point2.x - point1.x;
 	double yd = point2.y - point1.y;
 
 	return sqrt(xd*xd + yd*yd);
+}
+
+#pragma mark -
+
+void RMLogProjectedPoint(RMProjectedPoint point)
+{
+    printf("ProjectedPoint at (%.0f,%.0f)\n", point.x, point.y);
+}
+
+void RMLogProjectedRect(RMProjectedRect rect)
+{
+    printf("ProjectedRect at (%.0f,%.0f), size (%.0f,%.0f)\n", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 }

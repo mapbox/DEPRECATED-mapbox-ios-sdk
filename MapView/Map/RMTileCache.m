@@ -40,52 +40,65 @@
 @end
 
 @implementation RMTileCache
+{
+    NSMutableArray *_tileCaches;
+
+    // The memory cache, if we have one
+    // This one has its own variable because we want to propagate cache hits down in
+    // the cache hierarchy up to the memory cache
+    RMMemoryCache *_memoryCache;
+    NSTimeInterval _expiryPeriod;
+
+    dispatch_queue_t _tileCacheQueue;
+}
 
 - (id)initWithExpiryPeriod:(NSTimeInterval)period
 {
-	if (!(self = [super init]))
-		return nil;
+    if (!(self = [super init]))
+        return nil;
 
-	caches = [[NSMutableArray alloc] init];
-    memoryCache = nil;
-    expiryPeriod = period;
-    
-	id cacheCfg = [[RMConfiguration configuration] cacheConfiguration];	
-	if (!cacheCfg)
-		cacheCfg = [NSArray arrayWithObjects:
+    _tileCaches = [[NSMutableArray alloc] init];
+    _tileCacheQueue = dispatch_queue_create("routeme.tileCacheQueue", DISPATCH_QUEUE_CONCURRENT);
+
+    _memoryCache = nil;
+    _expiryPeriod = period;
+
+    id cacheCfg = [[RMConfiguration configuration] cacheConfiguration];
+    if (!cacheCfg)
+        cacheCfg = [NSArray arrayWithObjects:
                     [NSDictionary dictionaryWithObject: @"memory-cache" forKey: @"type"],
                     [NSDictionary dictionaryWithObject: @"db-cache"     forKey: @"type"],
                     nil];
 
-	for (id cfg in cacheCfg) 
-	{
-		id <RMTileCache> newCache = nil;
+    for (id cfg in cacheCfg)
+    {
+        id <RMTileCache> newCache = nil;
 
-		@try {
+        @try {
 
-			NSString *type = [cfg valueForKey:@"type"];
+            NSString *type = [cfg valueForKey:@"type"];
 
-			if ([@"memory-cache" isEqualToString:type])
+            if ([@"memory-cache" isEqualToString:type])
             {
-				memoryCache = [[self memoryCacheWithConfig:cfg] retain];
+                _memoryCache = [[self memoryCacheWithConfig:cfg] retain];
                 continue;
             }
 
-			if ([@"db-cache" isEqualToString:type])
-				newCache = [self databaseCacheWithConfig:cfg];
+            if ([@"db-cache" isEqualToString:type])
+                newCache = [self databaseCacheWithConfig:cfg];
 
-			if (newCache)
-				[caches addObject:newCache];
-			else
-				RMLog(@"failed to create cache of type %@", type);
+            if (newCache)
+                [_tileCaches addObject:newCache];
+            else
+                RMLog(@"failed to create cache of type %@", type);
 
-		}
-		@catch (NSException * e) {
-			RMLog(@"*** configuration error: %@", [e reason]);
-		}
-	}
+        }
+        @catch (NSException * e) {
+            RMLog(@"*** configuration error: %@", [e reason]);
+        }
+    }
 
-	return self;
+    return self;
 }
 
 - (id)init
@@ -98,17 +111,19 @@
 
 - (void)dealloc
 {
-    [memoryCache release]; memoryCache = nil;
-	[caches release]; caches = nil;
+    dispatch_barrier_sync(_tileCacheQueue, ^{
+        [_memoryCache release]; _memoryCache = nil;
+        [_tileCaches release]; _tileCaches = nil;
+    });
+
 	[super dealloc];
 }
 
 - (void)addCache:(id <RMTileCache>)cache
 {
-    @synchronized (caches)
-    {
-        [caches addObject:cache];
-    }
+    dispatch_barrier_async(_tileCacheQueue, ^{
+        [_tileCaches addObject:cache];
+    });
 }
 
 + (NSNumber *)tileHash:(RMTile)tile
@@ -119,26 +134,27 @@
 // Returns the cached image if it exists. nil otherwise.
 - (UIImage *)cachedImage:(RMTile)tile withCacheKey:(NSString *)aCacheKey
 {
-    UIImage *image = [memoryCache cachedImage:tile withCacheKey:aCacheKey];
+    __block UIImage *image = [_memoryCache cachedImage:tile withCacheKey:aCacheKey];
 
     if (image)
         return image;
 
-    @synchronized (caches)
-    {
-        for (id <RMTileCache> cache in caches)
+    dispatch_sync(_tileCacheQueue, ^{
+
+        for (id <RMTileCache> cache in _tileCaches)
         {
-            image = [cache cachedImage:tile withCacheKey:aCacheKey];
+            image = [[cache cachedImage:tile withCacheKey:aCacheKey] retain];
 
             if (image != nil)
             {
-                [memoryCache addImage:image forTile:tile withCacheKey:aCacheKey];
-                return image;
+                [_memoryCache addImage:image forTile:tile withCacheKey:aCacheKey];
+                break;
             }
         }
-    }
 
-	return nil;
+    });
+
+	return [image autorelease];
 }
 
 - (void)addImage:(UIImage *)image forTile:(RMTile)tile withCacheKey:(NSString *)aCacheKey
@@ -146,43 +162,47 @@
     if (!image || !aCacheKey)
         return;
 
-    [memoryCache addImage:image forTile:tile withCacheKey:aCacheKey];
+    [_memoryCache addImage:image forTile:tile withCacheKey:aCacheKey];
 
-    @synchronized (caches)
-    {
-        for (id <RMTileCache> cache in caches)
+    dispatch_sync(_tileCacheQueue, ^{
+
+        for (id <RMTileCache> cache in _tileCaches)
         {	
             if ([cache respondsToSelector:@selector(addImage:forTile:withCacheKey:)])
                 [cache addImage:image forTile:tile withCacheKey:aCacheKey];
         }
-    }
+
+    });
 }
 
 - (void)didReceiveMemoryWarning
 {
 	LogMethod();
-    [memoryCache didReceiveMemoryWarning];
 
-    @synchronized (caches)
-    {
-        for (id<RMTileCache> cache in caches)
+    [_memoryCache didReceiveMemoryWarning];
+
+    dispatch_sync(_tileCacheQueue, ^{
+
+        for (id<RMTileCache> cache in _tileCaches)
         {
             [cache didReceiveMemoryWarning];
         }
-    }
+
+    });
 }
 
 - (void)removeAllCachedImages
 {
-    [memoryCache removeAllCachedImages];
+    [_memoryCache removeAllCachedImages];
 
-    @synchronized (caches)
-    {
-        for (id<RMTileCache> cache in caches)
+    dispatch_sync(_tileCacheQueue, ^{
+
+        for (id<RMTileCache> cache in _tileCaches)
         {
             [cache removeAllCachedImages];
         }
-    }
+
+    });
 }
 
 @end
@@ -245,13 +265,13 @@
     
     NSNumber *expiryPeriodNumber = [cfg objectForKey:@"expiryPeriod"];
     if (expiryPeriodNumber != nil)
-        expiryPeriod = [expiryPeriodNumber intValue];
+        _expiryPeriod = [expiryPeriodNumber intValue];
 
     RMDatabaseCache *dbCache = [[[RMDatabaseCache alloc] initUsingCacheDir:useCacheDir] autorelease];
     [dbCache setCapacity:capacity];
     [dbCache setPurgeStrategy:strategy];
     [dbCache setMinimalPurge:minimalPurge];
-    [dbCache setExpiryPeriod:expiryPeriod];
+    [dbCache setExpiryPeriod:_expiryPeriod];
 
     return dbCache;
 }

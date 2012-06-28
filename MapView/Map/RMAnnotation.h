@@ -85,6 +85,8 @@
 - (BOOL)isAnnotationOnScreen;
 - (BOOL)isAnnotationWithinBounds:(CGRect)bounds;
 
+- (void)setPosition:(CGPoint)position animated:(BOOL)animated;
+
 // Used internally
 @property (nonatomic, retain) RMMapView *mapView;
 
