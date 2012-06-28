@@ -172,7 +172,7 @@
 
         // calculate the bounds of the scaled path
         CGRect boundsInMercators = scaledPath.bounds;
-        nonClippedBounds = CGRectInset(boundsInMercators, -scaledLineWidth, -scaledLineWidth);
+        nonClippedBounds = CGRectInset(boundsInMercators, -scaledLineWidth - (2 * shapeLayer.shadowRadius), -scaledLineWidth - (2 * shapeLayer.shadowRadius));
 
         [scaledPath release];
     }
