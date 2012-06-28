@@ -60,6 +60,9 @@
 @property (nonatomic, assign) BOOL scaleLineDash;
 @property (nonatomic, assign) float lineWidth;
 @property (nonatomic, assign) BOOL	scaleLineWidth;
+@property (nonatomic, assign) CGFloat shadowBlur;
+@property (nonatomic, assign) CGSize shadowOffset;
+@property (nonatomic, assign) BOOL enableShadow;
 
 @property (nonatomic, readonly) CGRect pathBoundingBox;
 
