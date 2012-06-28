@@ -27,12 +27,6 @@
 
 #import "RMAbstractWebMapSource.h"
 
-/*!
- \brief Subclass of RMAbstractMercatorWebSource for access to the OpenSeaMap Layer over OpenStreetMap.
-
- Provides key-based access to tiles from the OpenSeaMap layer.
- */
-
 @interface RMOpenSeaMapSource : RMAbstractWebMapSource
 
 @end

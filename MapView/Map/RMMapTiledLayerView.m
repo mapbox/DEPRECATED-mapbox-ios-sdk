@@ -86,6 +86,7 @@
 - (void)dealloc
 {
     [tileSource cancelAllDownloads];
+    self.layer.contents = nil;
     [tileSource release]; tileSource = nil;
     [mapView release]; mapView = nil;
     [super dealloc];
@@ -118,18 +119,21 @@
 
 //        NSLog(@"Tiles from x1:%d, y1:%d to x2:%d, y2:%d @ zoom %d", x1, y1, x2, y2, zoom);
 
-        UIGraphicsPushContext(context);
-
-        for (int x=x1; x<=x2; ++x)
+        if (zoom >= tileSource.minZoom && zoom <= tileSource.maxZoom)
         {
-            for (int y=y1; y<=y2; ++y)
-            {
-                UIImage *tileImage = [tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[mapView tileCache]];
-                [tileImage drawInRect:CGRectMake(x * rectSize, y * rectSize, rectSize, rectSize)];
-            }
-        }
+            UIGraphicsPushContext(context);
 
-        UIGraphicsPopContext();
+            for (int x=x1; x<=x2; ++x)
+            {
+                for (int y=y1; y<=y2; ++y)
+                {
+                    UIImage *tileImage = [tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[mapView tileCache]];
+                    [tileImage drawInRect:CGRectMake(x * rectSize, y * rectSize, rectSize, rectSize)];
+                }
+            }
+
+            UIGraphicsPopContext();
+        }
     }
     else
     {
@@ -140,7 +144,10 @@
 
         UIGraphicsPushContext(context);
 
-        UIImage *tileImage = [tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[mapView tileCache]];
+        UIImage *tileImage = nil;
+
+        if (zoom >= tileSource.minZoom && zoom <= tileSource.maxZoom)
+            tileImage = [tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[mapView tileCache]];
 
         if ( ! tileImage)
         {
@@ -153,7 +160,7 @@
                 NSUInteger currentTileDepth = 1, currentZoom = zoom - currentTileDepth;
 
                 // tries to return lower zoom level tiles if a tile cannot be found
-                while ( !tileImage && currentZoom >= mapView.tileSourcesContainer.minZoom && currentTileDepth <= mapView.missingTilesDepth)
+                while ( !tileImage && currentZoom >= tileSource.minZoom && currentTileDepth <= mapView.missingTilesDepth)
                 {
                     float nextX = x / powf(2.0, (float)currentTileDepth),
                           nextY = y / powf(2.0, (float)currentTileDepth);

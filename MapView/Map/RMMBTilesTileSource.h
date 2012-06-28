@@ -40,21 +40,15 @@
 
 #import "RMTileSource.h"
 
-@class RMFractalTileProjection;
-@class FMDatabaseQueue;
-
 #define kMBTilesDefaultTileSize 256
 #define kMBTilesDefaultMinTileZoom 0
 #define kMBTilesDefaultMaxTileZoom 22
 #define kMBTilesDefaultLatLonBoundingBox ((RMSphericalTrapezium){.northEast = {.latitude = 90, .longitude = 180}, .southWest = {.latitude = -90, .longitude = -180}})
 
 @interface RMMBTilesTileSource : NSObject <RMTileSource>
-{
-    RMFractalTileProjection *tileProjection;
-    FMDatabaseQueue *queue;
-}
 
 - (id)initWithTileSetURL:(NSURL *)tileSetURL;
+
 - (BOOL)coversFullWorld;
 - (NSString *)legend;
 
