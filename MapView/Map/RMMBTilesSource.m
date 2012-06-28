@@ -43,7 +43,7 @@
 
 - (id)initWithTileSetURL:(NSURL *)tileSetURL
 {
-	if ( ! [super init])
+	if ( ! (self = [super init]))
 		return nil;
 
 	tileProjection = [[RMFractalTileProjection alloc] initFromProjection:[self projection] 
@@ -51,7 +51,7 @@
                                                                  maxZoom:kMBTilesDefaultMaxTileZoom 
                                                                  minZoom:kMBTilesDefaultMinTileZoom];
 
-    queue = [[FMDatabaseQueue databaseQueueWithPath:[tileSetURL relativePath]] retain];
+    queue = [[FMDatabaseQueue databaseQueueWithPath:[tileSetURL path]] retain];
 
     if ( ! queue)
         return nil;

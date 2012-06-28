@@ -32,7 +32,7 @@
 
 @class RMTileImage, RMMemoryCache;
 
-typedef enum {
+typedef enum : short {
 	RMCachePurgeStrategyLRU,
 	RMCachePurgeStrategyFIFO,
 } RMCachePurgeStrategy;

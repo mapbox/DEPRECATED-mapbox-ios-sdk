@@ -1,7 +1,7 @@
 //
-//  RMMapLayer.m
+//  RMOpenSeaMapLayer.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,57 +25,14 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import "RMMapLayer.h"
-#import "RMPixel.h"
+#import "RMAbstractWebMapSource.h"
 
-@implementation RMMapLayer
+/*!
+ \brief Subclass of RMAbstractMercatorWebSource for access to the OpenSeaMap Layer over OpenStreetMap.
 
-@synthesize annotation;
-@synthesize projectedLocation;
-@synthesize enableDragging;
-@synthesize userInfo;
+ Provides key-based access to tiles from the OpenSeaMap layer.
+ */
 
-- (id)init
-{
-	if (!(self = [super init]))
-		return nil;
-
-    self.annotation = nil;
-    self.enableDragging = NO;
-
-	return self;
-}
-
-- (id)initWithLayer:(id)layer
-{
-    if (!(self = [super initWithLayer:layer]))
-        return nil;
-
-    self.annotation = nil;
-    self.userInfo = nil;
-
-    return self;
-}
-
-- (void)dealloc
-{
-    self.annotation = nil;
-    self.userInfo = nil;
-    [super dealloc];
-}
-
-- (void)setPosition:(CGPoint)position animated:(BOOL)animated
-{
-    [self setPosition:position];
-}
-
-/// return nil for certain animation keys to block core animation
-//- (id <CAAction>)actionForKey:(NSString *)key
-//{
-//    if ([key isEqualToString:@"position"] || [key isEqualToString:@"bounds"])
-//        return nil;
-//    else
-//        return [super actionForKey:key];
-//}
+@interface RMOpenSeaMapLayer : RMAbstractWebMapSource
 
 @end

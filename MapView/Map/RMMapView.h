@@ -36,15 +36,16 @@
 #import "RMMapOverlayView.h"
 #import "RMMapTiledLayerView.h"
 #import "RMMapScrollView.h"
+#import "RMTileSourcesContainer.h"
 
 // constants for boundingMask
-enum {
+enum : NSUInteger {
     RMMapNoMinBound		= 0, // Map can be zoomed out past view limits
     RMMapMinHeightBound	= 1, // Minimum map height when zooming out restricted to view height
     RMMapMinWidthBound	= 2  // Minimum map width when zooming out restricted to view width (default)
 };
 
-typedef enum {
+typedef enum : NSUInteger {
     RMMapDecelerationNormal,
     RMMapDecelerationFast,
     RMMapDecelerationOff
@@ -73,15 +74,11 @@ typedef enum {
 {
     id <RMMapViewDelegate> delegate;
 
-    /// projection objects to convert from latitude/longitude to meters,
-    /// from projected meters to tile coordinates
     RMProjection *projection;
     RMFractalTileProjection *mercatorToTileProjection;
 
-    /// subview for the background image displayed while tiles are loading. Set its contents by providing your own "loading.png".
     UIView *backgroundView;
     RMMapScrollView *mapScrollView;
-    RMMapTiledLayerView *tiledLayerView;
     RMMapOverlayView *overlayView;
 
     double metersPerPixel;
@@ -93,13 +90,12 @@ typedef enum {
     BOOL            enableClustering, positionClusterMarkersAtTheGravityCenter;
     CGSize          clusterMarkerSize, clusterAreaSize;
 
-    id <RMTileSource> tileSource;
     RMTileCache *tileCache; // Generic tile cache
 
-    /// minimum and maximum zoom number allowed for the view. #minZoom and #maxZoom must be within the limits of #tileSource but can be stricter; they are clamped to tilesource limits if needed.
     float minZoom, maxZoom, zoom;
     float screenScale;
 
+    NSUInteger missingTilesDepth;
     NSUInteger boundingMask;
     
     CLLocationManager *locationManager;
@@ -132,14 +128,19 @@ typedef enum {
 @property (nonatomic, readonly) double scaledMetersPerPixel;
 @property (nonatomic, readonly) double scaleDenominator; /// The denominator in a cartographic scale like 1/24000, 1/50000, 1/2000000.
 @property (nonatomic, readonly) float screenScale;
-@property (nonatomic, assign)   NSUInteger boundingMask;
 
 @property (nonatomic, assign)   BOOL adjustTilesForRetinaDisplay;
 @property (nonatomic, readonly) float adjustedZoomForRetinaDisplay; // takes adjustTilesForRetinaDisplay and screen scale into account
 
-@property (nonatomic, assign) float zoom; /// zoom level is clamped to range (minZoom, maxZoom)
+/// minimum and maximum zoom number allowed for the view. #minZoom and #maxZoom must be within the limits of #tileSource but can be stricter; they are clamped to tilesource limits (minZoom, maxZoom) if needed.
+@property (nonatomic, assign) float zoom;
 @property (nonatomic, assign) float minZoom;
 @property (nonatomic, assign) float maxZoom;
+
+/// take missing tiles from lower zoom levels, up to #missingTilesDepth zoom levels (defaults to 0, which disables this feature)
+@property (nonatomic, assign) NSUInteger missingTilesDepth;
+
+@property (nonatomic, assign)   NSUInteger boundingMask;
 
 @property (nonatomic, retain) RMQuadTree *quadTree;
 @property (nonatomic, assign) BOOL enableClustering;
@@ -147,12 +148,14 @@ typedef enum {
 @property (nonatomic, assign) CGSize clusterMarkerSize;
 @property (nonatomic, assign) CGSize clusterAreaSize;
 
+/// projection objects to convert from latitude/longitude to meters, from projected meters to tile coordinates
 @property (nonatomic, readonly) RMProjection *projection;
 @property (nonatomic, readonly) id <RMMercatorToTileProjection> mercatorToTileProjection;
 
-@property (nonatomic, retain) id <RMTileSource> tileSource;
 @property (nonatomic, retain) RMTileCache *tileCache;
+@property (nonatomic, readonly) RMTileSourcesContainer *tileSourcesContainer;
 
+/// subview for the background image displayed while tiles are loading.
 @property (nonatomic, retain) UIView *backgroundView;
 
 @property (nonatomic) BOOL showsUserLocation;
@@ -162,8 +165,9 @@ typedef enum {
 
 @property (weak) UIViewController *viewControllerPresentingAttribution;
 
-#pragma mark -
-#pragma mark Initializers
+@property (nonatomic, assign) BOOL debugTiles;
+
+#pragma mark - Initializers
 
 - (id)initWithFrame:(CGRect)frame andTilesource:(id <RMTileSource>)newTilesource;
 
@@ -178,8 +182,7 @@ typedef enum {
 
 - (void)setFrame:(CGRect)frame;
 
-#pragma mark -
-#pragma mark Movement
+#pragma mark - Movement
 
 /// recenter the map on #coordinate, expressed as CLLocationCoordinate2D (latitude/longitude)
 - (void)setCenterCoordinate:(CLLocationCoordinate2D)coordinate animated:(BOOL)animated;
@@ -189,8 +192,7 @@ typedef enum {
 
 - (void)moveBy:(CGSize)delta;
 
-#pragma mark -
-#pragma mark Zoom
+#pragma mark - Zoom
 
 /// recenter the map on #boundsRect, expressed in projected meters
 - (void)setProjectedBounds:(RMProjectedRect)boundsRect animated:(BOOL)animated;
@@ -207,8 +209,7 @@ typedef enum {
 
 - (void)setMetersPerPixel:(double)newMetersPerPixel animated:(BOOL)animated;
 
-#pragma mark -
-#pragma mark Conversions
+#pragma mark - Conversions
 
 - (CGPoint)projectedPointToPixel:(RMProjectedPoint)projectedPoint;
 - (CGPoint)coordinateToPixel:(CLLocationCoordinate2D)coordinate;
@@ -230,16 +231,14 @@ typedef enum {
 /// returns the smallest bounding box containing a rectangular region of the view
 - (RMSphericalTrapezium)latitudeLongitudeBoundingBoxFor:(CGRect) rect;
 
-#pragma mark -
-#pragma mark Bounds
+#pragma mark - Bounds
 
 - (BOOL)tileSourceBoundsContainProjectedPoint:(RMProjectedPoint)point;
 
 - (void)setConstraintsSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast;
 - (void)setProjectedConstraintsSouthWest:(RMProjectedPoint)southWest northEast:(RMProjectedPoint)northEast;
 
-#pragma mark -
-#pragma mark Annotations
+#pragma mark - Annotations
 
 - (NSArray *)annotations;
 
@@ -252,14 +251,30 @@ typedef enum {
 
 - (CGPoint)mapPositionForAnnotation:(RMAnnotation *)annotation;
 
-#pragma mark -
-#pragma mark Cache
+#pragma mark - TileSources
+
+- (id <RMTileSource>)tileSource; // the first tile source, for backwards compatibility
+- (NSArray *)tileSources;
+
+- (BOOL)setTileSource:(id <RMTileSource>)tileSource; // replaces all tilesources with the new tilesource
+
+- (BOOL)addTileSource:(id <RMTileSource>)tileSource;
+- (BOOL)addTileSource:(id<RMTileSource>)tileSource atIndex:(NSUInteger)index;
+
+- (void)removeTileSource:(id <RMTileSource>)tileSource;
+- (void)removeTileSourceAtIndex:(NSUInteger)index;
+
+- (void)moveTileSourceAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
+
+- (void)setHidden:(BOOL)isHidden forTileSource:(id <RMTileSource>)tileSource;
+- (void)setHidden:(BOOL)isHidden forTileSourceAtIndex:(NSUInteger)index;
+
+#pragma mark - Cache
 
 ///  Clear all images from the #tileSource's caching system.
 -(void)removeAllCachedImages;
 
-#pragma mark -
-#pragma mark Snapshots
+#pragma mark - Snapshots
 
 - (UIImage *)takeSnapshot;
 - (UIImage *)takeSnapshotAndIncludeOverlay:(BOOL)includeOverlay;

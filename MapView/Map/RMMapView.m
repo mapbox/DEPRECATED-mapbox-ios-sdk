@@ -125,6 +125,9 @@
     BOOL _delegateHasDidFailToLocateUserWithError;
     BOOL _delegateHasDidChangeUserTrackingMode;
 
+    RMTileSourcesContainer *_tileSourcesContainer;
+    UIView *_tiledLayersSuperview;
+
     BOOL _constrainMovement;
     RMProjectedRect _constrainingProjectedBounds;
 
@@ -146,6 +149,8 @@
 @synthesize enableClustering, positionClusterMarkersAtTheGravityCenter, clusterMarkerSize, clusterAreaSize;
 @synthesize adjustTilesForRetinaDisplay;
 @synthesize userLocation, showsUserLocation, userTrackingMode;
+@synthesize missingTilesDepth;
+@synthesize debugTiles;
 
 #pragma mark -
 #pragma mark Initialization
@@ -164,17 +169,19 @@
 
     self.clipsToBounds = YES;
     
-    tileSource = nil;
+    _tileSourcesContainer = [RMTileSourcesContainer new];
+    _tiledLayersSuperview = nil;
+
     projection = nil;
     mercatorToTileProjection = nil;
     mapScrollView = nil;
-    tiledLayerView = nil;
     overlayView = nil;
 
     screenScale = [UIScreen mainScreen].scale;
 
     boundingMask = RMMapMinWidthBound;
     adjustTilesForRetinaDisplay = NO;
+    missingTilesDepth = 0;
 
     annotations = [NSMutableSet new];
     visibleAnnotations = [NSMutableSet new];
@@ -203,7 +210,7 @@
                                                  name:UIApplicationDidReceiveMemoryWarningNotification
                                                object:nil];
 
-    RMLog(@"Map initialised. tileSource:%@, minZoom:%f, maxZoom:%f, zoom:%f at {%f,%f}", tileSource, [self minZoom], [self maxZoom], [self zoom], [self centerCoordinate].longitude, [self centerCoordinate].latitude);
+    RMLog(@"Map initialised. tileSource:%@, minZoom:%f, maxZoom:%f, zoom:%f at {%f,%f}", newTilesource, [self minZoom], [self maxZoom], [self zoom], [self centerCoordinate].longitude, [self centerCoordinate].latitude);
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -306,11 +313,11 @@
     [annotations release]; annotations = nil;
     [visibleAnnotations release]; visibleAnnotations = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [tiledLayerView release]; tiledLayerView = nil;
     [mapScrollView removeObserver:self forKeyPath:@"contentOffset"];
+    [_tiledLayersSuperview release]; _tiledLayersSuperview = nil;
     [mapScrollView release]; mapScrollView = nil;
     [overlayView release]; overlayView = nil;
-    [tileSource cancelAllDownloads]; [tileSource release]; tileSource = nil;
+    [_tileSourcesContainer cancelAllDownloads]; [_tileSourcesContainer release]; _tileSourcesContainer = nil;
     [projection release]; projection = nil;
     [mercatorToTileProjection release]; mercatorToTileProjection = nil;
     [self setTileCache:nil];
@@ -326,7 +333,7 @@
 {
     LogMethod();
 
-    [tileSource didReceiveMemoryWarning];
+    [_tileSourcesContainer didReceiveMemoryWarning];
     [tileCache didReceiveMemoryWarning];
 }
 
@@ -339,7 +346,7 @@
 {
 	CGRect bounds = [self bounds];
 
-	return [NSString stringWithFormat:@"MapView at %.0f,%.0f-%.0f,%.0f", bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height];
+	return [NSString stringWithFormat:@"MapView at {%.0f,%.0f}-{%.0f,%.0f}", bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height];
 }
 
 #pragma mark -
@@ -475,7 +482,7 @@
 
 - (BOOL)tileSourceBoundsContainProjectedPoint:(RMProjectedPoint)point
 {
-    RMSphericalTrapezium bounds = [self.tileSource latitudeLongitudeBoundingBox];
+    RMSphericalTrapezium bounds = [self.tileSourcesContainer latitudeLongitudeBoundingBox];
 
     if (bounds.northEast.latitude == 90 && bounds.northEast.longitude == 180 &&
         bounds.southWest.latitude == -90 && bounds.southWest.longitude == -180)
@@ -604,7 +611,10 @@
 {
     if (self.boundingMask != RMMapNoMinBound)
     {
-        CGFloat newMinZoomScale = (self.boundingMask == RMMapMinWidthBound ? self.bounds.size.width : self.bounds.size.height) / ((CATiledLayer *)tiledLayerView.layer).tileSize.width;
+        if ([_tiledLayersSuperview.subviews count] == 0)
+            return;
+
+        CGFloat newMinZoomScale = (self.boundingMask == RMMapMinWidthBound ? self.bounds.size.width : self.bounds.size.height) / ((CATiledLayer *)((RMMapTiledLayerView *)[_tiledLayersSuperview.subviews objectAtIndex:0]).layer).tileSize.width;
 
         if (mapScrollView.minimumZoomScale > 0 && newMinZoomScale > mapScrollView.minimumZoomScale)
         {
@@ -710,7 +720,7 @@
         return NO;
 }
 
-- (void)zoomContentByFactor:(float)zoomFactor near:(CGPoint)pivot animated:(BOOL)animated
+- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)pivot animated:(BOOL)animated
 {
     if (![self tileSourceBoundsContainScreenPoint:pivot])
         return;
@@ -799,7 +809,7 @@
     }
 
 //    RMLog(@"zoom in from:%f to:%f by factor:%f around {%f,%f}", [self zoom], newZoom, factor, pivot.x, pivot.y);
-    [self zoomContentByFactor:factor near:pivot animated:animated];
+    [self zoomByFactor:factor near:pivot animated:animated];
 }
 
 - (void)zoomOutToNextNativeZoomAt:(CGPoint)pivot
@@ -824,80 +834,7 @@
     }
 
 //    RMLog(@"zoom out from:%f to:%f by factor:%f around {%f,%f}", [self zoom], newZoom, factor, pivot.x, pivot.y);
-    [self zoomContentByFactor:factor near:pivot animated:animated];
-}
-
-- (void)zoomByFactor:(float)zoomFactor near:(CGPoint)center animated:(BOOL)animated
-{
-    if (_constrainMovement)
-    {
-        // check that bounds after zoom don't exceed map constraints
-        float _zoomFactor = [self adjustedZoomForCurrentBoundingMask:zoomFactor];
-        float zoomDelta = log2f(_zoomFactor);
-        float targetZoom = zoomDelta + [self zoom];
-
-        BOOL canZoom = NO;
-
-        if (targetZoom == [self zoom])
-        {
-            //OK... . I could even do a return here.. but it will hamper with future logic..
-            canZoom = YES;
-        }
-
-        // clamp zoom to remain below or equal to maxZoom after zoomAfter will be applied
-        if (targetZoom > [self maxZoom])
-            zoomFactor = exp2f([self maxZoom] - [self zoom]);
-
-        // clamp zoom to remain above or equal to minZoom after zoomAfter will be applied
-        if (targetZoom < [self minZoom])
-            zoomFactor = 1/exp2f([self zoom] - [self minZoom]);
-
-        // bools for syntactical sugar to understand the logic in the if statement below
-        BOOL zoomAtMax = ([self zoom] == [self maxZoom]);
-        BOOL zoomAtMin = ([self zoom] == [self minZoom]);
-        BOOL zoomGreaterMin = ([self zoom] > [self minZoom]);
-        BOOL zoomLessMax = ([self zoom] < [ self maxZoom]);
-
-        //zooming in zoomFactor > 1
-        //zooming out zoomFactor < 1
-        if ((zoomGreaterMin && zoomLessMax) || (zoomAtMax && zoomFactor<1) || (zoomAtMin && zoomFactor>1))
-        {
-            // if I'm here it means I could zoom, now we have to see what will happen after zoom
-            // get copies of mercatorRoScreenProjection's data
-            RMProjectedPoint origin = [self projectedOrigin];
-            CGRect screenBounds = self.bounds;
-
-            // this is copied from [RMMercatorToScreenBounds zoomScreenByFactor]
-            // First we move the origin to the pivot...
-            origin.x += center.x * metersPerPixel;
-            origin.y += (screenBounds.size.height - center.y) * metersPerPixel;
-
-            // Then scale by 1/factor
-            metersPerPixel /= _zoomFactor;
-
-            // Then translate back
-            origin.x -= center.x * metersPerPixel;
-            origin.y -= (screenBounds.size.height - center.y) * metersPerPixel;
-
-            // calculate new bounds
-            RMProjectedRect zRect;
-            zRect.origin = origin;
-            zRect.size.width = screenBounds.size.width * metersPerPixel;
-            zRect.size.height = screenBounds.size.height * metersPerPixel;
-
-//            // can zoom only if within bounds
-//            canZoom = !(zRect.origin.y < _southWestConstraint.y || zRect.origin.y+zRect.size.height > _northEastConstraint.y ||
-//                        zRect.origin.x < _southWestConstraint.x || zRect.origin.x+zRect.size.width > _northEastConstraint.x);
-        }
-
-        if (!canZoom)
-        {
-            RMLog(@"Zooming will move map out of bounds: no zoom");
-            return;
-        }
-    }
-
-    [self zoomContentByFactor:zoomFactor near:center animated:animated];
+    [self zoomByFactor:factor near:pivot animated:animated];
 }
 
 #pragma mark -
@@ -983,15 +920,20 @@
 {
     [overlayView removeFromSuperview]; [overlayView release]; overlayView = nil;
 
-    tiledLayerView.layer.contents = nil;
-    [tiledLayerView removeFromSuperview]; [tiledLayerView release]; tiledLayerView = nil;
+    for (RMMapTiledLayerView *tiledLayerView in _tiledLayersSuperview.subviews)
+    {
+        tiledLayerView.layer.contents = nil;
+        [tiledLayerView removeFromSuperview]; [tiledLayerView release]; tiledLayerView = nil;
+    }
+
+    [_tiledLayersSuperview removeFromSuperview]; [_tiledLayersSuperview release]; _tiledLayersSuperview = nil;
 
     [mapScrollView removeObserver:self forKeyPath:@"contentOffset"];
     [mapScrollView removeFromSuperview]; [mapScrollView release]; mapScrollView = nil;
 
     _mapScrollViewIsZooming = NO;
 
-    int tileSideLength = [[self tileSource] tileSideLength];
+    int tileSideLength = [_tileSourcesContainer tileSideLength];
     CGSize contentSize = CGSizeMake(tileSideLength, tileSideLength); // zoom level 1
 
     mapScrollView = [[RMMapScrollView alloc] initWithFrame:[self bounds]];
@@ -1010,15 +952,22 @@
     mapScrollView.contentOffset = CGPointMake(0.0, 0.0);
     mapScrollView.clipsToBounds = NO;
 
-    tiledLayerView = [[RMMapTiledLayerView alloc] initWithFrame:CGRectMake(0.0, 0.0, contentSize.width, contentSize.height) mapView:self];
-    tiledLayerView.delegate = self;
+    _tiledLayersSuperview = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, contentSize.width, contentSize.height)];
 
-    if (self.adjustTilesForRetinaDisplay && screenScale > 1.0)
-        ((CATiledLayer *)tiledLayerView.layer).tileSize = CGSizeMake(tileSideLength * 2.0, tileSideLength * 2.0);
-    else
-        ((CATiledLayer *)tiledLayerView.layer).tileSize = CGSizeMake(tileSideLength, tileSideLength);
+    for (id <RMTileSource> tileSource in _tileSourcesContainer.tileSources)
+    {
+        RMMapTiledLayerView *tiledLayerView = [[RMMapTiledLayerView alloc] initWithFrame:CGRectMake(0.0, 0.0, contentSize.width, contentSize.height) mapView:self forTileSource:tileSource];
+        tiledLayerView.delegate = self;
 
-    [mapScrollView addSubview:tiledLayerView];
+        if (self.adjustTilesForRetinaDisplay && screenScale > 1.0)
+            ((CATiledLayer *)tiledLayerView.layer).tileSize = CGSizeMake(tileSideLength * 2.0, tileSideLength * 2.0);
+        else
+            ((CATiledLayer *)tiledLayerView.layer).tileSize = CGSizeMake(tileSideLength, tileSideLength);
+
+        [_tiledLayersSuperview addSubview:tiledLayerView];
+    }
+
+    [mapScrollView addSubview:_tiledLayersSuperview];
 
     _lastZoom = [self zoom];
     _lastContentOffset = mapScrollView.contentOffset;
@@ -1048,7 +997,7 @@
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
 {
-    return tiledLayerView;
+    return _tiledLayersSuperview;
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
@@ -1136,7 +1085,7 @@
     }
     else
     {
-        [self mapTiledLayerView:tiledLayerView doubleTapAtPoint:aPoint];
+        [self mapTiledLayerView:[_tiledLayersSuperview.subviews lastObject] doubleTapAtPoint:aPoint];
     }
 }
 
@@ -1169,7 +1118,7 @@
     }
     else
     {
-        [self mapTiledLayerView:tiledLayerView doubleTapAtPoint:aPoint];
+        [self mapTiledLayerView:[_tiledLayersSuperview.subviews lastObject] doubleTapAtPoint:aPoint];
     }
 }
 
@@ -1232,16 +1181,28 @@
 
 // Detect dragging/zooming
 
-- (CGPoint)scrollView:(RMMapScrollView *)aScrollView correctedOffsetForContentOffset:(CGPoint)aContentOffset
+- (void)scrollView:(RMMapScrollView *)aScrollView correctedContentOffset:(inout CGPoint *)aContentOffset
 {
     if ( ! _constrainMovement)
-        return aContentOffset;
+        return;
+
+    if (CGPointEqualToPoint(_lastContentOffset, *aContentOffset))
+        return;
+
+    // The first offset during zooming out (animated) is always garbage
+    if (_mapScrollViewIsZooming == YES &&
+        mapScrollView.zooming == NO &&
+        _lastContentSize.width > mapScrollView.contentSize.width &&
+        ((*aContentOffset).y - _lastContentOffset.y) == 0.0)
+    {
+        return;
+    }
 
     RMProjectedRect planetBounds = projection.planetBounds;
     double currentMetersPerPixel = planetBounds.size.width / aScrollView.contentSize.width;
 
-    CGPoint bottomLeft = CGPointMake(aContentOffset.x,
-                                     aScrollView.contentSize.height - (aContentOffset.y + aScrollView.bounds.size.height));
+    CGPoint bottomLeft = CGPointMake((*aContentOffset).x,
+                                     aScrollView.contentSize.height - ((*aContentOffset).y + aScrollView.bounds.size.height));
 
     RMProjectedRect normalizedProjectedRect;
     normalizedProjectedRect.origin.x = (bottomLeft.x * currentMetersPerPixel) - fabs(planetBounds.origin.x);
@@ -1250,7 +1211,7 @@
     normalizedProjectedRect.size.height = aScrollView.bounds.size.height * currentMetersPerPixel;
 
     if (RMProjectedRectContainsProjectedRect(_constrainingProjectedBounds, normalizedProjectedRect))
-        return aContentOffset;
+        return;
 
     RMProjectedRect fittedProjectedRect = [self fitProjectedRect:normalizedProjectedRect intoRect:_constrainingProjectedBounds];
 
@@ -1260,23 +1221,23 @@
 
     CGPoint correctedContentOffset = CGPointMake(normalizedProjectedPoint.x / currentMetersPerPixel,
                                                  aScrollView.contentSize.height - ((normalizedProjectedPoint.y / currentMetersPerPixel) + aScrollView.bounds.size.height));
-    return correctedContentOffset;
+    *aContentOffset = correctedContentOffset;
 }
 
-- (CGSize)scrollView:(RMMapScrollView *)aScrollView correctedSizeForContentSize:(CGSize)aContentSize
+- (void)scrollView:(RMMapScrollView *)aScrollView correctedContentSize:(inout CGSize *)aContentSize
 {
     if ( ! _constrainMovement)
-        return aContentSize;
+        return;
 
     RMProjectedRect planetBounds = projection.planetBounds;
-    double currentMetersPerPixel = planetBounds.size.width / aContentSize.width;
+    double currentMetersPerPixel = planetBounds.size.width / (*aContentSize).width;
 
     RMProjectedSize projectedSize;
     projectedSize.width = aScrollView.bounds.size.width * currentMetersPerPixel;
     projectedSize.height = aScrollView.bounds.size.height * currentMetersPerPixel;
 
     if (RMProjectedSizeContainsProjectedSize(_constrainingProjectedBounds.size, projectedSize))
-        return aContentSize;
+        return;
 
     CGFloat factor = 1.0;
     if (projectedSize.width > _constrainingProjectedBounds.size.width)
@@ -1284,10 +1245,7 @@
     else
         factor = (projectedSize.height / _constrainingProjectedBounds.size.height);
 
-    // \bug: Move this to RMMapScrollView
-    aScrollView.zoomScale *= factor;
-
-    return CGSizeMake(aContentSize.width * factor, aContentSize.height * factor);
+    *aContentSize = CGSizeMake((*aContentSize).width * factor, (*aContentSize).height * factor);
 }
 
 - (void)observeValueForKeyPath:(NSString *)aKeyPath ofObject:(id)anObject change:(NSDictionary *)change context:(void *)context
@@ -1369,9 +1327,13 @@
 
     UIGraphicsBeginImageContextWithOptions(self.bounds.size, self.opaque, [[UIScreen mainScreen] scale]);
 
-    tiledLayerView.useSnapshotRenderer = YES;
+    for (RMMapTiledLayerView *tiledLayerView in _tiledLayersSuperview.subviews)
+        tiledLayerView.useSnapshotRenderer = YES;
+
     [self.layer renderInContext:UIGraphicsGetCurrentContext()];
-    tiledLayerView.useSnapshotRenderer = NO;
+
+    for (RMMapTiledLayerView *tiledLayerView in _tiledLayersSuperview.subviews)
+        tiledLayerView.useSnapshotRenderer = NO;
 
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
 
@@ -1387,32 +1349,56 @@
     return [self takeSnapshotAndIncludeOverlay:YES];
 }
 
-#pragma mark -
-#pragma mark Properties
+#pragma mark - TileSources
+
+- (RMTileSourcesContainer *)tileSourcesContainer
+{
+    return [[_tileSourcesContainer retain] autorelease];
+}
 
 - (id <RMTileSource>)tileSource
 {
-    return [[tileSource retain] autorelease];
+    NSArray *tileSources = [_tileSourcesContainer tileSources];
+
+    if ([tileSources count] > 0)
+        return [tileSources objectAtIndex:0];
+
+    return nil;
 }
 
-- (void)setTileSource:(id <RMTileSource>)newTileSource
+- (NSArray *)tileSources
 {
-    if (tileSource == newTileSource)
-        return;
+    return [_tileSourcesContainer tileSources];
+}
+
+- (BOOL)setTileSource:(id <RMTileSource>)tileSource
+{
+    [_tileSourcesContainer removeAllTileSources];
+    return [self addTileSource:tileSource];
+}
+
+- (BOOL)addTileSource:(id <RMTileSource>)tileSource
+{
+    return [self addTileSource:tileSource atIndex:-1];
+}
+
+- (BOOL)addTileSource:(id<RMTileSource>)newTileSource atIndex:(NSUInteger)index
+{
+    if ([_tileSourcesContainer.tileSources containsObject:newTileSource])
+        return YES;
+
+    if ( ! [_tileSourcesContainer addTileSource:newTileSource atIndex:index])
+        return NO;
 
     RMProjectedPoint centerPoint = [self centerProjectedPoint];
 
-    [tileSource cancelAllDownloads];
-    [tileSource autorelease];
-    tileSource = [newTileSource retain];
-
     [projection release];
-    projection = [[tileSource projection] retain];
+    projection = [[_tileSourcesContainer projection] retain];
 
     [mercatorToTileProjection release];
-    mercatorToTileProjection = [[tileSource mercatorToTileProjection] retain];
+    mercatorToTileProjection = [[_tileSourcesContainer mercatorToTileProjection] retain];
 
-    RMSphericalTrapezium bounds = [tileSource latitudeLongitudeBoundingBox];
+    RMSphericalTrapezium bounds = [_tileSourcesContainer latitudeLongitudeBoundingBox];
 
     _constrainMovement = !(bounds.northEast.latitude == 90.0 && bounds.northEast.longitude == 180.0 && bounds.southWest.latitude == -90.0 && bounds.southWest.longitude == -180.0);
 
@@ -1421,15 +1407,91 @@
     else
         _constrainingProjectedBounds = projection.planetBounds;
 
-    [self setMinZoom:newTileSource.minZoom];
-    [self setMaxZoom:newTileSource.maxZoom];
+    [self setMinZoom:_tileSourcesContainer.minZoom];
+    [self setMaxZoom:_tileSourcesContainer.maxZoom];
     [self setZoom:[self zoom]]; // setZoom clamps zoom level to min/max limits
 
     // Recreate the map layer
     [self createMapView];
 
     [self setCenterProjectedPoint:centerPoint animated:NO];
+
+    return YES;
 }
+
+- (void)removeTileSource:(id <RMTileSource>)tileSource
+{
+    RMProjectedPoint centerPoint = [self centerProjectedPoint];
+
+    [_tileSourcesContainer removeTileSource:tileSource];
+
+    if ([_tileSourcesContainer.tileSources count] == 0)
+    {
+        [projection release];
+        [mercatorToTileProjection release];
+        _constrainMovement = NO;
+    }
+
+    // Recreate the map layer
+    [self createMapView];
+
+    [self setCenterProjectedPoint:centerPoint animated:NO];
+}
+
+- (void)removeTileSourceAtIndex:(NSUInteger)index
+{
+    RMProjectedPoint centerPoint = [self centerProjectedPoint];
+
+    [_tileSourcesContainer removeTileSourceAtIndex:index];
+
+    if ([_tileSourcesContainer.tileSources count] == 0)
+    {
+        [projection release];
+        [mercatorToTileProjection release];
+        _constrainMovement = NO;
+    }
+
+    // Recreate the map layer
+    [self createMapView];
+
+    [self setCenterProjectedPoint:centerPoint animated:NO];
+}
+
+- (void)moveTileSourceAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
+{
+    RMProjectedPoint centerPoint = [self centerProjectedPoint];
+
+    [_tileSourcesContainer moveTileSourceAtIndex:fromIndex toIndex:toIndex];
+
+    // Recreate the map layer
+    [self createMapView];
+
+    [self setCenterProjectedPoint:centerPoint animated:NO];
+}
+
+- (void)setHidden:(BOOL)isHidden forTileSource:(id <RMTileSource>)tileSource
+{
+    NSArray *tileSources = [self tileSources];
+
+    [tileSources enumerateObjectsUsingBlock:^(id <RMTileSource> currentTileSource, NSUInteger index, BOOL *stop)
+     {
+        if (tileSource == currentTileSource)
+        {
+            [self setHidden:isHidden forTileSourceAtIndex:index];
+            *stop = YES;
+        }
+     }];
+}
+
+- (void)setHidden:(BOOL)isHidden forTileSourceAtIndex:(NSUInteger)index
+{
+    if (index >= [_tiledLayersSuperview.subviews count])
+        return;
+
+    ((RMMapTiledLayerView *)[_tiledLayersSuperview.subviews objectAtIndex:index]).hidden = isHidden;
+}
+
+#pragma mark - Properties
 
 - (UIView *)backgroundView
 {
@@ -1470,7 +1532,7 @@
 {
     double factor = self.metersPerPixel / newMetersPerPixel;
 
-    [self zoomContentByFactor:factor near:CGPointMake(self.bounds.size.width/2.0, self.bounds.size.height/2.0) animated:animated];
+    [self zoomByFactor:factor near:CGPointMake(self.bounds.size.width/2.0, self.bounds.size.height/2.0) animated:animated];
 }
 
 - (double)scaledMetersPerPixel
@@ -1610,6 +1672,17 @@
 - (RMFractalTileProjection *)mercatorToTileProjection
 {
     return [[mercatorToTileProjection retain] autorelease];
+}
+
+- (void)setDebugTiles:(BOOL)shouldDebug;
+{
+    debugTiles = shouldDebug;
+
+    for (RMMapTiledLayerView *tiledLayerView in _tiledLayersSuperview.subviews)
+    {
+        tiledLayerView.layer.contents = nil;
+        [tiledLayerView.layer setNeedsDisplay];
+    }
 }
 
 #pragma mark -

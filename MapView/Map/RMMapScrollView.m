@@ -15,7 +15,7 @@
 - (void)setContentOffset:(CGPoint)contentOffset
 {
     if (self.mapScrollViewDelegate)
-        contentOffset = [self.mapScrollViewDelegate scrollView:self correctedOffsetForContentOffset:contentOffset];
+        [self.mapScrollViewDelegate scrollView:self correctedContentOffset:&contentOffset];
 
     [super setContentOffset:contentOffset];
 }
@@ -23,17 +23,28 @@
 - (void)setContentOffset:(CGPoint)contentOffset animated:(BOOL)animated
 {
     if (self.mapScrollViewDelegate)
-        contentOffset = [self.mapScrollViewDelegate scrollView:self correctedOffsetForContentOffset:contentOffset];
+        [self.mapScrollViewDelegate scrollView:self correctedContentOffset:&contentOffset];
 
     [super setContentOffset:contentOffset animated:animated];
 }
 
 - (void)setContentSize:(CGSize)contentSize
 {
+    CGFloat factor = 1.0;
+
     if (self.mapScrollViewDelegate)
-        contentSize = [self.mapScrollViewDelegate scrollView:self correctedSizeForContentSize:contentSize];
+    {
+        CGSize previousContentSize = contentSize;
+
+        [self.mapScrollViewDelegate scrollView:self correctedContentSize:&contentSize];
+
+        factor = contentSize.width / previousContentSize.width;
+    }
 
     [super setContentSize:contentSize];
+
+    if (factor != 1.0)
+        self.zoomScale *= factor;
 }
 
 @end

@@ -27,7 +27,6 @@
 
 #import "RMAbstractWebMapSource.h"
 #import "RMTileCache.h"
-#import "RMTileImage.h"
 
 @implementation RMAbstractWebMapSource
 
@@ -154,9 +153,6 @@
     {
         [[NSNotificationCenter defaultCenter] postNotificationName:RMTileRetrieved object:[NSNumber numberWithUnsignedLongLong:RMTileKey(tile)]];
     });
-
-    if (!image)
-        return [RMTileImage errorTile];
 
     return image;
 }
