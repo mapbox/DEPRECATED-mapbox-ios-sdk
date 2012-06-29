@@ -1,5 +1,5 @@
 //
-//  RMMBTilesTileSource.m
+//  RMMBTilesSource.m
 //
 //  Created by Justin R. Miller on 6/18/10.
 //  Copyright 2010, Code Sorcery Workshop, LLC and Development Seed, Inc.
@@ -32,7 +32,7 @@
 //  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import "RMMBTilesTileSource.h"
+#import "RMMBTilesSource.h"
 #import "RMTileImage.h"
 #import "RMProjection.h"
 #import "RMFractalTileProjection.h"
@@ -40,7 +40,7 @@
 #import "FMDatabase.h"
 #import "FMDatabaseQueue.h"
 
-@implementation RMMBTilesTileSource
+@implementation RMMBTilesSource
 {
     RMFractalTileProjection *tileProjection;
     FMDatabaseQueue *queue;

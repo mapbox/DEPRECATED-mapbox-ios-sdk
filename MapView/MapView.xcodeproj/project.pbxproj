@@ -154,8 +154,8 @@
 		DD2B375014CF814F008DE8CB /* FMDatabasePool.m in Sources */ = {isa = PBXBuildFile; fileRef = DD2B374C14CF814F008DE8CB /* FMDatabasePool.m */; };
 		DD2B375114CF814F008DE8CB /* FMDatabaseQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = DD2B374D14CF814F008DE8CB /* FMDatabaseQueue.h */; };
 		DD2B375214CF814F008DE8CB /* FMDatabaseQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = DD2B374E14CF814F008DE8CB /* FMDatabaseQueue.m */; };
-		DD2B375514CF8197008DE8CB /* RMMBTilesTileSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DD2B375314CF8197008DE8CB /* RMMBTilesTileSource.h */; };
-		DD2B375614CF8197008DE8CB /* RMMBTilesTileSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD2B375414CF8197008DE8CB /* RMMBTilesTileSource.m */; };
+		DD2B375514CF8197008DE8CB /* RMMBTilesSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DD2B375314CF8197008DE8CB /* RMMBTilesSource.h */; };
+		DD2B375614CF8197008DE8CB /* RMMBTilesSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD2B375414CF8197008DE8CB /* RMMBTilesSource.m */; };
 		DD8CDB4A14E0507100B73EB9 /* RMMapQuestOSMSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DD8CDB4814E0507100B73EB9 /* RMMapQuestOSMSource.h */; };
 		DD8CDB4B14E0507100B73EB9 /* RMMapQuestOSMSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD8CDB4914E0507100B73EB9 /* RMMapQuestOSMSource.m */; };
 		DD98B6FA14D76B930092882F /* RMMapBoxSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DD98B6F814D76B930092882F /* RMMapBoxSource.h */; };
@@ -313,8 +313,8 @@
 		DD2B374C14CF814F008DE8CB /* FMDatabasePool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMDatabasePool.m; sourceTree = "<group>"; };
 		DD2B374D14CF814F008DE8CB /* FMDatabaseQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabaseQueue.h; sourceTree = "<group>"; };
 		DD2B374E14CF814F008DE8CB /* FMDatabaseQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMDatabaseQueue.m; sourceTree = "<group>"; };
-		DD2B375314CF8197008DE8CB /* RMMBTilesTileSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMBTilesTileSource.h; sourceTree = "<group>"; };
-		DD2B375414CF8197008DE8CB /* RMMBTilesTileSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMBTilesTileSource.m; sourceTree = "<group>"; };
+		DD2B375314CF8197008DE8CB /* RMMBTilesSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMBTilesSource.h; sourceTree = "<group>"; };
+		DD2B375414CF8197008DE8CB /* RMMBTilesSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMBTilesSource.m; sourceTree = "<group>"; };
 		DD8CDB4814E0507100B73EB9 /* RMMapQuestOSMSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMapQuestOSMSource.h; sourceTree = "<group>"; };
 		DD8CDB4914E0507100B73EB9 /* RMMapQuestOSMSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMapQuestOSMSource.m; sourceTree = "<group>"; };
 		DD98B6F814D76B930092882F /* RMMapBoxSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMapBoxSource.h; sourceTree = "<group>"; };
@@ -374,8 +374,8 @@
 				16FFF2CA14E3DBF700A170EC /* RMMapQuestOpenAerialSource.m */,
 				DD8CDB4814E0507100B73EB9 /* RMMapQuestOSMSource.h */,
 				DD8CDB4914E0507100B73EB9 /* RMMapQuestOSMSource.m */,
-				DD2B375314CF8197008DE8CB /* RMMBTilesTileSource.h */,
-				DD2B375414CF8197008DE8CB /* RMMBTilesTileSource.m */,
+				DD2B375314CF8197008DE8CB /* RMMBTilesSource.h */,
+				DD2B375414CF8197008DE8CB /* RMMBTilesSource.m */,
 				1606C9FC13D86BA300547581 /* RMOpenCycleMapSource.h */,
 				1606C9FD13D86BA300547581 /* RMOpenCycleMapSource.m */,
 				16128CF3148D295300C23C0E /* RMOpenSeaMapSource.h */,
@@ -689,7 +689,7 @@
 				DD2B374914CF8041008DE8CB /* FMResultSet.h in Headers */,
 				DD2B374F14CF814F008DE8CB /* FMDatabasePool.h in Headers */,
 				DD2B375114CF814F008DE8CB /* FMDatabaseQueue.h in Headers */,
-				DD2B375514CF8197008DE8CB /* RMMBTilesTileSource.h in Headers */,
+				DD2B375514CF8197008DE8CB /* RMMBTilesSource.h in Headers */,
 				DD98B6FA14D76B930092882F /* RMMapBoxSource.h in Headers */,
 				DD8CDB4A14E0507100B73EB9 /* RMMapQuestOSMSource.h in Headers */,
 				1607499514E120A100D535F5 /* RMGenericMapSource.h in Headers */,
@@ -910,7 +910,7 @@
 				DD2B374A14CF8041008DE8CB /* FMResultSet.m in Sources */,
 				DD2B375014CF814F008DE8CB /* FMDatabasePool.m in Sources */,
 				DD2B375214CF814F008DE8CB /* FMDatabaseQueue.m in Sources */,
-				DD2B375614CF8197008DE8CB /* RMMBTilesTileSource.m in Sources */,
+				DD2B375614CF8197008DE8CB /* RMMBTilesSource.m in Sources */,
 				DD98B6FB14D76B930092882F /* RMMapBoxSource.m in Sources */,
 				DD8CDB4B14E0507100B73EB9 /* RMMapQuestOSMSource.m in Sources */,
 				1607499614E120A100D535F5 /* RMGenericMapSource.m in Sources */,
