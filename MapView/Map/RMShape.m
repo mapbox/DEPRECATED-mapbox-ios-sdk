@@ -48,6 +48,9 @@
 @synthesize scaleLineWidth;
 @synthesize lineDashLengths;
 @synthesize scaleLineDash;
+@synthesize shadowBlur;
+@synthesize shadowOffset;
+@synthesize enableShadow;
 @synthesize pathBoundingBox;
 
 #define kDefaultLineWidth 2.0
@@ -70,6 +73,9 @@
     shapeLayer.lineJoin = kCALineJoinMiter;
     shapeLayer.strokeColor = [UIColor blackColor].CGColor;
     shapeLayer.fillColor = [UIColor clearColor].CGColor;
+    shapeLayer.shadowRadius = 0.0;
+    shapeLayer.shadowOpacity = 0.0;
+    shapeLayer.shadowOffset = CGSizeMake(0, 0);
     [self addSublayer:shapeLayer];
 
     pathBoundingBox = CGRectZero;
@@ -166,7 +172,7 @@
 
         // calculate the bounds of the scaled path
         CGRect boundsInMercators = scaledPath.bounds;
-        nonClippedBounds = CGRectInset(boundsInMercators, -scaledLineWidth, -scaledLineWidth);
+        nonClippedBounds = CGRectInset(boundsInMercators, -scaledLineWidth - (2 * shapeLayer.shadowRadius), -scaledLineWidth - (2 * shapeLayer.shadowRadius));
 
         [scaledPath release];
     }
@@ -411,6 +417,40 @@
         shapeLayer.fillColor = aFillColor.CGColor;
         [self setNeedsDisplay];
     }
+}
+
+- (CGFloat)shadowBlur
+{
+    return shapeLayer.shadowRadius;
+}
+
+- (void)setShadowBlur:(CGFloat)blur
+{
+    shapeLayer.shadowRadius = blur;
+    [self setNeedsDisplay];
+}
+
+- (CGSize)shadowOffset
+{
+    return shapeLayer.shadowOffset;
+}
+
+- (void)setShadowOffset:(CGSize)offset
+{
+    shapeLayer.shadowOffset = offset;
+    [self setNeedsDisplay];
+}
+
+- (BOOL)enableShadow
+{
+    return (shapeLayer.shadowOpacity > 0);
+}
+
+- (void)setEnableShadow:(BOOL)flag
+{
+    shapeLayer.shadowOpacity   = (flag ? 1.0 : 0.0);
+    shapeLayer.shouldRasterize = ! flag;
+    [self setNeedsDisplay];
 }
 
 - (NSString *)fillRule
