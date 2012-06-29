@@ -1786,6 +1786,35 @@
 	return returnTile;
 }
 
+- (RMSphericalTrapezium)latitudeLongitudeBoundingBoxForTile:(RMTile)aTile
+{
+    RMProjectedRect planetBounds = _projection.planetBounds;
+
+    double scale = (1<<aTile.zoom);
+    double tileSideLength = [_tileSourcesContainer tileSideLength];
+    double tileMetersPerPixel = planetBounds.size.width / (tileSideLength * scale);
+
+    CGPoint bottomLeft = CGPointMake(aTile.x * tileSideLength, (scale - aTile.y - 1) * tileSideLength);
+
+    RMProjectedRect normalizedProjectedRect;
+    normalizedProjectedRect.origin.x = (bottomLeft.x * tileMetersPerPixel) - fabs(planetBounds.origin.x);
+    normalizedProjectedRect.origin.y = (bottomLeft.y * tileMetersPerPixel) - fabs(planetBounds.origin.y);
+    normalizedProjectedRect.size.width = tileSideLength * tileMetersPerPixel;
+    normalizedProjectedRect.size.height = tileSideLength * tileMetersPerPixel;
+
+    RMSphericalTrapezium boundingBox;
+    boundingBox.southWest = [self projectedPointToCoordinate:
+                             RMProjectedPointMake(normalizedProjectedRect.origin.x,
+                                                  normalizedProjectedRect.origin.y)];
+    boundingBox.northEast = [self projectedPointToCoordinate:
+                             RMProjectedPointMake(normalizedProjectedRect.origin.x + normalizedProjectedRect.size.width,
+                                                  normalizedProjectedRect.origin.y + normalizedProjectedRect.size.height)];
+
+    RMLog(@"Bounding box for tile (%d,%d) at zoom %d: {%f,%f} {%f,%f)", aTile.x, aTile.y, aTile.zoom, boundingBox.southWest.longitude, boundingBox.southWest.latitude, boundingBox.northEast.longitude, boundingBox.northEast.latitude);
+
+    return boundingBox;
+}
+
 #pragma mark -
 #pragma mark Bounds
 

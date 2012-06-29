@@ -114,6 +114,22 @@
 	[self updateInfo];
 	[self performSelector:@selector(addMarkers) withObject:nil afterDelay:0.5];
 
+//    // Tile bounding box
+//    RMSphericalTrapezium tileBoundingBox = [mapView latitudeLongitudeBoundingBoxForTile:RMTileMake(541, 357, 10)];
+//
+//    RMAnnotation *annotation = [RMAnnotation annotationWithMapView:mapView coordinate:tileBoundingBox.southWest andTitle:@"bbox SouthWest"];
+//    annotation.annotationIcon = [UIImage imageNamed:@"marker-red.png"];
+//    annotation.anchorPoint = CGPointMake(0.5, 1.0);
+//    annotation.clusteringEnabled = NO;
+//    [mapView addAnnotation:annotation];
+//
+//    annotation = [RMAnnotation annotationWithMapView:mapView coordinate:tileBoundingBox.northEast andTitle:@"bbox NorthEast"];
+//    annotation.annotationIcon = [UIImage imageNamed:@"marker-red.png"];
+//    annotation.anchorPoint = CGPointMake(0.5, 1.0);
+//    annotation.clusteringEnabled = NO;
+//    [mapView addAnnotation:annotation];
+
+    // Tile sources
 //    [mapView setTileSources:@[
 //     [[[RMOpenStreetMapSource alloc] init] autorelease],
 //     [[[RMOpenSeaMapLayer alloc] init] autorelease]
