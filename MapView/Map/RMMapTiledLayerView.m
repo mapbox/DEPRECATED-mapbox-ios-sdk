@@ -202,26 +202,25 @@
 
             [tileImage drawInRect:debugRect];
 
-            CGColorRef color = CGColorCreateCopyWithAlpha([[UIColor redColor] CGColor], 0.25);
+            UIFont *font = [UIFont systemFontOfSize:32.0];
 
-            UIFont *font = [UIFont systemFontOfSize:36.0];
-
-            CGContextSetStrokeColorWithColor(debugContext, color);
-            CGContextSetLineWidth(debugContext, 5.0);
+            CGContextSetStrokeColorWithColor(debugContext, [UIColor whiteColor].CGColor);
+            CGContextSetLineWidth(debugContext, 2.0);
+            CGContextSetShadowWithColor(debugContext, CGSizeMake(0.0, 0.0), 5.0, [UIColor blackColor].CGColor);
 
             CGContextStrokeRect(debugContext, debugRect);
 
-            CGContextSetFillColorWithColor(debugContext, color);
+            CGContextSetFillColorWithColor(debugContext, [UIColor whiteColor].CGColor);
 
-            NSString *debugString = [NSString stringWithFormat:@"%i,%i,%i", zoom, x, y];
+            NSString *debugString = [NSString stringWithFormat:@"Zoom %d", zoom];
+            CGSize debugSize1 = [debugString sizeWithFont:font];
+            [debugString drawInRect:CGRectMake(5.0, 5.0, debugSize1.width, debugSize1.height) withFont:font];
 
-            CGSize debugSize = [debugString sizeWithFont:font];
-
-            [debugString drawInRect:CGRectMake(5.0, 5.0, debugSize.width, debugSize.height) withFont:font];
+            debugString = [NSString stringWithFormat:@"(%d, %d)", x, y];
+            CGSize debugSize2 = [debugString sizeWithFont:font];
+            [debugString drawInRect:CGRectMake(5.0, 5.0 + debugSize1.height + 5.0, debugSize2.width, debugSize2.height) withFont:font];
 
             tileImage = UIGraphicsGetImageFromCurrentImageContext();
-
-            CFRelease(color);
 
             UIGraphicsEndImageContext();
         }
