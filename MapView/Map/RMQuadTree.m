@@ -449,6 +449,7 @@
                     @synchronized (annotations)
                     {
                         [someArray addObjectsFromArray:enclosedAnnotations];
+                        [someArray addObjectsFromArray:[self unclusteredAnnotations]];
                     }
 
                     return;
