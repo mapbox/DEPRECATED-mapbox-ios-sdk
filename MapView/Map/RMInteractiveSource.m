@@ -33,8 +33,6 @@
 
 #import "RMInteractiveSource.h"
 
-#import "RMCompositeSource.h"
-
 #import "FMDatabase.h"
 #import "FMDatabaseQueue.h"
 
@@ -73,29 +71,17 @@
 {
     id <RMTileSource, RMInteractiveSource>interactiveTileSource = nil;
     
-    if ([self.tileSource isKindOfClass:[RMCompositeSource class]])
+    // currently, we iterate top-down and return the first interactive source
+    //
+    for (id <RMTileSource>source in [[self.tileSources reverseObjectEnumerator] allObjects])
     {
-        // currently, we iterate top-down and return the first interactive source
-        //
-        for (id <RMTileSource>source in [[((RMCompositeSource *)self.tileSource).compositeSources reverseObjectEnumerator] allObjects])
+        if (([source isKindOfClass:[RMMBTilesSource class]] || [source isKindOfClass:[RMMapBoxSource class]]) &&
+            [source conformsToProtocol:@protocol(RMInteractiveSource)]                                        &&
+            [(id <RMInteractiveSource>)source supportsInteractivity])
         {
-            if (([source isKindOfClass:[RMMBTilesSource class]] || [source isKindOfClass:[RMMapBoxSource class]]) &&
-                [source conformsToProtocol:@protocol(RMInteractiveSource)]                                        &&
-                [(id <RMInteractiveSource>)source supportsInteractivity])
-            {
-                interactiveTileSource = (id <RMTileSource, RMInteractiveSource>)source;
-                
-                break;
-            }
-        }
-    }
-    else
-    {
-        if (([self.tileSource isKindOfClass:[RMMBTilesSource class]] || [self.tileSource isKindOfClass:[RMMapBoxSource class]]) &&
-            [self.tileSource conformsToProtocol:@protocol(RMInteractiveSource)]                                                 &&
-            [(id <RMInteractiveSource>)self.tileSource supportsInteractivity])
-        {
-            interactiveTileSource = (id <RMTileSource, RMInteractiveSource>)self.tileSource;
+            interactiveTileSource = (id <RMTileSource, RMInteractiveSource>)source;
+            
+            break;
         }
     }
     
