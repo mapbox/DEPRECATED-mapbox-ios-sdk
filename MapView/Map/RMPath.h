@@ -1,7 +1,7 @@
 //
 //  RMPath.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -36,9 +36,9 @@
 {
     BOOL isFirstPoint;
 
-    /// The color of the line, or the outline if a polygon
+    // The color of the line, or the outline if a polygon
     UIColor *lineColor;
-    /// The color of polygon's fill.
+    // The color of polygon's fill.
     UIColor *fillColor;
 
     CGMutablePathRef path;
@@ -46,7 +46,7 @@
     BOOL ignorePathUpdates;
     CGRect previousBounds;
 
-    /// Width of the line, in pixels
+    // Width of the line, in pixels
     float lineWidth;
 
     /*! Drawing mode of the path; Choices are
@@ -57,7 +57,7 @@
      kCGPathEOFillStroke */
     CGPathDrawingMode drawingMode;
 
-    //Line cap and join styles
+    // Line cap and join styles
     CGLineCap lineCap;
     CGLineJoin lineJoin;
 
@@ -79,7 +79,7 @@
     RMMapView *mapView;
 }
 
-/// DEPRECATED. Use RMShape instead.
+// DEPRECATED. Use RMShape instead.
 - (id)initWithView:(RMMapView *)aMapView __attribute__ ((deprecated));;
 
 @property (nonatomic, assign) CGPathDrawingMode drawingMode;
@@ -108,9 +108,9 @@
 // Change the path without recalculating the geometry (performance!)
 - (void)performBatchOperations:(void (^)(RMPath *aPath))block;
 
-/// This closes the path, connecting the last point to the first.
-/// After this action, no further points can be added to the path.
-/// There is no requirement that a path be closed.
+// This closes the path, connecting the last point to the first.
+// After this action, no further points can be added to the path.
+// There is no requirement that a path be closed.
 - (void)closePath;
 
 @end

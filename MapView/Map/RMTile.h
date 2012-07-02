@@ -1,7 +1,7 @@
 //
 //  RMTile.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -31,28 +31,18 @@
 #include <CoreGraphics/CGGeometry.h>
 #include <stdint.h>
 
-/*! \file RMTile.h
- */
-/*! \struct RMTile
- \brief Uniquely specifies coordinates and zoom level for a particular tile in some tile source.
- 
- This is a 3-field number. If you want the image associated with an RMTile, you're looking for RMTileImage
- */
-typedef struct{
+// Uniquely specifies coordinates and zoom level for a particular tile in some tile source.
+typedef struct {
 	uint32_t x, y;
 	short zoom;
 } RMTile;
 
-/*! \struct RMTilePoint
- */
-typedef struct{
+typedef struct {
 	RMTile tile;
 	CGPoint offset;
 } RMTilePoint;
 
-/*! \struct RMTileRect
- */
-typedef struct{
+typedef struct {
 	RMTilePoint origin;
 	CGSize size;
 } RMTileRect;
@@ -64,16 +54,16 @@ RMTile RMTileDummy();
 
 RMTile RMTileMake(uint32_t x, uint32_t y, short zoom);
 
-/// Return a hash of the tile, used to override the NSObject hash method for RMTile.
+// Return a hash of the tile, used to override the NSObject hash method for RMTile.
 uint64_t RMTileHash(RMTile tile);
 
-/// Returns a unique key of the tile for use in the SQLite cache
+// Returns a unique key of the tile for use in the SQLite cache
 uint64_t RMTileKey(RMTile tile);
 
-/// Round the rectangle to whole numbers of tiles
+// Round the rectangle to whole numbers of tiles
 RMTileRect RMTileRectRound(RMTileRect rect);
 
-/// Dump a description of the tile to the console
+// Dump a description of the tile to the console
 void RMLogTile(RMTile tile);
 
 #endif

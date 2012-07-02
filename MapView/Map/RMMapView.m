@@ -1810,7 +1810,7 @@
                              RMProjectedPointMake(normalizedProjectedRect.origin.x + normalizedProjectedRect.size.width,
                                                   normalizedProjectedRect.origin.y + normalizedProjectedRect.size.height)];
 
-    RMLog(@"Bounding box for tile (%d,%d) at zoom %d: {%f,%f} {%f,%f)", aTile.x, aTile.y, aTile.zoom, boundingBox.southWest.longitude, boundingBox.southWest.latitude, boundingBox.northEast.longitude, boundingBox.northEast.latitude);
+//    RMLog(@"Bounding box for tile (%d,%d) at zoom %d: {%f,%f} {%f,%f)", aTile.x, aTile.y, aTile.zoom, boundingBox.southWest.longitude, boundingBox.southWest.latitude, boundingBox.northEast.longitude, boundingBox.northEast.latitude);
 
     return boundingBox;
 }

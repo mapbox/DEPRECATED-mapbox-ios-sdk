@@ -29,11 +29,18 @@
 #import "RMTileCache.h"
 
 @implementation RMCacheObject
+{
+    id _cachedObject;
+    NSString *_cacheKey;
 
-@synthesize cachedObject;
-@synthesize cacheKey;
-@synthesize tile;
-@synthesize timestamp;
+    RMTile _tile;
+    NSDate *_timestamp;
+}
+
+@synthesize cachedObject = _cachedObject;
+@synthesize cacheKey = _cacheKey;
+@synthesize tile = _tile;
+@synthesize timestamp = _timestamp;
 
 + (id)cacheObject:(id)anObject forTile:(RMTile)aTile withCacheKey:(NSString *)aCacheKey
 {
@@ -45,31 +52,31 @@
     if (!(self = [super init]))
         return nil;
 
-    cachedObject = [anObject retain];
-    cacheKey = [aCacheKey retain];
-    tile = aTile;
-    timestamp = [NSDate new];
+    _cachedObject = [anObject retain];
+    _cacheKey = [aCacheKey retain];
+    _tile = aTile;
+    _timestamp = [NSDate new];
 
     return self;
 }
 
 - (void)dealloc
 {
-    [cachedObject release]; cachedObject = nil;
-    [cacheKey release]; cacheKey = nil;
-    [timestamp release]; timestamp = nil;
+    [_cachedObject release]; _cachedObject = nil;
+    [_cacheKey release]; _cacheKey = nil;
+    [_timestamp release]; _timestamp = nil;
     [super dealloc];
 }
 
 - (void)touch
 {
-    [timestamp autorelease];
-    timestamp = [NSDate new];
+    [_timestamp autorelease];
+    _timestamp = [NSDate new];
 }
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@: tile='%d %d %d (%@)', cache key='%@'>", NSStringFromClass([self class]), tile.x, tile.y, tile.zoom, [RMTileCache tileHash:tile], cacheKey];
+    return [NSString stringWithFormat:@"<%@: tile='%d %d %d (%@)', cache key='%@'>", NSStringFromClass([self class]), _tile.x, _tile.y, _tile.zoom, [RMTileCache tileHash:_tile], _cacheKey];
 }
 
 @end

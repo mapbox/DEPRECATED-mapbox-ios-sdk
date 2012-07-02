@@ -1,7 +1,7 @@
 //
 //  RMFractalTileProjection.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -33,35 +33,18 @@
 @class RMProjection;
 
 @interface RMFractalTileProjection : NSObject
-{
-	// Maximum zoom for which our tile server stores images
-	NSUInteger maxZoom, minZoom;
-
-	// projected bounds of the planet, in meters
-	RMProjectedRect planetBounds;
-
-	// Normally 256px. This class assumes tiles are square.
-	NSUInteger tileSideLength;
-
-	// The deal is, we have a scale which stores how many mercator gradiants per pixel
-	// in the image.
-	// If you run the maths, scale = bounds.width/(2^zoom * tileSideLength)
-	// or if you want, z = log(bounds.width/tileSideLength) - log(s)
-	// So here we'll cache the first term for efficiency.
-	// I'm using width arbitrarily - I'm not sure what the effect of using the other term is when they're not the same.
-	double scaleFactor;
-}
 
 // bounds of the earth, in projected units (meters).
-@property (readonly, nonatomic) RMProjectedRect planetBounds;
+@property (nonatomic, readonly) RMProjectedRect planetBounds;
 
 // Maximum zoom for which we have tile images 
-@property (readonly, nonatomic) NSUInteger maxZoom;
+@property (nonatomic, readonly) NSUInteger maxZoom;
+
 // Minimum zoom for which we have tile images 
-@property (readonly, nonatomic) NSUInteger minZoom;
+@property (nonatomic, readonly) NSUInteger minZoom;
 
 // Tile side length in pixels
-@property (readonly, nonatomic) NSUInteger tileSideLength;
+@property (nonatomic, readonly) NSUInteger tileSideLength;
 
 - (id)initFromProjection:(RMProjection *)projection tileSideLength:(NSUInteger)tileSideLength maxZoom:(NSUInteger)aMaxZoom minZoom:(NSUInteger)aMinZoom;
 

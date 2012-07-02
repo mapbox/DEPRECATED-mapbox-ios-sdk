@@ -29,9 +29,6 @@
 #import "RMTileCache.h"
 
 @interface RMDatabaseCache : NSObject <RMTileCache>
-{
-	NSString *databasePath;
-}
 
 @property (nonatomic, retain) NSString *databasePath;
 
@@ -43,6 +40,6 @@
 - (void)setPurgeStrategy:(RMCachePurgeStrategy)theStrategy;
 - (void)setCapacity:(NSUInteger)theCapacity;
 - (void)setMinimalPurge:(NSUInteger)thePurgeMinimum;
-- (void)setExpiryPeriod:(NSTimeInterval)theExpiryPeriod;
+- (void)setExpiryPeriod:(NSTimeInterval)theExpiryPeriod; // in seconds
 
 @end

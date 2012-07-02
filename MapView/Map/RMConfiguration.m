@@ -1,7 +1,7 @@
 //
 //  RMConfiguration.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -31,69 +31,61 @@ static RMConfiguration *RMConfigurationSharedInstance = nil;
 
 @implementation RMConfiguration
 {
-	id propertyList;
+    id _propertyList;
 }
 
 + (RMConfiguration *)configuration
 {
-	@synchronized (RMConfigurationSharedInstance)
-    {
-		if (RMConfigurationSharedInstance != nil)
-            return RMConfigurationSharedInstance;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        RMConfigurationSharedInstance = [[RMConfiguration alloc] initWithPath:[[NSBundle mainBundle] pathForResource:@"routeme" ofType:@"plist"]];
+    });
 
-		RMConfigurationSharedInstance = [[RMConfiguration alloc] initWithPath:[[NSBundle mainBundle] pathForResource:@"routeme" ofType:@"plist"]];
-
-		return RMConfigurationSharedInstance;
-	}
-
-	return nil;
+    return RMConfigurationSharedInstance;
 }
 
 - (RMConfiguration *)initWithPath:(NSString *)path
 {
-	if (!(self = [super init]))
+    if (!(self = [super init]))
         return nil;
 
-	NSData *plistData;
-	NSString *error;
-	NSPropertyListFormat format;
-
-	if (path == nil)
+    if (path == nil)
     {
-		propertyList = nil;
-		return self;
-	}
+        _propertyList = nil;
+        return self;
+    }
 
-	RMLog(@"reading configuration from %@", path);
+    RMLog(@"reading route-me configuration from %@", path);
 
-	plistData = [NSData dataWithContentsOfFile:path];
+    NSString *error = nil;
+    NSData *plistData = [NSData dataWithContentsOfFile:path];
 
-	propertyList = [[NSPropertyListSerialization propertyListFromData:plistData
-                                                 mutabilityOption:NSPropertyListImmutable
-                                                           format:&format
-                                                 errorDescription:&error] retain];
+    _propertyList = [[NSPropertyListSerialization propertyListFromData:plistData
+                                                      mutabilityOption:NSPropertyListImmutable
+                                                                format:NULL
+                                                      errorDescription:&error] retain];
 
-	if (!propertyList)
+    if ( ! _propertyList)
     {
-		RMLog(@"problem reading from %@: %@", path, error);
-		[error release];
-	}
+        RMLog(@"problem reading route-me configuration from %@: %@", path, error);
+        [error release];
+    }
 
-	return self;
+    return self;
 }
 
 - (void)dealloc
 {
-	[propertyList release]; propertyList = nil;
-	[super dealloc];
+    [_propertyList release]; _propertyList = nil;
+    [super dealloc];
 }
 
 - (NSDictionary *)cacheConfiguration
 {
-	if (propertyList == nil)
+    if (_propertyList == nil)
         return nil;
 
-	return [propertyList objectForKey:@"caches"];
+    return [_propertyList objectForKey:@"caches"];
 }
 
 @end

@@ -1,7 +1,7 @@
 //
 //  RMProjection.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -30,147 +30,158 @@
 #import "RMProjection.h"
 
 @implementation RMProjection
-
-@synthesize internalProjection;
-@synthesize planetBounds;
-@synthesize projectionWrapsHorizontally;
-
-- (id)initWithString:(NSString *)params inBounds:(RMProjectedRect)projectedBounds
 {
-	if (!(self = [super init]))
-		return nil;
+    // This is actually a PROJ4 projPJ, but it is typed as void* so the proj_api doesn't have to be included
+    void *_internalProjection;
 
-	internalProjection = pj_init_plus([params UTF8String]);
-	if (internalProjection == NULL)
-	{
-		RMLog(@"Unhandled error creating projection. String is %@", params);
-		[self release];
-		return nil;
-	}
+    // the size of the earth, in projected units (meters, most often)
+    RMProjectedRect	_planetBounds;
 
-	planetBounds = projectedBounds;
-	projectionWrapsHorizontally = YES;
-
-	return self;
+    // hardcoded to YES in #initWithString:InBounds:
+    BOOL _projectionWrapsHorizontally;
 }
 
-- (id)initWithString:(NSString *)params
-{
-	RMProjectedRect theBounds;
-	theBounds = RMProjectedRectMake(0, 0, 0, 0);
+@synthesize internalProjection = _internalProjection;
+@synthesize planetBounds = _planetBounds;
+@synthesize projectionWrapsHorizontally = _projectionWrapsHorizontally;
 
-	return [self initWithString:params inBounds:theBounds];
+- (id)initWithString:(NSString *)proj4String inBounds:(RMProjectedRect)projectedBounds
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _internalProjection = pj_init_plus([proj4String UTF8String]);
+
+    if (_internalProjection == NULL)
+    {
+        RMLog(@"Unhandled error creating projection. String is %@", proj4String);
+        [self release];
+        return nil;
+    }
+
+    _planetBounds = projectedBounds;
+    _projectionWrapsHorizontally = YES;
+
+    return self;
+}
+
+- (id)initWithString:(NSString *)proj4String
+{
+    RMProjectedRect theBounds;
+    theBounds = RMProjectedRectMake(0, 0, 0, 0);
+
+    return [self initWithString:proj4String inBounds:theBounds];
 }
 
 - (id)init
 {
-	return [self initWithString:@"+proj=latlong +ellps=WGS84"];
+    return [self initWithString:@"+proj=latlong +ellps=WGS84"];
 }
 
 - (void)dealloc
 {
-	if (internalProjection)
-		pj_free(internalProjection);
+    if (_internalProjection)
+        pj_free(_internalProjection);
 
-	[super dealloc];
+    [super dealloc];
 }
 
 - (RMProjectedPoint)wrapPointHorizontally:(RMProjectedPoint)aPoint
 {
-	if (!projectionWrapsHorizontally || planetBounds.size.width == 0.0f || planetBounds.size.height == 0.0f)
-		return aPoint;
+    if (!_projectionWrapsHorizontally || _planetBounds.size.width == 0.0f || _planetBounds.size.height == 0.0f)
+        return aPoint;
 
-	while (aPoint.x < planetBounds.origin.x)
-		aPoint.x += planetBounds.size.width;
+    while (aPoint.x < _planetBounds.origin.x)
+        aPoint.x += _planetBounds.size.width;
 
-	while (aPoint.x > (planetBounds.origin.x + planetBounds.size.width))
-		aPoint.x -= planetBounds.size.width;
+    while (aPoint.x > (_planetBounds.origin.x + _planetBounds.size.width))
+        aPoint.x -= _planetBounds.size.width;
 
-	return aPoint;
+    return aPoint;
 }
 
 - (RMProjectedPoint)constrainPointToBounds:(RMProjectedPoint)aPoint
 {
-	if (planetBounds.size.width == 0.0f || planetBounds.size.height == 0.0f)
-		return aPoint;
+    if (_planetBounds.size.width == 0.0f || _planetBounds.size.height == 0.0f)
+        return aPoint;
 
-	[self wrapPointHorizontally:aPoint];
+    [self wrapPointHorizontally:aPoint];
 
-	if (aPoint.y < planetBounds.origin.y)
-		aPoint.y = planetBounds.origin.y;
-	else if (aPoint.y > (planetBounds.origin.y + planetBounds.size.height))
-		aPoint.y = planetBounds.origin.y + planetBounds.size.height;
+    if (aPoint.y < _planetBounds.origin.y)
+        aPoint.y = _planetBounds.origin.y;
+    else if (aPoint.y > (_planetBounds.origin.y + _planetBounds.size.height))
+        aPoint.y = _planetBounds.origin.y + _planetBounds.size.height;
 
-	return aPoint;
+    return aPoint;
 }
 
 - (RMProjectedPoint)coordinateToProjectedPoint:(CLLocationCoordinate2D)aLatLong
 {
-	projUV uv = {
-		aLatLong.longitude * DEG_TO_RAD,
-		aLatLong.latitude * DEG_TO_RAD
-	};
+    projUV uv = {
+        aLatLong.longitude * DEG_TO_RAD,
+        aLatLong.latitude * DEG_TO_RAD
+    };
 
-	projUV result = pj_fwd(uv, internalProjection);
+    projUV result = pj_fwd(uv, _internalProjection);
 
-	RMProjectedPoint result_point = {
-		result.u,
-		result.v,
-	};
+    RMProjectedPoint result_point = {
+        result.u,
+        result.v,
+    };
 
-	return result_point;
+    return result_point;
 }
 
 - (CLLocationCoordinate2D)projectedPointToCoordinate:(RMProjectedPoint)aPoint
 {
-	projUV uv = {
-		aPoint.x,
-		aPoint.y,
-	};
+    projUV uv = {
+        aPoint.x,
+        aPoint.y,
+    };
 
-	projUV result = pj_inv(uv, internalProjection);
+    projUV result = pj_inv(uv, _internalProjection);
 
-	CLLocationCoordinate2D result_coordinate = {
-		result.v * RAD_TO_DEG,
-		result.u * RAD_TO_DEG,
-	};
+    CLLocationCoordinate2D result_coordinate = {
+        result.v * RAD_TO_DEG,
+        result.u * RAD_TO_DEG,
+    };
 
-	return result_coordinate;
+    return result_coordinate;
 }
 
-static RMProjection *_google = nil;
-static RMProjection *_latlong = nil;
+static RMProjection *_googleProjection = nil;
+static RMProjection *_latitudeLongitudeProjection = nil;
 
 + (RMProjection *)googleProjection
 {
-	if (_google)
+    if (_googleProjection)
     {
-		return _google;
-	}
-	else
+        return _googleProjection;
+    }
+    else
     {
-		RMProjectedRect theBounds = RMProjectedRectMake(-20037508.34, -20037508.34, 20037508.34 * 2, 20037508.34 * 2);
+        RMProjectedRect theBounds = RMProjectedRectMake(-20037508.34, -20037508.34, 20037508.34 * 2, 20037508.34 * 2);
 
-		_google = [[RMProjection alloc] initWithString:@"+title= Google Mercator EPSG:900913 +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs"
-											  inBounds:theBounds];
-		return _google;
-	}
+        _googleProjection = [[RMProjection alloc] initWithString:@"+title= Google Mercator EPSG:900913 +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs"
+                                                        inBounds:theBounds];
+        return _googleProjection;
+    }
 }
 
 + (RMProjection *)EPSGLatLong
 {
-	if (_latlong)
+    if (_latitudeLongitudeProjection)
     {
-		return _latlong;
-	}
-	else
+        return _latitudeLongitudeProjection;
+    }
+    else
     {
-		RMProjectedRect theBounds = RMProjectedRectMake(-kMaxLong, -kMaxLat, 360, kMaxLong);
+        RMProjectedRect theBounds = RMProjectedRectMake(-kMaxLong, -kMaxLat, 360.0, kMaxLong);
 
-		_latlong = [[RMProjection alloc] initWithString:@"+proj=latlong +ellps=WGS84"
-                                               inBounds:theBounds];
-		return _latlong;
-	}
+        _latitudeLongitudeProjection = [[RMProjection alloc] initWithString:@"+proj=latlong +ellps=WGS84"
+                                                                   inBounds:theBounds];
+        return _latitudeLongitudeProjection;
+    }
 }
 
 @end

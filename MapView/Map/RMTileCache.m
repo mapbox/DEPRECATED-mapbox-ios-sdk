@@ -105,7 +105,7 @@
 {
     if (!(self = [self initWithExpiryPeriod:0]))
         return nil;
-    
+
     return self;
 }
 
@@ -216,7 +216,7 @@
 	NSNumber *capacity = [cfg objectForKey:@"capacity"];
 	if (capacity == nil) 
         capacity = [NSNumber numberWithInt:32];
-    
+
 	return [[[RMMemoryCache alloc] initWithCapacity:[capacity intValue]] autorelease];
 }
 
@@ -232,19 +232,25 @@
     if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad && [cfg objectForKey:@"capacity-ipad"])
         capacityNumber = [cfg objectForKey:@"capacity-ipad"];
 
-    if (capacityNumber != nil) {
+    if (capacityNumber != nil)
+    {
         NSInteger value = [capacityNumber intValue];
 
         // 0 is valid: it means no capacity limit
-        if (value >= 0) {
+        if (value >= 0)
+        {
             capacity =  value;
             minimalPurge = MAX(1,capacity / 10);
-        } else
+        }
+        else
+        {
             RMLog(@"illegal value for capacity: %d", value);
+        }
     }
 
     NSString *strategyStr = [cfg objectForKey:@"strategy"];
-    if (strategyStr != nil) {
+    if (strategyStr != nil)
+    {
         if ([strategyStr caseInsensitiveCompare:@"FIFO"] == NSOrderedSame) strategy = RMCachePurgeStrategyFIFO;
         if ([strategyStr caseInsensitiveCompare:@"LRU"] == NSOrderedSame) strategy = RMCachePurgeStrategyLRU;
     }
@@ -254,15 +260,16 @@
         useCacheDir = [useCacheDirNumber boolValue];
 
     NSNumber *minimalPurgeNumber = [cfg objectForKey:@"minimalPurge"];
-    if (minimalPurgeNumber != nil && capacity != 0) {
+    if (minimalPurgeNumber != nil && capacity != 0)
+    {
         NSUInteger value = [minimalPurgeNumber unsignedIntValue];
-        if (value > 0 && value<=capacity) {
+
+        if (value > 0 && value<=capacity)
             minimalPurge = value;
-        } else {
+        else
             RMLog(@"minimalPurge must be at least one and at most the cache capacity");
-        }
     }
-    
+
     NSNumber *expiryPeriodNumber = [cfg objectForKey:@"expiryPeriod"];
     if (expiryPeriodNumber != nil)
         _expiryPeriod = [expiryPeriodNumber intValue];
