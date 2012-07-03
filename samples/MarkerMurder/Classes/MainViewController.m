@@ -21,6 +21,9 @@
 @implementation MainViewController
 {
     CLLocationCoordinate2D center;
+
+    BOOL tapped;
+    NSUInteger tapCount;
 }
 
 @synthesize mapView;
@@ -32,17 +35,35 @@
     if (!(self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]))
         return nil;
 
+    //Notifications for tile requests.  This code allows for a class to know when a tile is requested and retrieved
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tileRequested:) name:@"RMTileRequested" object:nil ];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tileRetrieved:) name:@"RMTileRetrieved" object:nil ];
+
+    tapped = NO;
+    tapCount = 0;
+
     return self;
 }
 
-- (void)addMarkers
+- (void)tileRequested:(NSNotification *)notification
 {
-#define kNumberRows 1
+	NSLog(@"Tile request started.");
+}
+
+- (void)tileRetrieved:(NSNotification *)notification
+{
+	NSLog(@"Tile request ended.");
+}
+
+#define kNumberRows 2
 #define kNumberColumns 9
 #define kSpacing 0.1
 
 #define kCircleAnnotationType @"circleAnnotation"
+#define kDraggableAnnotationType @"draggableAnnotation"
 
+- (void)addMarkers
+{
 	CLLocationCoordinate2D markerPosition;
 
 	UIImage *redMarkerImage = [UIImage imageNamed:@"marker-red.png"];
@@ -82,6 +103,16 @@
     RMAnnotation *circleAnnotation = [RMAnnotation annotationWithMapView:mapView coordinate:CLLocationCoordinate2DMake(47.4, 10.0) andTitle:@"A Circle"];
     circleAnnotation.annotationType = kCircleAnnotationType;
     [mapView addAnnotation:circleAnnotation];
+
+    RMAnnotation *draggableAnnotation = [RMAnnotation annotationWithMapView:mapView coordinate:CLLocationCoordinate2DMake(47.72, 10.2) andTitle:@"Drag me! Tap me!"];
+    draggableAnnotation.annotationType = kDraggableAnnotationType;
+    draggableAnnotation.annotationIcon = [UIImage imageNamed:@"marker-blue.png"];
+    draggableAnnotation.anchorPoint = CGPointMake(0.5, 1.0);
+    draggableAnnotation.clusteringEnabled = NO;
+    draggableAnnotation.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    [UIColor blueColor],@"foregroundColor",
+                                    nil];
+    [mapView addAnnotation:draggableAnnotation];
 }
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
@@ -89,7 +120,7 @@
 {
     [super viewDidLoad];
 
-    [mapView setDelegate:self];
+    mapView.delegate = self;
     mapView.enableClustering = YES;
     mapView.positionClusterMarkersAtTheGravityCenter = YES;
 
@@ -208,10 +239,69 @@
 	[self updateInfo];
 }
 
+- (BOOL)mapView:(RMMapView *)map shouldDragAnnotation:(RMAnnotation *)annotation
+{
+    if ([annotation.annotationType isEqualToString:kDraggableAnnotationType])
+    {
+        NSLog(@"Start dragging marker");
+        return YES;
+    }
+
+    return NO;
+}
+
+- (void)mapView:(RMMapView *)map didDragAnnotation:(RMAnnotation *)annotation withDelta:(CGPoint)delta
+{
+    CGPoint screenPosition = CGPointMake(annotation.position.x - delta.x, annotation.position.y - delta.y);
+
+    annotation.coordinate = [mapView pixelToCoordinate:screenPosition];
+    annotation.position = screenPosition;
+}
+
+- (void)mapView:(RMMapView *)map didEndDragAnnotation:(RMAnnotation *)annotation
+{
+    NSLog(@"Did end dragging marker, new location: {%f,%f}", annotation.coordinate.latitude, annotation.coordinate.longitude);
+}
+
+- (void)tapOnLabelForAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map
+{
+    if ([annotation.annotationType isEqualToString:kDraggableAnnotationType])
+    {
+        NSLog(@"Label <%@> tapped for marker <%@>",  ((RMMarker *)annotation.layer).label, (RMMarker *)annotation.layer);
+        [(RMMarker *)annotation.layer changeLabelUsingText:[NSString stringWithFormat:@"Drag me! Tap me! (%d)", ++tapCount]];
+    }
+}
+
+- (void)singleTapOnMap:(RMMapView *)map at:(CGPoint)point
+{
+	NSLog(@"Clicked on Map - Location: X:%lf Y:%lf", point.x, point.y);
+}
+
 - (void)tapOnAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map
 {
     if ([annotation.annotationType isEqualToString:kRMClusterAnnotationTypeName])
+    {
         [map zoomInToNextNativeZoomAt:[map coordinateToPixel:annotation.coordinate] animated:YES];
+    }
+    else if ([annotation.annotationType isEqualToString:kDraggableAnnotationType])
+    {
+        NSLog(@"MARKER TAPPED!");
+
+        if (!tapped)
+        {
+            annotation.annotationIcon = [UIImage imageNamed:@"marker-red.png"];
+            [(RMMarker *)annotation.layer replaceUIImage:annotation.annotationIcon anchorPoint:annotation.anchorPoint];
+            [(RMMarker *)annotation.layer changeLabelUsingText:@"Hello"];
+            tapped = YES;
+        }
+        else
+        {
+            annotation.annotationIcon = [UIImage imageNamed:@"marker-blue.png"];
+            [(RMMarker *)annotation.layer replaceUIImage:annotation.annotationIcon anchorPoint:annotation.anchorPoint];
+            [(RMMarker *)annotation.layer changeLabelUsingText:@"World"];
+            tapped = NO;
+        }
+    }
 }
 
 - (RMMapLayer *)mapView:(RMMapView *)aMapView layerForAnnotation:(RMAnnotation *)annotation
@@ -221,6 +311,7 @@
     if ([annotation.annotationType isEqualToString:kRMClusterAnnotationTypeName])
     {
         marker = [[[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"marker-blue.png"] anchorPoint:CGPointMake(0.5, 1.0)] autorelease];
+
         if (annotation.title)
             [(RMMarker *)marker changeLabelUsingText:annotation.title];
     }
@@ -232,8 +323,15 @@
     else
     {
         marker = [[[RMMarker alloc] initWithUIImage:annotation.annotationIcon anchorPoint:annotation.anchorPoint] autorelease];
+
         if (annotation.title)
             [(RMMarker *)marker changeLabelUsingText:annotation.title];
+
+        if ([annotation.userInfo objectForKey:@"foregroundColor"])
+            [(RMMarker *)marker setTextForegroundColor:[annotation.userInfo objectForKey:@"foregroundColor"]];
+
+        if ([annotation.annotationType isEqualToString:kDraggableAnnotationType])
+            marker.enableDragging = YES;
     }
 
     return marker;
