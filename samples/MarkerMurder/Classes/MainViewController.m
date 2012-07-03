@@ -260,7 +260,10 @@
 
 - (void)mapView:(RMMapView *)map didEndDragAnnotation:(RMAnnotation *)annotation
 {
-    NSLog(@"Did end dragging marker, new location: {%f,%f}", annotation.coordinate.latitude, annotation.coordinate.longitude);
+    RMProjectedPoint projectedPoint = annotation.projectedLocation;
+    CGPoint screenPoint = annotation.position;
+
+    NSLog(@"Did end dragging marker, screen: {%.0f,%.0f}, projected: {%f,%f}, coordinate: {%f,%f}", screenPoint.x, screenPoint.y, projectedPoint.x, projectedPoint.y, annotation.coordinate.latitude, annotation.coordinate.longitude);
 }
 
 - (void)tapOnLabelForAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map
@@ -274,7 +277,10 @@
 
 - (void)singleTapOnMap:(RMMapView *)map at:(CGPoint)point
 {
-	NSLog(@"Clicked on Map - Location: X:%lf Y:%lf", point.x, point.y);
+    RMProjectedPoint projectedPoint = [map pixelToProjectedPoint:point];
+    CLLocationCoordinate2D coordinates =  [map pixelToCoordinate:point];
+
+	NSLog(@"Clicked on Map - Location: x:%lf y:%lf, Projected east:%f north:%f, Coordinate lat:%f lon:%f", point.x, point.y, projectedPoint.x, projectedPoint.y, coordinates.latitude, coordinates.longitude);
 }
 
 - (void)tapOnAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map
