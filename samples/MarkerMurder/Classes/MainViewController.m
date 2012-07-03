@@ -16,6 +16,7 @@
 #import "RMProjection.h"
 #import "RMAnnotation.h"
 #import "RMQuadTree.h"
+#import "RMCoordinateGridSource.h"
 
 @implementation MainViewController
 {
@@ -98,6 +99,7 @@
 //    mapView.enableDragging = YES;
 //    mapView.debugTiles = YES;
 //    [mapView setConstraintsSouthWest:CLLocationCoordinate2DMake(47.0, 10.0) northEast:CLLocationCoordinate2DMake(48.0, 11.0)];
+//    [mapView addTileSource:[[[RMCoordinateGridSource alloc] init] autorelease]];
 
     UIImage *clusterMarkerImage = [UIImage imageNamed:@"marker-blue.png"];
     mapView.clusterMarkerSize = clusterMarkerImage.size;
