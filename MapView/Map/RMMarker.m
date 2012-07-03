@@ -116,6 +116,23 @@
     }
 }
 
+- (void)setTextBackgroundColor:(UIColor *)newTextBackgroundColor
+{
+    [textBackgroundColor autorelease];
+    textBackgroundColor = [newTextBackgroundColor retain];
+
+    self.label.backgroundColor = textBackgroundColor;
+}
+
+- (void)setTextForegroundColor:(UIColor *)newTextForegroundColor
+{
+    [textForegroundColor autorelease];
+    textForegroundColor = [newTextForegroundColor retain];
+
+    if ([self.label respondsToSelector:@selector(setTextColor:)])
+        ((UILabel *)self.label).textColor = textForegroundColor;
+}
+
 - (void)changeLabelUsingText:(NSString *)text
 {
     CGPoint position = CGPointMake([self bounds].size.width / 2 - [text sizeWithFont:[RMMarker defaultFont]].width / 2, 4);
