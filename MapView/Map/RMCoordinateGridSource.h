@@ -43,6 +43,7 @@ typedef enum : short {
 
 @property (nonatomic, retain) UIColor *gridColor;
 @property (nonatomic, assign) CGFloat  gridLineWidth;
+@property (nonatomic, assign) NSUInteger gridLabelInterval;
 
 @property (nonatomic, retain) UIColor *minorLabelColor;
 @property (nonatomic, retain) UIFont  *minorLabelFont;

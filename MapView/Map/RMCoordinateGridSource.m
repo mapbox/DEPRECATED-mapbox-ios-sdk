@@ -80,6 +80,7 @@ static double coordinateGridSpacingDecimal[19] = {
 
 @synthesize gridColor = _gridColor;
 @synthesize gridLineWidth = _gridLineWidth;
+@synthesize gridLabelInterval = _gridLabelInterval;
 @synthesize gridMode = _labelingMode;
 @synthesize minorLabelColor = _minorLabelColor;
 @synthesize minorLabelFont = _minorLabelFont;
@@ -96,6 +97,7 @@ static double coordinateGridSpacingDecimal[19] = {
 
     self.gridColor = [UIColor colorWithWhite:0.1 alpha:0.6];
     self.gridLineWidth = 2.0;
+    self.gridLabelInterval = 1;
 
     self.gridMode = GridModeGeographicDecimal;
     self.minorLabelColor = self.majorLabelColor = [UIColor colorWithWhite:0.1 alpha:0.6];
@@ -195,6 +197,9 @@ static double coordinateGridSpacingDecimal[19] = {
 
     for (double row = top; row >= bottom; row -= gridSpacing)
     {
+        if (self.gridLabelInterval > 1 && fmod(round(row / gridSpacing), (double)self.gridLabelInterval) != 0)
+            continue;
+
         CGFloat yCoordinate = paddedTileSideLength - (((row - southWest.latitude) / coordinatesLatitudeSpan) * paddedTileSideLength);
 
         for (double column = (left - (gridSpacing/2.0)); column <= (right + (gridSpacing / 2.0)); column += gridSpacing)
@@ -244,6 +249,9 @@ static double coordinateGridSpacingDecimal[19] = {
 
     for (double column=left; column<=right; column += gridSpacing)
     {
+        if (self.gridLabelInterval > 1 && fmod(round(column / gridSpacing), (double)self.gridLabelInterval) != 0)
+            continue;
+
         CGFloat xCoordinate = ((column - southWest.longitude) / coordinatesLongitudeSpan) * paddedTileSideLength;
 
         for (double row = (top + (gridSpacing/2.0)); row >= (bottom - (gridSpacing/2.0)); row -= gridSpacing)
