@@ -17,6 +17,7 @@
 #import "RMAnnotation.h"
 #import "RMQuadTree.h"
 #import "RMCoordinateGridSource.h"
+#import "RMOpenCycleMapSource.h"
 
 @implementation MainViewController
 {
@@ -170,16 +171,21 @@
 
 //    double delayInSeconds = 5.0;
 //    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-//    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-//        [mapView addTileSource:[[[RMOpenSeaMapLayer alloc] init] autorelease]];
+//    dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
+//        [mapView addTileSource:[[[RMCoordinateGridSource alloc] init] autorelease]];
 //
 //        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-//        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+//        dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
 //            [mapView setHidden:YES forTileSourceAtIndex:1];
 //
 //            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-//            dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+//            dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
 //                [mapView setHidden:NO forTileSourceAtIndex:1];
+//
+//                dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+//                dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
+//                    [mapView removeTileSourceAtIndex:1];
+//                });
 //            });
 //        });
 //    });
