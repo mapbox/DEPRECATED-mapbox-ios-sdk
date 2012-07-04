@@ -137,7 +137,7 @@
     [super dealloc];
 }
 
-- (NSArray *)annotationss
+- (NSArray *)annotations
 {
     NSArray *immutableAnnotations = nil;
 
