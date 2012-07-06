@@ -11,10 +11,10 @@ Major differences from [Alpstein fork of Route-Me](https://github.com/Alpstein/r
 
  * Canonical source for [MapBox](http://mapbox.com) & [MBTiles](http://mbtiles.org) tile source integration code
  * [UTFGrid interactivity](http://mapbox.com/mbtiles-spec/utfgrid/)
- * [Composited tile sources](https://github.com/mapbox/mapbox-ios-sdk/blob/develop/MapView/Map/RMCompositeSource.h)
- * [Use location services](http://mapbox.com/blog/ios-user-location-services/)
+ * [User location services](http://mapbox.com/blog/ios-user-location-services/)
  * Removal of two-finger double-tap gesture for zoom out (to speed up two-finger single-tap recognition like MapKit)
  * Different default starting location for maps
+ * Prepackaged framework (see #24)
 
 [mapbox]: http://mapbox.com
 
@@ -38,6 +38,8 @@ Please note that you are responsible for getting permission to use the map data,
 
 Installing
 ----------
+
+**New:** Try the [prepackaged framework](https://github.com/mapbox/mapbox-ios-sdk/downloads). Use like regular frameworks, linking it in your project, adding `#import <MapBox/MapBox.h>`, and additionally, including the `-ObjC` linker flag. 
 
 As the SDK is undergoing some significant changes, the recommended course of action is to clone a copy of the repository:
 
