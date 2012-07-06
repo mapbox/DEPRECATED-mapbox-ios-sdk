@@ -1,7 +1,7 @@
 //
 //  RMNofications.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,5 +25,5 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-static NSString * const RMSuspendNetworkOperations = @"RMSuspendNetworkOperations";
-static NSString * const RMResumeNetworkOperations = @"RMResumeNetworkOperations";
+static const NSString *RMSuspendNetworkOperations = @"RMSuspendNetworkOperations";
+static const NSString *RMResumeNetworkOperations = @"RMResumeNetworkOperations";

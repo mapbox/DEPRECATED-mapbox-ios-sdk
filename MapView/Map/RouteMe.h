@@ -32,8 +32,7 @@
 
 #import "RMMapView.h"
 #import "RMProjection.h"
-#import "RMTileLoader.h"
 #import "RMTileSource.h"
-#import "RMAbstractMercatorWebSource.h"
+#import "RMAbstractWebMapSource.h"
 
 #import "NSUserDefaults+RouteMe.h"

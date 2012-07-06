@@ -1411,7 +1411,30 @@
     [self setZoom:[self zoom]]; // setZoom clamps zoom level to min/max limits
 
     // Recreate the map layer
-    [self createMapView];
+    NSUInteger tileSourcesContainerSize = [[_tileSourcesContainer tileSources] count];
+
+    if (tileSourcesContainerSize == 1)
+    {
+        [self createMapView];
+    }
+    else
+    {
+        int tileSideLength = [_tileSourcesContainer tileSideLength];
+        CGSize contentSize = CGSizeMake(tileSideLength, tileSideLength); // zoom level 1
+
+        RMMapTiledLayerView *tiledLayerView = [[RMMapTiledLayerView alloc] initWithFrame:CGRectMake(0.0, 0.0, contentSize.width, contentSize.height) mapView:self forTileSource:newTileSource];
+        tiledLayerView.delegate = self;
+
+        if (self.adjustTilesForRetinaDisplay && _screenScale > 1.0)
+            ((CATiledLayer *)tiledLayerView.layer).tileSize = CGSizeMake(tileSideLength * 2.0, tileSideLength * 2.0);
+        else
+            ((CATiledLayer *)tiledLayerView.layer).tileSize = CGSizeMake(tileSideLength, tileSideLength);
+
+        if (index >= [[_tileSourcesContainer tileSources] count])
+            [_tiledLayersSuperview addSubview:tiledLayerView];
+        else
+            [_tiledLayersSuperview insertSubview:tiledLayerView atIndex:index];
+    }
 
     [self setCenterProjectedPoint:centerPoint animated:NO];
 }
@@ -1429,8 +1452,20 @@
         _constrainMovement = NO;
     }
 
-    // Recreate the map layer
-    [self createMapView];
+    // Remove the map layer
+    RMMapTiledLayerView *tileSourceTiledLayerView = nil;
+
+    for (RMMapTiledLayerView *tiledLayerView in _tiledLayersSuperview.subviews)
+    {
+        if (tiledLayerView.tileSource == tileSource)
+        {
+            tileSourceTiledLayerView = tiledLayerView;
+            break;
+        }
+    }
+
+    tileSourceTiledLayerView.layer.contents = nil;
+    [tileSourceTiledLayerView removeFromSuperview]; [tileSourceTiledLayerView release]; tileSourceTiledLayerView = nil;
 
     [self setCenterProjectedPoint:centerPoint animated:NO];
 }
@@ -1448,20 +1483,29 @@
         _constrainMovement = NO;
     }
 
-    // Recreate the map layer
-    [self createMapView];
+    // Remove the map layer
+    RMMapTiledLayerView *tileSourceTiledLayerView = [_tiledLayersSuperview.subviews objectAtIndex:index];
+
+    tileSourceTiledLayerView.layer.contents = nil;
+    [tileSourceTiledLayerView removeFromSuperview]; [tileSourceTiledLayerView release]; tileSourceTiledLayerView = nil;
 
     [self setCenterProjectedPoint:centerPoint animated:NO];
 }
 
 - (void)moveTileSourceAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
 {
+    if (fromIndex == toIndex)
+        return;
+
+    if (fromIndex >= [[_tileSourcesContainer tileSources] count])
+        return;
+
     RMProjectedPoint centerPoint = [self centerProjectedPoint];
 
     [_tileSourcesContainer moveTileSourceAtIndex:fromIndex toIndex:toIndex];
 
-    // Recreate the map layer
-    [self createMapView];
+    // Move the map layer
+    [_tiledLayersSuperview exchangeSubviewAtIndex:fromIndex withSubviewAtIndex:toIndex];
 
     [self setCenterProjectedPoint:centerPoint animated:NO];
 }
@@ -1784,6 +1828,35 @@
 	returnTile.zoom = tileZoom;
 
 	return returnTile;
+}
+
+- (RMSphericalTrapezium)latitudeLongitudeBoundingBoxForTile:(RMTile)aTile
+{
+    RMProjectedRect planetBounds = _projection.planetBounds;
+
+    double scale = (1<<aTile.zoom);
+    double tileSideLength = [_tileSourcesContainer tileSideLength];
+    double tileMetersPerPixel = planetBounds.size.width / (tileSideLength * scale);
+
+    CGPoint bottomLeft = CGPointMake(aTile.x * tileSideLength, (scale - aTile.y - 1) * tileSideLength);
+
+    RMProjectedRect normalizedProjectedRect;
+    normalizedProjectedRect.origin.x = (bottomLeft.x * tileMetersPerPixel) - fabs(planetBounds.origin.x);
+    normalizedProjectedRect.origin.y = (bottomLeft.y * tileMetersPerPixel) - fabs(planetBounds.origin.y);
+    normalizedProjectedRect.size.width = tileSideLength * tileMetersPerPixel;
+    normalizedProjectedRect.size.height = tileSideLength * tileMetersPerPixel;
+
+    RMSphericalTrapezium boundingBox;
+    boundingBox.southWest = [self projectedPointToCoordinate:
+                             RMProjectedPointMake(normalizedProjectedRect.origin.x,
+                                                  normalizedProjectedRect.origin.y)];
+    boundingBox.northEast = [self projectedPointToCoordinate:
+                             RMProjectedPointMake(normalizedProjectedRect.origin.x + normalizedProjectedRect.size.width,
+                                                  normalizedProjectedRect.origin.y + normalizedProjectedRect.size.height)];
+
+//    RMLog(@"Bounding box for tile (%d,%d) at zoom %d: {%f,%f} {%f,%f)", aTile.x, aTile.y, aTile.zoom, boundingBox.southWest.longitude, boundingBox.southWest.latitude, boundingBox.northEast.longitude, boundingBox.northEast.latitude);
+
+    return boundingBox;
 }
 
 #pragma mark -

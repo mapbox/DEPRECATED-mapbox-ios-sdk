@@ -21,12 +21,13 @@
 
 @implementation RMMapTiledLayerView
 {
-    RMMapView *mapView;
-    id <RMTileSource> tileSource;
+    RMMapView *_mapView;
+    id <RMTileSource> _tileSource;
 }
 
-@synthesize delegate;
-@synthesize useSnapshotRenderer;
+@synthesize delegate = _delegate;
+@synthesize useSnapshotRenderer = _useSnapshotRenderer;
+@synthesize tileSource = _tileSource;
 
 + (Class)layerClass
 {
@@ -43,8 +44,8 @@
     if (!(self = [super initWithFrame:frame]))
         return nil;
 
-    mapView = [aMapView retain];
-    tileSource = [aTileSource retain];
+    _mapView = [aMapView retain];
+    _tileSource = [aTileSource retain];
 
     self.userInteractionEnabled = YES;
     self.multipleTouchEnabled = YES;
@@ -53,8 +54,8 @@
     self.useSnapshotRenderer = NO;
 
     CATiledLayer *tiledLayer = [self tiledLayer];
-    size_t levelsOf2xMagnification = mapView.tileSourcesContainer.maxZoom;
-    if (mapView.adjustTilesForRetinaDisplay) levelsOf2xMagnification += 1;
+    size_t levelsOf2xMagnification = _mapView.tileSourcesContainer.maxZoom;
+    if (_mapView.adjustTilesForRetinaDisplay) levelsOf2xMagnification += 1;
     tiledLayer.levelsOfDetail = levelsOf2xMagnification;
     tiledLayer.levelsOfDetailBias = levelsOf2xMagnification;
 
@@ -85,10 +86,10 @@
 
 - (void)dealloc
 {
-    [tileSource cancelAllDownloads];
+    [_tileSource cancelAllDownloads];
     self.layer.contents = nil;
-    [tileSource release]; tileSource = nil;
-    [mapView release]; mapView = nil;
+    [_tileSource release]; _tileSource = nil;
+    [_mapView release]; _mapView = nil;
     [super dealloc];
 }
 
@@ -109,7 +110,7 @@
 
     if (self.useSnapshotRenderer)
     {
-        zoom = (short)ceilf(mapView.adjustedZoomForRetinaDisplay);
+        zoom = (short)ceilf(_mapView.adjustedZoomForRetinaDisplay);
         CGFloat rectSize = bounds.size.width / powf(2.0, (float)zoom);
 
         int x1 = floor(rect.origin.x / rectSize),
@@ -119,7 +120,7 @@
 
 //        NSLog(@"Tiles from x1:%d, y1:%d to x2:%d, y2:%d @ zoom %d", x1, y1, x2, y2, zoom);
 
-        if (zoom >= tileSource.minZoom && zoom <= tileSource.maxZoom)
+        if (zoom >= _tileSource.minZoom && zoom <= _tileSource.maxZoom)
         {
             UIGraphicsPushContext(context);
 
@@ -127,7 +128,7 @@
             {
                 for (int y=y1; y<=y2; ++y)
                 {
-                    UIImage *tileImage = [tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[mapView tileCache]];
+                    UIImage *tileImage = [_tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[_mapView tileCache]];
                     [tileImage drawInRect:CGRectMake(x * rectSize, y * rectSize, rectSize, rectSize)];
                 }
             }
@@ -146,12 +147,12 @@
 
         UIImage *tileImage = nil;
 
-        if (zoom >= tileSource.minZoom && zoom <= tileSource.maxZoom)
-            tileImage = [tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[mapView tileCache]];
+        if (zoom >= _tileSource.minZoom && zoom <= _tileSource.maxZoom)
+            tileImage = [_tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[_mapView tileCache]];
 
         if ( ! tileImage)
         {
-            if (mapView.missingTilesDepth == 0)
+            if (_mapView.missingTilesDepth == 0)
             {
                 tileImage = [RMTileImage errorTile];
             }
@@ -160,14 +161,14 @@
                 NSUInteger currentTileDepth = 1, currentZoom = zoom - currentTileDepth;
 
                 // tries to return lower zoom level tiles if a tile cannot be found
-                while ( !tileImage && currentZoom >= tileSource.minZoom && currentTileDepth <= mapView.missingTilesDepth)
+                while ( !tileImage && currentZoom >= _tileSource.minZoom && currentTileDepth <= _mapView.missingTilesDepth)
                 {
                     float nextX = x / powf(2.0, (float)currentTileDepth),
                           nextY = y / powf(2.0, (float)currentTileDepth);
                     float nextTileX = floor(nextX),
                           nextTileY = floor(nextY);
 
-                    tileImage = [tileSource imageForTile:RMTileMake((int)nextTileX, (int)nextTileY, currentZoom) inCache:[mapView tileCache]];
+                    tileImage = [_tileSource imageForTile:RMTileMake((int)nextTileX, (int)nextTileY, currentZoom) inCache:[_mapView tileCache]];
 
                     if (tileImage)
                     {
@@ -192,7 +193,7 @@
             }
         }
 
-        if (mapView.debugTiles)
+        if (_mapView.debugTiles)
         {
             UIGraphicsBeginImageContext(tileImage.size);
 
@@ -202,26 +203,25 @@
 
             [tileImage drawInRect:debugRect];
 
-            CGColorRef color = CGColorCreateCopyWithAlpha([[UIColor redColor] CGColor], 0.25);
+            UIFont *font = [UIFont systemFontOfSize:32.0];
 
-            UIFont *font = [UIFont systemFontOfSize:36.0];
-
-            CGContextSetStrokeColorWithColor(debugContext, color);
-            CGContextSetLineWidth(debugContext, 5.0);
+            CGContextSetStrokeColorWithColor(debugContext, [UIColor whiteColor].CGColor);
+            CGContextSetLineWidth(debugContext, 2.0);
+            CGContextSetShadowWithColor(debugContext, CGSizeMake(0.0, 0.0), 5.0, [UIColor blackColor].CGColor);
 
             CGContextStrokeRect(debugContext, debugRect);
 
-            CGContextSetFillColorWithColor(debugContext, color);
+            CGContextSetFillColorWithColor(debugContext, [UIColor whiteColor].CGColor);
 
-            NSString *debugString = [NSString stringWithFormat:@"%i,%i,%i", zoom, x, y];
+            NSString *debugString = [NSString stringWithFormat:@"Zoom %d", zoom];
+            CGSize debugSize1 = [debugString sizeWithFont:font];
+            [debugString drawInRect:CGRectMake(5.0, 5.0, debugSize1.width, debugSize1.height) withFont:font];
 
-            CGSize debugSize = [debugString sizeWithFont:font];
-
-            [debugString drawInRect:CGRectMake(5.0, 5.0, debugSize.width, debugSize.height) withFont:font];
+            debugString = [NSString stringWithFormat:@"(%d, %d)", x, y];
+            CGSize debugSize2 = [debugString sizeWithFont:font];
+            [debugString drawInRect:CGRectMake(5.0, 5.0 + debugSize1.height + 5.0, debugSize2.width, debugSize2.height) withFont:font];
 
             tileImage = UIGraphicsGetImageFromCurrentImageContext();
-
-            CFRelease(color);
 
             UIGraphicsEndImageContext();
         }
@@ -239,34 +239,34 @@
 
 - (void)handleSingleTap:(UIGestureRecognizer *)recognizer
 {
-    if ([delegate respondsToSelector:@selector(mapTiledLayerView:singleTapAtPoint:)])
-        [delegate mapTiledLayerView:self singleTapAtPoint:[recognizer locationInView:mapView]];
+    if ([_delegate respondsToSelector:@selector(mapTiledLayerView:singleTapAtPoint:)])
+        [_delegate mapTiledLayerView:self singleTapAtPoint:[recognizer locationInView:_mapView]];
 }
 
 - (void)handleTwoFingerSingleTap:(UIGestureRecognizer *)recognizer
 {
-    if ([delegate respondsToSelector:@selector(mapTiledLayerView:twoFingerSingleTapAtPoint:)])
-        [delegate mapTiledLayerView:self twoFingerSingleTapAtPoint:[recognizer locationInView:mapView]];
+    if ([_delegate respondsToSelector:@selector(mapTiledLayerView:twoFingerSingleTapAtPoint:)])
+        [_delegate mapTiledLayerView:self twoFingerSingleTapAtPoint:[recognizer locationInView:_mapView]];
 }
 
 - (void)handleLongPress:(UILongPressGestureRecognizer *)recognizer
 {
     if (recognizer.state != UIGestureRecognizerStateBegan) return;
 
-    if ([delegate respondsToSelector:@selector(mapTiledLayerView:longPressAtPoint:)])
-        [delegate mapTiledLayerView:self longPressAtPoint:[recognizer locationInView:mapView]];
+    if ([_delegate respondsToSelector:@selector(mapTiledLayerView:longPressAtPoint:)])
+        [_delegate mapTiledLayerView:self longPressAtPoint:[recognizer locationInView:_mapView]];
 }
 
 - (void)handleDoubleTap:(UIGestureRecognizer *)recognizer
 {
-    if ([delegate respondsToSelector:@selector(mapTiledLayerView:doubleTapAtPoint:)])
-        [delegate mapTiledLayerView:self doubleTapAtPoint:[recognizer locationInView:mapView]];
+    if ([_delegate respondsToSelector:@selector(mapTiledLayerView:doubleTapAtPoint:)])
+        [_delegate mapTiledLayerView:self doubleTapAtPoint:[recognizer locationInView:_mapView]];
 }
 
 - (void)handleTwoFingerDoubleTap:(UIGestureRecognizer *)recognizer
 {
-    if ([delegate respondsToSelector:@selector(mapTiledLayerView:twoFingerDoubleTapAtPoint:)])
-        [delegate mapTiledLayerView:self twoFingerDoubleTapAtPoint:[recognizer locationInView:mapView]];
+    if ([_delegate respondsToSelector:@selector(mapTiledLayerView:twoFingerDoubleTapAtPoint:)])
+        [_delegate mapTiledLayerView:self twoFingerDoubleTapAtPoint:[recognizer locationInView:_mapView]];
 }
 
 @end

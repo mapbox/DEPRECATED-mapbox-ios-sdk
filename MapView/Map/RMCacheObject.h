@@ -28,13 +28,6 @@
 #import "RMTile.h"
 
 @interface RMCacheObject : NSObject
-{
-    id cachedObject;
-    NSString *cacheKey;
-
-    RMTile tile;
-    NSDate *timestamp;
-}
 
 @property (nonatomic, readonly) id cachedObject;
 @property (nonatomic, readonly) NSString *cacheKey;

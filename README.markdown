@@ -65,10 +65,14 @@ Major changes in this fork (Alpstein/route-me)
 
 * Support for tile sources with multiple layers (e.g. OpenSeaMap)
 
+* Support for multiple tile sources on the map
+
 * Numerous performance improvements
 
 * Markers have been refactored into a MKMapView-like system, with annotations and on-demand markers
 
 * Automatic annotation clustering
+
+* Snapshots from the map
 
 * Requires at least iOS 4.0

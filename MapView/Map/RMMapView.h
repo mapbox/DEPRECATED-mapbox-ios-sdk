@@ -230,4 +230,6 @@ typedef enum : NSUInteger {
 - (CLLocationCoordinate2D)normalizeCoordinate:(CLLocationCoordinate2D)coordinate;
 - (RMTile)tileWithCoordinate:(CLLocationCoordinate2D)coordinate andZoom:(int)zoom;
 
+- (RMSphericalTrapezium)latitudeLongitudeBoundingBoxForTile:(RMTile)aTile;
+
 @end

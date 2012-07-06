@@ -1,7 +1,7 @@
 //
 //  RMMarker.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -114,6 +114,23 @@
         label = [aView retain];
         [self addSublayer:[label layer]];
     }
+}
+
+- (void)setTextBackgroundColor:(UIColor *)newTextBackgroundColor
+{
+    [textBackgroundColor autorelease];
+    textBackgroundColor = [newTextBackgroundColor retain];
+
+    self.label.backgroundColor = textBackgroundColor;
+}
+
+- (void)setTextForegroundColor:(UIColor *)newTextForegroundColor
+{
+    [textForegroundColor autorelease];
+    textForegroundColor = [newTextForegroundColor retain];
+
+    if ([self.label respondsToSelector:@selector(setTextColor:)])
+        ((UILabel *)self.label).textColor = textForegroundColor;
 }
 
 - (void)changeLabelUsingText:(NSString *)text
