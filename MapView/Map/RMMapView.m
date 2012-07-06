@@ -1532,6 +1532,31 @@
     ((RMMapTiledLayerView *)[_tiledLayersSuperview.subviews objectAtIndex:index]).hidden = isHidden;
 }
 
+- (void)reloadTileSource:(id <RMTileSource>)tileSource
+{
+    // Reload the map layer
+    for (RMMapTiledLayerView *tiledLayerView in _tiledLayersSuperview.subviews)
+    {
+        if (tiledLayerView.tileSource == tileSource)
+        {
+//            tiledLayerView.layer.contents = nil;
+            [tiledLayerView setNeedsDisplay];
+            break;
+        }
+    }
+}
+
+- (void)reloadTileSourceAtIndex:(NSUInteger)index
+{
+    if (index >= [_tiledLayersSuperview.subviews count])
+        return;
+
+    // Reload the map layer
+    RMMapTiledLayerView *tiledLayerView = [_tiledLayersSuperview.subviews objectAtIndex:index];
+//    tiledLayerView.layer.contents = nil;
+    [tiledLayerView setNeedsDisplay];
+}
+
 #pragma mark - Properties
 
 - (UIView *)backgroundView
