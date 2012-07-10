@@ -14,7 +14,7 @@ Major differences from [Alpstein fork of Route-Me](https://github.com/Alpstein/r
  * [User location services](http://mapbox.com/blog/ios-user-location-services/)
  * Removal of two-finger double-tap gesture for zoom out (to speed up two-finger single-tap recognition like MapKit)
  * Different default starting location for maps
- * Prepackaged framework (see #24)
+ * Prepackaged framework (see [#24](https://github.com/mapbox/mapbox-ios-sdk/issues/24))
 
 [mapbox]: http://mapbox.com
 
