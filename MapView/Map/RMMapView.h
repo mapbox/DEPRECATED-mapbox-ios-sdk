@@ -168,6 +168,7 @@ typedef enum : NSUInteger {
 #pragma mark - Annotations
 
 @property (nonatomic, readonly) NSArray *annotations;
+@property (nonatomic, readonly) NSArray *visibleAnnotations;
 
 - (void)addAnnotation:(RMAnnotation *)annotation;
 - (void)addAnnotations:(NSArray *)annotations;

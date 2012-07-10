@@ -2103,6 +2103,11 @@
     return [_annotations allObjects];
 }
 
+- (NSArray *)visibleAnnotations
+{
+    return [_visibleAnnotations allObjects];
+}
+
 - (void)addAnnotation:(RMAnnotation *)annotation
 {
     @synchronized (_annotations)
