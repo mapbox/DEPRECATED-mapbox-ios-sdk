@@ -173,6 +173,11 @@
     return [self isAnnotationWithinBounds:screenBounds];
 }
 
+- (BOOL)isAnnotationVisibleOnScreen
+{
+    return (layer != nil);
+}
+
 #pragma mark -
 
 - (void)setBoundingBoxCoordinatesSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast
