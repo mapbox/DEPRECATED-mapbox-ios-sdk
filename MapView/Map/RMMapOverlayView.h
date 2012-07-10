@@ -8,28 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@class RMMapOverlayView, RMAnnotation;
-
-@protocol RMMapOverlayViewDelegate <NSObject>
-@optional
-
-- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView tapOnAnnotation:(RMAnnotation *)anAnnotation atPoint:(CGPoint)aPoint;
-- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView doubleTapOnAnnotation:(RMAnnotation *)anAnnotation atPoint:(CGPoint)aPoint;
-- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView tapOnLabelForAnnotation:(RMAnnotation *)anAnnotation atPoint:(CGPoint)aPoint;
-- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView doubleTapOnLabelForAnnotation:(RMAnnotation *)anAnnotation atPoint:(CGPoint)aPoint;
-
-- (BOOL)mapOverlayView:(RMMapOverlayView *)aMapOverlayView shouldDragAnnotation:(RMAnnotation *)anAnnotation;
-- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView didDragAnnotation:(RMAnnotation *)anAnnotation withDelta:(CGPoint)delta;
-- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView didEndDragAnnotation:(RMAnnotation *)anAnnotation;
-
-@end
+@class RMAnnotation;
 
 @interface RMMapOverlayView : UIView
-{
-    id <RMMapOverlayViewDelegate> delegate;
-}
-
-@property (nonatomic, assign) id <RMMapOverlayViewDelegate> delegate;
 
 - (unsigned)sublayersCount;
 

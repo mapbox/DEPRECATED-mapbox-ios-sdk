@@ -12,20 +12,12 @@
 #import "RMTileSource.h"
 #import "RMTileImage.h"
 
-@interface RMMapOverlayView ()
-
-- (void)handleDoubleTap:(UIGestureRecognizer *)recognizer;
-- (void)handleTwoFingerDoubleTap:(UIGestureRecognizer *)recognizer;
-
-@end
-
 @implementation RMMapTiledLayerView
 {
     RMMapView *_mapView;
     id <RMTileSource> _tileSource;
 }
 
-@synthesize delegate = _delegate;
 @synthesize useSnapshotRenderer = _useSnapshotRenderer;
 @synthesize tileSource = _tileSource;
 
@@ -44,12 +36,10 @@
     if (!(self = [super initWithFrame:frame]))
         return nil;
 
+    self.opaque = NO;
+
     _mapView = [aMapView retain];
     _tileSource = [aTileSource retain];
-
-    self.userInteractionEnabled = YES;
-    self.multipleTouchEnabled = YES;
-    self.opaque = NO;
 
     self.useSnapshotRenderer = NO;
 
@@ -58,28 +48,6 @@
     if (_mapView.adjustTilesForRetinaDisplay) levelsOf2xMagnification += 1;
     tiledLayer.levelsOfDetail = levelsOf2xMagnification;
     tiledLayer.levelsOfDetailBias = levelsOf2xMagnification;
-
-    UITapGestureRecognizer *doubleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)] autorelease];
-    doubleTapRecognizer.numberOfTapsRequired = 2;
-
-    UITapGestureRecognizer *singleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)] autorelease];
-    [singleTapRecognizer requireGestureRecognizerToFail:doubleTapRecognizer];
-
-    UITapGestureRecognizer *twoFingerDoubleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTwoFingerDoubleTap:)] autorelease];
-    twoFingerDoubleTapRecognizer.numberOfTapsRequired = 2;
-    twoFingerDoubleTapRecognizer.numberOfTouchesRequired = 2;
-
-    UITapGestureRecognizer *twoFingerSingleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTwoFingerSingleTap:)] autorelease];
-    twoFingerSingleTapRecognizer.numberOfTouchesRequired = 2;
-    [twoFingerSingleTapRecognizer requireGestureRecognizerToFail:twoFingerDoubleTapRecognizer];
-
-    UILongPressGestureRecognizer *longPressRecognizer = [[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)] autorelease];
-
-    [self addGestureRecognizer:singleTapRecognizer];
-    [self addGestureRecognizer:doubleTapRecognizer];
-    [self addGestureRecognizer:twoFingerDoubleTapRecognizer];
-    [self addGestureRecognizer:twoFingerSingleTapRecognizer];
-    [self addGestureRecognizer:longPressRecognizer];
 
     return self;
 }
@@ -232,41 +200,6 @@
     }
 
     [pool release]; pool = nil;
-}
-
-#pragma mark -
-#pragma mark Event handling
-
-- (void)handleSingleTap:(UIGestureRecognizer *)recognizer
-{
-    if ([_delegate respondsToSelector:@selector(mapTiledLayerView:singleTapAtPoint:)])
-        [_delegate mapTiledLayerView:self singleTapAtPoint:[recognizer locationInView:_mapView]];
-}
-
-- (void)handleTwoFingerSingleTap:(UIGestureRecognizer *)recognizer
-{
-    if ([_delegate respondsToSelector:@selector(mapTiledLayerView:twoFingerSingleTapAtPoint:)])
-        [_delegate mapTiledLayerView:self twoFingerSingleTapAtPoint:[recognizer locationInView:_mapView]];
-}
-
-- (void)handleLongPress:(UILongPressGestureRecognizer *)recognizer
-{
-    if (recognizer.state != UIGestureRecognizerStateBegan) return;
-
-    if ([_delegate respondsToSelector:@selector(mapTiledLayerView:longPressAtPoint:)])
-        [_delegate mapTiledLayerView:self longPressAtPoint:[recognizer locationInView:_mapView]];
-}
-
-- (void)handleDoubleTap:(UIGestureRecognizer *)recognizer
-{
-    if ([_delegate respondsToSelector:@selector(mapTiledLayerView:doubleTapAtPoint:)])
-        [_delegate mapTiledLayerView:self doubleTapAtPoint:[recognizer locationInView:_mapView]];
-}
-
-- (void)handleTwoFingerDoubleTap:(UIGestureRecognizer *)recognizer
-{
-    if ([_delegate respondsToSelector:@selector(mapTiledLayerView:twoFingerDoubleTapAtPoint:)])
-        [_delegate mapTiledLayerView:self twoFingerDoubleTapAtPoint:[recognizer locationInView:_mapView]];
 }
 
 @end

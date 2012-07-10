@@ -64,8 +64,7 @@ typedef enum : NSUInteger {
 } RMMapDecelerationMode;
 
 
-@interface RMMapView : UIView <UIScrollViewDelegate, RMMapOverlayViewDelegate,
-                               RMMapTiledLayerViewDelegate, RMMapScrollViewDelegate>
+@interface RMMapView : UIView <UIScrollViewDelegate, UIGestureRecognizerDelegate, RMMapScrollViewDelegate>
 
 @property (nonatomic, assign) id <RMMapViewDelegate> delegate;
 
