@@ -75,4 +75,4 @@ Major changes in this fork (Alpstein/route-me)
 
 * Snapshots from the map
 
-* Requires at least iOS 4.0
+* Requires at least iOS 4.0 and Xcode 4.3
