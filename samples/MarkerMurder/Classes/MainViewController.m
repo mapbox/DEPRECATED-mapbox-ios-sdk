@@ -140,6 +140,30 @@
 	center.latitude = 47.5635;
 	center.longitude = 10.20981;
 
+//    int zoneNumber;
+//    BOOL isNorthernHemisphere;
+//    NSString *utmZone;
+//    double easting, northing;
+//
+//    [RMProjection convertCoordinate:center
+//                    toUTMZoneNumber:&zoneNumber
+//                      utmZoneLetter:&utmZone
+//               isNorthernHemisphere:&isNorthernHemisphere
+//                            easting:&easting
+//                           northing:&northing];
+//
+//    NSLog(@"{%f,%f} -> %d%@ %.0f %.0f (north: %@)", center.latitude, center.longitude, zoneNumber, utmZone, easting, northing, isNorthernHemisphere ? @"YES" : @"NO");
+//
+//    CLLocationCoordinate2D coordinate;
+//    [RMProjection convertUTMZoneNumber:zoneNumber
+//                         utmZoneLetter:utmZone
+//                  isNorthernHemisphere:isNorthernHemisphere
+//                               easting:easting
+//                              northing:northing
+//                          toCoordinate:&coordinate];
+//
+//    NSLog(@"-> {%f,%f}", coordinate.latitude, coordinate.longitude);
+
 //    [mapView zoomWithLatitudeLongitudeBoundsSouthWest:CLLocationCoordinate2DMake(47.5, 10.15) northEast:CLLocationCoordinate2DMake(47.6, 10.25) animated:NO];
 
 	[mapView setZoom:10.0];

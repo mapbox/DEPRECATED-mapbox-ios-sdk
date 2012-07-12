@@ -54,4 +54,20 @@
 // forward project latitude/longitude, return meters
 - (RMProjectedPoint)coordinateToProjectedPoint:(CLLocationCoordinate2D)aLatLong;
 
+#pragma mark - UTM conversions
+
++ (void)convertCoordinate:(CLLocationCoordinate2D)coordinate
+          toUTMZoneNumber:(int *)utmZoneNumber
+            utmZoneLetter:(NSString **)utmZoneLetter   // may be NULL
+     isNorthernHemisphere:(BOOL *)isNorthernHemisphere // may be NULL
+                  easting:(double *)easting
+                 northing:(double *)northing;
+
++ (void)convertUTMZoneNumber:(int)utmZoneNumber
+               utmZoneLetter:(NSString *)utmZoneLetter  // #utmZoneLetter will be used for calculations if not nil,
+        isNorthernHemisphere:(BOOL)isNorthernHemisphere // otherwise #isNorthernHemisphere
+                     easting:(double)easting
+                    northing:(double)northing
+                toCoordinate:(CLLocationCoordinate2D *)coordinate;
+
 @end
