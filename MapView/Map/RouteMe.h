@@ -69,3 +69,5 @@
 #import "RMTileImage.h"
 #import "RMTileSource.h"
 #import "RMTileSourcesContainer.h"
+#import "RMUserLocation.h"
+#import "RMUserTrackingBarButtonItem.h"

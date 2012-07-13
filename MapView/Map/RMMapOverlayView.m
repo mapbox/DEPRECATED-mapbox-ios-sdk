@@ -23,7 +23,7 @@
     if (!(self = [super initWithFrame:frame]))
         return nil;
 
-    self.layer.masksToBounds = YES;
+    self.layer.masksToBounds = NO;
 
     return self;
 }

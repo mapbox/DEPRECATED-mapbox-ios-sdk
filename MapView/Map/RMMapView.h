@@ -38,6 +38,10 @@
 #import "RMMapScrollView.h"
 #import "RMTileSourcesContainer.h"
 
+#define kRMUserLocationAnnotationTypeName   @"RMUserLocationAnnotation"
+#define kRMTrackingHaloAnnotationTypeName   @"RMTrackingHaloAnnotation"
+#define kRMAccuracyCircleAnnotationTypeName @"RMAccuracyCircleAnnotation"
+
 @class RMProjection;
 @class RMFractalTileProjection;
 @class RMTileCache;
@@ -47,6 +51,7 @@
 @class RMMarker;
 @class RMAnnotation;
 @class RMQuadTree;
+@class RMUserLocation;
 
 
 // constants for boundingMask
@@ -64,7 +69,7 @@ typedef enum : NSUInteger {
 } RMMapDecelerationMode;
 
 
-@interface RMMapView : UIView <UIScrollViewDelegate, UIGestureRecognizerDelegate, RMMapScrollViewDelegate>
+@interface RMMapView : UIView <UIScrollViewDelegate, UIGestureRecognizerDelegate, RMMapScrollViewDelegate, CLLocationManagerDelegate>
 
 @property (nonatomic, assign) id <RMMapViewDelegate> delegate;
 
@@ -82,6 +87,11 @@ typedef enum : NSUInteger {
 
 @property (nonatomic, assign)   BOOL adjustTilesForRetinaDisplay;
 @property (nonatomic, readonly) float adjustedZoomForRetinaDisplay; // takes adjustTilesForRetinaDisplay and screen scale into account
+
+@property (nonatomic) BOOL showsUserLocation;
+@property (nonatomic, readonly, retain) RMUserLocation *userLocation;
+@property (nonatomic, readonly, getter=isUserLocationVisible) BOOL userLocationVisible;
+@property (nonatomic) RMUserTrackingMode userTrackingMode;
 
 // take missing tiles from lower zoom levels, up to #missingTilesDepth zoom levels (defaults to 0, which disables this feature)
 @property (nonatomic, assign) NSUInteger missingTilesDepth;
@@ -234,5 +244,10 @@ typedef enum : NSUInteger {
 - (RMTile)tileWithCoordinate:(CLLocationCoordinate2D)coordinate andZoom:(int)zoom;
 
 - (RMSphericalTrapezium)latitudeLongitudeBoundingBoxForTile:(RMTile)aTile;
+
+#pragma mark -
+#pragma mark User Location
+
+- (void)setUserTrackingMode:(RMUserTrackingMode)mode animated:(BOOL)animated;
 
 @end
