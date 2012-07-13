@@ -25,6 +25,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+#include <sys/sysctl.h>
+
 #import "RMTileCache.h"
 #import "RMMemoryCache.h"
 #import "RMDatabaseCache.h"
@@ -105,7 +107,7 @@
 {
     if (!(self = [self initWithExpiryPeriod:0]))
         return nil;
-    
+
     return self;
 }
 
@@ -211,13 +213,87 @@
 
 @implementation RMTileCache (Configuration)
 
++ (NSString *)sysctlbyname:(NSString *)name
+{
+	size_t len;
+    sysctlbyname([name UTF8String], NULL, &len, NULL, 0);
+
+    char *sysctlResult = malloc(len);
+	sysctlbyname([name UTF8String], sysctlResult, &len, NULL, 0);
+
+	NSString *result = [NSString stringWithCString:sysctlResult encoding:NSASCIIStringEncoding];
+	free(sysctlResult);
+
+	return result;
+}
+
+- (NSDictionary *)predicateValues
+{
+    NSString *machine = [RMTileCache sysctlbyname:@"hw.machine"];
+
+    NSMutableDictionary *predicateValues = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                            [[UIDevice currentDevice] model], @"model",
+                                            machine, @"machine",
+                                            [[UIDevice currentDevice] systemName], @"systemName",
+                                            [NSNumber numberWithFloat:[[[UIDevice currentDevice] systemVersion] floatValue]], @"systemVersion",
+                                            [NSNumber numberWithInt:[[UIDevice currentDevice] userInterfaceIdiom]], @"userInterfaceIdiom",
+                                            nil];
+
+    if ( ! ([machine isEqualToString:@"i386"] || [machine isEqualToString:@"x86_64"]))
+    {
+        NSNumber *machineNumber = [NSNumber numberWithFloat:[[[machine stringByTrimmingCharactersInSet:[NSCharacterSet letterCharacterSet]] stringByReplacingOccurrencesOfString:@"," withString:@"."] floatValue]];
+
+        if ( ! machineNumber)
+            machineNumber = [NSNumber numberWithFloat:0.0];
+
+        [predicateValues setObject:machineNumber forKey:@"machineNumber"];
+    }
+    else
+    {
+        [predicateValues setObject:[NSNumber numberWithFloat:0.0] forKey:@"machineNumber"];
+    }
+
+    // A predicate might be:
+    // (self.model = 'iPad' and self.machineNumber >= 3) or (self.machine = 'x86_64')
+    // See NSPredicate
+
+//    NSLog(@"Predicate values:\n%@", [predicateValues description]);
+
+    return predicateValues;
+}
+
 - (id <RMTileCache>)memoryCacheWithConfig:(NSDictionary *)cfg
 {
-	NSNumber *capacity = [cfg objectForKey:@"capacity"];
-	if (capacity == nil) 
-        capacity = [NSNumber numberWithInt:32];
-    
-	return [[[RMMemoryCache alloc] initWithCapacity:[capacity intValue]] autorelease];
+    NSUInteger capacity = 32;
+
+	NSNumber *capacityNumber = [cfg objectForKey:@"capacity"];
+	if (capacityNumber != nil)
+        capacity = [capacityNumber unsignedIntegerValue];
+
+    NSArray *predicates = [cfg objectForKey:@"predicates"];
+
+    if (predicates)
+    {
+        NSDictionary *predicateValues = [self predicateValues];
+
+        for (NSDictionary *predicateDescription in predicates)
+        {
+            NSString *predicate = [predicateDescription objectForKey:@"predicate"];
+            if ( ! predicate)
+                continue;
+
+            if ( ! [[NSPredicate predicateWithFormat:predicate] evaluateWithObject:predicateValues])
+                continue;
+
+            capacityNumber = [predicateDescription objectForKey:@"capacity"];
+            if (capacityNumber != nil)
+                capacity = [capacityNumber unsignedIntegerValue];
+        }
+    }
+
+    RMLog(@"Memory cache configuration: {capacity : %d}", capacity);
+
+	return [[[RMMemoryCache alloc] initWithCapacity:capacity] autorelease];
 }
 
 - (id <RMTileCache>)databaseCacheWithConfig:(NSDictionary *)cfg
@@ -228,44 +304,94 @@
     NSUInteger capacity = 1000;
     NSUInteger minimalPurge = capacity / 10;
 
+    // Defaults
+
     NSNumber *capacityNumber = [cfg objectForKey:@"capacity"];
+
     if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad && [cfg objectForKey:@"capacity-ipad"])
+    {
+        NSLog(@"***** WARNING: deprecated config option capacity-ipad, use a predicate instead: -[%@ %@] (line %d)", self, NSStringFromSelector(_cmd), __LINE__);
         capacityNumber = [cfg objectForKey:@"capacity-ipad"];
-
-    if (capacityNumber != nil) {
-        NSInteger value = [capacityNumber intValue];
-
-        // 0 is valid: it means no capacity limit
-        if (value >= 0) {
-            capacity =  value;
-            minimalPurge = MAX(1,capacity / 10);
-        } else
-            RMLog(@"illegal value for capacity: %d", value);
     }
 
     NSString *strategyStr = [cfg objectForKey:@"strategy"];
-    if (strategyStr != nil) {
+    NSNumber *useCacheDirNumber = [cfg objectForKey:@"useCachesDirectory"];
+    NSNumber *minimalPurgeNumber = [cfg objectForKey:@"minimalPurge"];
+    NSNumber *expiryPeriodNumber = [cfg objectForKey:@"expiryPeriod"];
+
+    NSArray *predicates = [cfg objectForKey:@"predicates"];
+
+    if (predicates)
+    {
+        NSDictionary *predicateValues = [self predicateValues];
+
+        for (NSDictionary *predicateDescription in predicates)
+        {
+            NSString *predicate = [predicateDescription objectForKey:@"predicate"];
+            if ( ! predicate)
+                continue;
+
+            if ( ! [[NSPredicate predicateWithFormat:predicate] evaluateWithObject:predicateValues])
+                continue;
+
+            if ([predicateDescription objectForKey:@"capacity"])
+                capacityNumber = [predicateDescription objectForKey:@"capacity"];
+            if ([predicateDescription objectForKey:@"strategy"])
+                strategyStr = [predicateDescription objectForKey:@"strategy"];
+            if ([predicateDescription objectForKey:@"useCachesDirectory"])
+                useCacheDirNumber = [predicateDescription objectForKey:@"useCachesDirectory"];
+            if ([predicateDescription objectForKey:@"minimalPurge"])
+                minimalPurgeNumber = [predicateDescription objectForKey:@"minimalPurge"];
+            if ([predicateDescription objectForKey:@"expiryPeriod"])
+                expiryPeriodNumber = [predicateDescription objectForKey:@"expiryPeriod"];
+        }
+    }
+
+    // Check the values
+
+    if (capacityNumber != nil)
+    {
+        NSInteger value = [capacityNumber intValue];
+
+        // 0 is valid: it means no capacity limit
+        if (value >= 0)
+        {
+            capacity =  value;
+            minimalPurge = MAX(1,capacity / 10);
+        }
+        else
+        {
+            RMLog(@"illegal value for capacity: %d", value);
+        }
+    }
+
+    if (strategyStr != nil)
+    {
         if ([strategyStr caseInsensitiveCompare:@"FIFO"] == NSOrderedSame) strategy = RMCachePurgeStrategyFIFO;
         if ([strategyStr caseInsensitiveCompare:@"LRU"] == NSOrderedSame) strategy = RMCachePurgeStrategyLRU;
     }
+    else
+    {
+        strategyStr = @"FIFO";
+    }
 
-    NSNumber *useCacheDirNumber = [cfg objectForKey:@"useCachesDirectory"];
     if (useCacheDirNumber != nil)
         useCacheDir = [useCacheDirNumber boolValue];
 
-    NSNumber *minimalPurgeNumber = [cfg objectForKey:@"minimalPurge"];
-    if (minimalPurgeNumber != nil && capacity != 0) {
+    if (minimalPurgeNumber != nil && capacity != 0)
+    {
         NSUInteger value = [minimalPurgeNumber unsignedIntValue];
-        if (value > 0 && value<=capacity) {
+
+        if (value > 0 && value<=capacity)
             minimalPurge = value;
-        } else {
+        else
             RMLog(@"minimalPurge must be at least one and at most the cache capacity");
-        }
     }
-    
-    NSNumber *expiryPeriodNumber = [cfg objectForKey:@"expiryPeriod"];
+
     if (expiryPeriodNumber != nil)
-        _expiryPeriod = [expiryPeriodNumber intValue];
+        _expiryPeriod = [expiryPeriodNumber doubleValue];
+
+    RMLog(@"Database cache configuration: {capacity : %d, strategy : %@, minimalPurge : %d, expiryPeriod: %.0f, useCacheDir : %@}", capacity, strategyStr, minimalPurge, _expiryPeriod, useCacheDir ? @"YES" : @"NO");
 
     RMDatabaseCache *dbCache = [[[RMDatabaseCache alloc] initUsingCacheDir:useCacheDir] autorelease];
     [dbCache setCapacity:capacity];

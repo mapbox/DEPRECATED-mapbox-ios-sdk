@@ -149,6 +149,9 @@
 
     BOOL _enableDragging, _enableBouncing;
 
+    CGPoint _lastDraggingTranslation;
+    RMAnnotation *_draggedAnnotation;
+
     CLLocationManager *locationManager;
     RMUserLocation *userLocation;
     BOOL showsUserLocation;
@@ -189,6 +192,9 @@
 {
     _constrainMovement = _enableBouncing = _zoomingInPivotsAroundCenter = NO;
     _enableDragging = YES;
+
+    _lastDraggingTranslation = CGPointZero;
+    _draggedAnnotation = nil;
 
     self.backgroundColor = [UIColor grayColor];
 
@@ -336,6 +342,7 @@
     [self setDelegate:nil];
     [self setBackgroundView:nil];
     [self setQuadTree:nil];
+    [_draggedAnnotation release]; _draggedAnnotation = nil;
     [_annotations release]; _annotations = nil;
     [_visibleAnnotations release]; _visibleAnnotations = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -982,11 +989,11 @@
     _mapScrollView.clipsToBounds = NO;
 
     _tiledLayersSuperview = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, contentSize.width, contentSize.height)];
+    _tiledLayersSuperview.userInteractionEnabled = NO;
 
     for (id <RMTileSource> tileSource in _tileSourcesContainer.tileSources)
     {
         RMMapTiledLayerView *tiledLayerView = [[RMMapTiledLayerView alloc] initWithFrame:CGRectMake(0.0, 0.0, contentSize.width, contentSize.height) mapView:self forTileSource:tileSource];
-        tiledLayerView.delegate = self;
 
         if (self.adjustTilesForRetinaDisplay && _screenScale > 1.0)
             ((CATiledLayer *)tiledLayerView.layer).tileSize = CGSizeMake(tileSideLength * 2.0, tileSideLength * 2.0);
@@ -1007,7 +1014,6 @@
     _mapScrollView.mapScrollViewDelegate = self;
 
     _mapScrollView.zoomScale = exp2f([self zoom]);
-
     [self setDecelerationMode:_decelerationMode];
 
     if (_backgroundView)
@@ -1016,9 +1022,51 @@
         [self insertSubview:_mapScrollView atIndex:0];
 
     _overlayView = [[RMMapOverlayView alloc] initWithFrame:[self bounds]];
-    _overlayView.delegate = self;
+    _overlayView.userInteractionEnabled = NO;
 
     [self insertSubview:_overlayView aboveSubview:_mapScrollView];
+
+    // add gesture recognizers
+
+    // one finger taps
+    UITapGestureRecognizer *doubleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)] autorelease];
+    doubleTapRecognizer.numberOfTouchesRequired = 1;
+    doubleTapRecognizer.numberOfTapsRequired = 2;
+
+    UITapGestureRecognizer *singleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)] autorelease];
+    singleTapRecognizer.numberOfTouchesRequired = 1;
+    [singleTapRecognizer requireGestureRecognizerToFail:doubleTapRecognizer];
+
+    UILongPressGestureRecognizer *longPressRecognizer = [[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)] autorelease];
+
+    [self addGestureRecognizer:singleTapRecognizer];
+    [self addGestureRecognizer:doubleTapRecognizer];
+    [self addGestureRecognizer:longPressRecognizer];
+
+    // two finger taps
+    UITapGestureRecognizer *twoFingerDoubleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTwoFingerDoubleTap:)] autorelease];
+    twoFingerDoubleTapRecognizer.numberOfTapsRequired = 2;
+    twoFingerDoubleTapRecognizer.numberOfTouchesRequired = 2;
+
+    UITapGestureRecognizer *twoFingerSingleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTwoFingerSingleTap:)] autorelease];
+    twoFingerSingleTapRecognizer.numberOfTouchesRequired = 2;
+    [twoFingerSingleTapRecognizer requireGestureRecognizerToFail:twoFingerDoubleTapRecognizer];
+
+    [self addGestureRecognizer:twoFingerSingleTapRecognizer];
+    [self addGestureRecognizer:twoFingerDoubleTapRecognizer];
+
+    // pan
+    UIPanGestureRecognizer *panGestureRecognizer = [[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)] autorelease];
+    panGestureRecognizer.minimumNumberOfTouches = 1;
+    panGestureRecognizer.maximumNumberOfTouches = 1;
+
+    // the delegate is used to decide whether a pan should be handled by this
+    // recognizer or by the pan gesture recognizer of the scrollview
+    panGestureRecognizer.delegate = self;
+
+    // the pan recognizer is added to the scrollview as it competes with the
+    // pan recognizer of the scrollview
+    [_mapScrollView addGestureRecognizer:panGestureRecognizer];
 
     [_visibleAnnotations removeAllObjects];
     [self correctPositionOfAllAnnotations];
@@ -1089,119 +1137,6 @@
 
     if (_delegateHasAfterMapZoom)
         [_delegate afterMapZoom:self];
-}
-
-// Overlay
-
-- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView tapOnAnnotation:(RMAnnotation *)anAnnotation atPoint:(CGPoint)aPoint
-{
-    if (_delegateHasTapOnAnnotation && anAnnotation)
-    {
-        [_delegate tapOnAnnotation:anAnnotation onMap:self];
-    }
-    else
-    {
-        if (_delegateHasSingleTapOnMap)
-            [_delegate singleTapOnMap:self at:aPoint];
-    }
-}
-
-- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView doubleTapOnAnnotation:(RMAnnotation *)anAnnotation atPoint:(CGPoint)aPoint
-{
-    if (_delegateHasDoubleTapOnAnnotation && anAnnotation)
-    {
-        [_delegate doubleTapOnAnnotation:anAnnotation onMap:self];
-    }
-    else
-    {
-        [self mapTiledLayerView:[_tiledLayersSuperview.subviews lastObject] doubleTapAtPoint:aPoint];
-    }
-}
-
-- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView tapOnLabelForAnnotation:(RMAnnotation *)anAnnotation atPoint:(CGPoint)aPoint
-{
-    if (_delegateHasTapOnLabelForAnnotation && anAnnotation)
-    {
-        [_delegate tapOnLabelForAnnotation:anAnnotation onMap:self];
-    }
-    else if (_delegateHasTapOnAnnotation && anAnnotation)
-    {
-        [_delegate tapOnAnnotation:anAnnotation onMap:self];
-    }
-    else
-    {
-        if (_delegateHasSingleTapOnMap)
-            [_delegate singleTapOnMap:self at:aPoint];
-    }
-}
-
-- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView doubleTapOnLabelForAnnotation:(RMAnnotation *)anAnnotation atPoint:(CGPoint)aPoint
-{
-    if (_delegateHasDoubleTapOnLabelForAnnotation && anAnnotation)
-    {
-        [_delegate doubleTapOnLabelForAnnotation:anAnnotation onMap:self];
-    }
-    else if (_delegateHasDoubleTapOnAnnotation && anAnnotation)
-    {
-        [_delegate doubleTapOnAnnotation:anAnnotation onMap:self];
-    }
-    else
-    {
-        [self mapTiledLayerView:[_tiledLayersSuperview.subviews lastObject] doubleTapAtPoint:aPoint];
-    }
-}
-
-- (BOOL)mapOverlayView:(RMMapOverlayView *)aMapOverlayView shouldDragAnnotation:(RMAnnotation *)anAnnotation
-{
-    if (_delegateHasShouldDragMarker)
-        return [_delegate mapView:self shouldDragAnnotation:anAnnotation];
-    else
-        return NO;
-}
-
-- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView didDragAnnotation:(RMAnnotation *)anAnnotation withDelta:(CGPoint)delta
-{
-    if (_delegateHasDidDragMarker)
-        [_delegate mapView:self didDragAnnotation:anAnnotation withDelta:delta];
-}
-
-- (void)mapOverlayView:(RMMapOverlayView *)aMapOverlayView didEndDragAnnotation:(RMAnnotation *)anAnnotation
-{
-    if (_delegateHasDidEndDragMarker)
-        [_delegate mapView:self didEndDragAnnotation:anAnnotation];
-}
-
-// Tiled layer
-
-- (void)mapTiledLayerView:(RMMapTiledLayerView *)aTiledLayerView singleTapAtPoint:(CGPoint)aPoint
-{
-    if (_delegateHasSingleTapOnMap)
-        [_delegate singleTapOnMap:self at:aPoint];
-}
-
-- (void)mapTiledLayerView:(RMMapTiledLayerView *)aTiledLayerView doubleTapAtPoint:(CGPoint)aPoint
-{
-    if ((self.userTrackingMode != RMUserTrackingModeNone && CGRectContainsPoint(CGRectMake(self.center.x - 75, self.center.y - 75, 150, 150), aPoint)) || self.zoomingInPivotsAroundCenter)
-        [self zoomInToNextNativeZoomAt:[self convertPoint:self.center fromView:self.superview] animated:YES];
-    else
-        [self zoomInToNextNativeZoomAt:aPoint animated:YES];
-
-    if (_delegateHasDoubleTapOnMap)
-        [_delegate doubleTapOnMap:self at:aPoint];
-}
-
-- (void)mapTiledLayerView:(RMMapTiledLayerView *)aTiledLayerView twoFingerSingleTapAtPoint:(CGPoint)aPoint
-{
-    [self zoomOutToNextNativeZoomAt:[self convertPoint:self.center fromView:self.superview] animated:YES];
-
-    if (_delegateHasSingleTapTwoFingersOnMap)
-        [_delegate singleTapTwoFingersOnMap:self at:aPoint];
-}
-
-- (void)mapTiledLayerView:(RMMapTiledLayerView *)aTiledLayerView longPressAtPoint:(CGPoint)aPoint
-{
-    if (_delegateHasLongSingleTapOnMap)
-        [_delegate longSingleTapOnMap:self at:aPoint];
 }
 
 // Detect dragging/zooming
@@ -1343,6 +1278,260 @@
         [_delegate mapViewRegionDidChange:self];
 }
 
+#pragma mark - Gesture Recognizers and event handling
+
+- (RMAnnotation *)findAnnotationInLayer:(CALayer *)layer
+{
+    if ([layer respondsToSelector:@selector(annotation)])
+        return [((RMMarker *)layer) annotation];
+
+    CALayer *superlayer = [layer superlayer];
+
+    if (superlayer != nil && [superlayer respondsToSelector:@selector(annotation)])
+        return [((RMMarker *)superlayer) annotation];
+    else if ([superlayer superlayer] != nil && [[superlayer superlayer] respondsToSelector:@selector(annotation)])
+        return [((RMMarker *)[superlayer superlayer]) annotation];
+
+    return nil;
+}
+
+- (void)singleTapAtPoint:(CGPoint)aPoint
+{
+    if (_delegateHasSingleTapOnMap)
+        [_delegate singleTapOnMap:self at:aPoint];
+}
+
+- (void)handleSingleTap:(UIGestureRecognizer *)recognizer
+{
+    CALayer *hit = [_overlayView.layer hitTest:[recognizer locationInView:_overlayView]];
+
+    if ( ! hit)
+    {
+        [self singleTapAtPoint:[recognizer locationInView:self]];
+        return;
+    }
+
+    CALayer *superlayer = [hit superlayer];
+
+    // See if tap was on a marker or marker label and send delegate protocol method
+    if ([hit isKindOfClass:[RMMarker class]])
+    {
+        [self tapOnAnnotation:[((RMMarker *)hit) annotation] atPoint:[recognizer locationInView:self]];
+    }
+    else if (superlayer != nil && [superlayer isKindOfClass:[RMMarker class]])
+    {
+        [self tapOnLabelForAnnotation:[((RMMarker *)superlayer) annotation] atPoint:[recognizer locationInView:self]];
+    }
+    else if ([superlayer superlayer] != nil && [[superlayer superlayer] isKindOfClass:[RMMarker class]])
+    {
+        [self tapOnLabelForAnnotation:[((RMMarker *)[superlayer superlayer]) annotation] atPoint:[recognizer locationInView:self]];
+    }
+    else
+    {
+        [self singleTapAtPoint:[recognizer locationInView:self]];
+    }
+}
+
+- (void)doubleTapAtPoint:(CGPoint)aPoint
+{
+    if (self.zoomingInPivotsAroundCenter)
+        [self zoomInToNextNativeZoomAt:[self convertPoint:self.center fromView:self.superview] animated:YES];
+    else
+        [self zoomInToNextNativeZoomAt:aPoint animated:YES];
+
+    if (_delegateHasDoubleTapOnMap)
+        [_delegate doubleTapOnMap:self at:aPoint];
+}
+
+- (void)handleDoubleTap:(UIGestureRecognizer *)recognizer
+{
+    CALayer *hit = [_overlayView.layer hitTest:[recognizer locationInView:_overlayView]];
+
+    if ( ! hit)
+    {
+        [self doubleTapAtPoint:[recognizer locationInView:self]];
+        return;
+    }
+
+    CALayer *superlayer = [hit superlayer];
+
+    // See if tap was on a marker or marker label and send delegate protocol method
+    if ([hit isKindOfClass:[RMMarker class]])
+    {
+        [self doubleTapOnAnnotation:[((RMMarker *)hit) annotation] atPoint:[recognizer locationInView:self]];
+    }
+    else if (superlayer != nil && [superlayer isKindOfClass:[RMMarker class]])
+    {
+        [self doubleTapOnLabelForAnnotation:[((RMMarker *)superlayer) annotation] atPoint:[recognizer locationInView:self]];
+    }
+    else if ([superlayer superlayer] != nil && [[superlayer superlayer] isKindOfClass:[RMMarker class]])
+    {
+        [self doubleTapOnLabelForAnnotation:[((RMMarker *)[superlayer superlayer]) annotation] atPoint:[recognizer locationInView:self]];
+    }
+    else
+    {
+        [self doubleTapAtPoint:[recognizer locationInView:self]];
+    }
+}
+
+- (void)handleTwoFingerDoubleTap:(UIGestureRecognizer *)recognizer
+{
+    [self zoomOutToNextNativeZoomAt:[self convertPoint:self.center fromView:self.superview] animated:YES];
+
+    if (_delegateHasDoubleTapTwoFingersOnMap)
+        [_delegate doubleTapTwoFingersOnMap:self at:[recognizer locationInView:self]];
+}
+
+- (void)handleTwoFingerSingleTap:(UIGestureRecognizer *)recognizer
+{
+    [self zoomOutToNextNativeZoomAt:[self convertPoint:self.center fromView:self.superview] animated:YES];
+
+    if (_delegateHasSingleTapTwoFingersOnMap)
+        [_delegate singleTapTwoFingersOnMap:self at:[recognizer locationInView:self]];
+}
+
+- (void)handleLongPress:(UILongPressGestureRecognizer *)recognizer
+{
+    if (recognizer.state != UIGestureRecognizerStateBegan)
+        return;
+
+    if (_delegateHasLongSingleTapOnMap)
+        [_delegate longSingleTapOnMap:self at:[recognizer locationInView:self]];
+}
+
+// defines when the additional pan gesture recognizer on the scroll should handle the gesture
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)recognizer
+{
+    if ([recognizer isKindOfClass:[UIPanGestureRecognizer class]])
+    {
+        // check whether our custom pan gesture recognizer should start recognizing the gesture
+        CALayer *hit = [_overlayView.layer hitTest:[recognizer locationInView:_overlayView]];
+
+        if (!hit || ([hit respondsToSelector:@selector(enableDragging)] && ![(RMMarker *)hit enableDragging]))
+            return NO;
+
+        if ( ! [self shouldDragAnnotation:[self findAnnotationInLayer:hit]])
+            return NO;
+    }
+
+    return YES;
+}
+
+- (void)handlePanGesture:(UIPanGestureRecognizer *)recognizer
+{
+    if (recognizer.state == UIGestureRecognizerStateBegan)
+    {
+        CALayer *hit = [_overlayView.layer hitTest:[recognizer locationInView:self]];
+
+        if ( ! hit)
+            return;
+
+        if ([hit respondsToSelector:@selector(enableDragging)] && ![(RMMarker *)hit enableDragging])
+            return;
+
+        _lastDraggingTranslation = CGPointZero;
+        [_draggedAnnotation release];
+        _draggedAnnotation = [[self findAnnotationInLayer:hit] retain];
+    }
+
+    if (recognizer.state == UIGestureRecognizerStateChanged)
+    {
+        CGPoint translation = [recognizer translationInView:_overlayView];
+        CGPoint delta = CGPointMake(_lastDraggingTranslation.x - translation.x, _lastDraggingTranslation.y - translation.y);
+        _lastDraggingTranslation = translation;
+
+        [CATransaction begin];
+        [CATransaction setAnimationDuration:0];
+        [self didDragAnnotation:_draggedAnnotation withDelta:delta];
+        [CATransaction commit];
+    }
+    else if (recognizer.state == UIGestureRecognizerStateEnded)
+    {
+        [self didEndDragAnnotation:_draggedAnnotation];
+        [_draggedAnnotation release]; _draggedAnnotation = nil;
+    }
+}
+
+// Overlay
+
+- (void)tapOnAnnotation:(RMAnnotation *)anAnnotation atPoint:(CGPoint)aPoint
+{
+    if (_delegateHasTapOnAnnotation && anAnnotation)
+    {
+        [_delegate tapOnAnnotation:anAnnotation onMap:self];
+    }
+    else
+    {
+        if (_delegateHasSingleTapOnMap)
+            [_delegate singleTapOnMap:self at:aPoint];
+    }
+}
+
+- (void)doubleTapOnAnnotation:(RMAnnotation *)anAnnotation atPoint:(CGPoint)aPoint
+{
+    if (_delegateHasDoubleTapOnAnnotation && anAnnotation)
+    {
+        [_delegate doubleTapOnAnnotation:anAnnotation onMap:self];
+    }
+    else
+    {
+        [self doubleTapAtPoint:aPoint];
+    }
+}
+
+- (void)tapOnLabelForAnnotation:(RMAnnotation *)anAnnotation atPoint:(CGPoint)aPoint
+{
+    if (_delegateHasTapOnLabelForAnnotation && anAnnotation)
+    {
+        [_delegate tapOnLabelForAnnotation:anAnnotation onMap:self];
+    }
+    else if (_delegateHasTapOnAnnotation && anAnnotation)
+    {
+        [_delegate tapOnAnnotation:anAnnotation onMap:self];
+    }
+    else
+    {
+        if (_delegateHasSingleTapOnMap)
+            [_delegate singleTapOnMap:self at:aPoint];
+    }
+}
+
+- (void)doubleTapOnLabelForAnnotation:(RMAnnotation *)anAnnotation atPoint:(CGPoint)aPoint
+{
+    if (_delegateHasDoubleTapOnLabelForAnnotation && anAnnotation)
+    {
+        [_delegate doubleTapOnLabelForAnnotation:anAnnotation onMap:self];
+    }
+    else if (_delegateHasDoubleTapOnAnnotation && anAnnotation)
+    {
+        [_delegate doubleTapOnAnnotation:anAnnotation onMap:self];
+    }
+    else
+    {
+        [self doubleTapAtPoint:aPoint];
+    }
+}
+
+- (BOOL)shouldDragAnnotation:(RMAnnotation *)anAnnotation
+{
+    if (_delegateHasShouldDragMarker)
+        return [_delegate mapView:self shouldDragAnnotation:anAnnotation];
+    else
+        return NO;
+}
+
+- (void)didDragAnnotation:(RMAnnotation *)anAnnotation withDelta:(CGPoint)delta
+{
+    if (_delegateHasDidDragMarker)
+        [_delegate mapView:self didDragAnnotation:anAnnotation withDelta:delta];
+}
+
+- (void)didEndDragAnnotation:(RMAnnotation *)anAnnotation
+{
+    if (_delegateHasDidEndDragMarker)
+        [_delegate mapView:self didEndDragAnnotation:anAnnotation];
+}
+
 #pragma mark -
 #pragma mark Snapshots
 
@@ -1469,7 +1658,29 @@
     [self setZoom:[self zoom]]; // setZoom clamps zoom level to min/max limits
 
     // Recreate the map layer
-    [self createMapView];
+    NSUInteger tileSourcesContainerSize = [[_tileSourcesContainer tileSources] count];
+
+    if (tileSourcesContainerSize == 1)
+    {
+        [self createMapView];
+    }
+    else
+    {
+        int tileSideLength = [_tileSourcesContainer tileSideLength];
+        CGSize contentSize = CGSizeMake(tileSideLength, tileSideLength); // zoom level 1
+
+        RMMapTiledLayerView *tiledLayerView = [[RMMapTiledLayerView alloc] initWithFrame:CGRectMake(0.0, 0.0, contentSize.width, contentSize.height) mapView:self forTileSource:newTileSource];
+
+        if (self.adjustTilesForRetinaDisplay && _screenScale > 1.0)
+            ((CATiledLayer *)tiledLayerView.layer).tileSize = CGSizeMake(tileSideLength * 2.0, tileSideLength * 2.0);
+        else
+            ((CATiledLayer *)tiledLayerView.layer).tileSize = CGSizeMake(tileSideLength, tileSideLength);
+
+        if (index >= [[_tileSourcesContainer tileSources] count])
+            [_tiledLayersSuperview addSubview:tiledLayerView];
+        else
+            [_tiledLayersSuperview insertSubview:tiledLayerView atIndex:index];
+    }
 
     [self setCenterProjectedPoint:centerPoint animated:NO];
 }
@@ -1487,8 +1698,20 @@
         _constrainMovement = NO;
     }
 
-    // Recreate the map layer
-    [self createMapView];
+    // Remove the map layer
+    RMMapTiledLayerView *tileSourceTiledLayerView = nil;
+
+    for (RMMapTiledLayerView *tiledLayerView in _tiledLayersSuperview.subviews)
+    {
+        if (tiledLayerView.tileSource == tileSource)
+        {
+            tileSourceTiledLayerView = tiledLayerView;
+            break;
+        }
+    }
+
+    tileSourceTiledLayerView.layer.contents = nil;
+    [tileSourceTiledLayerView removeFromSuperview]; [tileSourceTiledLayerView release]; tileSourceTiledLayerView = nil;
 
     [self setCenterProjectedPoint:centerPoint animated:NO];
 }
@@ -1506,20 +1729,29 @@
         _constrainMovement = NO;
     }
 
-    // Recreate the map layer
-    [self createMapView];
+    // Remove the map layer
+    RMMapTiledLayerView *tileSourceTiledLayerView = [_tiledLayersSuperview.subviews objectAtIndex:index];
+
+    tileSourceTiledLayerView.layer.contents = nil;
+    [tileSourceTiledLayerView removeFromSuperview]; [tileSourceTiledLayerView release]; tileSourceTiledLayerView = nil;
 
     [self setCenterProjectedPoint:centerPoint animated:NO];
 }
 
 - (void)moveTileSourceAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
 {
+    if (fromIndex == toIndex)
+        return;
+
+    if (fromIndex >= [[_tileSourcesContainer tileSources] count])
+        return;
+
     RMProjectedPoint centerPoint = [self centerProjectedPoint];
 
     [_tileSourcesContainer moveTileSourceAtIndex:fromIndex toIndex:toIndex];
 
-    // Recreate the map layer
-    [self createMapView];
+    // Move the map layer
+    [_tiledLayersSuperview exchangeSubviewAtIndex:fromIndex withSubviewAtIndex:toIndex];
 
     [self setCenterProjectedPoint:centerPoint animated:NO];
 }
@@ -1544,6 +1776,31 @@
         return;
 
     ((RMMapTiledLayerView *)[_tiledLayersSuperview.subviews objectAtIndex:index]).hidden = isHidden;
+}
+
+- (void)reloadTileSource:(id <RMTileSource>)tileSource
+{
+    // Reload the map layer
+    for (RMMapTiledLayerView *tiledLayerView in _tiledLayersSuperview.subviews)
+    {
+        if (tiledLayerView.tileSource == tileSource)
+        {
+//            tiledLayerView.layer.contents = nil;
+            [tiledLayerView setNeedsDisplay];
+            break;
+        }
+    }
+}
+
+- (void)reloadTileSourceAtIndex:(NSUInteger)index
+{
+    if (index >= [_tiledLayersSuperview.subviews count])
+        return;
+
+    // Reload the map layer
+    RMMapTiledLayerView *tiledLayerView = [_tiledLayersSuperview.subviews objectAtIndex:index];
+//    tiledLayerView.layer.contents = nil;
+    [tiledLayerView setNeedsDisplay];
 }
 
 #pragma mark - Properties
@@ -1844,6 +2101,35 @@
 	return returnTile;
 }
 
+- (RMSphericalTrapezium)latitudeLongitudeBoundingBoxForTile:(RMTile)aTile
+{
+    RMProjectedRect planetBounds = _projection.planetBounds;
+
+    double scale = (1<<aTile.zoom);
+    double tileSideLength = [_tileSourcesContainer tileSideLength];
+    double tileMetersPerPixel = planetBounds.size.width / (tileSideLength * scale);
+
+    CGPoint bottomLeft = CGPointMake(aTile.x * tileSideLength, (scale - aTile.y - 1) * tileSideLength);
+
+    RMProjectedRect normalizedProjectedRect;
+    normalizedProjectedRect.origin.x = (bottomLeft.x * tileMetersPerPixel) - fabs(planetBounds.origin.x);
+    normalizedProjectedRect.origin.y = (bottomLeft.y * tileMetersPerPixel) - fabs(planetBounds.origin.y);
+    normalizedProjectedRect.size.width = tileSideLength * tileMetersPerPixel;
+    normalizedProjectedRect.size.height = tileSideLength * tileMetersPerPixel;
+
+    RMSphericalTrapezium boundingBox;
+    boundingBox.southWest = [self projectedPointToCoordinate:
+                             RMProjectedPointMake(normalizedProjectedRect.origin.x,
+                                                  normalizedProjectedRect.origin.y)];
+    boundingBox.northEast = [self projectedPointToCoordinate:
+                             RMProjectedPointMake(normalizedProjectedRect.origin.x + normalizedProjectedRect.size.width,
+                                                  normalizedProjectedRect.origin.y + normalizedProjectedRect.size.height)];
+
+//    RMLog(@"Bounding box for tile (%d,%d) at zoom %d: {%f,%f} {%f,%f)", aTile.x, aTile.y, aTile.zoom, boundingBox.southWest.longitude, boundingBox.southWest.latitude, boundingBox.northEast.longitude, boundingBox.northEast.latitude);
+
+    return boundingBox;
+}
+
 #pragma mark -
 #pragma mark Bounds
 
@@ -2067,6 +2353,11 @@
 - (NSArray *)annotations
 {
     return [_annotations allObjects];
+}
+
+- (NSArray *)visibleAnnotations
+{
+    return [_visibleAnnotations allObjects];
 }
 
 - (void)addAnnotation:(RMAnnotation *)annotation

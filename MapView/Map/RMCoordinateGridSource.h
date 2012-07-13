@@ -1,8 +1,8 @@
-
 //
-//  MapViewViewController.h
+//  RMCoordinateGridSource.h
+//  MapView
 //
-// Copyright (c) 2008, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -26,29 +26,28 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import <UIKit/UIKit.h>
-#import <CoreLocation/CoreLocation.h>
+#import "RMAbstractMercatorTileSource.h"
+#import "RMProjection.h"
 
-#import "RMMapView.h"
+typedef enum : short {
+    GridModeGeographic, // 47˚ 33'
+    GridModeGeographicDecimal, // 47.56
+    GridModeUTM // 32T 5910
+} CoordinateGridMode;
 
-#define degreesToRadian(x) (M_PI * x / 180.0)
+// UTM grid is missing for now
 
-@interface MapViewViewController : UIViewController <RMMapViewDelegate, CLLocationManagerDelegate> 
-{
-	IBOutlet RMMapView	   *mapView;
-	BOOL					tap;
-	NSInteger				tapCount;
-	CLLocationManager	   *locationManager;
-	CLLocationCoordinate2D	currentLocation;
-}
+@interface RMCoordinateGridSource : RMAbstractMercatorTileSource
 
-@property (nonatomic, retain) IBOutlet RMMapView *mapView;
-@property (nonatomic, retain) CLLocationManager	 *locationManager;
+@property (nonatomic, assign) CoordinateGridMode gridMode;
 
-@property (nonatomic) CLLocationCoordinate2D currentLocation;
+@property (nonatomic, retain) UIColor *gridColor;
+@property (nonatomic, assign) CGFloat  gridLineWidth;
+@property (nonatomic, assign) NSUInteger gridLabelInterval;
 
-@property BOOL		tap;
-@property NSInteger	tapCount;
+@property (nonatomic, retain) UIColor *minorLabelColor;
+@property (nonatomic, retain) UIFont  *minorLabelFont;
+@property (nonatomic, retain) UIColor *majorLabelColor;
+@property (nonatomic, retain) UIFont  *majorLabelFont;
 
 @end
-

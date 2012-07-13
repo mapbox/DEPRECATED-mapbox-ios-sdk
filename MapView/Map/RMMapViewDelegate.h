@@ -1,7 +1,7 @@
 //
 //  RMMapViewDelegate.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@ typedef enum {
     RMUserTrackingModeFollowWithHeading = 2
 } RMUserTrackingMode;
 
-/// Use this for notifications of map panning, zooming, and taps on the RMMapView.
+// Use this for notifications of map panning, zooming, and taps on the RMMapView.
 @protocol RMMapViewDelegate <NSObject>
 @optional
 

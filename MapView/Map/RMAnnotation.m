@@ -2,7 +2,7 @@
 //  RMAnnotation.m
 //  MapView
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -172,6 +172,11 @@
 {
     CGRect screenBounds = [mapView bounds];
     return [self isAnnotationWithinBounds:screenBounds];
+}
+
+- (BOOL)isAnnotationVisibleOnScreen
+{
+    return (layer != nil);
 }
 
 - (void)setIsUserLocationAnnotation:(BOOL)flag

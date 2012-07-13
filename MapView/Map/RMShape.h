@@ -36,7 +36,7 @@
 {
     CGRect pathBoundingBox;
 
-    /// Width of the line, in pixels
+    // Width of the line, in pixels
     float lineWidth;
 
     // Line dash style
@@ -59,7 +59,7 @@
 @property (nonatomic, assign) CGFloat lineDashPhase;
 @property (nonatomic, assign) BOOL scaleLineDash;
 @property (nonatomic, assign) float lineWidth;
-@property (nonatomic, assign) BOOL	scaleLineWidth;
+@property (nonatomic, assign) BOOL scaleLineWidth;
 @property (nonatomic, assign) CGFloat shadowBlur;
 @property (nonatomic, assign) CGSize shadowOffset;
 @property (nonatomic, assign) BOOL enableShadow;
@@ -77,9 +77,9 @@
 // Change the path without recalculating the geometry (performance!)
 - (void)performBatchOperations:(void (^)(RMShape *aPath))block;
 
-/// This closes the path, connecting the last point to the first.
-/// After this action, no further points can be added to the path.
-/// There is no requirement that a path be closed.
+// This closes the path, connecting the last point to the first.
+// After this action, no further points can be added to the path.
+// There is no requirement that a path be closed.
 - (void)closePath;
 
 @end

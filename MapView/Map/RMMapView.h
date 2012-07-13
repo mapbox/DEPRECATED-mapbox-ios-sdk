@@ -69,7 +69,7 @@ typedef enum : NSUInteger {
 } RMMapDecelerationMode;
 
 
-@interface RMMapView : UIView <UIScrollViewDelegate, RMMapOverlayViewDelegate, RMMapTiledLayerViewDelegate, RMMapScrollViewDelegate, CLLocationManagerDelegate>
+@interface RMMapView : UIView <UIScrollViewDelegate, UIGestureRecognizerDelegate, RMMapScrollViewDelegate, CLLocationManagerDelegate>
 
 @property (nonatomic, assign) id <RMMapViewDelegate> delegate;
 
@@ -179,6 +179,7 @@ typedef enum : NSUInteger {
 #pragma mark - Annotations
 
 @property (nonatomic, readonly) NSArray *annotations;
+@property (nonatomic, readonly) NSArray *visibleAnnotations;
 
 - (void)addAnnotation:(RMAnnotation *)annotation;
 - (void)addAnnotations:(NSArray *)annotations;
@@ -215,6 +216,9 @@ typedef enum : NSUInteger {
 - (void)setHidden:(BOOL)isHidden forTileSource:(id <RMTileSource>)tileSource;
 - (void)setHidden:(BOOL)isHidden forTileSourceAtIndex:(NSUInteger)index;
 
+- (void)reloadTileSource:(id <RMTileSource>)tileSource;
+- (void)reloadTileSourceAtIndex:(NSUInteger)index;
+
 #pragma mark - Cache
 
 //  Clear all images from the #tileSource's caching system.
@@ -240,6 +244,8 @@ typedef enum : NSUInteger {
 
 - (CLLocationCoordinate2D)normalizeCoordinate:(CLLocationCoordinate2D)coordinate;
 - (RMTile)tileWithCoordinate:(CLLocationCoordinate2D)coordinate andZoom:(int)zoom;
+
+- (RMSphericalTrapezium)latitudeLongitudeBoundingBoxForTile:(RMTile)aTile;
 
 #pragma mark -
 #pragma mark User Location
