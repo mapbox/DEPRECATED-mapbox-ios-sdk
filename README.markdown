@@ -47,7 +47,7 @@ As the SDK is undergoing some significant changes, the recommended course of act
 
 Or, [download the trunk][dl].
 
-The two main branches are pretty self-explanatory: `release` and `develop`. 
+The two main branches are pretty self-explanatory: `release` and `develop`. When we tag a [release](https://github.com/mapbox/mapbox-ios-sdk/tags), we also merge `develop` over to `release`. 
 
 Then, update the submodules:
 
