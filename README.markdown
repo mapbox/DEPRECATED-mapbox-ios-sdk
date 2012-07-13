@@ -10,14 +10,14 @@ Undergoing rapid development, so the `develop` branch is currently recommended.
 Major differences from [Alpstein fork of Route-Me](https://github.com/Alpstein/route-me): 
 
  * Requires iOS 5.0 and above. 
- * Canonical source for [MapBox](http://mapbox.com) & [MBTiles](http://mbtiles.org) tile source integration code
- * [UTFGrid interactivity](http://mapbox.com/mbtiles-spec/utfgrid/)
- * [User location services](http://mapbox.com/blog/ios-user-location-services/)
- * Removal of two-finger double-tap gesture for zoom out (to speed up two-finger single-tap recognition like MapKit)
- * Different default starting location for maps
+ * Canonical source for [MapBox](http://mapbox.com) & [MBTiles](http://mbtiles.org) tile source integration code. 
+ * [UTFGrid interactivity](http://mapbox.com/mbtiles-spec/utfgrid/). 
+ * [User location services](http://mapbox.com/blog/ios-user-location-services/). 
+ * Removal of two-finger double-tap gesture for zoom out (to speed up two-finger single-tap recognition like MapKit). 
+ * Different default starting location for maps. 
  * Built-in attribution view controller with button on map views & default OpenStreetMap attribution. 
  * [MapBox Markers](http://mapbox.com/blog/markers/) support. 
- * Prepackaged framework (see [#24](https://github.com/mapbox/mapbox-ios-sdk/issues/24))
+ * Prepackaged framework (see [#24](https://github.com/mapbox/mapbox-ios-sdk/issues/24)). 
 
 [mapbox]: http://mapbox.com
 
