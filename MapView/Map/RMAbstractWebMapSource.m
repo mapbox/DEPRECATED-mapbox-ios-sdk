@@ -141,9 +141,12 @@
     }
     else
     {
-        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[URLs objectAtIndex:0]];
-        [request setTimeoutInterval:self.waitSeconds];
-        image = [UIImage imageWithData:[NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil]];
+        for (NSUInteger try = 0; image == nil && try < self.retryCount; ++try)
+        {
+            NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[URLs objectAtIndex:0]];
+            [request setTimeoutInterval:self.waitSeconds];
+            image = [UIImage imageWithData:[NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil]];
+        }
     }
     
     if (image)
