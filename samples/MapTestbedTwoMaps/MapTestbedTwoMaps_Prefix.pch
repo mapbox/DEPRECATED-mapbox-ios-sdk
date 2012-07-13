@@ -1,9 +1,0 @@
-//
-// Prefix header for all source files of the 'MapTestbed' target in the 'MapTestbed' project
-//
-
-#ifdef __OBJC__
-    #import <Foundation/Foundation.h>
-    #import <UIKit/UIKit.h>
-#endif
-#define LogMethod() NSLog(@"%s logged method call: -[%@ %s] (line %d)", _cmd, self, _cmd, __LINE__)
