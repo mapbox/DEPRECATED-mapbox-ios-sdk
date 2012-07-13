@@ -1044,16 +1044,10 @@
     [self addGestureRecognizer:longPressRecognizer];
 
     // two finger taps
-    UITapGestureRecognizer *twoFingerDoubleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTwoFingerDoubleTap:)] autorelease];
-    twoFingerDoubleTapRecognizer.numberOfTapsRequired = 2;
-    twoFingerDoubleTapRecognizer.numberOfTouchesRequired = 2;
-
     UITapGestureRecognizer *twoFingerSingleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTwoFingerSingleTap:)] autorelease];
     twoFingerSingleTapRecognizer.numberOfTouchesRequired = 2;
-    [twoFingerSingleTapRecognizer requireGestureRecognizerToFail:twoFingerDoubleTapRecognizer];
 
     [self addGestureRecognizer:twoFingerSingleTapRecognizer];
-    [self addGestureRecognizer:twoFingerDoubleTapRecognizer];
 
     // pan
     UIPanGestureRecognizer *panGestureRecognizer = [[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)] autorelease];
@@ -1372,14 +1366,6 @@
     {
         [self doubleTapAtPoint:[recognizer locationInView:self]];
     }
-}
-
-- (void)handleTwoFingerDoubleTap:(UIGestureRecognizer *)recognizer
-{
-    [self zoomOutToNextNativeZoomAt:[self convertPoint:self.center fromView:self.superview] animated:YES];
-
-    if (_delegateHasDoubleTapTwoFingersOnMap)
-        [_delegate doubleTapTwoFingersOnMap:self at:[recognizer locationInView:self]];
 }
 
 - (void)handleTwoFingerSingleTap:(UIGestureRecognizer *)recognizer
