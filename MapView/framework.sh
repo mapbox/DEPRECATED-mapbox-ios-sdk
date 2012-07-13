@@ -58,5 +58,4 @@ done
 #
 # copy resources
 #
-cp -v Map/Resources/Heading*  $FW_FOLDER/Versions/A/Resources
-cp -v Map/Resources/Tracking* $FW_FOLDER/Versions/A/Resources
+cp -v Map/Resources/*  $FW_FOLDER/Versions/A/Resources
