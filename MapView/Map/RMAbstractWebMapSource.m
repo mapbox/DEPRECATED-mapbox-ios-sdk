@@ -28,6 +28,8 @@
 #import "RMAbstractWebMapSource.h"
 #import "RMTileCache.h"
 
+#define HTTP_404_NOT_FOUND 404
+
 @implementation RMAbstractWebMapSource
 
 @synthesize retryCount, waitSeconds;
@@ -143,12 +145,16 @@
     {
         for (NSUInteger try = 0; image == nil && try < self.retryCount; ++try)
         {
+            NSHTTPURLResponse *response = nil;
             NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[URLs objectAtIndex:0]];
             [request setTimeoutInterval:self.waitSeconds];
-            image = [UIImage imageWithData:[NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil]];
+            image = [UIImage imageWithData:[NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil]];
+
+            if (response.statusCode == HTTP_404_NOT_FOUND)
+                break;
         }
     }
-    
+
     if (image)
         [tileCache addImage:image forTile:tile withCacheKey:[self uniqueTilecacheKey]];
 
