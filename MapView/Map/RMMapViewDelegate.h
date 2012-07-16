@@ -29,6 +29,13 @@
 @class RMMapLayer;
 @class RMMarker;
 @class RMAnnotation;
+@class RMUserLocation;
+
+typedef enum {
+    RMUserTrackingModeNone              = 0,
+    RMUserTrackingModeFollow            = 1,
+    RMUserTrackingModeFollowWithHeading = 2
+} RMUserTrackingMode;
 
 // Use this for notifications of map panning, zooming, and taps on the RMMapView.
 @protocol RMMapViewDelegate <NSObject>
@@ -66,5 +73,11 @@
 - (BOOL)mapView:(RMMapView *)map shouldDragAnnotation:(RMAnnotation *)annotation;
 - (void)mapView:(RMMapView *)map didDragAnnotation:(RMAnnotation *)annotation withDelta:(CGPoint)delta;
 - (void)mapView:(RMMapView *)map didEndDragAnnotation:(RMAnnotation *)annotation;
+
+- (void)mapViewWillStartLocatingUser:(RMMapView *)mapView;
+- (void)mapViewDidStopLocatingUser:(RMMapView *)mapView;
+- (void)mapView:(RMMapView *)mapView didUpdateUserLocation:(RMUserLocation *)userLocation;
+- (void)mapView:(RMMapView *)mapView didFailToLocateUserWithError:(NSError *)error;
+- (void)mapView:(RMMapView *)mapView didChangeUserTrackingMode:(RMUserTrackingMode)mode animated:(BOOL)animated;
 
 @end
