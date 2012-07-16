@@ -269,6 +269,12 @@
 	[self updateInfo];
 }
 
+// Don't use this delegate method for long running tasks since it blocks the main thread - use #afterMapMove or #afterMapZoom instead
+- (void)mapViewRegionDidChange:(RMMapView *)mapView
+{
+    [self updateInfo];
+}
+
 - (BOOL)mapView:(RMMapView *)map shouldDragAnnotation:(RMAnnotation *)annotation
 {
     if ([annotation.annotationType isEqualToString:kDraggableAnnotationType])
