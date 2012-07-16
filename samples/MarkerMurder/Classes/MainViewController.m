@@ -168,6 +168,7 @@
 
     [mapView setZoom:10.0];
     [mapView setCenterCoordinate:center animated:NO];
+    mapView.showsUserLocation = YES;
 
     [self updateInfo];
     [self performSelector:@selector(addMarkers) withObject:nil afterDelay:0.5];
