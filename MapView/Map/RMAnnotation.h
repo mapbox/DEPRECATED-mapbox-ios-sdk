@@ -74,7 +74,7 @@
 @property (nonatomic, assign) RMQuadTreeNode *quadTreeNode;
 
 // This is for filtering framework-provided annotations.
-@property (nonatomic, assign, readonly) BOOL isUserLocationAnnotation;
+@property (nonatomic, readonly) BOOL isUserLocationAnnotation;
 
 #pragma mark -
 

@@ -88,11 +88,6 @@ typedef enum : NSUInteger {
 @property (nonatomic, assign)   BOOL adjustTilesForRetinaDisplay;
 @property (nonatomic, readonly) float adjustedZoomForRetinaDisplay; // takes adjustTilesForRetinaDisplay and screen scale into account
 
-@property (nonatomic) BOOL showsUserLocation;
-@property (nonatomic, readonly, retain) RMUserLocation *userLocation;
-@property (nonatomic, readonly, getter=isUserLocationVisible) BOOL userLocationVisible;
-@property (nonatomic) RMUserTrackingMode userTrackingMode;
-
 // take missing tiles from lower zoom levels, up to #missingTilesDepth zoom levels (defaults to 0, which disables this feature)
 @property (nonatomic, assign) NSUInteger missingTilesDepth;
 
@@ -247,6 +242,11 @@ typedef enum : NSUInteger {
 
 #pragma mark -
 #pragma mark User Location
+
+@property (nonatomic, assign)   BOOL showsUserLocation;
+@property (nonatomic, readonly) RMUserLocation *userLocation;
+@property (nonatomic, readonly, getter=isUserLocationVisible) BOOL userLocationVisible;
+@property (nonatomic, assign)   RMUserTrackingMode userTrackingMode;
 
 - (void)setUserTrackingMode:(RMUserTrackingMode)mode animated:(BOOL)animated;
 
