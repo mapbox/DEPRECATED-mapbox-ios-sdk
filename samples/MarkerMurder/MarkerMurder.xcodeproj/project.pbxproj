@@ -8,6 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		16BFBA3714E912DF00F8D07E /* mpp.png in Resources */ = {isa = PBXBuildFile; fileRef = 16BFBA3614E912DF00F8D07E /* mpp.png */; };
+		16FCBD4515B41683005E3A5D /* HeadingAngleSmall.png in Resources */ = {isa = PBXBuildFile; fileRef = 16FCBD3B15B41683005E3A5D /* HeadingAngleSmall.png */; };
+		16FCBD4615B41683005E3A5D /* HeadingAngleSmall@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 16FCBD3C15B41683005E3A5D /* HeadingAngleSmall@2x.png */; };
+		16FCBD4715B41683005E3A5D /* TrackingDot.png in Resources */ = {isa = PBXBuildFile; fileRef = 16FCBD3D15B41683005E3A5D /* TrackingDot.png */; };
+		16FCBD4815B41683005E3A5D /* TrackingDot@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 16FCBD3E15B41683005E3A5D /* TrackingDot@2x.png */; };
+		16FCBD4915B41683005E3A5D /* TrackingDotHalo.png in Resources */ = {isa = PBXBuildFile; fileRef = 16FCBD3F15B41683005E3A5D /* TrackingDotHalo.png */; };
+		16FCBD4A15B41683005E3A5D /* TrackingDotHalo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 16FCBD4015B41683005E3A5D /* TrackingDotHalo@2x.png */; };
+		16FCBD4B15B41683005E3A5D /* TrackingHeading.png in Resources */ = {isa = PBXBuildFile; fileRef = 16FCBD4115B41683005E3A5D /* TrackingHeading.png */; };
+		16FCBD4C15B41683005E3A5D /* TrackingHeading@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 16FCBD4215B41683005E3A5D /* TrackingHeading@2x.png */; };
+		16FCBD4D15B41683005E3A5D /* TrackingLocation.png in Resources */ = {isa = PBXBuildFile; fileRef = 16FCBD4315B41683005E3A5D /* TrackingLocation.png */; };
+		16FCBD4E15B41683005E3A5D /* TrackingLocation@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 16FCBD4415B41683005E3A5D /* TrackingLocation@2x.png */; };
 		1D3623260D0F684500981E51 /* MarkerMurderAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* MarkerMurderAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -50,6 +60,16 @@
 
 /* Begin PBXFileReference section */
 		16BFBA3614E912DF00F8D07E /* mpp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mpp.png; sourceTree = "<group>"; };
+		16FCBD3B15B41683005E3A5D /* HeadingAngleSmall.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = HeadingAngleSmall.png; path = ../../MapView/Map/Resources/HeadingAngleSmall.png; sourceTree = "<group>"; };
+		16FCBD3C15B41683005E3A5D /* HeadingAngleSmall@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "HeadingAngleSmall@2x.png"; path = "../../MapView/Map/Resources/HeadingAngleSmall@2x.png"; sourceTree = "<group>"; };
+		16FCBD3D15B41683005E3A5D /* TrackingDot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = TrackingDot.png; path = ../../MapView/Map/Resources/TrackingDot.png; sourceTree = "<group>"; };
+		16FCBD3E15B41683005E3A5D /* TrackingDot@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "TrackingDot@2x.png"; path = "../../MapView/Map/Resources/TrackingDot@2x.png"; sourceTree = "<group>"; };
+		16FCBD3F15B41683005E3A5D /* TrackingDotHalo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = TrackingDotHalo.png; path = ../../MapView/Map/Resources/TrackingDotHalo.png; sourceTree = "<group>"; };
+		16FCBD4015B41683005E3A5D /* TrackingDotHalo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "TrackingDotHalo@2x.png"; path = "../../MapView/Map/Resources/TrackingDotHalo@2x.png"; sourceTree = "<group>"; };
+		16FCBD4115B41683005E3A5D /* TrackingHeading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = TrackingHeading.png; path = ../../MapView/Map/Resources/TrackingHeading.png; sourceTree = "<group>"; };
+		16FCBD4215B41683005E3A5D /* TrackingHeading@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "TrackingHeading@2x.png"; path = "../../MapView/Map/Resources/TrackingHeading@2x.png"; sourceTree = "<group>"; };
+		16FCBD4315B41683005E3A5D /* TrackingLocation.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = TrackingLocation.png; path = ../../MapView/Map/Resources/TrackingLocation.png; sourceTree = "<group>"; };
+		16FCBD4415B41683005E3A5D /* TrackingLocation@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "TrackingLocation@2x.png"; path = "../../MapView/Map/Resources/TrackingLocation@2x.png"; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* MarkerMurderAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkerMurderAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* MarkerMurderAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MarkerMurderAppDelegate.m; sourceTree = "<group>"; };
@@ -177,6 +197,16 @@
 				280E754A0DD40C5E005A515E /* FlipsideView.xib */,
 				280E754B0DD40C5E005A515E /* MainView.xib */,
 				280E754C0DD40C5E005A515E /* MainWindow.xib */,
+				16FCBD3B15B41683005E3A5D /* HeadingAngleSmall.png */,
+				16FCBD3C15B41683005E3A5D /* HeadingAngleSmall@2x.png */,
+				16FCBD3D15B41683005E3A5D /* TrackingDot.png */,
+				16FCBD3E15B41683005E3A5D /* TrackingDot@2x.png */,
+				16FCBD3F15B41683005E3A5D /* TrackingDotHalo.png */,
+				16FCBD4015B41683005E3A5D /* TrackingDotHalo@2x.png */,
+				16FCBD4115B41683005E3A5D /* TrackingHeading.png */,
+				16FCBD4215B41683005E3A5D /* TrackingHeading@2x.png */,
+				16FCBD4315B41683005E3A5D /* TrackingLocation.png */,
+				16FCBD4415B41683005E3A5D /* TrackingLocation@2x.png */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 			);
 			name = Resources;
@@ -281,6 +311,16 @@
 				2B580E4A0F8D236100D495B2 /* marker-blue.png in Resources */,
 				2B2BADDB0FA3B48A00EE37AA /* marker-X.png in Resources */,
 				16BFBA3714E912DF00F8D07E /* mpp.png in Resources */,
+				16FCBD4515B41683005E3A5D /* HeadingAngleSmall.png in Resources */,
+				16FCBD4615B41683005E3A5D /* HeadingAngleSmall@2x.png in Resources */,
+				16FCBD4715B41683005E3A5D /* TrackingDot.png in Resources */,
+				16FCBD4815B41683005E3A5D /* TrackingDot@2x.png in Resources */,
+				16FCBD4915B41683005E3A5D /* TrackingDotHalo.png in Resources */,
+				16FCBD4A15B41683005E3A5D /* TrackingDotHalo@2x.png in Resources */,
+				16FCBD4B15B41683005E3A5D /* TrackingHeading.png in Resources */,
+				16FCBD4C15B41683005E3A5D /* TrackingHeading@2x.png in Resources */,
+				16FCBD4D15B41683005E3A5D /* TrackingLocation.png in Resources */,
+				16FCBD4E15B41683005E3A5D /* TrackingLocation@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
