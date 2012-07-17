@@ -236,6 +236,7 @@
 		DD2B375414CF8197008DE8CB /* RMMBTilesSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMBTilesSource.m; sourceTree = "<group>"; };
 		DD3BEF7715913C55007892D8 /* RMAttributionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMAttributionViewController.h; sourceTree = "<group>"; };
 		DD3BEF7815913C55007892D8 /* RMAttributionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMAttributionViewController.m; sourceTree = "<group>"; };
+		DD624B4315B4EB53004524C4 /* loading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = loading.png; path = Resources/loading.png; sourceTree = "<group>"; };
 		DD6380DB152E72880074E66E /* RMMapBoxSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMapBoxSource.h; sourceTree = "<group>"; };
 		DD6380DC152E72880074E66E /* RMMapBoxSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMapBoxSource.m; sourceTree = "<group>"; };
 		DD8CDB4814E0507100B73EB9 /* RMMapQuestOSMSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMapQuestOSMSource.h; sourceTree = "<group>"; };
@@ -485,6 +486,7 @@
 				DD8FD7571559ED930044D96F /* User Location */,
 				DD3BEF71159134E0007892D8 /* Attribution */,
 				1266929E0EB75BEA00E002D5 /* Configuration */,
+				DD8FD7581559EDA80044D96F /* Resources */,
 				B8474B8C0EB40094006A0BC1 /* FMDB */,
 			);
 			path = Map;
@@ -519,7 +521,6 @@
 				DD8FD7531559E4A40044D96F /* RMUserLocation.m */,
 				DDA6B8BB155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.h */,
 				DDA6B8BC155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.m */,
-				DD8FD7581559EDA80044D96F /* Resources */,
 			);
 			name = "User Location";
 			sourceTree = "<group>";
@@ -527,6 +528,7 @@
 		DD8FD7581559EDA80044D96F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				DD624B4315B4EB53004524C4 /* loading.png */,
 				DD8FD7631559EE120044D96F /* HeadingAngleSmall.png */,
 				DD8FD7641559EE120044D96F /* HeadingAngleSmall@2x.png */,
 				DD8FD7651559EE120044D96F /* TrackingDot.png */,
