@@ -237,6 +237,9 @@
     [self setTileSource:newTilesource];
     [self setCenterCoordinate:initialCenterCoordinate animated:NO];
 
+    _decelerationMode = RMMapDecelerationFast;
+    _boundingMask = RMMapMinHeightBound;
+
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleMemoryWarningNotification:)
                                                  name:UIApplicationDidReceiveMemoryWarningNotification
