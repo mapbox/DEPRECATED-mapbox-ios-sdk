@@ -928,9 +928,6 @@
         myOrigin.y = myOrigin.y - (zoomRect.size.height / 2);
         zoomRect.origin = myOrigin;
 
-        RMProjectedPoint topRight = RMProjectedPointMake(myOrigin.x + zoomRect.size.width, myOrigin.y + zoomRect.size.height);
-        RMLog(@"zoomWithBoundingBox: {%f,%f} - {%f,%f}", [_projection projectedPointToCoordinate:myOrigin].longitude, [_projection projectedPointToCoordinate:myOrigin].latitude, [_projection projectedPointToCoordinate:topRight].longitude, [_projection projectedPointToCoordinate:topRight].latitude);
-
         [self setProjectedBounds:zoomRect animated:animated];
     }
 }
