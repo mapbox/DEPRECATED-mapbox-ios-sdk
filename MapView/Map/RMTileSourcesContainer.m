@@ -124,6 +124,9 @@
 
 - (BOOL)addTileSource:(id<RMTileSource>)tileSource atIndex:(NSUInteger)index
 {
+    if ( ! tileSource)
+        return NO;
+    
     [_tileSourcesLock lock];
 
     RMProjection *newProjection = [tileSource projection];
