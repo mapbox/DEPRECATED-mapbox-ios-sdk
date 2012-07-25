@@ -2852,7 +2852,7 @@
 {
     if (self.viewControllerPresentingAttribution)
     {
-        RMAttributionViewController *attributionViewController = [[RMAttributionViewController alloc] initWithMapView:self];
+        RMAttributionViewController *attributionViewController = [[[RMAttributionViewController alloc] initWithMapView:self] autorelease];
         
         attributionViewController.modalTransitionStyle = UIModalTransitionStylePartialCurl;
         
