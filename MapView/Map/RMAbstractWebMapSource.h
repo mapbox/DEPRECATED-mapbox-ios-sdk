@@ -34,7 +34,7 @@
 @interface RMAbstractWebMapSource : RMAbstractMercatorTileSource
 
 @property (nonatomic, assign) NSUInteger retryCount;
-@property (nonatomic, assign) NSTimeInterval waitSeconds;
+@property (nonatomic, assign) NSTimeInterval requestTimeoutSeconds;
 
 - (NSURL *)URLForTile:(RMTile)tile;
 

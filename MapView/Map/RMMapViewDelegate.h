@@ -31,7 +31,7 @@
 @class RMAnnotation;
 @class RMUserLocation;
 
-typedef enum {
+typedef enum : NSUInteger {
     RMUserTrackingModeNone              = 0,
     RMUserTrackingModeFollow            = 1,
     RMUserTrackingModeFollowWithHeading = 2

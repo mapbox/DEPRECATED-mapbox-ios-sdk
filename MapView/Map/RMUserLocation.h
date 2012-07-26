@@ -11,7 +11,7 @@
 @interface RMUserLocation : RMAnnotation
 
 @property (nonatomic, readonly, getter=isUpdating) BOOL updating;
-@property (nonatomic, readonly, retain) CLLocation *location;
-@property (nonatomic, readonly, retain) CLHeading *heading;
+@property (nonatomic, readonly) CLLocation *location;
+@property (nonatomic, readonly) CLHeading *heading;
 
 @end
