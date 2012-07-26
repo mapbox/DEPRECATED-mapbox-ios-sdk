@@ -2534,10 +2534,7 @@
                                  _overlayView.transform   = CGAffineTransformIdentity;
                                  
                                  for (RMAnnotation *annotation in _annotations)
-                                 {
-                                     if ( ! annotation.isUserLocationAnnotation)
-                                         annotation.layer.transform = CATransform3DIdentity;
-                                 }
+                                     annotation.layer.transform = CATransform3DIdentity;
                              }
                              completion:nil];
 
@@ -2579,10 +2576,7 @@
                                  _overlayView.transform   = CGAffineTransformIdentity;
 
                                  for (RMAnnotation *annotation in _annotations)
-                                 {
-                                     if ( ! annotation.isUserLocationAnnotation)
-                                         annotation.layer.transform = CATransform3DIdentity;
-                                 }
+                                     annotation.layer.transform = CATransform3DIdentity;
                              }
                              completion:nil];
 
@@ -2793,10 +2787,8 @@
                              _overlayView.transform   = CGAffineTransformMakeRotation(angle);
 
                              for (RMAnnotation *annotation in _annotations)
-                             {
-                                 if ( ! annotation.isUserLocationAnnotation)
+                                 if ([annotation.layer isKindOfClass:[RMMarker class]] && ! annotation.isUserLocationAnnotation)
                                      annotation.layer.transform = CATransform3DMakeAffineTransform(CGAffineTransformMakeRotation(-angle));
-                             }
                          }
                          completion:nil];
 
