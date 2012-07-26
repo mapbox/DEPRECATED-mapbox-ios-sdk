@@ -18,6 +18,7 @@ Major differences from [Alpstein fork of Route-Me](https://github.com/Alpstein/r
  * Built-in attribution view controller with button on map views & default OpenStreetMap attribution. 
  * [MapBox Markers](http://mapbox.com/blog/markers/) support. 
  * Prepackaged [binary framework](http://mapbox.com/blog/ios-sdk-framework/). 
+ * Improved documentation. 
 
 [mapbox]: http://mapbox.com
 
