@@ -2466,12 +2466,16 @@
         NSMutableArray *annotationsToRemove = [NSMutableArray array];
 
         for (RMAnnotation *annotation in _annotations)
+        {
             if (annotation.isUserLocationAnnotation)
                 [annotationsToRemove addObject:annotation];
-        
+        }
+
         for (RMAnnotation *annotationToRemove in annotationsToRemove)
+        {
             [self removeAnnotation:annotationToRemove];
-        
+        }
+
         self.userLocation = nil;
     }    
 }
