@@ -104,6 +104,8 @@
 		DD8CDB4B14E0507100B73EB9 /* RMMapQuestOSMSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD8CDB4914E0507100B73EB9 /* RMMapQuestOSMSource.m */; };
 		DD8FD7541559E4A40044D96F /* RMUserLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = DD8FD7521559E4A40044D96F /* RMUserLocation.h */; };
 		DD8FD7551559E4A40044D96F /* RMUserLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = DD8FD7531559E4A40044D96F /* RMUserLocation.m */; };
+		DD98B6FA14D76B930092882F /* RMMapBoxSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DD98B6F814D76B930092882F /* RMMapBoxSource.h */; };
+		DD98B6FB14D76B930092882F /* RMMapBoxSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD98B6F914D76B930092882F /* RMMapBoxSource.m */; };
 		DDA6B8BD155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA6B8BB155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.h */; };
 		DDA6B8BE155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = DDA6B8BC155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.m */; };
 		DDC4BED5152E3BD700089409 /* RMInteractiveSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DDC4BED3152E3BD700089409 /* RMInteractiveSource.h */; };
@@ -118,7 +120,6 @@
 		DDC4BEEB152E3DE700089409 /* GRMustacheTemplateRepository.h in Headers */ = {isa = PBXBuildFile; fileRef = DDC4BEE0152E3DE700089409 /* GRMustacheTemplateRepository.h */; };
 		DDC4BEEC152E3DE700089409 /* GRMustacheVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = DDC4BEE1152E3DE700089409 /* GRMustacheVersion.h */; };
 		DDC4BEF2152E3FAE00089409 /* RMInteractiveSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DDC4BED4152E3BD700089409 /* RMInteractiveSource.m */; };
-		DDD6A19015C1BEF200260443 /* RMMapBoxSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD98B6F914D76B930092882F /* RMMapBoxSource.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -620,6 +621,7 @@
 				DD2B374F14CF814F008DE8CB /* FMDatabasePool.h in Headers */,
 				DD2B375114CF814F008DE8CB /* FMDatabaseQueue.h in Headers */,
 				DD2B375514CF8197008DE8CB /* RMMBTilesSource.h in Headers */,
+				DD98B6FA14D76B930092882F /* RMMapBoxSource.h in Headers */,
 				DD8CDB4A14E0507100B73EB9 /* RMMapQuestOSMSource.h in Headers */,
 				1607499514E120A100D535F5 /* RMGenericMapSource.h in Headers */,
 				16FFF2CB14E3DBF700A170EC /* RMMapQuestOpenAerialSource.h in Headers */,
@@ -746,6 +748,7 @@
 				DD2B375014CF814F008DE8CB /* FMDatabasePool.m in Sources */,
 				DD2B375214CF814F008DE8CB /* FMDatabaseQueue.m in Sources */,
 				DD2B375614CF8197008DE8CB /* RMMBTilesSource.m in Sources */,
+				DD98B6FB14D76B930092882F /* RMMapBoxSource.m in Sources */,
 				DD8CDB4B14E0507100B73EB9 /* RMMapQuestOSMSource.m in Sources */,
 				1607499614E120A100D535F5 /* RMGenericMapSource.m in Sources */,
 				16FFF2CC14E3DBF700A170EC /* RMMapQuestOpenAerialSource.m in Sources */,
@@ -758,7 +761,6 @@
 				16FBF07715936BF1004ECAD1 /* RMTileSourcesContainer.m in Sources */,
 				161E563B1594664E00B00BB6 /* RMOpenSeaMapLayer.m in Sources */,
 				1656665615A1DF7900EF3DC7 /* RMCoordinateGridSource.m in Sources */,
-				DDD6A19015C1BEF200260443 /* RMMapBoxSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
