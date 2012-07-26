@@ -88,7 +88,7 @@ typedef enum : NSUInteger {
 @property (nonatomic, assign)   BOOL adjustTilesForRetinaDisplay;
 @property (nonatomic, readonly) float adjustedZoomForRetinaDisplay; // takes adjustTilesForRetinaDisplay and screen scale into account
 
-@property (weak) UIViewController *viewControllerPresentingAttribution;
+@property (nonatomic, assign) UIViewController *viewControllerPresentingAttribution;
 
 // take missing tiles from lower zoom levels, up to #missingTilesDepth zoom levels (defaults to 0, which disables this feature)
 @property (nonatomic, assign) NSUInteger missingTilesDepth;

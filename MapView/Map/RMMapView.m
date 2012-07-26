@@ -160,8 +160,8 @@
     UIImageView *userLocationTrackingView;
     UIImageView *userHeadingTrackingView;
 
-    UIViewController *viewControllerPresentingAttribution;
-    UIButton *attributionButton;
+    UIViewController *_viewControllerPresentingAttribution;
+    UIButton *_attributionButton;
 }
 
 @synthesize decelerationMode = _decelerationMode;
@@ -361,7 +361,7 @@
     [userLocation release]; userLocation = nil;
     [userLocationTrackingView release]; userLocationTrackingView = nil;
     [userHeadingTrackingView release]; userHeadingTrackingView = nil;
-    [attributionButton release]; attributionButton = nil;
+    [_attributionButton release]; _attributionButton = nil;
     [super dealloc];
 }
 
@@ -2812,39 +2812,39 @@
 
 - (UIViewController *)viewControllerPresentingAttribution
 {
-    return viewControllerPresentingAttribution;
+    return _viewControllerPresentingAttribution;
 }
 
 - (void)setViewControllerPresentingAttribution:(UIViewController *)viewController
 {
-    viewControllerPresentingAttribution = viewController;
+    _viewControllerPresentingAttribution = viewController;
     
-    if (self.viewControllerPresentingAttribution && ! attributionButton)
+    if (_viewControllerPresentingAttribution && ! _attributionButton)
     {
-        attributionButton = [[UIButton buttonWithType:UIButtonTypeInfoLight] retain];
+        _attributionButton = [[UIButton buttonWithType:UIButtonTypeInfoLight] retain];
         
-        attributionButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
+        _attributionButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
         
-        [attributionButton addTarget:self action:@selector(showAttribution:) forControlEvents:UIControlEventTouchUpInside];
+        [_attributionButton addTarget:self action:@selector(showAttribution:) forControlEvents:UIControlEventTouchUpInside];
         
-        attributionButton.frame = CGRectMake(self.bounds.size.width  - 30, 
-                                             self.bounds.size.height - 30, 
-                                             attributionButton.bounds.size.width, 
-                                             attributionButton.bounds.size.height);
+        _attributionButton.frame = CGRectMake(self.bounds.size.width  - 30,
+                                              self.bounds.size.height - 30,
+                                              _attributionButton.bounds.size.width,
+                                              _attributionButton.bounds.size.height);
 
-        [self addSubview:attributionButton];
+        [self addSubview:_attributionButton];
     }
 }
 
 - (void)showAttribution:(id)sender
 {
-    if (self.viewControllerPresentingAttribution)
+    if (_viewControllerPresentingAttribution)
     {
         RMAttributionViewController *attributionViewController = [[[RMAttributionViewController alloc] initWithMapView:self] autorelease];
         
         attributionViewController.modalTransitionStyle = UIModalTransitionStylePartialCurl;
         
-        [self.viewControllerPresentingAttribution presentModalViewController:attributionViewController animated:YES];
+        [_viewControllerPresentingAttribution presentModalViewController:attributionViewController animated:YES];
     }
 }
 
