@@ -2602,6 +2602,11 @@
             userHeadingTrackingView.center = CGPointMake(round([self bounds].size.width  / 2), 
                                                          round([self bounds].size.height / 2) - (userHeadingTrackingView.bounds.size.height / 2) - 4);
 
+            userHeadingTrackingView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin  |
+                                                       UIViewAutoresizingFlexibleRightMargin |
+                                                       UIViewAutoresizingFlexibleTopMargin   |
+                                                       UIViewAutoresizingFlexibleBottomMargin;
+
             userHeadingTrackingView.alpha = 0.0;
 
             [self addSubview:userHeadingTrackingView];
@@ -2613,6 +2618,11 @@
             userLocationTrackingView.center = CGPointMake(round([self bounds].size.width  / 2), 
                                                           round([self bounds].size.height / 2));
 
+            userLocationTrackingView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin  |
+                                                        UIViewAutoresizingFlexibleRightMargin |
+                                                        UIViewAutoresizingFlexibleTopMargin   |
+                                                        UIViewAutoresizingFlexibleBottomMargin;
+            
             [self addSubview:userLocationTrackingView];
 
             if (self.zoom < 3)
