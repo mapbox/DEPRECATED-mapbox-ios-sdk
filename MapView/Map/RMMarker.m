@@ -135,8 +135,8 @@
     
     NSURL *imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://a.tiles.mapbox.com/v3/marker/pin-%@%@%@%@.png",
                                                (sizeString ? [sizeString substringToIndex:1] : @"m"), 
-                                               (symbolName ? [@"-" stringByAppendingString:symbolName] : nil), 
-                                               (colorHex   ? [@"+" stringByAppendingString:[colorHex stringByReplacingOccurrencesOfString:@"#" withString:@""]] : nil),
+                                               (symbolName ? [@"-" stringByAppendingString:symbolName] : @""),
+                                               (colorHex   ? [@"+" stringByAppendingString:[colorHex stringByReplacingOccurrencesOfString:@"#" withString:@""]] : @""),
                                                (useRetina  ? @"@2x" : @"")]];
     
     UIImage *image;
