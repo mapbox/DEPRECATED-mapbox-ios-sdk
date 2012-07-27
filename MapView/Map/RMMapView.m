@@ -2605,8 +2605,12 @@
 
             userHeadingTrackingView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"HeadingAngleSmall.png"]];
 
-            userHeadingTrackingView.center = CGPointMake(round([self bounds].size.width  / 2), 
-                                                         round([self bounds].size.height / 2) - (userHeadingTrackingView.bounds.size.height / 2) - 4);
+            userHeadingTrackingView.frame = CGRectMake((self.bounds.size.width  / 2) - (userHeadingTrackingView.bounds.size.width / 2),
+                                                       (self.bounds.size.height / 2) - userHeadingTrackingView.bounds.size.height,
+                                                       userHeadingTrackingView.bounds.size.width,
+                                                       userHeadingTrackingView.bounds.size.height * 2);
+
+            userHeadingTrackingView.contentMode = UIViewContentModeTop;
 
             userHeadingTrackingView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin  |
                                                        UIViewAutoresizingFlexibleRightMargin |
