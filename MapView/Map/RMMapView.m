@@ -2785,7 +2785,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
 {
-    if ( ! showsUserLocation || _mapScrollView.isDragging)
+    if ( ! showsUserLocation || _mapScrollView.isDragging || newHeading.headingAccuracy < 0)
         return;
 
     userLocation.heading = newHeading;
@@ -2796,15 +2796,39 @@
     if (newHeading.trueHeading != 0 && self.userTrackingMode == RMUserTrackingModeFollowWithHeading)
     {
         [CATransaction begin];
-        [CATransaction setAnimationDuration:1.0];
+        [CATransaction setAnimationDuration:0.5];
         [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
 
-        [UIView animateWithDuration:1.0
+        [UIView animateWithDuration:0.5
                               delay:0.0
                             options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveEaseInOut
                          animations:^(void)
                          {
                              CGFloat angle = (M_PI / -180) * newHeading.trueHeading;
+
+                             switch ([[UIApplication sharedApplication] statusBarOrientation])
+                             {
+                                 case (UIInterfaceOrientationLandscapeLeft):
+                                 {
+                                     angle -= 90 * (M_PI / -180);
+                                     break;
+                                 }
+                                 case (UIInterfaceOrientationLandscapeRight):
+                                 {
+                                     angle += 90 * (M_PI / -180);
+                                     break;
+                                 }
+                                 case (UIInterfaceOrientationPortraitUpsideDown):
+                                 {
+                                     angle += M_PI;
+                                     break;
+                                 }
+                                 case (UIInterfaceOrientationPortrait):
+                                 default:
+                                 {
+                                     break;
+                                 }
+                             }
 
                              _mapScrollView.transform = CGAffineTransformMakeRotation(angle);
                              _overlayView.transform   = CGAffineTransformMakeRotation(angle);
