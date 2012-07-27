@@ -76,6 +76,8 @@
     self.enabled           = YES;
     self.clusteringEnabled = YES;
 
+    self.isUserLocationAnnotation = NO;
+
     layer = nil;
 
     return self;
