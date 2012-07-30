@@ -162,6 +162,8 @@
 
     UIViewController *_viewControllerPresentingAttribution;
     UIButton *_attributionButton;
+
+    BOOL _userAlteringPanOrZoom;
 }
 
 @synthesize decelerationMode = _decelerationMode;
@@ -400,13 +402,13 @@
 
     _delegate = aDelegate;
 
-    _delegateHasBeforeMapMove = [_delegate respondsToSelector:@selector(beforeMapMove:)];
-    _delegateHasAfterMapMove  = [_delegate respondsToSelector:@selector(afterMapMove:)];
+    _delegateHasBeforeMapMove = [_delegate respondsToSelector:@selector(beforeMapMove:byUser:)];
+    _delegateHasAfterMapMove  = [_delegate respondsToSelector:@selector(afterMapMove:byUser:)];
 
-    _delegateHasBeforeMapZoom = [_delegate respondsToSelector:@selector(beforeMapZoom:)];
-    _delegateHasAfterMapZoom  = [_delegate respondsToSelector:@selector(afterMapZoom:)];
+    _delegateHasBeforeMapZoom = [_delegate respondsToSelector:@selector(beforeMapZoom:byUser:)];
+    _delegateHasAfterMapZoom  = [_delegate respondsToSelector:@selector(afterMapZoom:byUser:)];
 
-    _delegateHasMapViewRegionDidChange = [_delegate respondsToSelector:@selector(mapViewRegionDidChange:)];
+    _delegateHasMapViewRegionDidChange = [_delegate respondsToSelector:@selector(mapViewRegionDidChange:byUser:)];
 
     _delegateHasDoubleTapOnMap = [_delegate respondsToSelector:@selector(doubleTapOnMap:at:)];
     _delegateHasSingleTapOnMap = [_delegate respondsToSelector:@selector(singleTapOnMap:at:)];
@@ -593,7 +595,7 @@
 - (void)setCenterProjectedPoint:(RMProjectedPoint)centerProjectedPoint animated:(BOOL)animated
 {
     if (_delegateHasBeforeMapMove)
-        [_delegate beforeMapMove:self];
+        [_delegate beforeMapMove:self byUser:_userAlteringPanOrZoom];
 
 //    RMLog(@"Current contentSize: {%.0f,%.0f}, zoom: %f", mapScrollView.contentSize.width, mapScrollView.contentSize.height, self.zoom);
 
@@ -609,7 +611,7 @@
 //    RMLog(@"setMapCenterProjectedPoint: {%f,%f} -> {%.0f,%.0f}", centerProjectedPoint.x, centerProjectedPoint.y, mapScrollView.contentOffset.x, mapScrollView.contentOffset.y);
 
     if (_delegateHasAfterMapMove && !animated)
-        [_delegate afterMapMove:self];
+        [_delegate afterMapMove:self byUser:_userAlteringPanOrZoom];
 
     [self correctPositionOfAllAnnotations];
 }
@@ -619,7 +621,7 @@
 - (void)moveBy:(CGSize)delta
 {
     if (_delegateHasBeforeMapMove)
-        [_delegate beforeMapMove:self];
+        [_delegate beforeMapMove:self byUser:_userAlteringPanOrZoom];
 
     CGPoint contentOffset = _mapScrollView.contentOffset;
     contentOffset.x += delta.width;
@@ -627,7 +629,7 @@
     _mapScrollView.contentOffset = contentOffset;
 
     if (_delegateHasAfterMapMove)
-        [_delegate afterMapMove:self];
+        [_delegate afterMapMove:self byUser:_userAlteringPanOrZoom];
 }
 
 #pragma mark -
@@ -1076,14 +1078,19 @@
     if (self.userTrackingMode != RMUserTrackingModeNone)
         self.userTrackingMode = RMUserTrackingModeNone;
 
+    _userAlteringPanOrZoom = YES;
+    
     if (_delegateHasBeforeMapMove)
-        [_delegate beforeMapMove:self];
+        [_delegate beforeMapMove:self byUser:_userAlteringPanOrZoom];
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
     if (!decelerate && _delegateHasAfterMapMove)
-        [_delegate afterMapMove:self];
+        [_delegate afterMapMove:self byUser:_userAlteringPanOrZoom];
+    
+    if (!decelerate)
+        _userAlteringPanOrZoom = NO;
 }
 
 - (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView
@@ -1095,21 +1102,25 @@
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
     if (_delegateHasAfterMapMove)
-        [_delegate afterMapMove:self];
+        [_delegate afterMapMove:self byUser:_userAlteringPanOrZoom];
+    
+    _userAlteringPanOrZoom = NO;
 }
 
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
 {
     if (_delegateHasAfterMapMove)
-        [_delegate afterMapMove:self];
+        [_delegate afterMapMove:self byUser:_userAlteringPanOrZoom];
 }
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
 {
     _mapScrollViewIsZooming = YES;
 
+    _userAlteringPanOrZoom = (scrollView.pinchGestureRecognizer.state == UIGestureRecognizerStateBegan);
+    
     if (_delegateHasBeforeMapZoom)
-        [_delegate beforeMapZoom:self];
+        [_delegate beforeMapZoom:self byUser:_userAlteringPanOrZoom];
 }
 
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(float)scale
@@ -1121,7 +1132,9 @@
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
 {
-    if (self.userTrackingMode != RMUserTrackingModeNone && scrollView.pinchGestureRecognizer.state == UIGestureRecognizerStateChanged)
+    _userAlteringPanOrZoom = (scrollView.pinchGestureRecognizer.state == UIGestureRecognizerStateChanged);
+
+    if (self.userTrackingMode != RMUserTrackingModeNone && _userAlteringPanOrZoom)
         self.userTrackingMode = RMUserTrackingModeNone;
     
     [self correctPositionOfAllAnnotations];
@@ -1130,7 +1143,7 @@
         self.userTrackingMode = RMUserTrackingModeFollow;
 
     if (_delegateHasAfterMapZoom)
-        [_delegate afterMapZoom:self];
+        [_delegate afterMapZoom:self byUser:_userAlteringPanOrZoom];
 }
 
 // Detect dragging/zooming
@@ -1269,7 +1282,7 @@
 
     // Don't do anything stupid here or your scrolling experience will suck
     if (_delegateHasMapViewRegionDidChange)
-        [_delegate mapViewRegionDidChange:self];
+        [_delegate mapViewRegionDidChange:self byUser:_userAlteringPanOrZoom];
 }
 
 #pragma mark - Gesture Recognizers and event handling
@@ -2595,8 +2608,12 @@
 
             userHeadingTrackingView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"HeadingAngleSmall.png"]];
 
-            userHeadingTrackingView.center = CGPointMake(round([self bounds].size.width  / 2), 
-                                                         round([self bounds].size.height / 2) - (userHeadingTrackingView.bounds.size.height / 2) - 4);
+            userHeadingTrackingView.frame = CGRectMake((self.bounds.size.width  / 2) - (userHeadingTrackingView.bounds.size.width / 2),
+                                                       (self.bounds.size.height / 2) - userHeadingTrackingView.bounds.size.height,
+                                                       userHeadingTrackingView.bounds.size.width,
+                                                       userHeadingTrackingView.bounds.size.height * 2);
+
+            userHeadingTrackingView.contentMode = UIViewContentModeTop;
 
             userHeadingTrackingView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin  |
                                                        UIViewAutoresizingFlexibleRightMargin |
@@ -2775,7 +2792,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
 {
-    if ( ! showsUserLocation || _mapScrollView.isDragging)
+    if ( ! showsUserLocation || _mapScrollView.isDragging || newHeading.headingAccuracy < 0)
         return;
 
     userLocation.heading = newHeading;
@@ -2786,15 +2803,39 @@
     if (newHeading.trueHeading != 0 && self.userTrackingMode == RMUserTrackingModeFollowWithHeading)
     {
         [CATransaction begin];
-        [CATransaction setAnimationDuration:1.0];
+        [CATransaction setAnimationDuration:0.5];
         [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
 
-        [UIView animateWithDuration:1.0
+        [UIView animateWithDuration:0.5
                               delay:0.0
                             options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveEaseInOut
                          animations:^(void)
                          {
                              CGFloat angle = (M_PI / -180) * newHeading.trueHeading;
+
+                             switch ([[UIApplication sharedApplication] statusBarOrientation])
+                             {
+                                 case (UIInterfaceOrientationLandscapeLeft):
+                                 {
+                                     angle -= 90 * (M_PI / -180);
+                                     break;
+                                 }
+                                 case (UIInterfaceOrientationLandscapeRight):
+                                 {
+                                     angle += 90 * (M_PI / -180);
+                                     break;
+                                 }
+                                 case (UIInterfaceOrientationPortraitUpsideDown):
+                                 {
+                                     angle += M_PI;
+                                     break;
+                                 }
+                                 case (UIInterfaceOrientationPortrait):
+                                 default:
+                                 {
+                                     break;
+                                 }
+                             }
 
                              _mapScrollView.transform = CGAffineTransformMakeRotation(angle);
                              _overlayView.transform   = CGAffineTransformMakeRotation(angle);
