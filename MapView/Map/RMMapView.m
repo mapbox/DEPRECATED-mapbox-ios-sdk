@@ -2551,6 +2551,9 @@
         {
             [locationManager stopUpdatingHeading];
 
+            [CATransaction setAnimationDuration:0.5];
+            [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+
             [UIView animateWithDuration:(animated ? 0.5 : 0.0)
                                   delay:0.0
                                 options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveEaseInOut
@@ -2566,6 +2569,8 @@
                                      annotation.layer.transform = _annotationTransform;
                              }
                              completion:nil];
+
+            [CATransaction commit];
 
             if (userLocationTrackingView || userHeadingTrackingView)
             {
@@ -2596,6 +2601,9 @@
                 userHeadingTrackingView = nil;
             }
 
+            [CATransaction setAnimationDuration:0.5];
+            [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+
             [UIView animateWithDuration:(animated ? 0.5 : 0.0)
                                   delay:0.0
                                 options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveEaseInOut
@@ -2611,6 +2619,8 @@
                                      annotation.layer.transform = _annotationTransform;
                              }
                              completion:nil];
+
+            [CATransaction commit];
 
             userLocation.layer.hidden = NO;
 
