@@ -164,6 +164,9 @@
     UIButton *_attributionButton;
 
     BOOL _userAlteringPanOrZoom;
+
+    CGAffineTransform _mapTransform;
+    CATransform3D _annotationTransform;
 }
 
 @synthesize decelerationMode = _decelerationMode;
@@ -241,6 +244,9 @@
 
     _decelerationMode = RMMapDecelerationFast;
     _boundingMask = RMMapMinHeightBound;
+
+    _mapTransform = CGAffineTransformIdentity;
+    _annotationTransform = CATransform3DIdentity;
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleMemoryWarningNotification:)
@@ -2254,6 +2260,8 @@
             if (annotation.layer == nil)
                 continue;
 
+            annotation.layer.transform = _annotationTransform;
+
             // Use the zPosition property to order the layer hierarchy
             if ( ! [_visibleAnnotations containsObject:annotation])
             {
@@ -2304,6 +2312,8 @@
                             annotation.layer = [_delegate mapView:self layerForAnnotation:annotation];
                         if (annotation.layer == nil)
                             continue;
+
+                        annotation.layer.transform = _annotationTransform;
 
                         if (![_visibleAnnotations containsObject:annotation])
                         {
@@ -2546,11 +2556,14 @@
                                 options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveEaseInOut
                              animations:^(void)
                              {
-                                 _mapScrollView.transform = CGAffineTransformIdentity;
-                                 _overlayView.transform   = CGAffineTransformIdentity;
-                                 
+                                 _mapTransform = CGAffineTransformIdentity;
+                                 _annotationTransform = CATransform3DIdentity;
+
+                                 _mapScrollView.transform = _mapTransform;
+                                 _overlayView.transform   = _mapTransform;
+
                                  for (RMAnnotation *annotation in _annotations)
-                                     annotation.layer.transform = CATransform3DIdentity;
+                                     annotation.layer.transform = _annotationTransform;
                              }
                              completion:nil];
 
@@ -2588,11 +2601,14 @@
                                 options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveEaseInOut
                              animations:^(void)
                              {
-                                 _mapScrollView.transform = CGAffineTransformIdentity;
-                                 _overlayView.transform   = CGAffineTransformIdentity;
+                                 _mapTransform = CGAffineTransformIdentity;
+                                 _annotationTransform = CATransform3DIdentity;
+
+                                 _mapScrollView.transform = _mapTransform;
+                                 _overlayView.transform   = _mapTransform;
 
                                  for (RMAnnotation *annotation in _annotations)
-                                     annotation.layer.transform = CATransform3DIdentity;
+                                     annotation.layer.transform = _annotationTransform;
                              }
                              completion:nil];
 
@@ -2837,12 +2853,15 @@
                                  }
                              }
 
-                             _mapScrollView.transform = CGAffineTransformMakeRotation(angle);
-                             _overlayView.transform   = CGAffineTransformMakeRotation(angle);
+                             _mapTransform = CGAffineTransformMakeRotation(angle);
+                             _annotationTransform = CATransform3DMakeAffineTransform(CGAffineTransformMakeRotation(-angle));
+
+                             _mapScrollView.transform = _mapTransform;
+                             _overlayView.transform   = _mapTransform;
 
                              for (RMAnnotation *annotation in _annotations)
                                  if ([annotation.layer isKindOfClass:[RMMarker class]] && ! annotation.isUserLocationAnnotation)
-                                     annotation.layer.transform = CATransform3DMakeAffineTransform(CGAffineTransformMakeRotation(-angle));
+                                     annotation.layer.transform = _annotationTransform;
                          }
                          completion:nil];
 
