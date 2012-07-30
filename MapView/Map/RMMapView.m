@@ -1316,7 +1316,7 @@
 
 - (void)handleSingleTap:(UIGestureRecognizer *)recognizer
 {
-    CALayer *hit = [_overlayView.layer hitTest:[recognizer locationInView:_overlayView]];
+    CALayer *hit = [_overlayView.layer hitTest:[recognizer locationInView:self]];
 
     if ( ! hit)
     {
@@ -1358,7 +1358,7 @@
 
 - (void)handleDoubleTap:(UIGestureRecognizer *)recognizer
 {
-    CALayer *hit = [_overlayView.layer hitTest:[recognizer locationInView:_overlayView]];
+    CALayer *hit = [_overlayView.layer hitTest:[recognizer locationInView:self]];
 
     if ( ! hit)
     {
