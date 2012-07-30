@@ -1393,6 +1393,9 @@
         // check whether our custom pan gesture recognizer should start recognizing the gesture
         CALayer *hit = [_overlayView.layer hitTest:[recognizer locationInView:_overlayView]];
 
+        if ([hit isEqual:_overlayView.layer])
+            return NO;
+        
         if (!hit || ([hit respondsToSelector:@selector(enableDragging)] && ![(RMMarker *)hit enableDragging]))
             return NO;
 
@@ -2595,6 +2598,11 @@
             userHeadingTrackingView.center = CGPointMake(round([self bounds].size.width  / 2), 
                                                          round([self bounds].size.height / 2) - (userHeadingTrackingView.bounds.size.height / 2) - 4);
 
+            userHeadingTrackingView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin  |
+                                                       UIViewAutoresizingFlexibleRightMargin |
+                                                       UIViewAutoresizingFlexibleTopMargin   |
+                                                       UIViewAutoresizingFlexibleBottomMargin;
+
             userHeadingTrackingView.alpha = 0.0;
 
             [self addSubview:userHeadingTrackingView];
@@ -2606,6 +2614,11 @@
             userLocationTrackingView.center = CGPointMake(round([self bounds].size.width  / 2), 
                                                           round([self bounds].size.height / 2));
 
+            userLocationTrackingView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin  |
+                                                        UIViewAutoresizingFlexibleRightMargin |
+                                                        UIViewAutoresizingFlexibleTopMargin   |
+                                                        UIViewAutoresizingFlexibleBottomMargin;
+            
             [self addSubview:userLocationTrackingView];
 
             if (self.zoom < 3)
