@@ -2852,13 +2852,10 @@
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
-    if ([error code] != kCLErrorLocationUnknown)
-    {
-        self.userTrackingMode = RMUserTrackingModeNone;
+    self.userTrackingMode = RMUserTrackingModeNone;
 
-        if (_delegateHasDidFailToLocateUserWithError)
-            [_delegate mapView:self didFailToLocateUserWithError:error];
-    }
+    if (_delegateHasDidFailToLocateUserWithError)
+        [_delegate mapView:self didFailToLocateUserWithError:error];
 }
 
 #pragma mark -
