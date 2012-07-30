@@ -1400,6 +1400,9 @@
         // check whether our custom pan gesture recognizer should start recognizing the gesture
         CALayer *hit = [_overlayView.layer hitTest:[recognizer locationInView:_overlayView]];
 
+        if ([hit isEqual:_overlayView.layer])
+            return NO;
+        
         if (!hit || ([hit respondsToSelector:@selector(enableDragging)] && ![(RMMarker *)hit enableDragging]))
             return NO;
 
