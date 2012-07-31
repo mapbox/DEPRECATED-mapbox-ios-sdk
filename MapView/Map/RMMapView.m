@@ -181,7 +181,7 @@
 @synthesize positionClusterMarkersAtTheGravityCenter = _positionClusterMarkersAtTheGravityCenter;
 @synthesize clusterMarkerSize = _clusterMarkerSize, clusterAreaSize = _clusterAreaSize;
 @synthesize adjustTilesForRetinaDisplay = _adjustTilesForRetinaDisplay;
-@synthesize userLocation, showsUserLocation, userTrackingMode;
+@synthesize userLocation, showsUserLocation, userTrackingMode, displayHeadingCalibration;
 @synthesize missingTilesDepth = _missingTilesDepth;
 @synthesize debugTiles = _debugTiles;
 
@@ -241,6 +241,8 @@
 
     [self setTileSource:newTilesource];
     [self setCenterCoordinate:initialCenterCoordinate animated:NO];
+
+    self.displayHeadingCalibration = YES;
 
     _decelerationMode = RMMapDecelerationFast;
     _boundingMask = RMMapMinHeightBound;
@@ -2857,7 +2859,7 @@
 
 - (BOOL)locationManagerShouldDisplayHeadingCalibration:(CLLocationManager *)manager
 {
-    return YES;
+    return self.displayHeadingCalibration;
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading

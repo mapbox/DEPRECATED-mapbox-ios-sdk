@@ -249,6 +249,7 @@ typedef enum : NSUInteger {
 @property (nonatomic, readonly) RMUserLocation *userLocation;
 @property (nonatomic, readonly, getter=isUserLocationVisible) BOOL userLocationVisible;
 @property (nonatomic, assign)   RMUserTrackingMode userTrackingMode;
+@property (nonatomic, assign)   BOOL displayHeadingCalibration;
 
 - (void)setUserTrackingMode:(RMUserTrackingMode)mode animated:(BOOL)animated;
 
