@@ -2678,8 +2678,6 @@
 
             [self addSubview:userHeadingTrackingView];
 
-            [UIView animateWithDuration:0.5 animations:^(void) { userHeadingTrackingView.alpha = 1.0; }];
-
             userLocationTrackingView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"TrackingDot.png"]];
 
             userLocationTrackingView.center = CGPointMake(round([self bounds].size.width  / 2), 
@@ -2874,6 +2872,9 @@
 
     if (newHeading.trueHeading != 0 && self.userTrackingMode == RMUserTrackingModeFollowWithHeading)
     {
+        if (userHeadingTrackingView.alpha < 1.0)
+            [UIView animateWithDuration:0.5 animations:^(void) { userHeadingTrackingView.alpha = 1.0; }];
+
         [CATransaction begin];
         [CATransaction setAnimationDuration:0.5];
         [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
