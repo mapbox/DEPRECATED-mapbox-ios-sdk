@@ -1361,9 +1361,17 @@
 - (void)doubleTapAtPoint:(CGPoint)aPoint
 {
     if (self.zoomingInPivotsAroundCenter)
+    {
         [self zoomInToNextNativeZoomAt:[self convertPoint:self.center fromView:self.superview] animated:YES];
+    }
+    else if (userTrackingMode != RMUserTrackingModeNone && fabsf(aPoint.x - [self coordinateToPixel:userLocation.location.coordinate].x) < 75 && fabsf(aPoint.y - [self coordinateToPixel:userLocation.location.coordinate].y) < 75)
+    {
+        [self zoomInToNextNativeZoomAt:[self coordinateToPixel:userLocation.location.coordinate] animated:YES];
+    }
     else
+    {
         [self zoomInToNextNativeZoomAt:aPoint animated:YES];
+    }
 
     if (_delegateHasDoubleTapOnMap)
         [_delegate doubleTapOnMap:self at:aPoint];
@@ -1402,7 +1410,12 @@
 
 - (void)handleTwoFingerSingleTap:(UIGestureRecognizer *)recognizer
 {
-    [self zoomOutToNextNativeZoomAt:[self convertPoint:self.center fromView:self.superview] animated:YES];
+    CGPoint centerPoint = [self convertPoint:self.center fromView:self.superview];
+
+    if (userTrackingMode != RMUserTrackingModeNone)
+        centerPoint = [self coordinateToPixel:userLocation.location.coordinate];
+
+    [self zoomOutToNextNativeZoomAt:centerPoint animated:YES];
 
     if (_delegateHasSingleTapTwoFingersOnMap)
         [_delegate singleTapTwoFingersOnMap:self at:[recognizer locationInView:self]];
