@@ -847,7 +847,7 @@
 
 - (void)zoomInToNextNativeZoomAt:(CGPoint)pivot animated:(BOOL)animated
 {
-    if (self.userTrackingMode != RMUserTrackingModeNone && ! CGPointEqualToPoint(pivot, self.center))
+    if (self.userTrackingMode != RMUserTrackingModeNone && ! CGPointEqualToPoint(pivot, [self coordinateToPixel:userLocation.location.coordinate]))
         self.userTrackingMode = RMUserTrackingModeNone;
     
     // Calculate rounded zoom
