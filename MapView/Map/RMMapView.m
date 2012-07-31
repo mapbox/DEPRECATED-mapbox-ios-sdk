@@ -262,6 +262,11 @@
                                                  name:UIApplicationWillChangeStatusBarOrientationNotification
                                                object:nil];
 
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleDidChangeOrientationNotification:)
+                                                 name:UIApplicationDidChangeStatusBarOrientationNotification
+                                               object:nil];
+
     RMLog(@"Map initialised. tileSource:%@, minZoom:%f, maxZoom:%f, zoom:%f at {%f,%f}", newTilesource, self.minZoom, self.maxZoom, self.zoom, initialCenterCoordinate.longitude, initialCenterCoordinate.latitude);
 }
 
@@ -397,12 +402,15 @@
 
 - (void)handleWillChangeOrientationNotification:(NSNotification *)notification
 {
-    [self updateHeadingForDeviceOrientation];
-
     // send a dummy heading update to force re-rotation
     //
     if (userTrackingMode == RMUserTrackingModeFollowWithHeading)
         [self locationManager:locationManager didUpdateHeading:locationManager.heading];
+}
+
+- (void)handleDidChangeOrientationNotification:(NSNotification *)notification
+{
+    [self updateHeadingForDeviceOrientation];
 }
 
 - (NSString *)description
