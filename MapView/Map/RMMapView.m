@@ -75,6 +75,8 @@
 
 - (void)correctMinZoomScaleForBoundingMask;
 
+- (void)updateHeadingForDeviceOrientation;
+
 @end
 
 #pragma mark -
@@ -395,6 +397,8 @@
 
 - (void)handleWillChangeOrientationNotification:(NSNotification *)notification
 {
+    [self updateHeadingForDeviceOrientation];
+
     // send a dummy heading update to force re-rotation
     //
     if (userTrackingMode == RMUserTrackingModeFollowWithHeading)
@@ -2696,6 +2700,8 @@
             if (self.userLocation)
                 [self locationManager:locationManager didUpdateToLocation:self.userLocation.location fromLocation:self.userLocation.location];
 
+            [self updateHeadingForDeviceOrientation];
+
             [locationManager startUpdatingHeading];
 
             break;
@@ -2886,30 +2892,6 @@
                          {
                              CGFloat angle = (M_PI / -180) * newHeading.trueHeading;
 
-                             switch ([[UIApplication sharedApplication] statusBarOrientation])
-                             {
-                                 case (UIInterfaceOrientationLandscapeLeft):
-                                 {
-                                     angle -= 90 * (M_PI / -180);
-                                     break;
-                                 }
-                                 case (UIInterfaceOrientationLandscapeRight):
-                                 {
-                                     angle += 90 * (M_PI / -180);
-                                     break;
-                                 }
-                                 case (UIInterfaceOrientationPortraitUpsideDown):
-                                 {
-                                     angle += M_PI;
-                                     break;
-                                 }
-                                 case (UIInterfaceOrientationPortrait):
-                                 default:
-                                 {
-                                     break;
-                                 }
-                             }
-
                              _mapTransform = CGAffineTransformMakeRotation(angle);
                              _annotationTransform = CATransform3DMakeAffineTransform(CGAffineTransformMakeRotation(-angle));
 
@@ -2932,6 +2914,39 @@
 
     if (_delegateHasDidFailToLocateUserWithError)
         [_delegate mapView:self didFailToLocateUserWithError:error];
+}
+
+- (void)updateHeadingForDeviceOrientation
+{
+    if (locationManager)
+    {
+        // note that device and interface orientations are opposites (see UIApplication.h)
+        //
+        switch ([[UIApplication sharedApplication] statusBarOrientation])
+        {
+            case (UIInterfaceOrientationLandscapeLeft):
+            {
+                locationManager.headingOrientation = CLDeviceOrientationLandscapeRight;
+                break;
+            }
+            case (UIInterfaceOrientationLandscapeRight):
+            {
+                locationManager.headingOrientation = CLDeviceOrientationLandscapeLeft;
+                break;
+            }
+            case (UIInterfaceOrientationPortraitUpsideDown):
+            {
+                locationManager.headingOrientation = CLDeviceOrientationPortraitUpsideDown;
+                break;
+            }
+            case (UIInterfaceOrientationPortrait):
+            default:
+            {
+                locationManager.headingOrientation = CLDeviceOrientationPortrait;
+                break;
+            }
+        }
+    }
 }
 
 #pragma mark -
