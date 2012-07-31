@@ -2504,7 +2504,6 @@
         self.userLocation = [RMUserLocation annotationWithMapView:self coordinate:CLLocationCoordinate2DMake(0, 0) andTitle:nil];
 
         locationManager = [[CLLocationManager alloc] init];
-        locationManager.headingFilter = 5;
         locationManager.delegate = self;
         [locationManager startUpdatingLocation];
     }
