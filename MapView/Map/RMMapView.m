@@ -2858,6 +2858,8 @@
 
     if ( ! [_annotations containsObject:userLocation])
         [self addAnnotation:userLocation];
+
+    [self correctPositionOfAllAnnotations];
 }
 
 - (BOOL)locationManagerShouldDisplayHeadingCalibration:(CLLocationManager *)manager
