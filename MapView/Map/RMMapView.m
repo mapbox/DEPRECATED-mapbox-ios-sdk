@@ -2721,26 +2721,44 @@
 
     if (self.userTrackingMode != RMUserTrackingModeNone)
     {
-        // zoom centered on user location unless we're already centered there (or very close)
+        // center on user location unless we're already centered there (or very close)
         //
         CGPoint mapCenterPoint    = [self convertPoint:self.center fromView:self.superview];
         CGPoint userLocationPoint = [self mapPositionForAnnotation:userLocation];
 
         if (fabsf(userLocationPoint.x - mapCenterPoint.x) > 2 || fabsf(userLocationPoint.y - mapCenterPoint.y > 2))
         {
-            float delta = newLocation.horizontalAccuracy / 110000; // approx. meter per degree latitude
+            if (round(_zoom) >= 10)
+            {
+                // at sufficient detail, just re-center the map; don't zoom
+                //
+                [self setCenterCoordinate:userLocation.location.coordinate animated:YES];
+            }
+            else
+            {
+                // otherwise re-center and zoom in to near accuracy confidence
+                //
+                float delta = (newLocation.horizontalAccuracy / 110000) * 1.2; // approx. meter per degree latitude, plus some margin
 
-            CLLocationCoordinate2D southWest = CLLocationCoordinate2DMake(newLocation.coordinate.latitude  - delta, 
-                                                                          newLocation.coordinate.longitude - delta);
-            
-            CLLocationCoordinate2D northEast = CLLocationCoordinate2DMake(newLocation.coordinate.latitude  + delta, 
-                                                                          newLocation.coordinate.longitude + delta);
+                CLLocationCoordinate2D desiredSouthWest = CLLocationCoordinate2DMake(newLocation.coordinate.latitude  - delta,
+                                                                                     newLocation.coordinate.longitude - delta);
 
-            if (northEast.latitude  != [self latitudeLongitudeBoundingBox].northEast.latitude  ||
-                northEast.longitude != [self latitudeLongitudeBoundingBox].northEast.longitude ||
-                southWest.latitude  != [self latitudeLongitudeBoundingBox].southWest.latitude  ||
-                southWest.longitude != [self latitudeLongitudeBoundingBox].southWest.longitude)
-                [self zoomWithLatitudeLongitudeBoundsSouthWest:southWest northEast:northEast animated:YES];
+                CLLocationCoordinate2D desiredNorthEast = CLLocationCoordinate2DMake(newLocation.coordinate.latitude  + delta,
+                                                                                     newLocation.coordinate.longitude + delta);
+
+                CGFloat pixelRadius = fminf(self.bounds.size.width, self.bounds.size.height) / 2;
+
+                CLLocationCoordinate2D actualSouthWest = [self pixelToCoordinate:CGPointMake(userLocationPoint.x - pixelRadius, userLocationPoint.y - pixelRadius)];
+                CLLocationCoordinate2D actualNorthEast = [self pixelToCoordinate:CGPointMake(userLocationPoint.x + pixelRadius, userLocationPoint.y + pixelRadius)];
+
+                if (desiredNorthEast.latitude  != actualNorthEast.latitude  ||
+                    desiredNorthEast.longitude != actualNorthEast.longitude ||
+                    desiredSouthWest.latitude  != actualSouthWest.latitude  ||
+                    desiredSouthWest.longitude != actualSouthWest.longitude)
+                {
+                    [self zoomWithLatitudeLongitudeBoundsSouthWest:desiredSouthWest northEast:desiredNorthEast animated:YES];
+                }
+            }
         }
     }
 
