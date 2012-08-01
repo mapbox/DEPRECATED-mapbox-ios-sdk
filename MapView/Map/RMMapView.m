@@ -2929,7 +2929,7 @@
 {
     if (locationManager)
     {
-        // note that device and interface orientations are opposites (see UIApplication.h)
+        // note that right/left device and interface orientations are opposites (see UIApplication.h)
         //
         switch ([[UIApplication sharedApplication] statusBarOrientation])
         {
