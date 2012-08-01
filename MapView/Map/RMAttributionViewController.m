@@ -12,6 +12,9 @@
 #import "RMTileSource.h"
 
 @implementation RMAttributionViewController
+{
+    RMMapView *_mapView;
+}
 
 - (id)initWithMapView:(RMMapView *)mapView
 {
@@ -24,6 +27,8 @@
     
     if (self)
     {
+        _mapView = mapView;
+
         self.view.backgroundColor = [UIColor darkGrayColor];
         
         [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissModalViewControllerAnimated:)]];
@@ -32,6 +37,8 @@
         
         webView.delegate = self;
         
+        webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
+
         webView.backgroundColor = [UIColor clearColor];
         webView.opaque = NO;
         
@@ -54,6 +61,11 @@
     }
     
     return self;
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    return [_mapView.viewControllerPresentingAttribution shouldAutorotateToInterfaceOrientation:interfaceOrientation];
 }
 
 #pragma mark -
