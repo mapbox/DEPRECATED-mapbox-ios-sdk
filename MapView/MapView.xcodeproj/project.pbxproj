@@ -99,7 +99,8 @@
 		DD2B375614CF8197008DE8CB /* RMMBTilesSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD2B375414CF8197008DE8CB /* RMMBTilesSource.m */; };
 		DD3BEF7915913C55007892D8 /* RMAttributionViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = DD3BEF7715913C55007892D8 /* RMAttributionViewController.h */; };
 		DD3BEF7A15913C55007892D8 /* RMAttributionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DD3BEF7815913C55007892D8 /* RMAttributionViewController.m */; };
-		DD57D010152F97D000584A7C /* libGRMustache3-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDC4BEE2152E3DE700089409 /* libGRMustache3-iOS.a */; };
+		DD5A200915CAD03700FE4157 /* libGRMustache4-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD5A200815CAD03700FE4157 /* libGRMustache4-iOS.a */; };
+		DD5A200B15CAD09400FE4157 /* GRMustache.h in Headers */ = {isa = PBXBuildFile; fileRef = DD5A200A15CAD09400FE4157 /* GRMustache.h */; };
 		DD6380DD152E72880074E66E /* RMMapBoxSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DD6380DB152E72880074E66E /* RMMapBoxSource.h */; };
 		DD6380DE152E72880074E66E /* RMMapBoxSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD6380DC152E72880074E66E /* RMMapBoxSource.m */; };
 		DD8CDB4A14E0507100B73EB9 /* RMMapQuestOSMSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DD8CDB4814E0507100B73EB9 /* RMMapQuestOSMSource.h */; };
@@ -110,16 +111,6 @@
 		DDA6B8BD155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA6B8BB155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.h */; };
 		DDA6B8BE155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = DDA6B8BC155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.m */; };
 		DDC4BED5152E3BD700089409 /* RMInteractiveSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DDC4BED3152E3BD700089409 /* RMInteractiveSource.h */; };
-		DDC4BEE3152E3DE700089409 /* GRMustache.h in Headers */ = {isa = PBXBuildFile; fileRef = DDC4BED8152E3DE700089409 /* GRMustache.h */; };
-		DDC4BEE4152E3DE700089409 /* GRMustacheAvailabilityMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = DDC4BED9152E3DE700089409 /* GRMustacheAvailabilityMacros.h */; };
-		DDC4BEE5152E3DE700089409 /* GRMustacheError.h in Headers */ = {isa = PBXBuildFile; fileRef = DDC4BEDA152E3DE700089409 /* GRMustacheError.h */; };
-		DDC4BEE6152E3DE700089409 /* GRMustacheHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = DDC4BEDB152E3DE700089409 /* GRMustacheHelper.h */; };
-		DDC4BEE7152E3DE700089409 /* GRMustacheInvocation.h in Headers */ = {isa = PBXBuildFile; fileRef = DDC4BEDC152E3DE700089409 /* GRMustacheInvocation.h */; };
-		DDC4BEE8152E3DE700089409 /* GRMustacheSection.h in Headers */ = {isa = PBXBuildFile; fileRef = DDC4BEDD152E3DE700089409 /* GRMustacheSection.h */; };
-		DDC4BEE9152E3DE700089409 /* GRMustacheTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDC4BEDE152E3DE700089409 /* GRMustacheTemplate.h */; };
-		DDC4BEEA152E3DE700089409 /* GRMustacheTemplateDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDC4BEDF152E3DE700089409 /* GRMustacheTemplateDelegate.h */; };
-		DDC4BEEB152E3DE700089409 /* GRMustacheTemplateRepository.h in Headers */ = {isa = PBXBuildFile; fileRef = DDC4BEE0152E3DE700089409 /* GRMustacheTemplateRepository.h */; };
-		DDC4BEEC152E3DE700089409 /* GRMustacheVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = DDC4BEE1152E3DE700089409 /* GRMustacheVersion.h */; };
 		DDC4BEF2152E3FAE00089409 /* RMInteractiveSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DDC4BED4152E3BD700089409 /* RMInteractiveSource.m */; };
 /* End PBXBuildFile section */
 
@@ -236,6 +227,8 @@
 		DD2B375414CF8197008DE8CB /* RMMBTilesSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMBTilesSource.m; sourceTree = "<group>"; };
 		DD3BEF7715913C55007892D8 /* RMAttributionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMAttributionViewController.h; sourceTree = "<group>"; };
 		DD3BEF7815913C55007892D8 /* RMAttributionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMAttributionViewController.m; sourceTree = "<group>"; };
+		DD5A200815CAD03700FE4157 /* libGRMustache4-iOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libGRMustache4-iOS.a"; path = "GRMustache/lib/libGRMustache4-iOS.a"; sourceTree = "<group>"; };
+		DD5A200A15CAD09400FE4157 /* GRMustache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GRMustache.h; path = GRMustache/include/GRMustache.h; sourceTree = "<group>"; };
 		DD624B4315B4EB53004524C4 /* loading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = loading.png; path = Resources/loading.png; sourceTree = "<group>"; };
 		DD6380DB152E72880074E66E /* RMMapBoxSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMapBoxSource.h; sourceTree = "<group>"; };
 		DD6380DC152E72880074E66E /* RMMapBoxSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMapBoxSource.m; sourceTree = "<group>"; };
@@ -258,17 +251,6 @@
 		DDA6B8C3155CAB9A003DB5D8 /* TrackingHeading@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "TrackingHeading@2x.png"; path = "Resources/TrackingHeading@2x.png"; sourceTree = "<group>"; };
 		DDC4BED3152E3BD700089409 /* RMInteractiveSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMInteractiveSource.h; sourceTree = "<group>"; };
 		DDC4BED4152E3BD700089409 /* RMInteractiveSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMInteractiveSource.m; sourceTree = "<group>"; };
-		DDC4BED8152E3DE700089409 /* GRMustache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GRMustache.h; sourceTree = "<group>"; };
-		DDC4BED9152E3DE700089409 /* GRMustacheAvailabilityMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GRMustacheAvailabilityMacros.h; sourceTree = "<group>"; };
-		DDC4BEDA152E3DE700089409 /* GRMustacheError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GRMustacheError.h; sourceTree = "<group>"; };
-		DDC4BEDB152E3DE700089409 /* GRMustacheHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GRMustacheHelper.h; sourceTree = "<group>"; };
-		DDC4BEDC152E3DE700089409 /* GRMustacheInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GRMustacheInvocation.h; sourceTree = "<group>"; };
-		DDC4BEDD152E3DE700089409 /* GRMustacheSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GRMustacheSection.h; sourceTree = "<group>"; };
-		DDC4BEDE152E3DE700089409 /* GRMustacheTemplate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GRMustacheTemplate.h; sourceTree = "<group>"; };
-		DDC4BEDF152E3DE700089409 /* GRMustacheTemplateDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GRMustacheTemplateDelegate.h; sourceTree = "<group>"; };
-		DDC4BEE0152E3DE700089409 /* GRMustacheTemplateRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GRMustacheTemplateRepository.h; sourceTree = "<group>"; };
-		DDC4BEE1152E3DE700089409 /* GRMustacheVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GRMustacheVersion.h; sourceTree = "<group>"; };
-		DDC4BEE2152E3DE700089409 /* libGRMustache3-iOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libGRMustache3-iOS.a"; path = "GRMustache/lib/libGRMustache3-iOS.a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -281,9 +263,9 @@
 				B8C974520E8A19B2007D16AD /* CoreLocation.framework in Frameworks */,
 				B8C974530E8A19B2007D16AD /* UIKit.framework in Frameworks */,
 				B8C974540E8A19B2007D16AD /* QuartzCore.framework in Frameworks */,
-				DD57D010152F97D000584A7C /* libGRMustache3-iOS.a in Frameworks */,
 				B8474BC10EB4019A006A0BC1 /* libsqlite3.dylib in Frameworks */,
 				3849889C0F6F758100496293 /* libProj4.a in Frameworks */,
+				DD5A200915CAD03700FE4157 /* libGRMustache4-iOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -553,29 +535,11 @@
 			name = Interactivity;
 			sourceTree = "<group>";
 		};
-		DDC4BED7152E3DE700089409 /* include */ = {
-			isa = PBXGroup;
-			children = (
-				DDC4BED8152E3DE700089409 /* GRMustache.h */,
-				DDC4BED9152E3DE700089409 /* GRMustacheAvailabilityMacros.h */,
-				DDC4BEDA152E3DE700089409 /* GRMustacheError.h */,
-				DDC4BEDB152E3DE700089409 /* GRMustacheHelper.h */,
-				DDC4BEDC152E3DE700089409 /* GRMustacheInvocation.h */,
-				DDC4BEDD152E3DE700089409 /* GRMustacheSection.h */,
-				DDC4BEDE152E3DE700089409 /* GRMustacheTemplate.h */,
-				DDC4BEDF152E3DE700089409 /* GRMustacheTemplateDelegate.h */,
-				DDC4BEE0152E3DE700089409 /* GRMustacheTemplateRepository.h */,
-				DDC4BEE1152E3DE700089409 /* GRMustacheVersion.h */,
-			);
-			name = include;
-			path = GRMustache/include;
-			sourceTree = "<group>";
-		};
 		DDC4BEEE152E3DEC00089409 /* GRMustache */ = {
 			isa = PBXGroup;
 			children = (
-				DDC4BED7152E3DE700089409 /* include */,
-				DDC4BEE2152E3DE700089409 /* libGRMustache3-iOS.a */,
+				DD5A200A15CAD09400FE4157 /* GRMustache.h */,
+				DD5A200815CAD03700FE4157 /* libGRMustache4-iOS.a */,
 			);
 			name = GRMustache;
 			sourceTree = "<group>";
@@ -629,16 +593,6 @@
 				16FFF2CB14E3DBF700A170EC /* RMMapQuestOpenAerialSource.h in Headers */,
 				DD96559215264C810008517A /* RMMapBoxSource.h in Headers */,
 				DDC4BED5152E3BD700089409 /* RMInteractiveSource.h in Headers */,
-				DDC4BEE3152E3DE700089409 /* GRMustache.h in Headers */,
-				DDC4BEE4152E3DE700089409 /* GRMustacheAvailabilityMacros.h in Headers */,
-				DDC4BEE5152E3DE700089409 /* GRMustacheError.h in Headers */,
-				DDC4BEE6152E3DE700089409 /* GRMustacheHelper.h in Headers */,
-				DDC4BEE7152E3DE700089409 /* GRMustacheInvocation.h in Headers */,
-				DDC4BEE8152E3DE700089409 /* GRMustacheSection.h in Headers */,
-				DDC4BEE9152E3DE700089409 /* GRMustacheTemplate.h in Headers */,
-				DDC4BEEA152E3DE700089409 /* GRMustacheTemplateDelegate.h in Headers */,
-				DDC4BEEB152E3DE700089409 /* GRMustacheTemplateRepository.h in Headers */,
-				DDC4BEEC152E3DE700089409 /* GRMustacheVersion.h in Headers */,
 				DD6380DD152E72880074E66E /* RMMapBoxSource.h in Headers */,
 				DD8FD7541559E4A40044D96F /* RMUserLocation.h in Headers */,
 				DDA6B8BD155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.h in Headers */,
@@ -648,6 +602,7 @@
 				16FBF07615936BF1004ECAD1 /* RMTileSourcesContainer.h in Headers */,
 				161E563A1594664E00B00BB6 /* RMOpenSeaMapLayer.h in Headers */,
 				1656665515A1DF7900EF3DC7 /* RMCoordinateGridSource.h in Headers */,
+				DD5A200B15CAD09400FE4157 /* GRMustache.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
