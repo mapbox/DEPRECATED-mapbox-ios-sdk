@@ -28,9 +28,11 @@
 #import "RMAbstractWebMapSource.h"
 #import "RMTileCache.h"
 
+#define HTTP_404_NOT_FOUND 404
+
 @implementation RMAbstractWebMapSource
 
-@synthesize retryCount, waitSeconds;
+@synthesize retryCount, requestTimeoutSeconds;
 
 - (id)init
 {
@@ -38,7 +40,7 @@
         return nil;
 
     self.retryCount = RMAbstractWebMapSourceDefaultRetryCount;
-    self.waitSeconds = RMAbstractWebMapSourceDefaultWaitSeconds;
+    self.requestTimeoutSeconds = RMAbstractWebMapSourceDefaultWaitSeconds;
 
     return self;
 }
@@ -74,66 +76,82 @@
 
     NSArray *URLs = [self URLsForTile:tile];
 
-    // fill up collection array with placeholders
-    //
-    NSMutableArray *tilesData = [NSMutableArray arrayWithCapacity:[URLs count]];
-
-    for (NSUInteger p = 0; p < [URLs count]; ++p)
-        [tilesData addObject:[NSNull null]];
-
-    dispatch_group_t fetchGroup = dispatch_group_create();
-
-    for (NSUInteger u = 0; u < [URLs count]; ++u)
+    if ([URLs count] > 1)
     {
-        NSURL *currentURL = [URLs objectAtIndex:u];
+        // fill up collection array with placeholders
+        //
+        NSMutableArray *tilesData = [NSMutableArray arrayWithCapacity:[URLs count]];
 
-        dispatch_group_async(fetchGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void)
+        for (NSUInteger p = 0; p < [URLs count]; ++p)
+            [tilesData addObject:[NSNull null]];
+
+        dispatch_group_t fetchGroup = dispatch_group_create();
+
+        for (NSUInteger u = 0; u < [URLs count]; ++u)
         {
-            NSData *tileData = nil;
+            NSURL *currentURL = [URLs objectAtIndex:u];
 
-            for (NSUInteger try = 0; tileData == nil && try < self.retryCount; ++try)
+            dispatch_group_async(fetchGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void)
             {
-                NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:currentURL];
-                [request setTimeoutInterval:(self.waitSeconds / (CGFloat)self.retryCount)];
-                tileData = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
-            }
+                NSData *tileData = nil;
 
-            if (tileData)
-            {
-                @synchronized(self)
+                for (NSUInteger try = 0; tileData == nil && try < self.retryCount; ++try)
                 {
-                    // safely put into collection array in proper order
-                    //
-                    [tilesData replaceObjectAtIndex:u withObject:tileData];
-                };
-            }
-        });
-    }
+                    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:currentURL];
+                    [request setTimeoutInterval:(self.requestTimeoutSeconds / (CGFloat)self.retryCount)];
+                    tileData = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
+                }
 
-    // wait for whole group of fetches (with retries) to finish, then clean up
-    //
-    dispatch_group_wait(fetchGroup, dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * self.waitSeconds));
-    dispatch_release(fetchGroup);
+                if (tileData)
+                {
+                    @synchronized(self)
+                    {
+                        // safely put into collection array in proper order
+                        //
+                        [tilesData replaceObjectAtIndex:u withObject:tileData];
+                    };
+                }
+            });
+        }
 
-    // composite the collected images together
-    //
-    for (NSData *tileData in tilesData)
-    {
-        if (tileData && [tileData isKindOfClass:[NSData class]] && [tileData length])
+        // wait for whole group of fetches (with retries) to finish, then clean up
+        //
+        dispatch_group_wait(fetchGroup, dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * self.requestTimeoutSeconds));
+        dispatch_release(fetchGroup);
+
+        // composite the collected images together
+        //
+        for (NSData *tileData in tilesData)
         {
-            if (image != nil)
+            if (tileData && [tileData isKindOfClass:[NSData class]] && [tileData length])
             {
-                UIGraphicsBeginImageContext(image.size);
-                [image drawAtPoint:CGPointMake(0,0)];
-                [[UIImage imageWithData:tileData] drawAtPoint:CGPointMake(0,0)];
+                if (image != nil)
+                {
+                    UIGraphicsBeginImageContext(image.size);
+                    [image drawAtPoint:CGPointMake(0,0)];
+                    [[UIImage imageWithData:tileData] drawAtPoint:CGPointMake(0,0)];
 
-                image = UIGraphicsGetImageFromCurrentImageContext();
-                UIGraphicsEndImageContext();
+                    image = UIGraphicsGetImageFromCurrentImageContext();
+                    UIGraphicsEndImageContext();
+                }
+                else
+                {
+                    image = [UIImage imageWithData:tileData];
+                }
             }
-            else
-            {
-                image = [UIImage imageWithData:tileData];
-            }
+        }
+    }
+    else
+    {
+        for (NSUInteger try = 0; image == nil && try < self.retryCount; ++try)
+        {
+            NSHTTPURLResponse *response = nil;
+            NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[URLs objectAtIndex:0]];
+            [request setTimeoutInterval:(self.requestTimeoutSeconds / (CGFloat)self.retryCount)];
+            image = [UIImage imageWithData:[NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil]];
+
+            if (response.statusCode == HTTP_404_NOT_FOUND)
+                break;
         }
     }
 

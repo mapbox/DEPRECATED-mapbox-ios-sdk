@@ -31,7 +31,7 @@
 @class RMAnnotation;
 @class RMUserLocation;
 
-typedef enum {
+typedef enum : NSUInteger {
     RMUserTrackingModeNone              = 0,
     RMUserTrackingModeFollow            = 1,
     RMUserTrackingModeFollowWithHeading = 2
@@ -45,11 +45,11 @@ typedef enum {
 - (void)mapView:(RMMapView *)mapView willHideLayerForAnnotation:(RMAnnotation *)annotation;
 - (void)mapView:(RMMapView *)mapView didHideLayerForAnnotation:(RMAnnotation *)annotation;
 
-- (void)beforeMapMove:(RMMapView *)map;
-- (void)afterMapMove:(RMMapView *)map;
+- (void)beforeMapMove:(RMMapView *)map byUser:(BOOL)wasUserAction;
+- (void)afterMapMove:(RMMapView *)map byUser:(BOOL)wasUserAction;
 
-- (void)beforeMapZoom:(RMMapView *)map;
-- (void)afterMapZoom:(RMMapView *)map;
+- (void)beforeMapZoom:(RMMapView *)map byUser:(BOOL)wasUserAction;
+- (void)afterMapZoom:(RMMapView *)map byUser:(BOOL)wasUserAction;
 
 /*
  \brief Tells the delegate that the region displayed by the map view just changed.
@@ -57,7 +57,7 @@ typedef enum {
  During scrolling and zooming, this method may be called many times to report updates to the map position.
  Therefore, your implementation of this method should be as lightweight as possible to avoid affecting scrolling and zooming performance.
  */
-- (void)mapViewRegionDidChange:(RMMapView *)mapView;
+- (void)mapViewRegionDidChange:(RMMapView *)mapView byUser:(BOOL)wasUserAction;
 
 - (void)doubleTapOnMap:(RMMapView *)map at:(CGPoint)point;
 - (void)singleTapOnMap:(RMMapView *)map at:(CGPoint)point;
