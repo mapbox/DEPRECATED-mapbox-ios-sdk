@@ -258,7 +258,11 @@ RMTilePoint RMInteractiveSourceNormalizedTilePointForMapView(CGPoint point, RMMa
             NSMutableDictionary *infoObject = [NSJSONSerialization JSONObjectWithData:[[interactivityDictionary objectForKey:@"keyJSON"] dataUsingEncoding:NSUTF8StringEncoding]
                                                                               options:NSJSONReadingMutableContainers
                                                                                 error:nil];
-            
+
+#ifdef DEBUG
+            [GRMustache preventNSUndefinedKeyExceptionAttack];
+#endif
+
             switch (outputType)
             {
                 case RMInteractiveSourceOutputTypeTeaser:
