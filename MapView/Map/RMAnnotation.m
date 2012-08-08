@@ -172,13 +172,12 @@
 
 - (BOOL)isAnnotationOnScreen
 {
-    CGRect screenBounds = [mapView bounds];
-    return [self isAnnotationWithinBounds:screenBounds];
+    return [self isAnnotationWithinBounds:[mapView bounds]];
 }
 
 - (BOOL)isAnnotationVisibleOnScreen
 {
-    return (layer != nil);
+    return (layer != nil && [self isAnnotationOnScreen]);
 }
 
 - (void)setIsUserLocationAnnotation:(BOOL)flag
