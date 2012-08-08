@@ -10,8 +10,14 @@
 #import "RMMarker.h"
 #import "RMAnnotation.h"
 #import "RMPixel.h"
+#import "RMMapView.h"
 
 @implementation RMMapOverlayView
+{
+    RMAnnotation *_userLocationAnnotation;
+    RMAnnotation *_accuracyCircleAnnotation;
+    RMAnnotation *_trackingHaloAnnotation;
+}
 
 + (Class)layerClass
 {
@@ -56,6 +62,32 @@
 - (void)moveLayersBy:(CGPoint)delta
 {
     [self.layer scrollPoint:CGPointMake(-delta.x, -delta.y)];
+}
+
+- (CALayer *)overlayHitTest:(CGPoint)point
+{
+    RMMapView *mapView = ((RMMapView *)self.superview);
+
+    if ( ! _userLocationAnnotation)
+        _userLocationAnnotation = (RMAnnotation *)mapView.userLocation;
+
+    if ( ! _accuracyCircleAnnotation)
+        for (RMAnnotation *annotation in mapView.annotations)
+            if ([annotation.annotationType isEqualToString:kRMAccuracyCircleAnnotationTypeName])
+                _accuracyCircleAnnotation = annotation;
+
+    if ( ! _trackingHaloAnnotation)
+        for (RMAnnotation *annotation in mapView.annotations)
+            if ([annotation.annotationType isEqualToString:kRMTrackingHaloAnnotationTypeName])
+                _trackingHaloAnnotation = annotation;
+
+    _userLocationAnnotation.layer.hidden = _accuracyCircleAnnotation.layer.hidden = _trackingHaloAnnotation.layer.hidden = YES;
+
+    CALayer *hit = [self.layer hitTest:point];
+
+    _userLocationAnnotation.layer.hidden = _accuracyCircleAnnotation.layer.hidden = _trackingHaloAnnotation.layer.hidden = NO;
+
+    return hit;
 }
 
 @end

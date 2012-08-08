@@ -25,6 +25,8 @@
     
     layer = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDot.png"]];
 
+    layer.zPosition = -MAXFLOAT + 2;
+
     annotationType = [kRMUserLocationAnnotationTypeName retain];
 
     clusteringEnabled = NO;

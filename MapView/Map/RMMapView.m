@@ -1343,7 +1343,7 @@
 
 - (void)handleSingleTap:(UIGestureRecognizer *)recognizer
 {
-    CALayer *hit = [_overlayView.layer hitTest:[recognizer locationInView:self]];
+    CALayer *hit = [_overlayView overlayHitTest:[recognizer locationInView:self]];
 
     if ( ! hit)
     {
@@ -1393,7 +1393,7 @@
 
 - (void)handleDoubleTap:(UIGestureRecognizer *)recognizer
 {
-    CALayer *hit = [_overlayView.layer hitTest:[recognizer locationInView:self]];
+    CALayer *hit = [_overlayView overlayHitTest:[recognizer locationInView:self]];
 
     if ( ! hit)
     {
@@ -1450,7 +1450,7 @@
     if ([recognizer isKindOfClass:[UIPanGestureRecognizer class]])
     {
         // check whether our custom pan gesture recognizer should start recognizing the gesture
-        CALayer *hit = [_overlayView.layer hitTest:[recognizer locationInView:_overlayView]];
+        CALayer *hit = [_overlayView overlayHitTest:[recognizer locationInView:_overlayView]];
 
         if ([hit isEqual:_overlayView.layer])
             return NO;
@@ -2789,6 +2789,7 @@
         accuracyCircleAnnotation.annotationType = kRMAccuracyCircleAnnotationTypeName;
         accuracyCircleAnnotation.clusteringEnabled = NO;
         accuracyCircleAnnotation.layer = [[RMCircle alloc] initWithView:self radiusInMeters:newLocation.horizontalAccuracy];
+        accuracyCircleAnnotation.layer.zPosition = -MAXFLOAT;
         accuracyCircleAnnotation.isUserLocationAnnotation = YES;
 
         ((RMCircle *)accuracyCircleAnnotation.layer).lineColor = [UIColor colorWithRed:0.378 green:0.552 blue:0.827 alpha:0.7];
@@ -2822,6 +2823,7 @@
         // create image marker
         //
         trackingHaloAnnotation.layer = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDotHalo.png"]];
+        trackingHaloAnnotation.layer.zPosition = -MAXFLOAT + 1;
         trackingHaloAnnotation.isUserLocationAnnotation = YES;
 
         [CATransaction begin];

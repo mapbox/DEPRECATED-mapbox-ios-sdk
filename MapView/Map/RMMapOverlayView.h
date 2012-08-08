@@ -22,4 +22,6 @@
 
 - (void)moveLayersBy:(CGPoint)delta;
 
+- (CALayer *)overlayHitTest:(CGPoint)point;
+
 @end
