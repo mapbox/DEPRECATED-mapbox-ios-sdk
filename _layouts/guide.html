@@ -1,0 +1,41 @@
+---
+layout: default
+section: developers
+class: box
+---
+<link rel='stylesheet' href='{{site.url}}/css/developers.css' />
+
+<div class='clearfix doc-header pad1 fillL'>
+  <div class='cell7'>
+    <h2>{{site.title}}</h2>
+    <p>{{site.description}}</p>
+  </div>
+  <div class='cell5 doc-subnav clearfix'>
+    <a href='{{site.baseurl}}/' class='active'>Guide</a>
+    <a href='{{site.baseurl}}/api/'>API</a>
+    <a href='{{site.baseurl}}/examples/'>Examples</a>
+  </div>
+</div>
+
+<div class='doc-content pad0 fillL clearfix'>
+<div class='fillW clearfix'>
+  <div class='cell9 doc float-right pad2 prose'>
+    <h1>{{page.title}}</h1>
+    {{content}}
+  </div>
+  <div class='cell3 float-right'>
+    <form class='pad2 doc-search'>
+      <input type='text' placeholder='Search...' />
+      <input type='submit' value='Search' class='icon reverse search' />
+    </form>
+    <div class='doc-nav'>
+    <ul class='pages'>
+    {% for item in site.categories.guide reversed %}
+    <li><a {% if item.url == page.url %}class='active'{% endif %} href='{{site.baseurl}}{{item.url}}'>{{item.title}}</a></li>
+    {% endfor %}
+    </ul>
+    </div>
+  </div>
+</div>
+</div>
+
