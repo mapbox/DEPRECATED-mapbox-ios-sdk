@@ -33,8 +33,11 @@ done
 echo -e "$YAML"
 echo "---"
 echo -e "$CONTENT" | \
-  sed 's/class="title /class="/' | \
-  sed 's/class="section /class="/' | \
-  sed 's/ Class Reference<\/h1>/<\/h1>/' | \
-  sed 's/ Protocol Reference<\/h1>/<\/h1>/'
-
+  sed 's,class="title ,class=",' | \
+  sed 's,class="section ,class=",' | \
+  sed 's, Class Reference</h1>,</h1>,' | \
+  sed 's, Protocol Reference</h1>,</h1>,' | \
+  # Add an id to h1s so they can be looked up by anchor links.
+  sed 's,<h1 class="title-header">\([^<]*\)</h1>,<h1 class="title-header" id="\L\1">\E\1</h1>,' | \
+  # Replace links to class/protocol pages with anchor links. Avoids http:// urls.
+  sed 's,<a href="[^#][^:\"]*">\([^<]*\)</a>,<a href="#\L\1">\E\1</a>,g'
