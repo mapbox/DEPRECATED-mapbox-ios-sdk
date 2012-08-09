@@ -20,7 +20,7 @@ class: box
 <div class='doc-page pad0 fillM clearfix'>
 <div class='fillW clearfix'>
   <div class='cell9 doc-content doc float-right pad2 prose'>
-    <h1>{{page.title}}</h1>
+    <h1 id='{{page.title|downcase|replace:' ','_'}}'>{{page.title}}</h1>
     {{content}}
   </div>
   <div class='cell3 float-right'>
@@ -29,13 +29,27 @@ class: box
       <input type='submit' value='Search' class='icon reverse search' />
     </form>
     <div class='doc-nav'>
-    <ul class='pages'>
-    {% for item in site.categories.guide reversed %}
-    <li><a {% if item.url == page.url %}class='active'{% endif %} href='{{site.baseurl}}{{item.url}}'>{{item.title}}</a></li>
-    {% endfor %}
-    </ul>
+      {% if page.navigation %}
+      {% for heading in page.navigation %}
+        <h3><a href='#{{heading[0]|downcase|replace:' ','_'}}'>{{heading[0]}}</a></h3>
+        <ul class='anchors'>
+        {% for item in heading[1] %}
+        {% if item.hash %}
+          <li><a href='#{{item.hash}}'>{{item.text}}</a></li>
+        {% else %}
+          <li><a href='#{{item|downcase|replace:' ','_'}}'>{{item}}</a></li>
+        {% endif %}
+        {% endfor %}
+        </ul>
+      {% endfor %}
+      {% endif %}
     </div>
   </div>
 </div>
 </div>
 
+<script type='text/javascript'>
+$('h1[id], h2[id], h3[id], h4[id]').click(function(ev) {
+  window.location.hash = $(ev.currentTarget).attr('id');
+});
+</script>
