@@ -76,7 +76,6 @@
 - (void)correctMinZoomScaleForBoundingMask;
 
 - (void)updateHeadingForDeviceOrientation;
-- (BOOL)locationCoordinateIsValid:(CLLocationCoordinate2D)coordinate;
 
 @end
 
@@ -2512,7 +2511,7 @@
         if (_delegateHasWillStartLocatingUser)
             [_delegate mapViewWillStartLocatingUser:self];
 
-        self.userLocation = [RMUserLocation annotationWithMapView:self coordinate:CLLocationCoordinate2DMake(0, 0) andTitle:nil];
+        self.userLocation = [RMUserLocation annotationWithMapView:self coordinate:CLLocationCoordinate2DMake(MAXFLOAT, MAXFLOAT) andTitle:nil];
 
         locationManager = [[CLLocationManager alloc] init];
         locationManager.delegate = self;
@@ -2584,7 +2583,7 @@
     if (mode == userTrackingMode)
         return;
 
-    if (mode == RMUserTrackingModeFollowWithHeading && ! [self locationCoordinateIsValid:userLocation.coordinate])
+    if (mode == RMUserTrackingModeFollowWithHeading && ! CLLocationCoordinate2DIsValid(userLocation.coordinate))
         mode = RMUserTrackingModeNone;
 
     userTrackingMode = mode;
@@ -2729,7 +2728,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
-    if ( ! showsUserLocation || _mapScrollView.isDragging || ! [self locationCoordinateIsValid:newLocation.coordinate])
+    if ( ! showsUserLocation || _mapScrollView.isDragging || ! CLLocationCoordinate2DIsValid(newLocation.coordinate))
         return;
 
     if ([newLocation distanceFromLocation:oldLocation])
@@ -2868,11 +2867,11 @@
     if ([newLocation distanceFromLocation:oldLocation])
         trackingHaloAnnotation.coordinate = newLocation.coordinate;
 
-    userLocation.layer.hidden = ( ! [self locationCoordinateIsValid:trackingHaloAnnotation.coordinate] || self.userTrackingMode == RMUserTrackingModeFollowWithHeading);
+    userLocation.layer.hidden = ( ! CLLocationCoordinate2DIsValid(trackingHaloAnnotation.coordinate) || self.userTrackingMode == RMUserTrackingModeFollowWithHeading);
 
     accuracyCircleAnnotation.layer.hidden = newLocation.horizontalAccuracy <= 10;
 
-    trackingHaloAnnotation.layer.hidden = ( ! [self locationCoordinateIsValid:trackingHaloAnnotation.coordinate] || newLocation.horizontalAccuracy > 10);
+    trackingHaloAnnotation.layer.hidden = ( ! CLLocationCoordinate2DIsValid(trackingHaloAnnotation.coordinate) || newLocation.horizontalAccuracy > 10);
 
     if ( ! [_annotations containsObject:userLocation])
         [self addAnnotation:userLocation];
@@ -2966,11 +2965,6 @@
             }
         }
     }
-}
-
-- (BOOL)locationCoordinateIsValid:(CLLocationCoordinate2D)coordinate
-{
-    return (CLLocationCoordinate2DIsValid(coordinate) && ! (coordinate.latitude == 0.0 && coordinate.longitude == 0.0));
 }
 
 #pragma mark -
