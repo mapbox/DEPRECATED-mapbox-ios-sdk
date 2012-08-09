@@ -2301,7 +2301,8 @@
             if (annotation.layer == nil)
                 continue;
 
-            annotation.layer.transform = _annotationTransform;
+            if ([annotation.layer isKindOfClass:[RMMarker class]] && ! annotation.isUserLocationAnnotation)
+                annotation.layer.transform = _annotationTransform;
 
             // Use the zPosition property to order the layer hierarchy
             if ( ! [_visibleAnnotations containsObject:annotation])
@@ -2354,7 +2355,8 @@
                         if (annotation.layer == nil)
                             continue;
 
-                        annotation.layer.transform = _annotationTransform;
+                        if ([annotation.layer isKindOfClass:[RMMarker class]] && ! annotation.isUserLocationAnnotation)
+                            annotation.layer.transform = _annotationTransform;
 
                         if (![_visibleAnnotations containsObject:annotation])
                         {
@@ -2609,7 +2611,8 @@
                                  _overlayView.transform   = _mapTransform;
 
                                  for (RMAnnotation *annotation in _annotations)
-                                     annotation.layer.transform = _annotationTransform;
+                                     if ([annotation.layer isKindOfClass:[RMMarker class]] && ! annotation.isUserLocationAnnotation)
+                                         annotation.layer.transform = _annotationTransform;
                              }
                              completion:nil];
 
@@ -2659,7 +2662,8 @@
                                  _overlayView.transform   = _mapTransform;
 
                                  for (RMAnnotation *annotation in _annotations)
-                                     annotation.layer.transform = _annotationTransform;
+                                     if ([annotation.layer isKindOfClass:[RMMarker class]] && ! annotation.isUserLocationAnnotation)
+                                         annotation.layer.transform = _annotationTransform;
                              }
                              completion:nil];
 
