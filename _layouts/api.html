@@ -71,9 +71,9 @@ code p { display:inline; }
   </div>
 </div>
 
-<div class='doc-content pad0 fillL clearfix'>
+<div class='doc-page pad0 fillL clearfix'>
 <div class='fillW clearfix'>
-  <div id='docs' class='cell9 doc float-right pad2 prose'>
+  <div id='docs' class='cell9 doc-content doc float-right pad2 prose'>
     {{content}}
   </div>
   <div class='cell3 float-right'>
@@ -97,3 +97,8 @@ code p { display:inline; }
 </div>
 </div>
 
+<script type='text/javascript'>
+$('h1[id], h2[id], h3[id], h4[id]').click(function(ev) {
+  window.location.hash = $(ev.currentTarget).attr('id');
+});
+</script>
