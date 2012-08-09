@@ -76,6 +76,7 @@
 - (void)correctMinZoomScaleForBoundingMask;
 
 - (void)updateHeadingForDeviceOrientation;
+- (BOOL)locationCoordinateIsValid:(CLLocationCoordinate2D)coordinate;
 
 @end
 
@@ -2581,6 +2582,9 @@
     if (mode == userTrackingMode)
         return;
 
+    if (mode == RMUserTrackingModeFollowWithHeading && ! [self locationCoordinateIsValid:userLocation.coordinate])
+        mode = RMUserTrackingModeNone;
+
     userTrackingMode = mode;
 
     switch (userTrackingMode)
@@ -2721,7 +2725,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
-    if ( ! showsUserLocation || _mapScrollView.isDragging)
+    if ( ! showsUserLocation || _mapScrollView.isDragging || ! [self locationCoordinateIsValid:newLocation.coordinate])
         return;
 
     if ([newLocation distanceFromLocation:oldLocation])
@@ -2860,11 +2864,11 @@
     if ([newLocation distanceFromLocation:oldLocation])
         trackingHaloAnnotation.coordinate = newLocation.coordinate;
 
-    userLocation.layer.hidden = ((trackingHaloAnnotation.coordinate.latitude == 0 && trackingHaloAnnotation.coordinate.longitude == 0) || self.userTrackingMode == RMUserTrackingModeFollowWithHeading);
+    userLocation.layer.hidden = ( ! [self locationCoordinateIsValid:trackingHaloAnnotation.coordinate] || self.userTrackingMode == RMUserTrackingModeFollowWithHeading);
 
     accuracyCircleAnnotation.layer.hidden = newLocation.horizontalAccuracy <= 10;
 
-    trackingHaloAnnotation.layer.hidden = ((trackingHaloAnnotation.coordinate.latitude == 0 && trackingHaloAnnotation.coordinate.longitude == 0) || newLocation.horizontalAccuracy > 10);
+    trackingHaloAnnotation.layer.hidden = ( ! [self locationCoordinateIsValid:trackingHaloAnnotation.coordinate] || newLocation.horizontalAccuracy > 10);
 
     if ( ! [_annotations containsObject:userLocation])
         [self addAnnotation:userLocation];
@@ -2958,6 +2962,11 @@
             }
         }
     }
+}
+
+- (BOOL)locationCoordinateIsValid:(CLLocationCoordinate2D)coordinate
+{
+    return (CLLocationCoordinate2DIsValid(coordinate) && ! (coordinate.latitude == 0.0 && coordinate.longitude == 0.0));
 }
 
 #pragma mark -
