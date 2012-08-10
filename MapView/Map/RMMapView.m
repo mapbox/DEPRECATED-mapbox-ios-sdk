@@ -2746,7 +2746,7 @@
         CGPoint mapCenterPoint    = [self convertPoint:self.center fromView:self.superview];
         CGPoint userLocationPoint = [self mapPositionForAnnotation:userLocation];
 
-        if (fabsf(userLocationPoint.x - mapCenterPoint.x) || fabsf(userLocationPoint.y - mapCenterPoint.y))
+        if (fabsf(userLocationPoint.x - mapCenterPoint.x) > 1.0 || fabsf(userLocationPoint.y - mapCenterPoint.y) > 1.0)
         {
             if (round(_zoom) >= 10)
             {
