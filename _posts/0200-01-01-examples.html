@@ -7,9 +7,25 @@ permalink: /examples
 ---
 <style type='text/css'>
 .example {
+  position:relative;
   margin:0px -40px;
   border-top:1px solid #ddd;
   }
+
+.screenshot,
+.dummy { height:300px; }
+
+.screenshot {
+  position:absolute;
+  right:0px;
+  bottom:0px;
+  box-shadow:inset #fff 0px -120px 60px -60px;
+  }
+
+.screenshot.mapbox-ios-example { background:url(https://raw.github.com/mapbox/mapbox-ios-example/master/screenshot.png) 50% 0% no-repeat; }
+.screenshot.mapbox-me { background:url(https://raw.github.com/mapbox/mapbox-me/master/screenshot.png) 50% 0% no-repeat; }
+.screenshot.weekend-picks-template { background:url(https://raw.github.com/mapbox/weekend-picks-template-ios/master/screenshot.png) 50% 0% no-repeat; }
+
 @media (max-width:640px) {
   .example { margin:0px -20px; }
   }
@@ -27,8 +43,8 @@ permalink: /examples
     </ul>
     <a class='button big' href='https://github.com/mapbox/mapbox-ios-example'>GitHub</a>
   </div>
-  <div class='cell6 pad1'>
-  </div>
+  <div class='cell6 dummy'></div>
+  <div class='cell6 screenshot mapbox-ios-example'></div>
 </div>
 
 <div class='example clearfix'>
@@ -41,8 +57,8 @@ permalink: /examples
     </ul>
     <a class='button big' href='https://github.com/mapbox/mapbox-me'>GitHub</a>
   </div>
-  <div class='cell6 pad1'>
-  </div>
+  <div class='cell6 dummy'></div>
+  <div class='cell6 screenshot mapbox-me'></div>
 </div>
 
 <div class='example clearfix'>
@@ -55,7 +71,7 @@ permalink: /examples
     </ul>
     <a class='button big' href='https://github.com/mapbox/weekend-picks-template-ios'>GitHub</a>
   </div>
-  <div class='cell6 pad1'>
-  </div>
+  <div class='cell6 dummy'></div>
+  <div class='cell6 screenshot weekend-picks-template'></div>
 </div>
 
