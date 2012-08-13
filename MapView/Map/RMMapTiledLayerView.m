@@ -135,6 +135,49 @@
             }
         }
 
+        if ( ! tileImage)
+        {
+            if (_mapView.missingTilesDepth == 0)
+            {
+                tileImage = [RMTileImage errorTile];
+            }
+            else
+            {
+                NSUInteger currentTileDepth = 1, currentZoom = zoom - currentTileDepth;
+
+                // tries to return lower zoom level tiles if a tile cannot be found
+                while ( !tileImage && currentZoom >= _tileSource.minZoom && currentTileDepth <= _mapView.missingTilesDepth)
+                {
+                    float nextX = x / powf(2.0, (float)currentTileDepth),
+                          nextY = y / powf(2.0, (float)currentTileDepth);
+                    float nextTileX = floor(nextX),
+                          nextTileY = floor(nextY);
+
+                    tileImage = [_tileSource imageForTile:RMTileMake((int)nextTileX, (int)nextTileY, currentZoom) inCache:[_mapView tileCache]];
+
+                    if (tileImage)
+                    {
+                        // crop
+                        float cropSize = 1.0 / powf(2.0, (float)currentTileDepth);
+
+                        CGRect cropBounds = CGRectMake(tileImage.size.width * (nextX - nextTileX),
+                                                       tileImage.size.height * (nextY - nextTileY),
+                                                       tileImage.size.width * cropSize,
+                                                       tileImage.size.height * cropSize);
+
+                        CGImageRef imageRef = CGImageCreateWithImageInRect([tileImage CGImage], cropBounds);
+                        tileImage = [UIImage imageWithCGImage:imageRef];
+                        CGImageRelease(imageRef);
+
+                        break;
+                    }
+
+                    currentTileDepth++;
+                    currentZoom = zoom - currentTileDepth;
+                }
+            }
+        }
+
         if (_mapView.debugTiles)
         {
             UIGraphicsBeginImageContext(tileImage.size);

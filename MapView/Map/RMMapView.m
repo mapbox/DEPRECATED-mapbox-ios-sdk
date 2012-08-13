@@ -184,6 +184,7 @@
 @synthesize clusterMarkerSize = _clusterMarkerSize, clusterAreaSize = _clusterAreaSize;
 @synthesize adjustTilesForRetinaDisplay = _adjustTilesForRetinaDisplay;
 @synthesize userLocation, showsUserLocation, userTrackingMode, displayHeadingCalibration;
+@synthesize missingTilesDepth = _missingTilesDepth;
 @synthesize debugTiles = _debugTiles;
 
 #pragma mark -
@@ -218,6 +219,7 @@
 
     _boundingMask = RMMapMinWidthBound;
     _adjustTilesForRetinaDisplay = NO;
+    _missingTilesDepth = 1;
     _debugTiles = NO;
 
     _annotations = [NSMutableSet new];
