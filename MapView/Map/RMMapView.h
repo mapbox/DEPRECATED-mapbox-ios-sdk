@@ -90,9 +90,6 @@ typedef enum : NSUInteger {
 
 @property (nonatomic, assign) UIViewController *viewControllerPresentingAttribution;
 
-// take missing tiles from lower zoom levels, up to #missingTilesDepth zoom levels (defaults to 0, which disables this feature)
-@property (nonatomic, assign) NSUInteger missingTilesDepth;
-
 @property (nonatomic, assign) NSUInteger boundingMask;
 
 // subview for the background image displayed while tiles are loading.
