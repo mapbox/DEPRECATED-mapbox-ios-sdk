@@ -11,6 +11,7 @@
 #import "RMMapView.h"
 #import "RMTileSource.h"
 #import "RMTileImage.h"
+#import "RMTileCache.h"
 
 @implementation RMMapTiledLayerView
 {
@@ -116,7 +117,23 @@
         UIImage *tileImage = nil;
 
         if (zoom >= _tileSource.minZoom && zoom <= _tileSource.maxZoom)
-            tileImage = [_tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[_mapView tileCache]];
+        {
+            tileImage = [[_mapView tileCache] cachedImage:RMTileMake(x, y, zoom) withCacheKey:[_tileSource uniqueTilecacheKey]];
+
+            if ( ! tileImage)
+            {
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void)
+                {
+                    if ([_tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[_mapView tileCache]])
+                    {
+                        dispatch_async(dispatch_get_main_queue(), ^(void)
+                        {
+                            [self.layer setNeedsDisplay];
+                        });
+                    }
+                });
+            }
+        }
 
         if ( ! tileImage)
         {

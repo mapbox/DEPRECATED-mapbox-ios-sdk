@@ -219,7 +219,7 @@
 
     _boundingMask = RMMapMinWidthBound;
     _adjustTilesForRetinaDisplay = NO;
-    _missingTilesDepth = 0;
+    _missingTilesDepth = 1;
     _debugTiles = NO;
 
     _annotations = [NSMutableSet new];
