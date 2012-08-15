@@ -22,9 +22,10 @@ permalink: /examples
   box-shadow:inset #fff 0px -120px 60px -60px;
   }
 
-.screenshot.mapbox-ios-example { background:url(https://raw.github.com/mapbox/mapbox-ios-example/master/screenshot.png) 50% 0% no-repeat; }
-.screenshot.mapbox-me { background:url(https://raw.github.com/mapbox/mapbox-me/master/screenshot.png) 50% 0% no-repeat; }
-.screenshot.weekend-picks-template { background:url(https://raw.github.com/mapbox/weekend-picks-template-ios/master/screenshot.png) 50% 0% no-repeat; }
+.image-heading { background:url(../images/examples-sprite.png) 160px 160px no-repeat; }
+.image-heading.mapbox-ios-example { background-position:0px 0px; }
+.image-heading.mapbox-me { background-position:-170px 0px; }
+.image-heading.weekend-picks-template { background-position:-340px 0px; }
 
 @media (max-width:640px) {
   .example { margin:0px -20px; }
@@ -32,8 +33,11 @@ permalink: /examples
 </style>
 <p>Check out how native iOS integration of the MapBox stack works.</p>
 
-<div class='example clearfix'>
-  <div class='cell6 pad3'>
+<div class='example clearfix pad3'>
+  <div class='cell4 float-right'>
+    <a href='https://github.com/mapbox/mapbox-ios-example' class='image-heading mapbox-ios-example'></a>
+  </div>
+  <div class='cell8 float-right'>
     <h2 id='mapbox_ios_example'>MapBox iOS Example</h2>
     <p>Basic example for getting started with the MapBox iOS SDK.</p>
     <ul class='checklist'>
@@ -41,37 +45,37 @@ permalink: /examples
       <li class='check'>Offline layer <code>RMMBTilesSource</code></li>
       <li class='check'>Interactive layer <code>RMInteractiveSource</code></li>
     </ul>
-    <a class='button big' href='https://github.com/mapbox/mapbox-ios-example'>GitHub</a>
+    <a class='button big' href='https://github.com/mapbox/mapbox-ios-example'><span class='icon reverse github'></span> GitHub</a>
   </div>
-  <div class='cell6 dummy'></div>
-  <div class='cell6 screenshot mapbox-ios-example'></div>
 </div>
 
-<div class='example clearfix'>
-  <div class='cell6 pad3'>
+<div class='example clearfix pad3'>
+  <div class='cell4 float-right'>
+    <a href='https://github.com/mapbox/mapbox-me' class='image-heading mapbox-me'></a>
+  </div>
+  <div class='cell8 float-right'>
     <h2 id='mapbox_me'>MapBox Me</h2>
     <p>Shows use of the user location services built into the SDK. Read more and see a demo video on the <a href='http://mapbox.com/blog/ios-user-location-services/'>blog</a>.</p>
     <ul class='checklist'>
       <li class='check'>Online layer <code>RMMapBox</code></li>
       <li class='check'>Location services <code>RMUserLocation</code></li>
     </ul>
-    <a class='button big' href='https://github.com/mapbox/mapbox-me'>GitHub</a>
+    <a class='button big' href='https://github.com/mapbox/mapbox-me'><span class='icon reverse github'></span> GitHub</a>
   </div>
-  <div class='cell6 dummy'></div>
-  <div class='cell6 screenshot mapbox-me'></div>
 </div>
 
-<div class='example clearfix'>
-  <div class='cell6 pad3'>
+<div class='example clearfix pad3'>
+  <div class='cell4 float-right'>
+    <a href='https://github.com/mapbox/weekend-picks-template-ios' class='image-heading weekend-picks-template'></a>
+  </div>
+  <div class='cell8 float-right'>
     <h2 id='weekend_picks_template'>Weekend Picks Template</h2>
     <p>Shows off MapBox API marker support, with easy customization for your own map layers and markers. Read more about this, as well as the companion website template, in the <a href='http://mapbox.com/blog/markers/'>blog post</a>.</p>
     <ul class='checklist'>
       <li class='check'>Online layer <code>RMMapBox</code></li>
       <li class='check'>Markers <code>RMMarker</code></li>
     </ul>
-    <a class='button big' href='https://github.com/mapbox/weekend-picks-template-ios'>GitHub</a>
+    <a class='button big' href='https://github.com/mapbox/weekend-picks-template-ios'><span class='icon reverse github'></span> GitHub</a>
   </div>
-  <div class='cell6 dummy'></div>
-  <div class='cell6 screenshot weekend-picks-template'></div>
 </div>
 
