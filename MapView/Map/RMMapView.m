@@ -2396,6 +2396,30 @@
         }
     }
 
+    NSMutableArray *sortedAnnotations = [NSMutableArray arrayWithArray:[_visibleAnnotations allObjects]];
+
+    [sortedAnnotations filterUsingPredicate:[NSPredicate predicateWithFormat:@"isUserLocationAnnotation = NO"]];
+
+    [sortedAnnotations sortUsingComparator:^(id obj1, id obj2)
+    {
+        RMAnnotation *annotation1 = (RMAnnotation *)obj1;
+        RMAnnotation *annotation2 = (RMAnnotation *)obj2;
+
+        CGPoint obj1Point = [self convertPoint:annotation1.position fromView:_overlayView];
+        CGPoint obj2Point = [self convertPoint:annotation2.position fromView:_overlayView];
+
+        if (obj1Point.y > obj2Point.y)
+            return NSOrderedDescending;
+
+        if (obj1Point.y < obj2Point.y)
+            return NSOrderedAscending;
+
+        return NSOrderedSame;
+    }];
+
+    for (CGFloat i = 0; i < [sortedAnnotations count]; i++)
+        ((RMAnnotation *)[sortedAnnotations objectAtIndex:i]).layer.zPosition = (CGFloat)i;
+
     [CATransaction commit];
 }
 
@@ -2917,6 +2941,8 @@
                              for (RMAnnotation *annotation in _annotations)
                                  if ([annotation.layer isKindOfClass:[RMMarker class]] && ! annotation.isUserLocationAnnotation)
                                      annotation.layer.transform = _annotationTransform;
+
+                             [self correctPositionOfAllAnnotations];
                          }
                          completion:nil];
 
