@@ -57,7 +57,7 @@ typedef enum : NSUInteger {
  During scrolling and zooming, this method may be called many times to report updates to the map position.
  Therefore, your implementation of this method should be as lightweight as possible to avoid affecting scrolling and zooming performance.
  */
-- (void)mapViewRegionDidChange:(RMMapView *)mapView byUser:(BOOL)wasUserAction;
+- (void)mapViewRegionDidChange:(RMMapView *)mapView;
 
 - (void)doubleTapOnMap:(RMMapView *)map at:(CGPoint)point;
 - (void)singleTapOnMap:(RMMapView *)map at:(CGPoint)point;

@@ -70,6 +70,9 @@
 
 - (void)createMapView;
 
+- (void)registerMoveEventByUser:(BOOL)wasUserEvent;
+- (void)registerZoomEventByUser:(BOOL)wasUserEvent;
+
 - (void)correctPositionOfAllAnnotations;
 - (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllLayers animated:(BOOL)animated;
 
@@ -165,10 +168,11 @@
     UIViewController *_viewControllerPresentingAttribution;
     UIButton *_attributionButton;
 
-    BOOL _userAlteringPanOrZoom;
-
     CGAffineTransform _mapTransform;
     CATransform3D _annotationTransform;
+
+    NSOperationQueue *_moveDelegateQueue;
+    NSOperationQueue *_zoomDelegateQueue;
 }
 
 @synthesize decelerationMode = _decelerationMode;
@@ -228,6 +232,12 @@
     _enableClustering = _positionClusterMarkersAtTheGravityCenter = NO;
     _clusterMarkerSize = CGSizeMake(100.0, 100.0);
     _clusterAreaSize = CGSizeMake(150.0, 150.0);
+
+    _moveDelegateQueue = [[NSOperationQueue alloc] init];
+    [_moveDelegateQueue setMaxConcurrentOperationCount:1];
+
+    _zoomDelegateQueue = [[NSOperationQueue alloc] init];
+    [_zoomDelegateQueue setMaxConcurrentOperationCount:1];
 
     [self setTileCache:[[[RMTileCache alloc] init] autorelease]];
 
@@ -367,6 +377,10 @@
     [self setDelegate:nil];
     [self setBackgroundView:nil];
     [self setQuadTree:nil];
+    [_moveDelegateQueue cancelAllOperations];
+    [_moveDelegateQueue release]; _moveDelegateQueue = nil;
+    [_zoomDelegateQueue cancelAllOperations];
+    [_zoomDelegateQueue release]; _zoomDelegateQueue = nil;
     [_draggedAnnotation release]; _draggedAnnotation = nil;
     [_annotations release]; _annotations = nil;
     [_visibleAnnotations release]; _visibleAnnotations = nil;
@@ -441,7 +455,7 @@
     _delegateHasBeforeMapZoom = [_delegate respondsToSelector:@selector(beforeMapZoom:byUser:)];
     _delegateHasAfterMapZoom  = [_delegate respondsToSelector:@selector(afterMapZoom:byUser:)];
 
-    _delegateHasMapViewRegionDidChange = [_delegate respondsToSelector:@selector(mapViewRegionDidChange:byUser:)];
+    _delegateHasMapViewRegionDidChange = [_delegate respondsToSelector:@selector(mapViewRegionDidChange:)];
 
     _delegateHasDoubleTapOnMap = [_delegate respondsToSelector:@selector(doubleTapOnMap:at:)];
     _delegateHasSingleTapOnMap = [_delegate respondsToSelector:@selector(singleTapOnMap:at:)];
@@ -466,6 +480,68 @@
     _delegateHasDidUpdateUserLocation = [_delegate respondsToSelector:@selector(mapView:didUpdateUserLocation:)];
     _delegateHasDidFailToLocateUserWithError = [_delegate respondsToSelector:@selector(mapView:didFailToLocateUserWithError:)];
     _delegateHasDidChangeUserTrackingMode = [_delegate respondsToSelector:@selector(mapView:didChangeUserTrackingMode:animated:)];
+}
+
+- (void)registerMoveEventByUser:(BOOL)wasUserEvent
+{
+    @synchronized (_moveDelegateQueue)
+    {
+        BOOL flag = wasUserEvent;
+
+        if ([_moveDelegateQueue operationCount] == 0)
+        {
+            dispatch_async(dispatch_get_main_queue(), ^(void)
+            {
+                if (_delegateHasBeforeMapMove)
+                    [_delegate beforeMapMove:self byUser:flag];
+            });
+        }
+
+        [_moveDelegateQueue setSuspended:YES];
+
+        if ([_moveDelegateQueue operationCount] == 0)
+        {
+            [_moveDelegateQueue addOperationWithBlock:^(void)
+            {
+                dispatch_async(dispatch_get_main_queue(), ^(void)
+                {
+                    if (_delegateHasAfterMapMove)
+                        [_delegate afterMapMove:self byUser:flag];
+                });
+            }];
+        }
+    }
+}
+
+- (void)registerZoomEventByUser:(BOOL)wasUserEvent
+{
+    @synchronized (_zoomDelegateQueue)
+    {
+        BOOL flag = wasUserEvent;
+
+        if ([_zoomDelegateQueue operationCount] == 0)
+        {
+            dispatch_async(dispatch_get_main_queue(), ^(void)
+            {
+                if (_delegateHasBeforeMapZoom)
+                    [_delegate beforeMapZoom:self byUser:flag];
+            });
+        }
+
+        [_zoomDelegateQueue setSuspended:YES];
+
+        if ([_zoomDelegateQueue operationCount] == 0)
+        {
+            [_zoomDelegateQueue addOperationWithBlock:^(void)
+            {
+                dispatch_async(dispatch_get_main_queue(), ^(void)
+                {
+                    if (_delegateHasAfterMapZoom)
+                        [_delegate afterMapZoom:self byUser:flag];
+                });
+            }];
+        }
+    }
 }
 
 #pragma mark -
@@ -627,8 +703,7 @@
 
 - (void)setCenterProjectedPoint:(RMProjectedPoint)centerProjectedPoint animated:(BOOL)animated
 {
-    if (_delegateHasBeforeMapMove)
-        [_delegate beforeMapMove:self byUser:_userAlteringPanOrZoom];
+    [self registerMoveEventByUser:NO];
 
 //    RMLog(@"Current contentSize: {%.0f,%.0f}, zoom: %f", mapScrollView.contentSize.width, mapScrollView.contentSize.height, self.zoom);
 
@@ -643,8 +718,8 @@
 
 //    RMLog(@"setMapCenterProjectedPoint: {%f,%f} -> {%.0f,%.0f}", centerProjectedPoint.x, centerProjectedPoint.y, mapScrollView.contentOffset.x, mapScrollView.contentOffset.y);
 
-    if (_delegateHasAfterMapMove && !animated)
-        [_delegate afterMapMove:self byUser:_userAlteringPanOrZoom];
+    if ( ! animated)
+        [_moveDelegateQueue setSuspended:NO];
 
     [self correctPositionOfAllAnnotations];
 }
@@ -653,16 +728,14 @@
 
 - (void)moveBy:(CGSize)delta
 {
-    if (_delegateHasBeforeMapMove)
-        [_delegate beforeMapMove:self byUser:_userAlteringPanOrZoom];
+    [self registerMoveEventByUser:NO];
 
     CGPoint contentOffset = _mapScrollView.contentOffset;
     contentOffset.x += delta.width;
     contentOffset.y += delta.height;
     _mapScrollView.contentOffset = contentOffset;
 
-    if (_delegateHasAfterMapMove)
-        [_delegate afterMapMove:self byUser:_userAlteringPanOrZoom];
+    [_moveDelegateQueue setSuspended:NO];
 }
 
 #pragma mark -
@@ -1108,22 +1181,16 @@
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
+    [self registerMoveEventByUser:YES];
+
     if (self.userTrackingMode != RMUserTrackingModeNone)
         self.userTrackingMode = RMUserTrackingModeNone;
-
-    _userAlteringPanOrZoom = YES;
-    
-    if (_delegateHasBeforeMapMove)
-        [_delegate beforeMapMove:self byUser:_userAlteringPanOrZoom];
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
-    if (!decelerate && _delegateHasAfterMapMove)
-        [_delegate afterMapMove:self byUser:_userAlteringPanOrZoom];
-    
-    if (!decelerate)
-        _userAlteringPanOrZoom = NO;
+    if ( ! decelerate)
+        [_moveDelegateQueue setSuspended:NO];
 }
 
 - (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView
@@ -1134,30 +1201,26 @@
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    if (_delegateHasAfterMapMove)
-        [_delegate afterMapMove:self byUser:_userAlteringPanOrZoom];
-    
-    _userAlteringPanOrZoom = NO;
+    [_moveDelegateQueue setSuspended:NO];
 }
 
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
 {
-    if (_delegateHasAfterMapMove)
-        [_delegate afterMapMove:self byUser:_userAlteringPanOrZoom];
+    [_moveDelegateQueue setSuspended:NO];
 }
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
 {
-    _mapScrollViewIsZooming = YES;
+    [self registerZoomEventByUser:(scrollView.pinchGestureRecognizer.state == UIGestureRecognizerStateBegan)];
 
-    _userAlteringPanOrZoom = (scrollView.pinchGestureRecognizer.state == UIGestureRecognizerStateBegan);
-    
-    if (_delegateHasBeforeMapZoom)
-        [_delegate beforeMapZoom:self byUser:_userAlteringPanOrZoom];
+    _mapScrollViewIsZooming = YES;
 }
 
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(float)scale
 {
+    [_moveDelegateQueue setSuspended:NO];
+    [_zoomDelegateQueue setSuspended:NO];
+
     _mapScrollViewIsZooming = NO;
 
     [self correctPositionOfAllAnnotations];
@@ -1165,18 +1228,17 @@
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
 {
-    _userAlteringPanOrZoom = (scrollView.pinchGestureRecognizer.state == UIGestureRecognizerStateChanged);
+    BOOL wasUserAction = (scrollView.pinchGestureRecognizer.state == UIGestureRecognizerStateChanged);
 
-    if (self.userTrackingMode != RMUserTrackingModeNone && _userAlteringPanOrZoom)
+    [self registerZoomEventByUser:wasUserAction];
+
+    if (self.userTrackingMode != RMUserTrackingModeNone && wasUserAction)
         self.userTrackingMode = RMUserTrackingModeNone;
     
     [self correctPositionOfAllAnnotations];
 
     if (_zoom < 3 && self.userTrackingMode == RMUserTrackingModeFollowWithHeading)
         self.userTrackingMode = RMUserTrackingModeFollow;
-
-    if (_delegateHasAfterMapZoom)
-        [_delegate afterMapZoom:self byUser:_userAlteringPanOrZoom];
 }
 
 // Detect dragging/zooming
@@ -1313,9 +1375,8 @@
     _lastContentOffset = _mapScrollView.contentOffset;
     _lastContentSize = _mapScrollView.contentSize;
 
-    // Don't do anything stupid here or your scrolling experience will suck
     if (_delegateHasMapViewRegionDidChange)
-        [_delegate mapViewRegionDidChange:self byUser:_userAlteringPanOrZoom];
+        [_delegate mapViewRegionDidChange:self];
 }
 
 #pragma mark - Gesture Recognizers and event handling
@@ -1374,6 +1435,8 @@
 
 - (void)doubleTapAtPoint:(CGPoint)aPoint
 {
+    [self registerZoomEventByUser:YES];
+
     if (self.zoomingInPivotsAroundCenter)
     {
         [self zoomInToNextNativeZoomAt:[self convertPoint:self.center fromView:self.superview] animated:YES];
@@ -1384,6 +1447,8 @@
     }
     else
     {
+        [self registerMoveEventByUser:YES];
+
         [self zoomInToNextNativeZoomAt:aPoint animated:YES];
     }
 
@@ -1424,6 +1489,8 @@
 
 - (void)handleTwoFingerSingleTap:(UIGestureRecognizer *)recognizer
 {
+    [self registerZoomEventByUser:YES];
+
     CGPoint centerPoint = [self convertPoint:self.center fromView:self.superview];
 
     if (userTrackingMode != RMUserTrackingModeNone)
