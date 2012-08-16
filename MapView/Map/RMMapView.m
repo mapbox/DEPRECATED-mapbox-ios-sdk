@@ -167,7 +167,7 @@
 
     UIImageView *userLocationTrackingView;
     UIImageView *userHeadingTrackingView;
-    CALayer *userHaloTrackingLayer;
+    UIImageView *userHaloTrackingView;
 
     UIViewController *_viewControllerPresentingAttribution;
     UIButton *_attributionButton;
@@ -403,7 +403,7 @@
     [_trackingHaloAnnotation release]; _trackingHaloAnnotation = nil;
     [userLocationTrackingView release]; userLocationTrackingView = nil;
     [userHeadingTrackingView release]; userHeadingTrackingView = nil;
-    [userHaloTrackingLayer release]; userHaloTrackingLayer = nil;
+    [userHaloTrackingView release]; userHaloTrackingView = nil;
     [_attributionButton release]; _attributionButton = nil;
     [super dealloc];
 }
@@ -2715,11 +2715,11 @@
 
             [CATransaction commit];
 
-            if (userLocationTrackingView || userHeadingTrackingView || userHaloTrackingLayer)
+            if (userLocationTrackingView || userHeadingTrackingView || userHaloTrackingView)
             {
                 [userLocationTrackingView removeFromSuperview]; userLocationTrackingView = nil;
                 [userHeadingTrackingView removeFromSuperview]; userHeadingTrackingView = nil;
-                [userHaloTrackingLayer removeFromSuperlayer]; userHaloTrackingLayer = nil;
+                [userHaloTrackingView removeFromSuperview]; userHaloTrackingView = nil;
             }
 
             userLocation.layer.hidden = NO;
@@ -2735,11 +2735,11 @@
             if (self.userLocation)
                 [self locationManager:locationManager didUpdateToLocation:self.userLocation.location fromLocation:self.userLocation.location];
 
-            if (userLocationTrackingView || userHeadingTrackingView || userHaloTrackingLayer)
+            if (userLocationTrackingView || userHeadingTrackingView || userHaloTrackingView)
             {
                 [userLocationTrackingView removeFromSuperview]; userLocationTrackingView = nil;
                 [userHeadingTrackingView removeFromSuperview]; userHeadingTrackingView = nil;
-                [userHaloTrackingLayer removeFromSuperlayer]; userHaloTrackingLayer = nil;
+                [userHaloTrackingView removeFromSuperview]; userHaloTrackingView = nil;
             }
 
             [CATransaction setAnimationDuration:0.5];
@@ -2774,16 +2774,20 @@
 
             userLocation.layer.hidden = YES;
 
-            userHaloTrackingLayer = [CALayer layer];
+            userHaloTrackingView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"TrackingDotHalo"]];
 
-            userHaloTrackingLayer.bounds   = _trackingHaloAnnotation.layer.bounds;
-            userHaloTrackingLayer.position = _trackingHaloAnnotation.layer.position;
-            userHaloTrackingLayer.contents = _trackingHaloAnnotation.layer.contents;
+            userHaloTrackingView.center = CGPointMake(round([self bounds].size.width  / 2),
+                                                      round([self bounds].size.height / 2));
+
+            userHaloTrackingView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin  |
+                                                    UIViewAutoresizingFlexibleRightMargin |
+                                                    UIViewAutoresizingFlexibleTopMargin   |
+                                                    UIViewAutoresizingFlexibleBottomMargin;
 
             for (NSString *animationKey in _trackingHaloAnnotation.layer.animationKeys)
-                [userHaloTrackingLayer addAnimation:[[[_trackingHaloAnnotation.layer animationForKey:animationKey] copy] autorelease] forKey:animationKey];
+                [userHaloTrackingView.layer addAnimation:[[[_trackingHaloAnnotation.layer animationForKey:animationKey] copy] autorelease] forKey:animationKey];
 
-            [self.layer insertSublayer:userHaloTrackingLayer below:_overlayView.layer];
+            [self insertSubview:userHaloTrackingView belowSubview:_overlayView];
 
             userHeadingTrackingView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"HeadingAngleSmall.png"]];
 
