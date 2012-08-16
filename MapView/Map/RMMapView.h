@@ -191,6 +191,7 @@ typedef enum : NSUInteger {
 
 @property (nonatomic, assign) BOOL enableClustering;
 @property (nonatomic, assign) BOOL positionClusterMarkersAtTheGravityCenter;
+@property (nonatomic, assign) BOOL orderClusterMarkersAboveOthers;
 @property (nonatomic, assign) CGSize clusterMarkerSize;
 @property (nonatomic, assign) CGSize clusterAreaSize;
 
