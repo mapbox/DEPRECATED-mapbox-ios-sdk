@@ -2728,7 +2728,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
-    if ( ! showsUserLocation || _mapScrollView.isDragging || ! CLLocationCoordinate2DIsValid(newLocation.coordinate))
+    if ( ! showsUserLocation || _mapScrollView.isDragging || ! newLocation || ! CLLocationCoordinate2DIsValid(newLocation.coordinate))
         return;
 
     if ([newLocation distanceFromLocation:oldLocation])
@@ -2875,8 +2875,6 @@
 
     if ( ! [_annotations containsObject:userLocation])
         [self addAnnotation:userLocation];
-
-    [self correctPositionOfAllAnnotations];
 }
 
 - (BOOL)locationManagerShouldDisplayHeadingCalibration:(CLLocationManager *)manager
