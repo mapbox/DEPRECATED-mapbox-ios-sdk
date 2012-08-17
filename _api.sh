@@ -4,7 +4,7 @@ HTMLTOP='<div id="header">'
 HTMLEND='<div class="main-navigation navigation-bottom">'
 YAML="\
 ---
-title: 0.3.0
+title: iOS SDK 0.3.0
 layout: api
 permalink: /api
 categories: api
