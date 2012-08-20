@@ -46,6 +46,7 @@
 
 #import "RMMapTiledLayerView.h"
 #import "RMMapOverlayView.h"
+#import "RMLoadingTileView.h"
 
 #import "RMUserLocation.h"
 
@@ -135,6 +136,7 @@
     RMMapScrollView *_mapScrollView;
     RMMapOverlayView *_overlayView;
     UIView *_tiledLayersSuperview;
+    RMLoadingTileView *_loadingTileView;
 
     RMProjection *_projection;
     RMFractalTileProjection *_mercatorToTileProjection;
@@ -241,9 +243,16 @@
 
     [self setTileCache:[[[RMTileCache alloc] init] autorelease]];
 
-    [self setBackgroundView:[[[UIView alloc] initWithFrame:[self bounds]] autorelease]];
     if (backgroundImage)
+    {
+        [self setBackgroundView:[[[UIView alloc] initWithFrame:[self bounds]] autorelease]];
         self.backgroundView.layer.contents = (id)backgroundImage.CGImage;
+    }
+    else
+    {
+        _loadingTileView = [[[RMLoadingTileView alloc] initWithFrame:self.bounds] autorelease];
+        [self setBackgroundView:_loadingTileView];
+    }
 
     if (minZoomLevel < newTilesource.minZoom) minZoomLevel = newTilesource.minZoom;
     if (maxZoomLevel > newTilesource.maxZoom) maxZoomLevel = newTilesource.maxZoom;
@@ -1214,6 +1223,9 @@
     [self registerZoomEventByUser:(scrollView.pinchGestureRecognizer.state == UIGestureRecognizerStateBegan)];
 
     _mapScrollViewIsZooming = YES;
+
+    if (_loadingTileView)
+        _loadingTileView.mapZooming = YES;
 }
 
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(float)scale
@@ -1224,6 +1236,19 @@
     _mapScrollViewIsZooming = NO;
 
     [self correctPositionOfAllAnnotations];
+
+    if (_loadingTileView)
+        _loadingTileView.mapZooming = NO;
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if (_loadingTileView)
+    {
+        CGSize delta = CGSizeMake(scrollView.contentOffset.x - _lastContentOffset.x, scrollView.contentOffset.y - _lastContentOffset.y);
+        CGPoint newOffset = CGPointMake(_loadingTileView.contentOffset.x + delta.width, _loadingTileView.contentOffset.y + delta.height);
+        _loadingTileView.contentOffset = newOffset;
+    }
 }
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
