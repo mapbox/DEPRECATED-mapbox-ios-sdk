@@ -21,21 +21,19 @@
     if ( ! (self = [super initWithMapView:aMapView coordinate:aCoordinate andTitle:aTitle]))
         return nil;
 
-    layer = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDot.png"]];
+    self.layer = [[[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDot.png"]] autorelease];
 
-    layer.zPosition = -MAXFLOAT + 2;
+    self.layer.zPosition = -MAXFLOAT + 2;
 
-    annotationType = [kRMUserLocationAnnotationTypeName retain];
+    self.annotationType = kRMUserLocationAnnotationTypeName;
 
-    clusteringEnabled = NO;
+    self.clusteringEnabled = NO;
 
     return self;
 }
 
 - (void)dealloc
 {
-    [layer release]; layer = nil;
-    [annotationType release]; annotationType = nil;
     [location release]; location = nil;
     [heading release]; heading = nil;
     [super dealloc];

@@ -81,11 +81,21 @@
             if ([annotation.annotationType isEqualToString:kRMTrackingHaloAnnotationTypeName])
                 _trackingHaloAnnotation = annotation;
 
-    _userLocationAnnotation.layer.hidden = _accuracyCircleAnnotation.layer.hidden = _trackingHaloAnnotation.layer.hidden = YES;
+    // here we hide the accuracy circle & tracking halo to exclude from hit
+    // testing, as well as be sure to show the user location (even if in
+    // heading mode) to ensure hits on it
+    //
+    BOOL flag = _userLocationAnnotation.layer.isHidden;
+
+    _userLocationAnnotation.layer.hidden = NO;
+
+    _accuracyCircleAnnotation.layer.hidden = _trackingHaloAnnotation.layer.hidden = YES;
 
     CALayer *hit = [self.layer hitTest:point];
 
-    _userLocationAnnotation.layer.hidden = _accuracyCircleAnnotation.layer.hidden = _trackingHaloAnnotation.layer.hidden = NO;
+    _userLocationAnnotation.layer.hidden = flag;
+
+    _accuracyCircleAnnotation.layer.hidden = _trackingHaloAnnotation.layer.hidden = NO;
 
     return hit;
 }
