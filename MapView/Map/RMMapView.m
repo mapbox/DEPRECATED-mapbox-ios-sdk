@@ -2638,6 +2638,12 @@
 
     if (newShowsUserLocation)
     {
+        RMRequireAsset(@"HeadingAngleSmall.png");
+        RMRequireAsset(@"TrackingDot.png");
+        RMRequireAsset(@"TrackingDotHalo.png");
+        RMRequireAsset(@"TrackingHeading.png");
+        RMRequireAsset(@"TrackingLocation.png");
+
         if (_delegateHasWillStartLocatingUser)
             [_delegate mapViewWillStartLocatingUser:self];
 

@@ -21,8 +21,6 @@
     if ( ! (self = [super initWithMapView:aMapView coordinate:aCoordinate andTitle:aTitle]))
         return nil;
 
-    NSAssert([[NSBundle mainBundle] pathForResource:@"TrackingDot" ofType:@"png"], @"Unable to find necessary graphical assets (copy from framework 'Resources' folder)");
-    
     layer = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDot.png"]];
 
     layer.zPosition = -MAXFLOAT + 2;

@@ -21,7 +21,8 @@
 
     if (self)
     {
-        NSAssert([[NSBundle mainBundle] pathForResource:@"LoadingTile" ofType:@"png"], @"Unable to find necessary graphical assets (copy from framework 'Resources' folder)");
+        RMRequireAsset(@"LoadingTile.png");
+        RMRequireAsset(@"LoadingTileZoom.png");
 
         _contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width * 3, frame.size.height * 3)];
         [self addSubview:_contentView];
