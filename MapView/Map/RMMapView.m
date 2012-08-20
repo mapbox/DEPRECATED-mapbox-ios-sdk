@@ -164,8 +164,12 @@
     BOOL showsUserLocation;
     RMUserTrackingMode userTrackingMode;
 
+    RMAnnotation *_accuracyCircleAnnotation;
+    RMAnnotation *_trackingHaloAnnotation;
+
     UIImageView *userLocationTrackingView;
     UIImageView *userHeadingTrackingView;
+    UIImageView *userHaloTrackingView;
 
     UIViewController *_viewControllerPresentingAttribution;
     UIButton *_attributionButton;
@@ -187,6 +191,7 @@
 @synthesize quadTree = _quadTree;
 @synthesize enableClustering = _enableClustering;
 @synthesize positionClusterMarkersAtTheGravityCenter = _positionClusterMarkersAtTheGravityCenter;
+@synthesize orderClusterMarkersAboveOthers = _orderClusterMarkersOnTop;
 @synthesize clusterMarkerSize = _clusterMarkerSize, clusterAreaSize = _clusterAreaSize;
 @synthesize adjustTilesForRetinaDisplay = _adjustTilesForRetinaDisplay;
 @synthesize userLocation, showsUserLocation, userTrackingMode, displayHeadingCalibration;
@@ -404,8 +409,11 @@
     [self setTileCache:nil];
     [locationManager release]; locationManager = nil;
     [userLocation release]; userLocation = nil;
+    [_accuracyCircleAnnotation release]; _accuracyCircleAnnotation = nil;
+    [_trackingHaloAnnotation release]; _trackingHaloAnnotation = nil;
     [userLocationTrackingView release]; userLocationTrackingView = nil;
     [userHeadingTrackingView release]; userHeadingTrackingView = nil;
+    [userHaloTrackingView release]; userHaloTrackingView = nil;
     [_attributionButton release]; _attributionButton = nil;
     [super dealloc];
 }
@@ -2488,6 +2496,36 @@
         }
     }
 
+    NSMutableArray *sortedAnnotations = [NSMutableArray arrayWithArray:[_visibleAnnotations allObjects]];
+
+    [sortedAnnotations filterUsingPredicate:[NSPredicate predicateWithFormat:@"isUserLocationAnnotation = NO"]];
+
+    [sortedAnnotations sortUsingComparator:^(id obj1, id obj2)
+    {
+        RMAnnotation *annotation1 = (RMAnnotation *)obj1;
+        RMAnnotation *annotation2 = (RMAnnotation *)obj2;
+
+        if (   [annotation1.annotationType isEqualToString:kRMClusterAnnotationTypeName] && ! [annotation2.annotationType isEqualToString:kRMClusterAnnotationTypeName])
+            return (_orderClusterMarkersOnTop ? NSOrderedDescending : NSOrderedAscending);
+
+        if ( ! [annotation1.annotationType isEqualToString:kRMClusterAnnotationTypeName] &&   [annotation2.annotationType isEqualToString:kRMClusterAnnotationTypeName])
+            return (_orderClusterMarkersOnTop ? NSOrderedAscending : NSOrderedDescending);
+
+        CGPoint obj1Point = [self convertPoint:annotation1.position fromView:_overlayView];
+        CGPoint obj2Point = [self convertPoint:annotation2.position fromView:_overlayView];
+
+        if (obj1Point.y > obj2Point.y)
+            return NSOrderedDescending;
+
+        if (obj1Point.y < obj2Point.y)
+            return NSOrderedAscending;
+
+        return NSOrderedSame;
+    }];
+
+    for (CGFloat i = 0; i < [sortedAnnotations count]; i++)
+        ((RMAnnotation *)[sortedAnnotations objectAtIndex:i]).layer.zPosition = (CGFloat)i;
+
     [CATransaction commit];
 }
 
@@ -2709,12 +2747,11 @@
 
             [CATransaction commit];
 
-            if (userLocationTrackingView || userHeadingTrackingView)
+            if (userLocationTrackingView || userHeadingTrackingView || userHaloTrackingView)
             {
-                [userLocationTrackingView removeFromSuperview];
-                userLocationTrackingView = nil;
-                [userHeadingTrackingView removeFromSuperview];
-                userHeadingTrackingView = nil;
+                [userLocationTrackingView removeFromSuperview]; userLocationTrackingView = nil;
+                [userHeadingTrackingView removeFromSuperview]; userHeadingTrackingView = nil;
+                [userHaloTrackingView removeFromSuperview]; userHaloTrackingView = nil;
             }
 
             userLocation.layer.hidden = NO;
@@ -2730,12 +2767,11 @@
             if (self.userLocation)
                 [self locationManager:locationManager didUpdateToLocation:self.userLocation.location fromLocation:self.userLocation.location];
 
-            if (userLocationTrackingView || userHeadingTrackingView)
+            if (userLocationTrackingView || userHeadingTrackingView || userHaloTrackingView)
             {
-                [userLocationTrackingView removeFromSuperview];
-                userLocationTrackingView = nil;
-                [userHeadingTrackingView removeFromSuperview];
-                userHeadingTrackingView = nil;
+                [userLocationTrackingView removeFromSuperview]; userLocationTrackingView = nil;
+                [userHeadingTrackingView removeFromSuperview]; userHeadingTrackingView = nil;
+                [userHaloTrackingView removeFromSuperview]; userHaloTrackingView = nil;
             }
 
             [CATransaction setAnimationDuration:0.5];
@@ -2770,6 +2806,21 @@
 
             userLocation.layer.hidden = YES;
 
+            userHaloTrackingView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"TrackingDotHalo"]];
+
+            userHaloTrackingView.center = CGPointMake(round([self bounds].size.width  / 2),
+                                                      round([self bounds].size.height / 2));
+
+            userHaloTrackingView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin  |
+                                                    UIViewAutoresizingFlexibleRightMargin |
+                                                    UIViewAutoresizingFlexibleTopMargin   |
+                                                    UIViewAutoresizingFlexibleBottomMargin;
+
+            for (NSString *animationKey in _trackingHaloAnnotation.layer.animationKeys)
+                [userHaloTrackingView.layer addAnimation:[[[_trackingHaloAnnotation.layer animationForKey:animationKey] copy] autorelease] forKey:animationKey];
+
+            [self insertSubview:userHaloTrackingView belowSubview:_overlayView];
+
             userHeadingTrackingView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"HeadingAngleSmall.png"]];
 
             userHeadingTrackingView.frame = CGRectMake((self.bounds.size.width  / 2) - (userHeadingTrackingView.bounds.size.width / 2),
@@ -2786,7 +2837,7 @@
 
             userHeadingTrackingView.alpha = 0.0;
 
-            [self addSubview:userHeadingTrackingView];
+            [self insertSubview:userHeadingTrackingView belowSubview:_overlayView];
 
             userLocationTrackingView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"TrackingDot.png"]];
 
@@ -2798,7 +2849,7 @@
                                                         UIViewAutoresizingFlexibleTopMargin   |
                                                         UIViewAutoresizingFlexibleBottomMargin;
             
-            [self addSubview:userLocationTrackingView];
+            [self insertSubview:userLocationTrackingView aboveSubview:userHeadingTrackingView];
 
             if (self.zoom < 3)
                 [self zoomByFactor:exp2f(3 - [self zoom]) near:self.center animated:YES];
@@ -2820,7 +2871,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
-    if ( ! showsUserLocation || _mapScrollView.isDragging || ! CLLocationCoordinate2DIsValid(newLocation.coordinate))
+    if ( ! showsUserLocation || _mapScrollView.isDragging || ! newLocation || ! CLLocationCoordinate2DIsValid(newLocation.coordinate))
         return;
 
     if ([newLocation distanceFromLocation:oldLocation])
@@ -2874,56 +2925,40 @@
         }
     }
 
-    RMAnnotation *accuracyCircleAnnotation = nil;
-
-    for (RMAnnotation *annotation in _annotations)
+    if ( ! _accuracyCircleAnnotation)
     {
-        if ([annotation.annotationType isEqualToString:kRMAccuracyCircleAnnotationTypeName])
-            accuracyCircleAnnotation = annotation;
-    }
+        _accuracyCircleAnnotation = [RMAnnotation annotationWithMapView:self coordinate:newLocation.coordinate andTitle:nil];
+        _accuracyCircleAnnotation.annotationType = kRMAccuracyCircleAnnotationTypeName;
+        _accuracyCircleAnnotation.clusteringEnabled = NO;
+        _accuracyCircleAnnotation.layer = [[RMCircle alloc] initWithView:self radiusInMeters:newLocation.horizontalAccuracy];
+        _accuracyCircleAnnotation.layer.zPosition = -MAXFLOAT;
+        _accuracyCircleAnnotation.isUserLocationAnnotation = YES;
 
-    if ( ! accuracyCircleAnnotation)
-    {
-        accuracyCircleAnnotation = [RMAnnotation annotationWithMapView:self coordinate:newLocation.coordinate andTitle:nil];
-        accuracyCircleAnnotation.annotationType = kRMAccuracyCircleAnnotationTypeName;
-        accuracyCircleAnnotation.clusteringEnabled = NO;
-        accuracyCircleAnnotation.layer = [[RMCircle alloc] initWithView:self radiusInMeters:newLocation.horizontalAccuracy];
-        accuracyCircleAnnotation.layer.zPosition = -MAXFLOAT;
-        accuracyCircleAnnotation.isUserLocationAnnotation = YES;
+        ((RMCircle *)_accuracyCircleAnnotation.layer).lineColor = [UIColor colorWithRed:0.378 green:0.552 blue:0.827 alpha:0.7];
+        ((RMCircle *)_accuracyCircleAnnotation.layer).fillColor = [UIColor colorWithRed:0.378 green:0.552 blue:0.827 alpha:0.15];
 
-        ((RMCircle *)accuracyCircleAnnotation.layer).lineColor = [UIColor colorWithRed:0.378 green:0.552 blue:0.827 alpha:0.7];
-        ((RMCircle *)accuracyCircleAnnotation.layer).fillColor = [UIColor colorWithRed:0.378 green:0.552 blue:0.827 alpha:0.15];
+        ((RMCircle *)_accuracyCircleAnnotation.layer).lineWidthInPixels = 2.0;
 
-        ((RMCircle *)accuracyCircleAnnotation.layer).lineWidthInPixels = 2.0;
-
-        [self addAnnotation:accuracyCircleAnnotation];
+        [self addAnnotation:_accuracyCircleAnnotation];
     }
 
     if ([newLocation distanceFromLocation:oldLocation])
-        accuracyCircleAnnotation.coordinate = newLocation.coordinate;
+        _accuracyCircleAnnotation.coordinate = newLocation.coordinate;
 
     if (newLocation.horizontalAccuracy != oldLocation.horizontalAccuracy)
-        ((RMCircle *)accuracyCircleAnnotation.layer).radiusInMeters = newLocation.horizontalAccuracy;
+        ((RMCircle *)_accuracyCircleAnnotation.layer).radiusInMeters = newLocation.horizontalAccuracy;
 
-    RMAnnotation *trackingHaloAnnotation = nil;
-
-    for (RMAnnotation *annotation in _annotations)
+    if ( ! _trackingHaloAnnotation)
     {
-        if ([annotation.annotationType isEqualToString:kRMTrackingHaloAnnotationTypeName])
-            trackingHaloAnnotation = annotation;
-    }
-
-    if ( ! trackingHaloAnnotation)
-    {
-        trackingHaloAnnotation = [RMAnnotation annotationWithMapView:self coordinate:newLocation.coordinate andTitle:nil];
-        trackingHaloAnnotation.annotationType = kRMTrackingHaloAnnotationTypeName;
-        trackingHaloAnnotation.clusteringEnabled = NO;
+        _trackingHaloAnnotation = [RMAnnotation annotationWithMapView:self coordinate:newLocation.coordinate andTitle:nil];
+        _trackingHaloAnnotation.annotationType = kRMTrackingHaloAnnotationTypeName;
+        _trackingHaloAnnotation.clusteringEnabled = NO;
 
         // create image marker
         //
-        trackingHaloAnnotation.layer = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDotHalo.png"]];
-        trackingHaloAnnotation.layer.zPosition = -MAXFLOAT + 1;
-        trackingHaloAnnotation.isUserLocationAnnotation = YES;
+        _trackingHaloAnnotation.layer = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDotHalo.png"]];
+        _trackingHaloAnnotation.layer.zPosition = -MAXFLOAT + 1;
+        _trackingHaloAnnotation.isUserLocationAnnotation = YES;
 
         [CATransaction begin];
         [CATransaction setAnimationDuration:2.5];
@@ -2938,7 +2973,7 @@
         boundsAnimation.removedOnCompletion = NO;
         boundsAnimation.fillMode = kCAFillModeForwards;
 
-        [trackingHaloAnnotation.layer addAnimation:boundsAnimation forKey:@"animateScale"];
+        [_trackingHaloAnnotation.layer addAnimation:boundsAnimation forKey:@"animateScale"];
 
         // go transparent as scaled out
         //
@@ -2949,26 +2984,24 @@
         opacityAnimation.removedOnCompletion = NO;
         opacityAnimation.fillMode = kCAFillModeForwards;
 
-        [trackingHaloAnnotation.layer addAnimation:opacityAnimation forKey:@"animateOpacity"];
+        [_trackingHaloAnnotation.layer addAnimation:opacityAnimation forKey:@"animateOpacity"];
 
         [CATransaction commit];
 
-        [self addAnnotation:trackingHaloAnnotation];
+        [self addAnnotation:_trackingHaloAnnotation];
     }
 
     if ([newLocation distanceFromLocation:oldLocation])
-        trackingHaloAnnotation.coordinate = newLocation.coordinate;
+        _trackingHaloAnnotation.coordinate = newLocation.coordinate;
 
-    userLocation.layer.hidden = ( ! CLLocationCoordinate2DIsValid(trackingHaloAnnotation.coordinate) || self.userTrackingMode == RMUserTrackingModeFollowWithHeading);
+    userLocation.layer.hidden = ( ! CLLocationCoordinate2DIsValid(userLocation.coordinate) || self.userTrackingMode == RMUserTrackingModeFollowWithHeading);
 
-    accuracyCircleAnnotation.layer.hidden = newLocation.horizontalAccuracy <= 10;
+    _accuracyCircleAnnotation.layer.hidden = newLocation.horizontalAccuracy <= 10;
 
-    trackingHaloAnnotation.layer.hidden = ( ! CLLocationCoordinate2DIsValid(trackingHaloAnnotation.coordinate) || newLocation.horizontalAccuracy > 10);
+    _trackingHaloAnnotation.layer.hidden = ( ! CLLocationCoordinate2DIsValid(userLocation.coordinate) || newLocation.horizontalAccuracy > 10 || self.userTrackingMode == RMUserTrackingModeFollowWithHeading);
 
     if ( ! [_annotations containsObject:userLocation])
         [self addAnnotation:userLocation];
-
-    [self correctPositionOfAllAnnotations];
 }
 
 - (BOOL)locationManagerShouldDisplayHeadingCalibration:(CLLocationManager *)manager
@@ -3011,6 +3044,8 @@
                              for (RMAnnotation *annotation in _annotations)
                                  if ([annotation.layer isKindOfClass:[RMMarker class]] && ! annotation.isUserLocationAnnotation)
                                      annotation.layer.transform = _annotationTransform;
+
+                             [self correctPositionOfAllAnnotations];
                          }
                          completion:nil];
 
