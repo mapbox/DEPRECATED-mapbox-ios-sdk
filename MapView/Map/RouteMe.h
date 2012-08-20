@@ -44,6 +44,7 @@
 #import "RMGenericMapSource.h"
 #import "RMGlobalConstants.h"
 #import "RMInteractiveSource.h"
+#import "RMLoadingTileView.h"
 #import "RMMBTilesSource.h"
 #import "RMMapBoxSource.h"
 #import "RMMapLayer.h"
