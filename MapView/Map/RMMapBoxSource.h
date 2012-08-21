@@ -46,9 +46,6 @@
 //  [4] https://github.com/mapbox/simplestyle-spec
 //  [5] https://github.com/mapbox/tilejson-spec/tree/v2.1.0/
 //
-//  This class also supports initialization via the deprecated info dictionary
-//  for backwards compatibility and for iOS < 5.0 where JSON serialization isn't
-//  built into the SDK. Its use is discouraged.
 
 #import "RMAbstractWebMapSource.h"
 
@@ -62,7 +59,7 @@
 
 @interface RMMapBoxSource : RMAbstractWebMapSource
 
-// Designated initializer. Point to either a remote TileJSON spec or a local TileJSON or property list.
+// Designated initializer. Point to either a remote or local TileJSON structure.
 - (id)initWithReferenceURL:(NSURL *)referenceURL;
 
 // Initialize source with TileJSON.
@@ -71,9 +68,6 @@
 // For TileJSON 2.1.0+ layers, look for and auto-add annotations from simplestyle data.
 - (id)initWithTileJSON:(NSString *)tileJSON enablingDataOnMapView:(RMMapView *)mapView;
 - (id)initWithReferenceURL:(NSURL *)referenceURL enablingDataOnMapView:(RMMapView *)mapView;
-
-// Initialize source with properly list (deprecated; use TileJSON).
-- (id)initWithInfo:(NSDictionary *)info __attribute__ ((deprecated));
 
 // HTML-formatted legend for this source, if any
 - (NSString *)legend;

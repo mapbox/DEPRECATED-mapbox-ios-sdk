@@ -40,6 +40,8 @@
 
 @property (nonatomic, retain) NSDictionary *infoDictionary;
 
+- (id)initWithInfo:(NSDictionary *)info;
+
 @end
 
 #pragma mark -
@@ -115,6 +117,8 @@
 
 - (id)initWithInfo:(NSDictionary *)info
 {
+    WarnDeprecated();
+
     if ( ! (self = [super init]))
         return nil;
 
