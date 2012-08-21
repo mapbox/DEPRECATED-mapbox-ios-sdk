@@ -3015,6 +3015,9 @@
 
 - (BOOL)locationManagerShouldDisplayHeadingCalibration:(CLLocationManager *)manager
 {
+    if (self.displayHeadingCalibration)
+        [locationManager performSelector:@selector(dismissHeadingCalibrationDisplay) withObject:nil afterDelay:10.0];
+
     return self.displayHeadingCalibration;
 }
 
