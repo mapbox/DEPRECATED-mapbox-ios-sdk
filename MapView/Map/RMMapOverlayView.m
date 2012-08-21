@@ -13,11 +13,6 @@
 #import "RMMapView.h"
 
 @implementation RMMapOverlayView
-{
-    RMAnnotation *_userLocationAnnotation;
-    RMAnnotation *_accuracyCircleAnnotation;
-    RMAnnotation *_trackingHaloAnnotation;
-}
 
 + (Class)layerClass
 {
@@ -68,34 +63,58 @@
 {
     RMMapView *mapView = ((RMMapView *)self.superview);
 
-    if ( ! _userLocationAnnotation)
-        _userLocationAnnotation = (RMAnnotation *)mapView.userLocation;
-
-    if ( ! _accuracyCircleAnnotation)
-        for (RMAnnotation *annotation in mapView.annotations)
-            if ([annotation.annotationType isEqualToString:kRMAccuracyCircleAnnotationTypeName])
-                _accuracyCircleAnnotation = annotation;
-
-    if ( ! _trackingHaloAnnotation)
-        for (RMAnnotation *annotation in mapView.annotations)
-            if ([annotation.annotationType isEqualToString:kRMTrackingHaloAnnotationTypeName])
-                _trackingHaloAnnotation = annotation;
-
     // here we hide the accuracy circle & tracking halo to exclude from hit
     // testing, as well as be sure to show the user location (even if in
     // heading mode) to ensure hits on it
     //
-    BOOL flag = _userLocationAnnotation.layer.isHidden;
+    RMAnnotation *userLocationAnnotation = (RMAnnotation *)mapView.userLocation;
+    RMAnnotation *accuracyCircleAnnotation = nil;
+    RMAnnotation *trackingHaloAnnotation   = nil;
 
-    _userLocationAnnotation.layer.hidden = NO;
+    NSArray *matches = nil;
 
-    _accuracyCircleAnnotation.layer.hidden = _trackingHaloAnnotation.layer.hidden = YES;
+    matches = [mapView.annotations filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"annotationType = %@", kRMAccuracyCircleAnnotationTypeName]];
+
+    if ([matches count])
+        accuracyCircleAnnotation = [matches lastObject];
+
+    matches = [mapView.annotations filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"annotationType = %@", kRMTrackingHaloAnnotationTypeName]];
+
+    if ([matches count])
+        trackingHaloAnnotation = [matches lastObject];
+
+    BOOL userLocationFlag;
+    BOOL accuracyCircleFlag;
+    BOOL trackingHaloFlag;
+
+    if (userLocationAnnotation)
+    {
+        userLocationFlag = userLocationAnnotation.layer.isHidden;
+        userLocationAnnotation.layer.hidden = NO;
+    }
+
+    if (accuracyCircleAnnotation)
+    {
+        accuracyCircleFlag = accuracyCircleAnnotation.layer.isHidden;
+        accuracyCircleAnnotation.layer.hidden = YES;
+    }
+
+    if (trackingHaloAnnotation)
+    {
+        trackingHaloFlag = trackingHaloAnnotation.layer.isHidden;
+        trackingHaloAnnotation.layer.hidden = YES;
+    }
 
     CALayer *hit = [self.layer hitTest:point];
 
-    _userLocationAnnotation.layer.hidden = flag;
+    if (userLocationAnnotation)
+        userLocationAnnotation.layer.hidden = userLocationFlag;
 
-    _accuracyCircleAnnotation.layer.hidden = _trackingHaloAnnotation.layer.hidden = NO;
+    if (accuracyCircleAnnotation)
+        accuracyCircleAnnotation.layer.hidden = accuracyCircleFlag;
+
+    if (trackingHaloAnnotation)
+        trackingHaloAnnotation.layer.hidden = trackingHaloFlag;
 
     return hit;
 }

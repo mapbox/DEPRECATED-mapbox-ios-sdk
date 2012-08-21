@@ -407,6 +407,9 @@
     [_projection release]; _projection = nil;
     [_mercatorToTileProjection release]; _mercatorToTileProjection = nil;
     [self setTileCache:nil];
+    locationManager.delegate = nil;
+    [locationManager stopUpdatingLocation];
+    [locationManager stopUpdatingHeading];
     [locationManager release]; locationManager = nil;
     [userLocation release]; userLocation = nil;
     [_accuracyCircleAnnotation release]; _accuracyCircleAnnotation = nil;
@@ -2659,8 +2662,7 @@
         [locationManager stopUpdatingLocation];
         [locationManager stopUpdatingHeading];
         locationManager.delegate = nil;
-        [locationManager release];
-        locationManager = nil;
+        [locationManager release]; locationManager = nil;
 
         if (_delegateHasDidStopLocatingUser)
             [_delegate mapViewDidStopLocatingUser:self];
@@ -3060,13 +3062,25 @@
     }
 }
 
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+{
+    if (status != kCLAuthorizationStatusAuthorized)
+    {
+        self.userTrackingMode  = RMUserTrackingModeNone;
+        self.showsUserLocation = NO;
+    }
+}
+
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
-    self.showsUserLocation = NO;
-    self.userTrackingMode = RMUserTrackingModeNone;
+    if ([error code] == kCLErrorDenied)
+    {
+        self.userTrackingMode  = RMUserTrackingModeNone;
+        self.showsUserLocation = NO;
 
-    if (_delegateHasDidFailToLocateUserWithError)
-        [_delegate mapView:self didFailToLocateUserWithError:error];
+        if (_delegateHasDidFailToLocateUserWithError)
+            [_delegate mapView:self didFailToLocateUserWithError:error];
+    }
 }
 
 - (void)updateHeadingForDeviceOrientation
