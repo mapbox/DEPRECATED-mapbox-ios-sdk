@@ -2934,7 +2934,7 @@
 
     if ( ! _accuracyCircleAnnotation)
     {
-        _accuracyCircleAnnotation = [RMAnnotation annotationWithMapView:self coordinate:newLocation.coordinate andTitle:nil];
+        _accuracyCircleAnnotation = [[RMAnnotation annotationWithMapView:self coordinate:newLocation.coordinate andTitle:nil] retain];
         _accuracyCircleAnnotation.annotationType = kRMAccuracyCircleAnnotationTypeName;
         _accuracyCircleAnnotation.clusteringEnabled = NO;
         _accuracyCircleAnnotation.layer = [[RMCircle alloc] initWithView:self radiusInMeters:newLocation.horizontalAccuracy];
@@ -2957,7 +2957,7 @@
 
     if ( ! _trackingHaloAnnotation)
     {
-        _trackingHaloAnnotation = [RMAnnotation annotationWithMapView:self coordinate:newLocation.coordinate andTitle:nil];
+        _trackingHaloAnnotation = [[RMAnnotation annotationWithMapView:self coordinate:newLocation.coordinate andTitle:nil] retain];
         _trackingHaloAnnotation.annotationType = kRMTrackingHaloAnnotationTypeName;
         _trackingHaloAnnotation.clusteringEnabled = NO;
 
@@ -3062,6 +3062,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
+    self.showsUserLocation = NO;
     self.userTrackingMode = RMUserTrackingModeNone;
 
     if (_delegateHasDidFailToLocateUserWithError)
