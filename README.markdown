@@ -5,18 +5,18 @@ Based on the Route-Me iOS map library (Alpstein fork) with custom [MapBox][mapbo
 
 Requires iOS 5 and Xcode 4.3 or greater. Does not yet support ARC. 
 
-Undergoing rapid development, so the `develop` branch is currently recommended. 
-
 Major differences from [Alpstein fork of Route-Me](https://github.com/Alpstein/route-me): 
 
  * Requires iOS 5.0 and above. 
  * [MapBox](http://mapbox.com) & [MBTiles](http://mbtiles.org) tile source integration code. 
+ * [MapBox Markers](http://mapbox.com/blog/markers/) support. 
  * [UTFGrid interactivity](http://mapbox.com/mbtiles-spec/utfgrid/). 
+ * Improved network tile loading performance. 
+ * Prepackaged [binary framework](http://mapbox.com/blog/ios-sdk-framework/). 
+ * [CocoaPods](http://cocoapods.org) support. 
  * Removal of two-finger double-tap gesture for zoom out (to speed up two-finger single-tap recognition like MapKit). 
  * Different default starting location for maps. 
  * Built-in attribution view controller with button on map views & default OpenStreetMap attribution. 
- * [MapBox Markers](http://mapbox.com/blog/markers/) support. 
- * Prepackaged [binary framework](http://mapbox.com/blog/ios-sdk-framework/). 
  * Removed of included example projects in favor of separate examples on GitHub. 
  * A few added defaults for convenience. 
  * Improved documentation. 
@@ -44,15 +44,13 @@ Please note that you are responsible for getting permission to use the map data,
 Installing
 ----------
 
-**New:** Try the [prepackaged framework](https://github.com/mapbox/mapbox-ios-sdk/downloads). Use like regular frameworks, linking it in your project, adding `#import <MapBox/MapBox.h>`, and additionally, including the `-ObjC` linker flag. 
+There are three ways that you can install the SDK, depending upon your needs: 
 
-As the SDK is undergoing some significant changes, the recommended course of action is to clone a copy of the repository:
+ 1. Clone from GitHub and integrate as a dependent Xcode project. 
+ 1. Use the [binary framework](https://github.com/mapbox/mapbox-ios-sdk/downloads). Use like regular frameworks, linking it in your project, adding `#import <MapBox/MapBox.h>`, and additionally, including the `-ObjC` linker flag. 
+ 1. Install via [CocoaPods](http://cocoapods.org). 
 
-      git://github.com/mapbox/mapbox-ios-sdk.git
-
-Or, [download the trunk][dl].
-
-The two main branches are pretty self-explanatory: `release` and `develop`. When we tag a [release](https://github.com/mapbox/mapbox-ios-sdk/tags), we also merge `develop` over to `release`. 
+The two main branches of the GitHub repository are pretty self-explanatory: `release` and `develop`. When we tag a [release](https://github.com/mapbox/mapbox-ios-sdk/tags), we also merge `develop` over to `release`. 
 
 Then, update the submodules:
 
@@ -66,13 +64,11 @@ Some example apps showing usage of the SDK:
 
 More documentation is available: 
 
-      http://mapbox.com/mobile/docs/sdk
+      http://mapbox.com/mapbox-ios-sdk/
 
 There are two subdirectories - MapView and Proj4. Proj4 is a support library used to do map projections. The MapView project contains only the Route-Me map library. 
 
 See License.txt for license details. In any app that uses the Route-Me library, include the following text on your "preferences" or "about" screen: "Uses Route-Me map library, (c) 2008-2012 Route-Me Contributors". Your data provider will have additional attribution requirements.
-
-   [dl]: https://github.com/mapbox/mapbox-ios-sdk/zipball/develop
 
 News, Support and Contributing
 ------------------------------
