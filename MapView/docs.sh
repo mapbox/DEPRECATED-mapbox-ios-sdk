@@ -1,80 +1,44 @@
 #!/bin/sh
 
+VERSION=$( git describe --tags | awk -F '-' '{ print $1 }' )
+
 appledoc \
-    --project-name MapBox \
-    --project-version `git describe --tags | awk -F '-' '{ print $1 }'` \
+    --project-name "MapBox $VERSION" \
     --project-company MapBox \
+    --create-html \
     --company-id com.mapbox \
     --output Documentation \
-    --ignore Map/FMDB \
-    --ignore Map/GRMustache \
     --ignore build \
     --ignore Documentation \
-    --ignore Map/RMTileImage.h \
-    --ignore Map/RMTileImage.m \
-    --ignore Map/RMMapTiledLayerView.h \
-    --ignore Map/RMMapTiledLayerView.m \
-    --ignore Map/RMMapOverlayView.h \
-    --ignore Map/RMMapOverlayView.m \
-    --ignore Map/RMMapScrollView.h \
-    --ignore Map/RMMapScrollView.m \
-    --ignore Map/RMLoadingTileView.h \
-    --ignore Map/RMLoadingTileView.m \
-    --ignore Map/RMTileSourcesContainer.h \
-    --ignore Map/RMTileSourcesContainer.m \
-    --ignore Map/RMAbstractMercatorTileSource.m \
-    --ignore Map/RMAbstractWebMapSource.m \
-    --ignore Map/RMCoordinateGridSource.h \
-    --ignore Map/RMCoordinateGridSource.m \
-    --ignore Map/RMDBMapSource.h \
-    --ignore Map/RMDBMapSource.m \
-    --ignore Map/RMGenericMapSource.h \
-    --ignore Map/RMGenericMapSource.m \
-    --ignore Map/RMMapQuestOpenAerialSource.h \
-    --ignore Map/RMMapQuestOpenAerialSource.m \
-    --ignore Map/RMMapQuestOSMSource.h \
-    --ignore Map/RMMapQuestOSMSource.m \
-    --ignore Map/RMOpenCycleMapSource.h \
-    --ignore Map/RMOpenCycleMapSource.m \
-    --ignore Map/RMOpenSeaMapLayer.h \
-    --ignore Map/RMOpenSeaMapLayer.m \
-    --ignore Map/RMOpenSeaMapSource.h \
-    --ignore Map/RMOpenSeaMapSource.m \
-    --ignore Map/RMMemoryCache.m \
-    --ignore Map/RMDatabaseCache.m \
-    --ignore MapRMCacheObject.m \
-    --ignore Map/RMProjection.h \
-    --ignore Map/RMProjection.m \
-    --ignore Map/RMFractalTileProjection.h \
-    --ignore Map/RMFractalTileProjection.m \
-    --ignore Map/RMPixel.h \
-    --ignore Map/RMPixel.m \
-    --ignore Map/RMNotifications.h \
-    --ignore Map/RMGlobalConstants.h \
-    --ignore Map/RMPath.m \
-    --ignore Map/RMShape.m \
-    --ignore Map/RMOpenStreetMapSource.m \
-    --ignore Map/RMAnnotation.m \
-    --ignore Map/RMCircle.m \
-    --ignore Map/RMInteractiveSource.m \
-    --ignore Map/RMAttributionViewController.h \
-    --ignore Map/RMAttributionViewController.m \
-    --ignore Map/RMMBTilesSource.m \
-    --ignore Map/RMMapBoxSource.m \
-    --ignore Map/RMMarker.m \
-    --ignore Map/RMFoundation.h \
-    --ignore Map/RMFoundation.m \
-    --ignore Map/RMTile.h \
-    --ignore Map/RMTile.m \
-    --ignore Map/RMPixel.h \
-    --ignore Map/RMPixel.m \
-    --ignore Map/RMTileCache.m \
-    --ignore Map/RMCacheObject.m \
-    --ignore Map/RMUserLocation.m \
-    --ignore Map/RMUserTrackingBarButtonItem.m \
-    --ignore Map/RMMapView.m \
-    --ignore Map/RMMapLayer.m \
-    --ignore Map/RMPath.h \
+    --ignore FMDB \
+    --ignore GRMustache \
+    --ignore .c \
+    --ignore .m \
+    --ignore RMAttributionViewController.h \
+    --ignore RMConfiguration.h \
+    --ignore RMCoordinateGridSource.h \
+    --ignore RMDBMapSource.h \
+    --ignore RMFoundation.h \
+    --ignore RMFractalTileProjection.h \
+    --ignore RMGenericMapSource.h \
+    --ignore RMGlobalConstants.h \
+    --ignore RMLoadingTileView.h \
+    --ignore RMMapOverlayView.h \
+    --ignore RMMapQuestOpenAerialSource.h \
+    --ignore RMMapQuestOSMSource.h \
+    --ignore RMMapScrollView.h \
+    --ignore RMMapTiledLayerView.h \
+    --ignore RMNotifications.h \
+    --ignore RMOpenCycleMapSource.h \
+    --ignore RMOpenSeaMapLayer.h \
+    --ignore RMOpenSeaMapSource.h \
+    --ignore RMPath.h \
+    --ignore RMPixel.h \
+    --ignore RMProjection.h \
+    --ignore RMTile.h \
+    --ignore RMTileImage.h \
+    --ignore RMTileSourcesContainer.h \
     --clean-output \
     --no-install-docset \
+    --index-desc ../README.markdown \
     .
