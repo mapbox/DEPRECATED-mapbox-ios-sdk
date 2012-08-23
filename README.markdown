@@ -73,6 +73,8 @@ See License.txt for license details. In any app that uses the Route-Me library, 
 News, Support and Contributing
 ------------------------------
 
+Complete API documentation is available [online][api] or as an [Xcode docset Atom feed][docset]. 
+
 The MapBox iOS SDK has a [support resource][support] where you can open cases and browse other developers' discussions about use of the SDK. 
 
 We have a [basic technical overview][docs] along with the installation instructions. 
@@ -83,6 +85,8 @@ The main Route-Me project has a [mailing list][list] for news and to communicate
 
 To report bugs and help fix them, please use the [issue tracker][tracker]. 
 
+[api]: http://mapbox.com/mapbox-ios-sdk/api/
+[docset]: https://raw.github.com/mapbox/mapbox-ios-sdk/release-tools/Docs/publish/docset.atom
 [support]: http://support.mapbox.com/discussions/mapbox-ios-sdk
 [docs]: http://mapbox.com/mobile/docs/sdk
 [list]: http://groups.google.com/group/route-me-map
