@@ -2,7 +2,7 @@
 
 appledoc \
     --project-name MapBox \
-    --project-version 0.4.0 \
+    --project-version `git describe --tags | awk -F '-' '{ print $1 }'` \
     --project-company MapBox \
     --company-id com.mapbox \
     --output Documentation \
