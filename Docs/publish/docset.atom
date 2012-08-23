@@ -3,7 +3,7 @@
     <id>https://raw.github.com/mapbox/mapbox-ios-sdk/release-tools/Docs/publish/docset.atom/20120823010647</id>
     <title type="text">MapBox 0.4.0 Documentation</title>
     <rights>Copyright © 2012 MapBox. All rights reserved.</rights>
-    <link rel="self" href="https://raw.github.com/mapbox/mapbox-ios-sdk/release-tools/Docs/publish/docset.atom"></link>
+    <link rel="self" href="http://mapbox.com/mapbox-ios-sdk/Docs/publish/docset.atom"></link>
     <docset:publisherName>MapBox</docset:publisherName>
     <docset:publisherID>com.mapbox.documentation</docset:publisherID>
     <updated>2012-08-23T01:06:47-07:00</updated>
