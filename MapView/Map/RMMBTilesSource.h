@@ -30,8 +30,6 @@
 //  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 //  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-//  http://mbtiles.org
-//
 
 #import <Foundation/Foundation.h>
 
@@ -44,14 +42,25 @@
 #define kMBTilesDefaultMaxTileZoom 22
 #define kMBTilesDefaultLatLonBoundingBox ((RMSphericalTrapezium){.northEast = {.latitude = 90, .longitude = 180}, .southWest = {.latitude = -90, .longitude = -180}})
 
+/** An RMMBTilesSource provides for a fast, offline-capable set of map tile images served from a local database. [MBTiles](http://mbtiles.org) is an open standard for map tile image transport. */
 @interface RMMBTilesSource : NSObject <RMTileSource>
 {
     FMDatabaseQueue *queue;
 }
 
+/** @name Creating Tile Sources */
+
+/** Initialize and return a newly allocated MBTiles tile source based on a given local database URL.
+*   @param tileSetURL Local file path URL to an MBTiles file.
+*   @return An initialized MBTiles tile source. */
 - (id)initWithTileSetURL:(NSURL *)tileSetURL;
 
+/** @name Querying Tile Source Information */
+
+/** Returns YES if the tile source provides full-world coverage; otherwise, returns NO. */
 - (BOOL)coversFullWorld;
+
+/** Any available HTML-formatted map legend data for the tile source, suitable for display in a UIWebView. */
 - (NSString *)legend;
 
 @end

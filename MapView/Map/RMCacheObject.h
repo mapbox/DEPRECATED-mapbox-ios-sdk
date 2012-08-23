@@ -27,17 +27,38 @@
 
 #import "RMTile.h"
 
+/** An RMCacheObject is a representation of a tile cache for use with the RMMemoryCache in-memory cache storage. While RMDatabaseCache uses a disk-based database backing store, RMMemoryCache maintains first-class objects in memory for use later. */
 @interface RMCacheObject : NSObject
 
+/** @name Managing Cache Objects */
+
+/** The object to be cached, typically a UIImage. */
 @property (nonatomic, readonly) id cachedObject;
+
+/** The unique identifier for the cache. */
 @property (nonatomic, readonly) NSString *cacheKey;
+
+/** The tile key for the cache object. */
 @property (nonatomic, readonly) RMTile tile;
+
+/** The freshness timestamp for the cache object. */
 @property (nonatomic, readonly) NSDate *timestamp;
 
+/** Creates and returns a cache object for a given key and object to store in a given cache.
+*   @param anObject The object to cache, typically a UIImage.
+*   @param aTile The tile key for the object.
+*   @param aCacheKey The unique identifier for the cache.
+*   @return A newly created cache object. */
 + (id)cacheObject:(id)anObject forTile:(RMTile)aTile withCacheKey:(NSString *)aCacheKey;
 
+/** Initializes and returns a newly allocated cache object for a given key and object to store in a given cache.
+*   @param anObject The object to cache, typically a UIImage.
+*   @param tile The tile key for the object.
+*   @param aCacheKey The unique identifier for the cache.
+*   @return An initialized cache object. */
 - (id)initWithObject:(id)anObject forTile:(RMTile)tile withCacheKey:(NSString *)aCacheKey;
 
+/** Updates the timestamp on a cache object to indicate freshness. Objects with older timestamps get deleted first when space is needed. */
 - (void)touch;
 
 @end
