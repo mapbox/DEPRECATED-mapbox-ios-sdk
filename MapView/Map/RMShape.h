@@ -32,6 +32,7 @@
 
 @class RMMapView;
 
+/** An RMShape object is used to represent a line, polygon, or other shape composed of two or more points connected by lines. An RMShape object changes visible size in response to map zooms in order to consistently represent coverage of the same geographic area. */
 @interface RMShape : RMMapLayer
 {
     CGRect pathBoundingBox;
@@ -47,39 +48,72 @@
     BOOL scaleLineDash; // if YES line dashes will be scaled to keep a constant size if the layer is zoomed
 }
 
+/** @name Creating Shape Objects */
+
+/** Initializes and returns a newly allocated shape object for the specified map view.
+*   @param aMapView The map view the shape should be drawn on. */
 - (id)initWithView:(RMMapView *)aMapView;
+
+/** @name Accessing the Drawing Properties */
 
 @property (nonatomic, retain) NSString *fillRule;
 @property (nonatomic, retain) NSString *lineCap;
 @property (nonatomic, retain) NSString *lineJoin;
+
+/** The line color of the shape. Defaults to black. */
 @property (nonatomic, retain) UIColor *lineColor;
+
+/** The fill color of the shape. Defaults to clear. */
 @property (nonatomic, retain) UIColor *fillColor;
 
 @property (nonatomic, assign) NSArray *lineDashLengths;
 @property (nonatomic, assign) CGFloat lineDashPhase;
 @property (nonatomic, assign) BOOL scaleLineDash;
+
+/** The line width of the shape. Defaults to 2.0. */
 @property (nonatomic, assign) float lineWidth;
+
 @property (nonatomic, assign) BOOL scaleLineWidth;
 @property (nonatomic, assign) CGFloat shadowBlur;
 @property (nonatomic, assign) CGSize shadowOffset;
 @property (nonatomic, assign) BOOL enableShadow;
 
+/** The bounding box of the shape in the current viewport. */
 @property (nonatomic, readonly) CGRect pathBoundingBox;
 
+/** @name Drawing Shapes */
+
+/** Move the drawing pen to a projected point. 
+*   @param projectedPoint The projected point to move to. */
 - (void)moveToProjectedPoint:(RMProjectedPoint)projectedPoint;
+
+/** Move the drawing pen to a screen point. 
+*   @param point The screen point to move to. */
 - (void)moveToScreenPoint:(CGPoint)point;
+
+/** Move the drawing pen to a coordinate. 
+*   @param coordinate The coordinate to move to. */
 - (void)moveToCoordinate:(CLLocationCoordinate2D)coordinate;
 
+/** Draw a line from the current pen location to a projected point. 
+*   @param projectedPoint The projected point to draw to. */
 - (void)addLineToProjectedPoint:(RMProjectedPoint)projectedPoint;
+
+/** Draw a line from the current pen location to a screen point.
+*   @param point The screen point to draw to. */
 - (void)addLineToScreenPoint:(CGPoint)point;
+
+/** Draw a line from the current pen location to a coordinate.
+*   @param coordinate The coordinate to draw to. */
 - (void)addLineToCoordinate:(CLLocationCoordinate2D)coordinate;
 
-// Change the path without recalculating the geometry (performance!)
+/** Alter the path without rerecalculating the geometry. Recommended for many operations in order to increase performance. 
+*   @param block A block containing the operations to perform. */
 - (void)performBatchOperations:(void (^)(RMShape *aPath))block;
 
-// This closes the path, connecting the last point to the first.
-// After this action, no further points can be added to the path.
-// There is no requirement that a path be closed.
+/** Closes the path, connecting the last point to the first. After this action, no further points can be added to the path.
+*
+* There is no requirement that a path be closed. */
 - (void)closePath;
 
 @end

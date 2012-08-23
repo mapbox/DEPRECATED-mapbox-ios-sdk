@@ -39,31 +39,64 @@ typedef enum : short {
 
 #pragma mark -
 
+/** The RMTileCache protocol describes behaviors that tile caches should implement. */
 @protocol RMTileCache <NSObject>
 
-// Returns the cached image if it exists. nil otherwise.
+/** @name Querying the Cache */
+
+/** Returns an image from the cache if it exists. 
+*   @param tile A desired RMTile.
+*   @param cacheKey The key representing a certain cache.
+*   @return An image of the tile that can be used to draw a portion of the map. */
 - (UIImage *)cachedImage:(RMTile)tile withCacheKey:(NSString *)cacheKey;
 
 - (void)didReceiveMemoryWarning;
 
 @optional
 
+/** @name Adding to the Cache */
+
+/** Adds a tile image to specified cache.
+*   @param image A tile image to be cached.
+*   @param tile The RMTile describing the map location of the image.
+*   @param cacheKey The key representing a certain cache. */
 - (void)addImage:(UIImage *)image forTile:(RMTile)tile withCacheKey:(NSString *)cacheKey;
 
-// removes all tile images from the memory and disk subcaches
+/** @name Clearing the Cache */
+
+/** Removes all tile images from a cache. */
 - (void)removeAllCachedImages;
 
 @end
 
 #pragma mark -
 
+/** An RMTileCache object manages memory-based and disk-based cache for map tiles that have been retrieved from the network. */
 @interface RMTileCache : NSObject <RMTileCache>
 
+/** @name Initializing a Cache Manager */
+
+/** Initializes and returns a newly allocated cache object with specified expiry period.
+*
+*   If the `init` method is used to initialize a cache instead, a period of `0` is used. In that case, time-based expiration of tiles is not performed, but rather the cached tile count is used instead.
+*
+*   @param period A period of time after which tiles should be expunged from the cache.
+*   @return An initialized cache object or `nil` if the object couldn't be created. */
 - (id)initWithExpiryPeriod:(NSTimeInterval)period;
 
+/** @name Identifying Cache Objects */
+
+/** Return an identifying hash number for the specified tile.
+*
+*   @param tile A tile image to hash.
+*   @return A unique number for the specified tile. */
 + (NSNumber *)tileHash:(RMTile)tile;
 
-// Add another cache to the chain
+/** @name Adding Caches to the Cache Manager */
+
+/** Adds a given cache to the cache management system.
+*
+*   @param cache A memory-based or disk-based cache. */
 - (void)addCache:(id <RMTileCache>)cache;
 
 - (void)didReceiveMemoryWarning;

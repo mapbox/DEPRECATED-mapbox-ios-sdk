@@ -31,15 +31,27 @@
 #define RMAbstractWebMapSourceDefaultRetryCount  3
 #define RMAbstractWebMapSourceDefaultWaitSeconds 15.0
 
+/** Abstract class representing a network-based location for retrieving map tiles for display. Developers can create subclasses in order to provide custom web addresses for tile downloads. */
 @interface RMAbstractWebMapSource : RMAbstractMercatorTileSource
 
+/** @name Configuring Network Behavior */
+
+/** The number of times to retry downloads of a given tile image. */
 @property (nonatomic, assign) NSUInteger retryCount;
+
+/** The network timeout for each attempt to download a tile image. */
 @property (nonatomic, assign) NSTimeInterval requestTimeoutSeconds;
 
+/** @name Providing Tile Images */
+
+/** Provide the URL for a given tile.
+    @param tile A specific map tile.
+    @return A URL to a tile image to download. */
 - (NSURL *)URLForTile:(RMTile)tile;
 
-// Tilesources with layers use this method.
-// URLs are ordered from the bottom layer to the top layer.
+/** Provide multiple URLs for a given tile. Each URL is fetched in turn and composited together before placement on the map. URLs are ordered from the bottom layer to the top layer.
+    @param tile A specific map tile.
+    @return An array of tile URLs to download, listed bottom to top. */
 - (NSArray *)URLsForTile:(RMTile)tile;
 
 @end
