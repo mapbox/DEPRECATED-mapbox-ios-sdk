@@ -4,7 +4,7 @@ HTMLTOP='<div id="header">'
 HTMLEND='<div class="main-navigation navigation-bottom">'
 YAML="\
 ---
-title: iOS SDK 0.3.0
+title: iOS SDK `git tag | sort -r | sed -n '1p'`
 layout: api
 permalink: /api
 categories: api
@@ -19,13 +19,13 @@ scrape() {
 }
 
 YAML="$YAML\n  Classes:"
-for file in `find docset -wholename "*Classes/*.html" | sort`; do
+for file in `find /tmp/docset -wholename "*Classes/*.html" | sort`; do
   YAML="$YAML\n  - $(basename $file .html)"
   CONTENT="$CONTENT\n$(scrape $file)"
 done
 
 YAML="$YAML\n  Protocols:"
-for file in `find docset -wholename "*Protocols/*.html" | sort`; do
+for file in `find /tmp/docset -wholename "*Protocols/*.html" | sort`; do
   YAML="$YAML\n  - $(basename $file .html)"
   CONTENT="$CONTENT\n$(scrape $file)"
 done
@@ -38,6 +38,6 @@ echo -e "$CONTENT" | \
   sed 's, Class Reference</h1>,</h1>,' | \
   sed 's, Protocol Reference</h1>,</h1>,' | \
   # Add an id to h1s so they can be looked up by anchor links.
-  sed 's,<h1 class="title-header">\([^<]*\)</h1>,<h1 class="title-header" id="\L\1">\E\1</h1>,' | \
+  sed 's,<h1 class="title-header">\([^<]*\)</h1>,<h1 class="title-header" id="\1">\1</h1>,' | \
   # Replace links to class/protocol pages with anchor links. Avoids http:// urls.
-  sed 's,<a href="[^#][^:\"]*">\([^<]*\)</a>,<a href="#\L\1">\E\1</a>,g'
+  sed 's,<a href="[^#][^:\"]*">\([^<]*\)</a>,<a href="#\1">\1</a>,g'
