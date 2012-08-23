@@ -86,7 +86,7 @@ The main Route-Me project has a [mailing list][list] for news and to communicate
 To report bugs and help fix them, please use the [issue tracker][tracker]. 
 
 [api]: http://mapbox.com/mapbox-ios-sdk/api/
-[docset]: https://raw.github.com/mapbox/mapbox-ios-sdk/release-tools/Docs/publish/docset.atom
+[docset]: http://mapbox.com/mapbox-ios-sdk/Docs/publish/docset.atom
 [support]: http://support.mapbox.com/discussions/mapbox-ios-sdk
 [docs]: http://mapbox.com/mobile/docs/sdk
 [list]: http://groups.google.com/group/route-me-map
