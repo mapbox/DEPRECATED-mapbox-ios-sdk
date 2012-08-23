@@ -26,5 +26,5 @@ Icon?
 .Trashes
 
 # Project-specific ignores
-MapView/Documentation
+MapView/Docs
 _site

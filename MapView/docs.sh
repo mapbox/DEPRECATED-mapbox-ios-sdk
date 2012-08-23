@@ -3,7 +3,7 @@
 VERSION=$( git describe --tags | awk -F '-' '{ print $1 }' )
 
 appledoc \
-    --output Documentation \
+    --output Docs \
     --project-name "MapBox $VERSION" \
     --project-company MapBox \
     --create-html \
