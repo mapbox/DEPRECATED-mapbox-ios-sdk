@@ -26,10 +26,10 @@ class: box
   <div class='cell3 float-right'>
     <div class='doc-nav'>
       {% if page.navigation %}
-      {% for heading in page.navigation %}
-        <h3><a href='#{{heading[0]|downcase|replace:' ','_'}}'>{{heading[0]}}</a></h3>
+      {% for section in page.navigation %}
+        <h3><a href='#{{section.title|downcase|replace:' ','_'}}'>{{section.title}}</a></h3>
         <ul class='anchors'>
-        {% for item in heading[1] %}
+        {% for item in section.items %}
         {% if item.hash %}
           <li><a href='#{{item.hash}}'>{{item.text}}</a></li>
         {% else %}
