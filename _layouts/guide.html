@@ -27,8 +27,8 @@ class: box
     <div class='doc-nav'>
       {% if page.navigation %}
       {% for section in page.navigation %}
-        <h3><a href='#{{section.title|downcase|replace:' ','_'}}'>{{section.title}}</a></h3>
-        <ul class='anchors'>
+        <ul class='nav anchors'>
+          <li class='heading'><a href='#{{section.title|downcase|replace:' ','_'}}'>{{section.title}}</a></li>
         {% for item in section.items %}
         {% if item.hash %}
           <li><a href='#{{item.hash}}'>{{item.text}}</a></li>

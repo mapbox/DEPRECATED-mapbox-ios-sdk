@@ -78,14 +78,13 @@ code p { display:inline; }
   </div>
   <div class='cell3 float-right'>
     <form class='doc-search'>
-      <input type='text' placeholder='Filter' />
-      <span class='icon search'></span>
+      <input type='search' placeholder='Filter'>
     </form>
     <div class='doc-nav'>
       {% if page.navigation %}
       {% for heading in page.navigation %}
-        <h3><a href='#{{heading[0]|replace:' ','_'}}'>{{heading[0]}}</a></h3>
-        <ul class='anchors'>
+        <ul class='nav anchors'>
+          <li class='heading'><a href='#{{heading[0]|replace:' ','_'}}'>{{heading[0]}}</a></li>
         {% for item in heading[1] %}
           <li><a href='#{{item|replace:' ','_'}}'>{{item}}</a></li>
         {% endfor %}
@@ -98,7 +97,7 @@ code p { display:inline; }
 </div>
 
 <script>
-$('.doc-search input[type=text]').bind('keyup', function() {
+$('.doc-search input').bind('keyup', function() {
     var q = this.value ? this.value.toLowerCase() : null;
     $('.doc-nav').find('[href]').each(function() {
         var $this = $(this),
@@ -106,14 +105,14 @@ $('.doc-search input[type=text]').bind('keyup', function() {
             body = $(document.getElementById('content-' + id)).text();
 
         if (!q || body.toLowerCase().indexOf(q) !== -1 || id.toLowerCase().indexOf(q) !== -1) {
-            if ($this.parent().prop('tagName') == 'H3') {
+            if ($this.parent().hasClass('heading')) {
                 $this.css('color', '');
             } else {
                 $this.css('display', '');
             }
 
         } else {
-            if ($this.parent().prop('tagName') == 'H3') {
+            if ($this.parent().hasClass('heading')) {
                 $this.css('color', '#BDBDBD');
             } else {
                 $this.css('display', 'none');
@@ -122,17 +121,12 @@ $('.doc-search input[type=text]').bind('keyup', function() {
     });
 
     // Hide headers if no children matched
-    $('.doc-nav').find('h3').each(function() {
+    $('.doc-nav').find('li.heading').each(function() {
         var $this = $(this),
-            next = $this.next(),
-            none = true;
-        if (next.prop('tagName') === 'UL') {
-            next.children().each(function() {
-                if ($(this).find('a').css('display') !== 'none') return none = false;
-            });
-        }
-        $this.css('display', none ? 'none' : '');
-        });
+            next = $this.next();
+
+        if (next.hasClass('heading')) $this.css('display', 'none');
+    });
 
     $(mapbox.docs);
 });
