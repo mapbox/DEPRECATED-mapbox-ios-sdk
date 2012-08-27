@@ -3067,7 +3067,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
-    if (status != kCLAuthorizationStatusAuthorized)
+    if (status == kCLAuthorizationStatusDenied || status == kCLAuthorizationStatusRestricted)
     {
         self.userTrackingMode  = RMUserTrackingModeNone;
         self.showsUserLocation = NO;
