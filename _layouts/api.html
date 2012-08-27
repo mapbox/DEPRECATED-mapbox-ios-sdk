@@ -73,14 +73,12 @@ code p { display:inline; }
 
 <div class='doc-page pad3c fillM clearfix'>
 <div class='fillW clearfix'>
-  <div id='docs' class='cell9 doc-content doc float-right pad2 prose'>
-    {{content}}
-  </div>
-  <div class='cell3 float-right'>
-    <form class='doc-search'>
-      <input type='search' placeholder='Filter'>
-    </form>
+  <div class='cell3'>
+    <div class='clearfix'>&nbsp;</div>
     <div class='doc-nav'>
+      <form class='doc-search'>
+        <input type='search' placeholder='Filter'>
+      </form>
       {% if page.navigation %}
       {% for heading in page.navigation %}
         <ul class='nav anchors'>
@@ -91,6 +89,11 @@ code p { display:inline; }
         </ul>
       {% endfor %}
       {% endif %}
+    </div>
+  </div>
+  <div id='docs' class='cell9 doc-content prose'>
+    <div class='doc pad2'>
+      {{content}}
     </div>
   </div>
 </div>

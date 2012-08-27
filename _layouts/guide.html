@@ -19,11 +19,8 @@ class: box
 
 <div class='doc-page pad3c fillM clearfix'>
 <div class='fillW clearfix'>
-  <div class='cell9 doc-content doc float-right pad2 prose'>
-    <h1 id='{{page.title|downcase|replace:' ','_'}}'>{{page.title}}</h1>
-    {{content}}
-  </div>
-  <div class='cell3 float-right'>
+  <div class='cell3'>
+    <div class='clearfix'>&nbsp;</div>
     <div class='doc-nav'>
       {% if page.navigation %}
       {% for section in page.navigation %}
@@ -39,6 +36,12 @@ class: box
         </ul>
       {% endfor %}
       {% endif %}
+    </div>
+  </div>
+  <div class='cell9 doc-content prose'>
+    <div class='doc pad2'>
+      <h1 id='{{page.title|downcase|replace:' ','_'}}'>{{page.title}}</h1>
+      {{content}}
     </div>
   </div>
 </div>
