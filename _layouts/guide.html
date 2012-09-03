@@ -5,12 +5,22 @@ class: box
 ---
 <link rel='stylesheet' href='{{site.url}}/css/developers.css' />
 <style>
-  a.external { font: normal 12px/1.6667em Opensans,Arial,sans-serif; }
+.doc-footer {
+  border-top:1px solid #ccc;
+  border-left:1px solid #ccc;
+  text-align:center;
+  }
+
+@media only screen and (max-width: 640px) {
+  .doc-footer {
+    border-left:none;
+  }
+}
 </style>
 <div class='clearfix doc-header pad3 fillL'>
   <div class='cell7'>
     <h2>{{site.title}}</h2>
-    <p>{{site.description}} <a class='external' href='http://github.com/mapbox/mapbox-ios-sdk'>Project on GitHub</a></p>
+    <p>{{site.description}}</p>
   </div>
   <ul class='cell5 doc-subnav clearfix'>
     <li><a href='{{site.baseurl}}/' class='active'>Guide</a></li>
@@ -44,6 +54,11 @@ class: box
     <div class='doc pad2'>
       <h1 id='{{page.title|downcase|replace:' ','_'}}'>{{page.title}}</h1>
       {{content}}
+    </div>
+    <div class='doc-footer'>
+      <div class='pad2'>
+        The code and documentation to mapbox-ios-sdk is <a href='http://github.com/mapbox/mapbox-ios-sdk'>hosted on GitHub</a> where you can contribute changes and improvements.
+      </div>
     </div>
   </div>
 </div>
