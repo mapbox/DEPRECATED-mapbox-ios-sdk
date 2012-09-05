@@ -593,8 +593,6 @@
 
 - (RMProjectedRect)projectedRectFromLatitudeLongitudeBounds:(RMSphericalTrapezium)bounds
 {
-    float pixelBuffer = kZoomRectPixelBuffer;
-
     CLLocationCoordinate2D southWest = bounds.southWest;
     CLLocationCoordinate2D northEast = bounds.northEast;
     CLLocationCoordinate2D midpoint = {
@@ -619,18 +617,18 @@
 
     if ((myPoint.x / self.bounds.size.width) < (myPoint.y / self.bounds.size.height))
     {
-        if ((myPoint.y / (self.bounds.size.height - pixelBuffer)) > 1)
+        if ((myPoint.y / self.bounds.size.height) > 1)
         {
-            zoomRect.size.width = self.bounds.size.width * (myPoint.y / (self.bounds.size.height - pixelBuffer));
-            zoomRect.size.height = self.bounds.size.height * (myPoint.y / (self.bounds.size.height - pixelBuffer));
+            zoomRect.size.width = self.bounds.size.width * (myPoint.y / self.bounds.size.height);
+            zoomRect.size.height = self.bounds.size.height * (myPoint.y / self.bounds.size.height);
         }
     }
     else
     {
-        if ((myPoint.x / (self.bounds.size.width - pixelBuffer)) > 1)
+        if ((myPoint.x / self.bounds.size.width) > 1)
         {
-            zoomRect.size.width = self.bounds.size.width * (myPoint.x / (self.bounds.size.width - pixelBuffer));
-            zoomRect.size.height = self.bounds.size.height * (myPoint.x / (self.bounds.size.width - pixelBuffer));
+            zoomRect.size.width = self.bounds.size.width * (myPoint.x / self.bounds.size.width);
+            zoomRect.size.height = self.bounds.size.height * (myPoint.x / self.bounds.size.width);
         }
     }
 
@@ -1020,8 +1018,6 @@
     else
     {
         // Convert northEast/southWest into RMMercatorRect and call zoomWithBounds
-        float pixelBuffer = kZoomRectPixelBuffer;
-
         CLLocationCoordinate2D midpoint = {
             .latitude = (northEast.latitude + southWest.latitude) / 2,
             .longitude = (northEast.longitude + southWest.longitude) / 2
@@ -1044,18 +1040,18 @@
 
         if ((myPoint.x / self.bounds.size.width) < (myPoint.y / self.bounds.size.height))
         {
-            if ((myPoint.y / (self.bounds.size.height - pixelBuffer)) > 1)
+            if ((myPoint.y / self.bounds.size.height) > 1)
             {
-                zoomRect.size.width = self.bounds.size.width * (myPoint.y / (self.bounds.size.height - pixelBuffer));
-                zoomRect.size.height = self.bounds.size.height * (myPoint.y / (self.bounds.size.height - pixelBuffer));
+                zoomRect.size.width = self.bounds.size.width * (myPoint.y / self.bounds.size.height);
+                zoomRect.size.height = self.bounds.size.height * (myPoint.y / self.bounds.size.height);
             }
         }
         else
         {
-            if ((myPoint.x / (self.bounds.size.width - pixelBuffer)) > 1)
+            if ((myPoint.x / self.bounds.size.width) > 1)
             {
-                zoomRect.size.width = self.bounds.size.width * (myPoint.x / (self.bounds.size.width - pixelBuffer));
-                zoomRect.size.height = self.bounds.size.height * (myPoint.x / (self.bounds.size.width - pixelBuffer));
+                zoomRect.size.width = self.bounds.size.width * (myPoint.x / self.bounds.size.width);
+                zoomRect.size.height = self.bounds.size.height * (myPoint.x / self.bounds.size.width);
             }
         }
 
