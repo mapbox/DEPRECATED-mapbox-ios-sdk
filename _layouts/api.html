@@ -56,6 +56,16 @@ class: box
 .method-subsection.brief-description p,
 .method-subsection.method-declaration code { margin-left:0px; }
 
+.doc-search input {
+  width:95%;
+  height:40px;
+  padding:10px 4px 10px 8px;
+  }
+.doc-nav .nav li.active a {
+  background-color:#ecf5fa;
+  color:#3C4E5A;
+  }
+
 code p { display:inline; }
 .doc-footer {
   border-top:1px solid #ccc;
@@ -88,7 +98,7 @@ code p { display:inline; }
     <div class='clearfix'>&nbsp;</div>
     <div class='doc-nav'>
       <form class='doc-search'>
-        <input type='search' placeholder='Filter'>
+        <input type='text' placeholder='Filter'>
       </form>
       {% if page.navigation %}
       {% for heading in page.navigation %}
@@ -116,37 +126,7 @@ code p { display:inline; }
 </div>
 
 <script>
-$('.doc-search input').bind('keyup', function() {
-    var q = this.value ? this.value.toLowerCase() : null;
-    $('.doc-nav').find('[href]').each(function() {
-        var $this = $(this),
-            id = $this.attr('href').replace('#', ''),
-            body = $(document.getElementById('content-' + id)).text();
-
-        if (!q || body.toLowerCase().indexOf(q) !== -1 || id.toLowerCase().indexOf(q) !== -1) {
-            if ($this.parent().hasClass('heading')) {
-                $this.css('color', '');
-            } else {
-                $this.css('display', '');
-            }
-
-        } else {
-            if ($this.parent().hasClass('heading')) {
-                $this.css('color', '#BDBDBD');
-            } else {
-                $this.css('display', 'none');
-            }
-        }
-    });
-
-    // Hide headers if no children matched
-    $('.doc-nav').find('li.heading').each(function() {
-        var $this = $(this),
-            next = $this.next();
-
-        if (next.hasClass('heading')) $this.css('display', 'none');
-    });
-
+    var docs = new Docs();
+    docs.bindSearch($('.doc-search input'), $('.doc-nav ul'));
     $(mapbox.docs);
-});
 </script>
