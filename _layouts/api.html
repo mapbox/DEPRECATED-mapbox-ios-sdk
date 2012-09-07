@@ -59,7 +59,13 @@ class: box
 .doc-search input {
   width:95%;
   height:40px;
-  padding:10px 4px 10px 8px;
+  padding:10px 40px 10px 8px;
+  }
+.doc-search span {
+  position:absolute;
+  top:10px;
+  right:10%;
+  margin-right:10px;
   }
 .doc-nav .nav li.active a {
   background-color:#ecf5fa;
@@ -99,6 +105,7 @@ code p { display:inline; }
     <div class='doc-nav'>
       <form class='doc-search'>
         <input type='text' placeholder='Filter'>
+        <span class='icon search'></span>
       </form>
       {% if page.navigation %}
       {% for heading in page.navigation %}
