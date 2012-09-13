@@ -1150,6 +1150,15 @@
 
     [self insertSubview:_overlayView aboveSubview:_mapScrollView];
 
+    // logo bug
+
+    UIImageView *logoBug = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"mapbox.png"]] autorelease];
+
+    logoBug.frame = CGRectMake(8, self.bounds.size.height - logoBug.bounds.size.height - 4, logoBug.bounds.size.width, logoBug.bounds.size.height);
+    logoBug.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin;
+
+    [self addSubview:logoBug];
+
     // add gesture recognizers
 
     // one finger taps
