@@ -24,6 +24,7 @@ typedef enum {
 @property (nonatomic, retain) UIActivityIndicatorView *activityView;
 @property (nonatomic, assign) RMUserTrackingButtonState state;
 
+- (void)createBarButtonItem;
 - (void)updateAppearance;
 - (void)changeMode:(id)sender;
 
@@ -44,6 +45,26 @@ typedef enum {
     if ( ! (self = [super initWithCustomView:[[UIControl alloc] initWithFrame:CGRectMake(0, 0, 32, 32)]]))
         return nil;
 
+    [self createBarButtonItem];
+    [self setMapView:mapView];
+
+    return self;
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    if ( ! (self = [super initWithCoder:aDecoder]))
+        return nil;
+
+    [self setCustomView:[[UIControl alloc] initWithFrame:CGRectMake(0, 0, 32, 32)]];
+
+    [self createBarButtonItem];
+
+    return self;
+}
+
+- (void)createBarButtonItem
+{
     _segmentedControl = [[[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@""]] retain];
     _segmentedControl.segmentedControlStyle = UISegmentedControlStyleBar;
     [_segmentedControl setWidth:32.0 forSegmentAtIndex:0];
@@ -70,16 +91,7 @@ typedef enum {
 
     [((UIControl *)self.customView) addTarget:self action:@selector(changeMode:) forControlEvents:UIControlEventTouchUpInside];
 
-    _mapView = [mapView retain];
-
-    [_mapView addObserver:self forKeyPath:@"userTrackingMode"      options:NSKeyValueObservingOptionNew context:nil];
-    [_mapView addObserver:self forKeyPath:@"userLocation.location" options:NSKeyValueObservingOptionNew context:nil];
-
     _state = RMUserTrackingButtonStateLocation;
-
-    [self updateAppearance];
-
-    return self;
 }
 
 - (void)dealloc
