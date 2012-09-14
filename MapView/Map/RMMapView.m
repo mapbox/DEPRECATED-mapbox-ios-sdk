@@ -176,6 +176,8 @@
 
     NSOperationQueue *_moveDelegateQueue;
     NSOperationQueue *_zoomDelegateQueue;
+
+    UIImageView *_logoBug;
 }
 
 @synthesize decelerationMode = _decelerationMode;
@@ -197,6 +199,7 @@
 @synthesize displayHeadingCalibration = _displayHeadingCalibration;
 @synthesize missingTilesDepth = _missingTilesDepth;
 @synthesize debugTiles = _debugTiles;
+@synthesize showLogoBug = _showLogoBug;
 
 #pragma mark -
 #pragma mark Initialization
@@ -270,6 +273,8 @@
 
     [self setDecelerationMode:RMMapDecelerationFast];
     [self setBoundingMask:RMMapMinHeightBound];
+
+    self.showLogoBug = YES;
 
     self.displayHeadingCalibration = YES;
 
@@ -418,6 +423,7 @@
     [_userHeadingTrackingView release]; _userHeadingTrackingView = nil;
     [_userHaloTrackingView release]; _userHaloTrackingView = nil;
     [_attributionButton release]; _attributionButton = nil;
+    [_logoBug release]; _logoBug = nil;
     [super dealloc];
 }
 
@@ -1149,15 +1155,6 @@
     _overlayView.userInteractionEnabled = NO;
 
     [self insertSubview:_overlayView aboveSubview:_mapScrollView];
-
-    // logo bug
-
-    UIImageView *logoBug = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"mapbox.png"]] autorelease];
-
-    logoBug.frame = CGRectMake(8, self.bounds.size.height - logoBug.bounds.size.height - 4, logoBug.bounds.size.width, logoBug.bounds.size.height);
-    logoBug.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin;
-
-    [self addSubview:logoBug];
 
     // add gesture recognizers
 
@@ -2151,6 +2148,26 @@
         tiledLayerView.layer.contents = nil;
         [tiledLayerView.layer setNeedsDisplay];
     }
+}
+
+- (void)setShowLogoBug:(BOOL)showLogoBug
+{
+    if (showLogoBug && ! _logoBug)
+    {
+        _logoBug = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"mapbox.png"]];
+
+        _logoBug.frame = CGRectMake(8, self.bounds.size.height - _logoBug.bounds.size.height - 4, _logoBug.bounds.size.width, _logoBug.bounds.size.height);
+        _logoBug.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin;
+
+        [self addSubview:_logoBug];
+    }
+    else if ( ! showLogoBug && _logoBug)
+    {
+        [_logoBug removeFromSuperview];
+        [_logoBug release]; _logoBug = nil;
+    }
+
+    _showLogoBug = showLogoBug;
 }
 
 #pragma mark -
