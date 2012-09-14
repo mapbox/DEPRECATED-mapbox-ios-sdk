@@ -3027,9 +3027,15 @@
 
     self.userLocation.layer.hidden = ( ! CLLocationCoordinate2DIsValid(self.userLocation.coordinate) || self.userTrackingMode == RMUserTrackingModeFollowWithHeading);
 
+    if (_userLocationTrackingView)
+        _userLocationTrackingView.hidden = ! CLLocationCoordinate2DIsValid(self.userLocation.coordinate);
+
     _accuracyCircleAnnotation.layer.hidden = newLocation.horizontalAccuracy <= 10;
 
     _trackingHaloAnnotation.layer.hidden = ( ! CLLocationCoordinate2DIsValid(self.userLocation.coordinate) || newLocation.horizontalAccuracy > 10 || self.userTrackingMode == RMUserTrackingModeFollowWithHeading);
+
+    if (_userHaloTrackingView)
+        _userHaloTrackingView.hidden = ( ! CLLocationCoordinate2DIsValid(self.userLocation.coordinate) || newLocation.horizontalAccuracy > 10);
 
     if ( ! [_annotations containsObject:self.userLocation])
         [self addAnnotation:self.userLocation];
