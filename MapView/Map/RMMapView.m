@@ -3003,14 +3003,20 @@
     if ([newLocation distanceFromLocation:oldLocation])
         _trackingHaloAnnotation.coordinate = newLocation.coordinate;
 
-    userLocation.layer.hidden = ( ! CLLocationCoordinate2DIsValid(userLocation.coordinate) || self.userTrackingMode == RMUserTrackingModeFollowWithHeading);
+    self.userLocation.layer.hidden = ( ! CLLocationCoordinate2DIsValid(self.userLocation.coordinate) || self.userTrackingMode == RMUserTrackingModeFollowWithHeading);
+
+    if (userLocationTrackingView)
+        userLocationTrackingView.hidden = ! CLLocationCoordinate2DIsValid(self.userLocation.coordinate);
 
     _accuracyCircleAnnotation.layer.hidden = newLocation.horizontalAccuracy <= 10;
 
-    _trackingHaloAnnotation.layer.hidden = ( ! CLLocationCoordinate2DIsValid(userLocation.coordinate) || newLocation.horizontalAccuracy > 10 || self.userTrackingMode == RMUserTrackingModeFollowWithHeading);
+    _trackingHaloAnnotation.layer.hidden = ( ! CLLocationCoordinate2DIsValid(self.userLocation.coordinate) || newLocation.horizontalAccuracy > 10 || self.userTrackingMode == RMUserTrackingModeFollowWithHeading);
 
-    if ( ! [_annotations containsObject:userLocation])
-        [self addAnnotation:userLocation];
+    if (userHaloTrackingView)
+        userHaloTrackingView.hidden = ( ! CLLocationCoordinate2DIsValid(self.userLocation.coordinate) || newLocation.horizontalAccuracy > 10);
+
+    if ( ! [_annotations containsObject:self.userLocation])
+        [self addAnnotation:self.userLocation];
 }
 
 - (BOOL)locationManagerShouldDisplayHeadingCalibration:(CLLocationManager *)manager
