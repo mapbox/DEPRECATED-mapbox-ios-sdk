@@ -2,7 +2,7 @@
 
 PATH="/bin:/usr/bin:/usr/libexec"
 VERSION=`git tag | sort -r | sed -n '1p'`
-SDK="5.1"
+SDK="6.0"
 TARGET="MapView"
 FW_NAME="MapBox"
 FW_FOLDER="build/$FW_NAME.framework"
@@ -45,7 +45,15 @@ xcodebuild -project MapView/MapView.xcodeproj -target $TARGET -configuration Rel
 # make fat binaries
 #
 lipo -create MapView/build/Debug-iphoneos/lib${TARGET}.a   MapView/build/Debug-iphonesimulator/lib${TARGET}.a   -o $FW_FOLDER/${FW_NAME}Debug
-lipo -create MapView/build/Release-iphoneos/lib${TARGET}.a MapView/build/Release-iphonesimulator/lib${TARGET}.a -o $FW_FOLDER/$FW_NAME
+lipo -create MapView/build/Release-iphoneos/lib${TARGET}.a MapView/build/Release-iphonesimulator/lib${TARGET}.a -o $FW_FOLDER/${FW_NAME}
+
+#
+# extract desired architectures
+#
+lipo -extract armv7 -extract i386 $FW_FOLDER/${FW_NAME}Debug -o $FW_FOLDER/${FW_NAME}Debug.trim
+lipo -extract armv7 -extract i386 $FW_FOLDER/${FW_NAME}      -o $FW_FOLDER/${FW_NAME}.trim
+mv $FW_FOLDER/${FW_NAME}Debug.trim $FW_FOLDER/${FW_NAME}Debug
+mv $FW_FOLDER/${FW_NAME}.trim      $FW_FOLDER/${FW_NAME}
 
 #
 # copy headers & create all-inclusive
