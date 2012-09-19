@@ -52,7 +52,12 @@
     NSTimeInterval _expiryPeriod;
 
     dispatch_queue_t _tileCacheQueue;
+    
+    id <RMTileSource>_activeTileSource;
+    NSOperationQueue *_backgroundFetchQueue;
 }
+
+@synthesize backgroundCacheDelegate=_backgroundCacheDelegate;
 
 - (id)initWithExpiryPeriod:(NSTimeInterval)period
 {
@@ -64,6 +69,10 @@
 
     _memoryCache = nil;
     _expiryPeriod = period;
+    
+    _backgroundCacheDelegate = nil;
+    _activeTileSource = nil;
+    _backgroundFetchQueue = nil;
 
     id cacheCfg = [[RMConfiguration configuration] cacheConfiguration];
     if (!cacheCfg)
@@ -113,6 +122,8 @@
 
 - (void)dealloc
 {
+    [self cancelBackgroundCache];
+    
     dispatch_barrier_sync(_tileCacheQueue, ^{
         [_memoryCache release]; _memoryCache = nil;
         [_tileCaches release]; _tileCaches = nil;
@@ -215,6 +226,98 @@
         }
 
     });
+}
+
+- (void)beginBackgroundCacheForTileSource:(id <RMTileSource>)tileSource southWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast minZoom:(float)minZoom maxZoom:(float)maxZoom
+{
+    if (_activeTileSource || _backgroundFetchQueue)
+        [self cancelBackgroundCache];
+        
+//    NSLog(@"resuming cache of %@ for %f, %f to %f, %f (z%f-%f)", tileSource, southWest.latitude, southWest.longitude, northEast.latitude, northEast.longitude, minZoom, maxZoom);
+    
+    _activeTileSource = [tileSource retain];
+    
+    _backgroundFetchQueue = [[NSOperationQueue alloc] init];
+    [_backgroundFetchQueue setMaxConcurrentOperationCount:6];
+    
+    int   MINZOOM = (int)minZoom;
+    int   MAXZOOM = (int)maxZoom;
+    float MINLAT  = southWest.latitude;
+    float MAXLAT  = northEast.latitude;
+    float MINLONG = southWest.longitude;
+    float MAXLONG = northEast.longitude;
+    
+    int totalTiles = 0;
+    __block int progTile = 0;
+    
+    for (int zoom = MINZOOM; zoom <= MAXZOOM; zoom++)
+    {
+        int n = pow(2.0, zoom);   //n=2^ZOOM
+        int xMin = floor(((MINLONG + 180.0) / 360.0) * n);  //longitude in degrees
+        int yMax = floor((1.0 - (logf(tanf(MINLAT * M_PI / 180.0) + 1.0 / cosf(MINLAT * M_PI / 180.0)) / M_PI)) / 2.0 * n);  //latitude in degrees
+        int xMax = floor(((MAXLONG + 180.0) / 360.0) * n);  //longitude in degrees
+        int yMin = floor((1.0 - (logf(tanf(MAXLAT * M_PI / 180.0) + 1.0 / cosf(MAXLAT * M_PI / 180.0)) / M_PI)) / 2.0 * n);
+//        NSLog(@"n=%d, xMin=%d, xMax=%d, yMin=%d, yMax=%d",n,xMin,xMax,yMin,yMax);
+        totalTiles += (xMax + 1 - xMin) * (yMax + 1 - yMin);
+//        NSLog(@"Total tiles for this zoom level: %d", totalTiles);
+    }
+
+    [_backgroundCacheDelegate tileCache:self didBeginBackgroundCacheWithCount:totalTiles forTileSource:_activeTileSource];
+
+    for (int zoom = MINZOOM; zoom <= MAXZOOM; zoom++)
+    {
+        int n = pow(2.0, zoom);   //n=2^ZOOM
+        int xMin = floor(((MINLONG + 180.0) / 360.0) * n);  //longitude in degrees
+        int yMax = floor((1.0 - (logf(tanf(MINLAT * M_PI / 180.0) + 1.0 / cosf(MINLAT * M_PI / 180.0)) / M_PI)) / 2.0 * n);  //latitude in degrees
+        int xMax = floor(((MAXLONG + 180.0) / 360.0) * n);  //longitude in degrees
+        int yMin = floor((1.0 - (logf(tanf(MAXLAT * M_PI / 180.0) + 1.0 / cosf(MAXLAT * M_PI / 180.0)) / M_PI)) / 2.0 * n);
+
+        for (int x = xMin; x<=xMax; x++)
+        {
+            // TODO: Create & drain autorelease pool for each iteration of the outer loop (we don't use the returned UIImages)
+            for (int y = yMin; y <= yMax; y++)
+            {
+                [_backgroundFetchQueue addOperation:[NSBlockOperation blockOperationWithBlock:^(void)
+                {
+//                    int currentTiles = (x - xMin) * (yMax + 1 - yMin) + (y - yMin + 1);
+//                    NSLog(@"Downloading zoom=%d,x=%d,y=%d (%d/%d)", zoom, x, y, currentTiles, totalTiles);
+                    
+//                    NSLog(@"%i/%i", progTile, totalTiles);
+                    
+                    if ( ! [self cachedImage:RMTileMake(x, y, zoom) withCacheKey:[_activeTileSource uniqueTilecacheKey]])
+                        [_activeTileSource imageForTile:RMTileMake(x, y, zoom) inCache:self];
+
+                    dispatch_sync(dispatch_get_main_queue(), ^(void)
+                    {
+                        progTile++;
+
+                        [_backgroundCacheDelegate tileCache:self didBackgroundCacheTileIndex:progTile ofTotalTileCount:totalTiles];
+
+                        if (progTile == totalTiles)
+                            [_backgroundCacheDelegate tileCacheDidFinishBackgroundCache:self]; // FIXME
+                    });
+                    
+//                        UIImage *tileImage = [_activeTileSource imageForTile:RMTileMake(x, y, zoom) inCache:[mapView tileCache]];
+                }]];
+            }
+        }
+    };
+}
+
+- (void)cancelBackgroundCache
+{
+//    NSLog(@"cancelling cache of %@", _activeTileSource);
+    
+    if (_backgroundFetchQueue)
+    {
+        [_backgroundFetchQueue cancelAllOperations];
+        [_backgroundFetchQueue release]; _backgroundFetchQueue = nil;
+    }
+    
+    if (_activeTileSource)
+        [_activeTileSource release]; _activeTileSource = nil;
+    
+    [_backgroundCacheDelegate tileCacheDidCancelBackgroundCache:self];
 }
 
 @end

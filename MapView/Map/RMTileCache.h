@@ -71,6 +71,19 @@ typedef enum : short {
 
 #pragma mark -
 
+@protocol RMTileCacheBackgroundDelegate <NSObject>
+
+@optional
+
+- (void)tileCache:(RMTileCache *)tileCache didBeginBackgroundCacheWithCount:(int)tileCount forTileSource:(id <RMTileSource>)tileSource;
+- (void)tileCache:(RMTileCache *)tileCache didBackgroundCacheTileIndex:(int)tileIndex ofTotalTileCount:(int)totalTileCount;
+- (void)tileCacheDidFinishBackgroundCache:(RMTileCache *)tileCache;
+- (void)tileCacheDidCancelBackgroundCache:(RMTileCache *)tileCache;
+
+@end
+
+#pragma mark -
+
 /** An RMTileCache object manages memory-based and disk-based cache for map tiles that have been retrieved from the network. */
 @interface RMTileCache : NSObject <RMTileCache>
 
@@ -101,5 +114,10 @@ typedef enum : short {
 - (void)insertCache:(id <RMTileCache>)cache atIndex:(NSUInteger)index;
 
 - (void)didReceiveMemoryWarning;
+
+@property (nonatomic, assign) id <RMTileCacheBackgroundDelegate>backgroundCacheDelegate;
+
+- (void)beginBackgroundCacheForTileSource:(id <RMTileSource>)tileSource southWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast minZoom:(float)minZoom maxZoom:(float)maxZoom;
+- (void)cancelBackgroundCache;
 
 @end
