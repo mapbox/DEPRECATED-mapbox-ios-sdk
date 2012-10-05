@@ -34,6 +34,9 @@
 @synthesize projectedLocation;
 @synthesize enableDragging;
 @synthesize userInfo;
+@synthesize canShowCallout;
+@synthesize leftCalloutAccessoryView;
+@synthesize rightCalloutAccessoryView;
 
 - (id)init
 {

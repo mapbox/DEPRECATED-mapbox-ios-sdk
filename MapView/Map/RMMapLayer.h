@@ -60,6 +60,27 @@
 /** Storage for arbitrary data. */
 @property (nonatomic, retain) id userInfo;
 
+/** A Boolean value indicating whether the annotation layer is able to display extra information in a callout bubble.
+*
+*   If the value of this property is `YES`, a standard callout bubble is shown when the user taps the layer. The callout uses the title text from the associated annotation object. If there is no title text, though, the annotation layer is treated as if its enabled property is set to `NO`. The callout also displays any custom callout views stored in the leftCalloutAccessoryView and rightCalloutAccessoryView properties.
+*
+*   If the value of this property is `NO`, the value of the title string is ignored and the annotation layer remains enabled by default. You can still disable the layer explicitly using the enabled property. */
+@property (nonatomic, assign) BOOL canShowCallout;
+
+/** The view to display on the left side of the standard callout bubble.
+*
+*   The default value of this property is `nil`. The left callout view is typically used to display information about the annotation or to link to custom information provided by your application. The height of your view should be 32 pixels or less.
+*
+*   If the view you specify is also a descendant of the UIControl class, you can use the map view’s delegate to receive notifications when your control is tapped. If it does not descend from UIControl, your view is responsible for handling any touch events within its bounds. */
+@property (nonatomic, retain) UIView *leftCalloutAccessoryView;
+
+/** The view to display on the right side of the standard callout bubble.
+*
+*   This property is set to `nil` by default. The right callout view is typically used to link to more detailed information about the annotation. The height of your view should be 32 pixels or less. A common view to specify for this property is UIButton object whose type is set to UIButtonTypeDetailDisclosure.
+*
+*   If the view you specify is also a descendant of the UIControl class, you can use the map view’s delegate to receive notifications when your control is tapped. If it does not descend from UIControl, your view is responsible for handling any touch events within its bounds. */
+@property (nonatomic, retain) UIView *rightCalloutAccessoryView;
+
 /** Set the screen position of the layer.
 *   @param position The desired screen position.
 *   @param animated If set to YES, any position change is animated. */
