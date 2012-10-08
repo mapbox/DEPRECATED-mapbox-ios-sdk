@@ -27,8 +27,14 @@
 
 #import "RMAbstractWebMapSource.h"
 
+typedef enum NSUInteger {
+    RMBingImagerySetRoad             = 0, // default
+    RMBingImagerySetAerial           = 1,
+    RMBingImagerySetAerialWithLabels = 2,
+} RMBingImagerySet;
+
 @interface RMBingSource : RMAbstractWebMapSource
 
-- (id)initWithMapsKey:(NSString *)mapsKey;
+- (id)initWithMapsKey:(NSString *)mapsKey forImagerySet:(RMBingImagerySet)imagerySet;
 
 @end

@@ -31,13 +31,16 @@
 {
     NSString *_mapsKey;
     NSString *_imageURLString;
+    RMBingImagerySet _imagerySet;
 }
 
-- (id)initWithMapsKey:(NSString *)mapsKey
+- (id)initWithMapsKey:(NSString *)mapsKey forImagerySet:(RMBingImagerySet)imagerySet;
 {
     if (self = [super init])
     {
         _mapsKey = [mapsKey retain];
+
+        _imagerySet = imagerySet;
 
         self.minZoom = 1;
         self.maxZoom = 21;
@@ -59,7 +62,16 @@
 {
     if ( ! _imageURLString)
     {
-        NSURL *metadataURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://dev.virtualearth.net/REST/v1/Imagery/Metadata/Road?key=%@", _mapsKey]];
+        NSString *imagerySetString;
+
+        if (_imagerySet == RMBingImagerySetAerial)
+            imagerySetString = @"Aerial";
+        else if (_imagerySet == RMBingImagerySetAerialWithLabels)
+            imagerySetString = @"AerialWithLabels";
+        else
+            imagerySetString = @"Road";
+
+        NSURL *metadataURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://dev.virtualearth.net/REST/v1/Imagery/Metadata/%@?key=%@", imagerySetString, _mapsKey]];
 
         NSData *metadataData = [NSData dataWithContentsOfURL:metadataURL];
 
@@ -108,7 +120,7 @@
 
 - (NSString *)uniqueTilecacheKey
 {
-	return @"Bing";
+	return [NSString stringWithFormat:@"Bing%i", _imagerySet];
 }
 
 - (NSString *)shortName
