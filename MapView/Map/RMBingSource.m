@@ -34,6 +34,11 @@
     RMBingImagerySet _imagerySet;
 }
 
+- (id)initWithMapsKey:(NSString *)mapsKey
+{
+    return [self initWithMapsKey:mapsKey forImagerySet:RMBingImagerySetRoad];
+}
+
 - (id)initWithMapsKey:(NSString *)mapsKey forImagerySet:(RMBingImagerySet)imagerySet;
 {
     if (self = [super init])

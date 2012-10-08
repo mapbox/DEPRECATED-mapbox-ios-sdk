@@ -35,6 +35,7 @@ typedef enum NSUInteger {
 
 @interface RMBingSource : RMAbstractWebMapSource
 
+- (id)initWithMapsKey:(NSString *)mapsKey;
 - (id)initWithMapsKey:(NSString *)mapsKey forImagerySet:(RMBingImagerySet)imagerySet;
 
 @end
