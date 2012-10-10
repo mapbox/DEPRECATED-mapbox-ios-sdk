@@ -84,7 +84,7 @@ typedef enum : short {
 
 /** Sent upon caching of each tile in a background cache operation.
 *   @param tileCache The tile cache. 
-*   @param tileIndex The index of the tile in question. Note that the first tile cached may not start at zero if a previous cache operation or normal cache behavior succeeded in caching some of the tiles already. 
+*   @param tileIndex The index of the tile in question, beginning with `1` and ending with totalTileCount. 
 *   @param totalTileCount The total number of of tiles required for coverage of the desired geographic area. */
 - (void)tileCache:(RMTileCache *)tileCache didBackgroundCacheTileIndex:(int)tileIndex ofTotalTileCount:(int)totalTileCount;
 
