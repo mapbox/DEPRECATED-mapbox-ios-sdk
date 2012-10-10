@@ -48,14 +48,6 @@ lipo -create MapView/build/Debug-iphoneos/lib${TARGET}.a   MapView/build/Debug-i
 lipo -create MapView/build/Release-iphoneos/lib${TARGET}.a MapView/build/Release-iphonesimulator/lib${TARGET}.a -o $FW_FOLDER/${FW_NAME}
 
 #
-# extract desired architectures
-#
-lipo -extract armv7 -extract i386 $FW_FOLDER/${FW_NAME}Debug -o $FW_FOLDER/${FW_NAME}Debug.trim
-lipo -extract armv7 -extract i386 $FW_FOLDER/${FW_NAME}      -o $FW_FOLDER/${FW_NAME}.trim
-mv $FW_FOLDER/${FW_NAME}Debug.trim $FW_FOLDER/${FW_NAME}Debug
-mv $FW_FOLDER/${FW_NAME}.trim      $FW_FOLDER/${FW_NAME}
-
-#
 # copy headers & create all-inclusive
 #
 for header in `ls MapView/Map/*.h | grep -v RouteMe.h | sed 's/MapView\/Map\///'`; do
