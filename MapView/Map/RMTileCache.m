@@ -34,6 +34,8 @@
 #import "RMConfiguration.h"
 #import "RMTileSource.h"
 
+#import "RMTileCacheDownloadOperation.h"
+
 @interface RMTileCache (Configuration)
 
 - (id <RMTileCache>)memoryCacheWithConfig:(NSDictionary *)cfg;
@@ -122,7 +124,8 @@
 
 - (void)dealloc
 {
-    [self cancelBackgroundCache];
+    if (self.isBackgroundCaching)
+        [self cancelBackgroundCache];
     
     dispatch_barrier_sync(_tileCacheQueue, ^{
         [_memoryCache release]; _memoryCache = nil;
@@ -228,9 +231,14 @@
     });
 }
 
+- (BOOL)isBackgroundCaching
+{
+    return (_activeTileSource || _backgroundFetchQueue);
+}
+
 - (void)beginBackgroundCacheForTileSource:(id <RMTileSource>)tileSource southWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast minZoom:(float)minZoom maxZoom:(float)maxZoom
 {
-    if (_activeTileSource || _backgroundFetchQueue)
+    if (self.isBackgroundCaching)
         [self cancelBackgroundCache];
         
 //    NSLog(@"resuming cache of %@ for %f, %f to %f, %f (z%f-%f)", tileSource, southWest.latitude, southWest.longitude, northEast.latitude, northEast.longitude, minZoom, maxZoom);
@@ -277,28 +285,35 @@
             // TODO: Create & drain autorelease pool for each iteration of the outer loop (we don't use the returned UIImages)
             for (int y = yMin; y <= yMax; y++)
             {
-                [_backgroundFetchQueue addOperation:[NSBlockOperation blockOperationWithBlock:^(void)
+                RMTileCacheDownloadOperation *operation = [[[RMTileCacheDownloadOperation alloc] initWithTile:RMTileMake(x, y, zoom)
+                                                                                                forTileSource:_activeTileSource
+                                                                                                   usingCache:self] autorelease];
+
+                [operation setCompletionBlock:^(void)
                 {
-//                    int currentTiles = (x - xMin) * (yMax + 1 - yMin) + (y - yMin + 1);
-//                    NSLog(@"Downloading zoom=%d,x=%d,y=%d (%d/%d)", zoom, x, y, currentTiles, totalTiles);
-                    
-//                    NSLog(@"%i/%i", progTile, totalTiles);
-                    
-                    if ( ! [self cachedImage:RMTileMake(x, y, zoom) withCacheKey:[_activeTileSource uniqueTilecacheKey]])
-                        [_activeTileSource imageForTile:RMTileMake(x, y, zoom) inCache:self];
-
-                    dispatch_sync(dispatch_get_main_queue(), ^(void)
+                    dispatch_async(dispatch_get_main_queue(), ^(void)
                     {
-                        progTile++;
+                        if ( ! [operation isCancelled])
+                        {
+                            progTile++;
 
-                        [_backgroundCacheDelegate tileCache:self didBackgroundCacheTileIndex:progTile ofTotalTileCount:totalTiles];
+                            [_backgroundCacheDelegate tileCache:self didBackgroundCacheTileIndex:progTile ofTotalTileCount:totalTiles];
 
-                        if (progTile == totalTiles)
-                            [_backgroundCacheDelegate tileCacheDidFinishBackgroundCache:self]; // FIXME
+                            if (progTile == totalTiles)
+                            {
+                                if (_backgroundFetchQueue)
+                                    [_backgroundFetchQueue release]; _backgroundFetchQueue = nil;
+
+                                if (_activeTileSource)
+                                    [_activeTileSource release]; _activeTileSource = nil;
+
+                                [_backgroundCacheDelegate tileCacheDidFinishBackgroundCache:self];
+                            }
+                        }
                     });
-                    
-//                        UIImage *tileImage = [_activeTileSource imageForTile:RMTileMake(x, y, zoom) inCache:[mapView tileCache]];
-                }]];
+                }];
+
+                [_backgroundFetchQueue addOperation:operation];
             }
         }
     };
@@ -306,18 +321,23 @@
 
 - (void)cancelBackgroundCache
 {
-//    NSLog(@"cancelling cache of %@", _activeTileSource);
-    
-    if (_backgroundFetchQueue)
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void)
     {
-        [_backgroundFetchQueue cancelAllOperations];
-        [_backgroundFetchQueue release]; _backgroundFetchQueue = nil;
-    }
-    
-    if (_activeTileSource)
-        [_activeTileSource release]; _activeTileSource = nil;
-    
-    [_backgroundCacheDelegate tileCacheDidCancelBackgroundCache:self];
+        if (_backgroundFetchQueue)
+        {
+            [_backgroundFetchQueue cancelAllOperations];
+            [_backgroundFetchQueue waitUntilAllOperationsAreFinished];
+            [_backgroundFetchQueue release]; _backgroundFetchQueue = nil;
+        }
+
+        if (_activeTileSource)
+            [_activeTileSource release]; _activeTileSource = nil;
+
+        dispatch_async(dispatch_get_main_queue(), ^(void)
+        {
+            [_backgroundCacheDelegate tileCacheDidCancelBackgroundCache:self];
+        });
+    });
 }
 
 @end
