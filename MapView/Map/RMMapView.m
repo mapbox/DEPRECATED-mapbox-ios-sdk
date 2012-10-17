@@ -1690,7 +1690,9 @@
 
 - (void)popupCalloutViewForAnnotation:(RMAnnotation *)anAnnotation
 {
-    anAnnotation.layer.zPosition = MAXFLOAT;
+    [self correctPositionOfAllAnnotations];
+
+    anAnnotation.layer.zPosition = _currentCallout.layer.zPosition = MAXFLOAT;
 
     [_currentCallout presentCalloutFromRect:anAnnotation.layer.bounds
                                     inLayer:anAnnotation.layer
@@ -2661,7 +2663,7 @@
         ((RMAnnotation *)[sortedAnnotations objectAtIndex:i]).layer.zPosition = (CGFloat)i;
 
     if (_currentAnnotation)
-        _currentAnnotation.layer.zPosition = MAXFLOAT;
+        _currentAnnotation.layer.zPosition = _currentCallout.layer.zPosition = MAXFLOAT;
 
     [CATransaction commit];
 }
