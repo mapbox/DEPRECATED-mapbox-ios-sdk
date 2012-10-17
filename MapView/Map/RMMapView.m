@@ -1422,13 +1422,6 @@
     _lastContentOffset = _mapScrollView.contentOffset;
     _lastContentSize = _mapScrollView.contentSize;
 
-    if (_currentAnnotation)
-    {
-        CGPoint newPoint = [self coordinateToPixel:_currentAnnotation.coordinate];
-
-        _currentCallout.center = CGPointMake(roundf(newPoint.x), roundf(newPoint.y - (_currentAnnotation.layer.bounds.size.height / 2)));
-    }
-
     if (_delegateHasMapViewRegionDidChange)
         [_delegate mapViewRegionDidChange:self];
 }
@@ -1462,7 +1455,17 @@
 
     if (_currentAnnotation && ! [hit isEqual:_currentAnnotation.layer])
     {
-        [_currentCallout dismissCalloutAnimated:( ! [hit isKindOfClass:[RMMarker class]])];
+        [self correctPositionOfAllAnnotations];
+
+        BOOL animated = ( ! [hit isKindOfClass:[RMMarker class]]);
+
+        [_currentCallout dismissCalloutAnimated:animated];
+
+        if (animated)
+            [self performSelector:@selector(correctPositionOfAllAnnotations) withObject:nil afterDelay:1.0/3.0];
+        else
+            [self correctPositionOfAllAnnotations];
+
         [_currentAnnotation release]; _currentAnnotation = nil;
         [_currentCallout release]; _currentCallout = nil;
     }
@@ -1672,12 +1675,26 @@
     }
 }
 
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+    if (_currentCallout)
+    {
+        UIView *calloutCandidate = [_currentCallout hitTest:[_currentCallout convertPoint:point fromView:self] withEvent:event];
+
+        if (calloutCandidate)
+            return calloutCandidate;
+    }
+
+    return [super hitTest:point withEvent:event];
+}
+
 - (void)popupCalloutViewForAnnotation:(RMAnnotation *)anAnnotation
 {
-    [_currentCallout presentCalloutFromRect:anAnnotation.layer.frame
-                                     inView:self
-                               aboveSubview:_overlayView
-                          constrainedToView:self
+    anAnnotation.layer.zPosition = MAXFLOAT;
+
+    [_currentCallout presentCalloutFromRect:anAnnotation.layer.bounds
+                                    inLayer:anAnnotation.layer
+                         constrainedToLayer:self.layer
                    permittedArrowDirections:SMCalloutArrowDirectionDown
                                    animated:YES];
 }
@@ -2642,6 +2659,9 @@
 
     for (CGFloat i = 0; i < [sortedAnnotations count]; i++)
         ((RMAnnotation *)[sortedAnnotations objectAtIndex:i]).layer.zPosition = (CGFloat)i;
+
+    if (_currentAnnotation)
+        _currentAnnotation.layer.zPosition = MAXFLOAT;
 
     [CATransaction commit];
 }
