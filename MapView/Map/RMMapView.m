@@ -2970,6 +2970,7 @@
         _accuracyCircleAnnotation = [[RMAnnotation annotationWithMapView:self coordinate:newLocation.coordinate andTitle:nil] retain];
         _accuracyCircleAnnotation.annotationType = kRMAccuracyCircleAnnotationTypeName;
         _accuracyCircleAnnotation.clusteringEnabled = NO;
+        _accuracyCircleAnnotation.enabled = NO;
         _accuracyCircleAnnotation.layer = [[RMCircle alloc] initWithView:self radiusInMeters:newLocation.horizontalAccuracy];
         _accuracyCircleAnnotation.layer.zPosition = -MAXFLOAT;
         _accuracyCircleAnnotation.isUserLocationAnnotation = YES;
@@ -2993,6 +2994,7 @@
         _trackingHaloAnnotation = [[RMAnnotation annotationWithMapView:self coordinate:newLocation.coordinate andTitle:nil] retain];
         _trackingHaloAnnotation.annotationType = kRMTrackingHaloAnnotationTypeName;
         _trackingHaloAnnotation.clusteringEnabled = NO;
+        _trackingHaloAnnotation.enabled = NO;
 
         // create image marker
         //
