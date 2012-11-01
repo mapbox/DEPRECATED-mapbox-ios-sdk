@@ -69,6 +69,7 @@
 
 @interface RMMapView (PrivateMethods) <UIScrollViewDelegate, UIGestureRecognizerDelegate, RMMapScrollViewDelegate, CLLocationManagerDelegate>
 
+@property (nonatomic, assign) UIViewController *viewControllerPresentingAttribution;
 @property (nonatomic, retain) RMUserLocation *userLocation;
 
 - (void)createMapView;
@@ -201,6 +202,7 @@
 @synthesize displayHeadingCalibration = _displayHeadingCalibration;
 @synthesize missingTilesDepth = _missingTilesDepth;
 @synthesize debugTiles = _debugTiles;
+@synthesize hideAttribution = _hideAttribution;
 @synthesize showLogoBug = _showLogoBug;
 
 #pragma mark -
@@ -453,6 +455,37 @@
 - (void)handleDidChangeOrientationNotification:(NSNotification *)notification
 {
     [self updateHeadingForDeviceOrientation];
+}
+
+- (void)layoutSubviews
+{
+    if ( ! self.viewControllerPresentingAttribution && ! _hideAttribution)
+    {
+        UIViewController *candidateViewController = self.window.rootViewController;
+
+        while ([self isDescendantOfView:candidateViewController.view])
+        {
+            for (UIViewController *childViewController in candidateViewController.childViewControllers)
+                if ([self isDescendantOfView:childViewController.view])
+                    candidateViewController = childViewController;
+
+            if ( ! [candidateViewController.childViewControllers count] || [candidateViewController isEqual:self.window.rootViewController])
+                break;
+        }
+
+        self.viewControllerPresentingAttribution = candidateViewController;
+    }
+    else if (self.viewControllerPresentingAttribution && _hideAttribution)
+    {
+        self.viewControllerPresentingAttribution = nil;
+    }
+}
+
+- (void)removeFromSuperview
+{
+    self.viewControllerPresentingAttribution = nil;
+
+    [super removeFromSuperview];
 }
 
 - (NSString *)description
@@ -3161,6 +3194,16 @@
 #pragma mark -
 #pragma mark Attribution
 
+- (void)setHideAttribution:(BOOL)flag
+{
+    if (_hideAttribution == flag)
+        return;
+
+    _hideAttribution = flag;
+
+    [self layoutSubviews];
+}
+
 - (UIViewController *)viewControllerPresentingAttribution
 {
     return _viewControllerPresentingAttribution;
@@ -3184,6 +3227,11 @@
                                               _attributionButton.bounds.size.height);
 
         [self addSubview:_attributionButton];
+    }
+    else if ( ! _viewControllerPresentingAttribution && _attributionButton)
+    {
+        [_attributionButton removeFromSuperview];
+        [_attributionButton release]; _attributionButton = nil;
     }
 }
 

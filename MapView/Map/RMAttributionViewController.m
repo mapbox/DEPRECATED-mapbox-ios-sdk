@@ -11,6 +11,14 @@
 #import "RMMapView.h"
 #import "RMTileSource.h"
 
+@interface RMMapView (RMAttributionViewControllerPrivate)
+
+@property (nonatomic, assign) UIViewController *viewControllerPresentingAttribution;
+
+@end
+
+#pragma mark -
+
 @implementation RMAttributionViewController
 {
     RMMapView *_mapView;
@@ -45,7 +53,7 @@
         NSString *attribution = [mapView.tileSource shortAttribution];
         
         if ( ! attribution)
-            attribution = (attributionString ? attributionString : @"Map data © OpenStreetMap contributors, CC BY-SA <a href=\"http://mapbox.com/about/maps/\">(Details)</a>");
+            attribution = (attributionString ? attributionString : @"Map data © OpenStreetMap contributors <a href=\"http://mapbox.com/about/maps/\">(Details)</a>");
         
         NSMutableString *contentString = [NSMutableString string];
 

@@ -123,12 +123,12 @@ typedef enum : NSUInteger {
 
 /** @name Attributing Map Data */
 
-/** A view controller that is presenting the map view and which should display attribution info for the map modally. 
+/** Whether to hide map data attribution for the map view.
 *
-*   If this is set, a small disclosure button will be added to the lower-right of the map view, allowing the user to tap it to display a modal view showing attribution info. The modal presentation uses a page curl animation to reveal the attribution info under the map view. 
+*   If this is set to NO, a small disclosure button will be added to the lower-right of the map view, allowing the user to tap it to display a modal view showing map data attribution info. The modal presentation uses a page curl animation to reveal the attribution info under the map view.
 *
-*   By default, no attribution disclosure button is shown. */
-@property (nonatomic, assign) UIViewController *viewControllerPresentingAttribution;
+*   The default value is NO, meaning that attribution info will be shown. Please ensure that the terms & conditions of any map data used in your application are satisfied before setting this value to YES. */
+@property (nonatomic, assign) BOOL hideAttribution;
 
 /** @name Fine-Tuning the Map Appearance */
 
