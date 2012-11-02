@@ -39,8 +39,19 @@
 #define kMapBoxDefaultLatLonBoundingBox ((RMSphericalTrapezium){ .northEast = { .latitude =  90, .longitude =  180 }, \
                                                                  .southWest = { .latitude = -90, .longitude = -180 } })
 
-@class RMMapView;
+// constants for the image quality API (see http://mapbox.com/developers/api/#image_quality)
+typedef enum : NSUInteger {
+    RMMapBoxSourceQualityFull   = 0, // default
+    RMMapBoxSourceQualityPNG32  = 1, // 32 color indexed PNG
+    RMMapBoxSourceQualityPNG64  = 2, // 64 color indexed PNG
+    RMMapBoxSourceQualityPNG128 = 3, // 128 color indexed PNG
+    RMMapBoxSourceQualityPNG256 = 4, // 256 color indexed PNG
+    RMMapBoxSourceQualityJPEG70 = 5, // 70% quality JPEG
+    RMMapBoxSourceQualityJPEG80 = 6, // 80% quality JPEG
+    RMMapBoxSourceQualityJPEG90 = 7  // 90% quality JPEG
+} RMMapBoxSourceQuality;
 
+@class RMMapView;
 
 /** An RMMapBoxSource is used to display map tiles from a network-based map hosted on [MapBox](http://mapbox.com/plans) or the open source [TileStream](https://github.com/mapbox/tilestream) software. Maps are reference by their [TileJSON](http://mapbox.com/developers/tilejson/) endpoint or file. */
 @interface RMMapBoxSource : RMAbstractWebMapSource
@@ -85,5 +96,10 @@
 
 /** Info about the TileJSON in a Cocoa-native format. */
 @property (nonatomic, readonly, retain) NSDictionary *infoDictionary;
+
+/** Image quality that is retrieved from the network. Useful for lower-bandwidth environments. The default is to provide full-quality imagery. 
+*
+*   Note that you may want to clear the tile cache after changing this value in order to provide a consistent experience. */
+@property (nonatomic, assign) RMMapBoxSourceQuality imageQuality;
 
 @end

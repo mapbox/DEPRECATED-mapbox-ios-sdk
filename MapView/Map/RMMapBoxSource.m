@@ -48,7 +48,7 @@
 
 @implementation RMMapBoxSource
 
-@synthesize infoDictionary=_infoDictionary;
+@synthesize infoDictionary=_infoDictionary, imageQuality=_imageQuality;
 
 - (id)initWithTileJSON:(NSString *)tileJSON
 {
@@ -189,6 +189,61 @@
     tileURLString = [tileURLString stringByReplacingOccurrencesOfString:@"{z}" withString:[[NSNumber numberWithInteger:zoom] stringValue]];
     tileURLString = [tileURLString stringByReplacingOccurrencesOfString:@"{x}" withString:[[NSNumber numberWithInteger:x]    stringValue]];
     tileURLString = [tileURLString stringByReplacingOccurrencesOfString:@"{y}" withString:[[NSNumber numberWithInteger:y]    stringValue]];
+
+    if (_imageQuality != RMMapBoxSourceQualityFull)
+    {
+        NSString *qualityExtension;
+
+        switch (_imageQuality)
+        {
+            case RMMapBoxSourceQualityPNG32:
+            {
+                qualityExtension = @".png32";
+                break;
+            }
+            case RMMapBoxSourceQualityPNG64:
+            {
+                qualityExtension = @".png64";
+                break;
+            }
+            case RMMapBoxSourceQualityPNG128:
+            {
+                qualityExtension = @".png128";
+                break;
+            }
+            case RMMapBoxSourceQualityPNG256:
+            {
+                qualityExtension = @".png256";
+                break;
+            }
+            case RMMapBoxSourceQualityJPEG70:
+            {
+                qualityExtension = @".jpg70";
+                break;
+            }
+            case RMMapBoxSourceQualityJPEG80:
+            {
+                qualityExtension = @".jpg80";
+                break;
+            }
+            case RMMapBoxSourceQualityJPEG90:
+            {
+                qualityExtension = @".jpg90";
+                break;
+            }
+            case RMMapBoxSourceQualityFull:
+            default:
+            {
+                qualityExtension = @".png";
+                break;
+            }
+        }
+
+        tileURLString = [tileURLString stringByReplacingOccurrencesOfString:@".png"
+                                                                 withString:qualityExtension
+                                                                    options:NSAnchoredSearch | NSBackwardsSearch
+                                                                      range:NSMakeRange(0, [tileURLString length])];
+    }
 
 	return [NSURL URLWithString:tileURLString];
 }
