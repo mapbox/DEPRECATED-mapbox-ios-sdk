@@ -48,7 +48,7 @@
 
 @implementation RMMapBoxSource
 
-@synthesize infoDictionary;
+@synthesize infoDictionary=_infoDictionary;
 
 - (id)initWithTileJSON:(NSString *)tileJSON
 {
@@ -59,13 +59,13 @@
 {
     if (self = [super init])
     {
-        infoDictionary = (NSDictionary *)[[NSJSONSerialization JSONObjectWithData:[tileJSON dataUsingEncoding:NSUTF8StringEncoding]
-                                                                          options:0
-                                                                            error:nil] retain];
+        _infoDictionary = (NSDictionary *)[[NSJSONSerialization JSONObjectWithData:[tileJSON dataUsingEncoding:NSUTF8StringEncoding]
+                                                                           options:0
+                                                                             error:nil] retain];
         
         id dataObject;
         
-        if (mapView && (dataObject = [infoDictionary objectForKey:@"data"]) && dataObject)
+        if (mapView && (dataObject = [_infoDictionary objectForKey:@"data"]) && dataObject)
         {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(void)
             {
@@ -122,7 +122,7 @@
     if ( ! (self = [super init]))
         return nil;
 
-    infoDictionary = [[NSDictionary dictionaryWithDictionary:info] retain];
+    _infoDictionary = [[NSDictionary dictionaryWithDictionary:info] retain];
 
 	return self;
 }
@@ -163,7 +163,7 @@
 
 - (void)dealloc
 {
-    [infoDictionary release];
+    [_infoDictionary release];
     [super dealloc];
 }
 
