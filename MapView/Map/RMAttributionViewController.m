@@ -54,7 +54,8 @@
                 if ([attribution length])
                     [attribution appendString:@" "];
 
-                [attribution appendString:[tileSource shortAttribution]];
+                if ([tileSource shortAttribution])
+                    [attribution appendString:[tileSource shortAttribution]];
             }
         }
         
