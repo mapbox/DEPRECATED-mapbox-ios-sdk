@@ -41,8 +41,8 @@ Please note that you are responsible for getting permission to use the map data,
    [7]: https://github.com/mapbox/tilestream
    [8]: http://mbtiles.org
 
-Installing
-----------
+Installation
+------------
 
 There are three ways that you can install the SDK, depending upon your needs: 
 

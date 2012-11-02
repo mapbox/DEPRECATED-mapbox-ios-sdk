@@ -36,6 +36,7 @@
 #import "RMCacheObject.h"
 #import "RMCircle.h"
 #import "RMConfiguration.h"
+#import "RMCompositeSource.h"
 #import "RMCoordinateGridSource.h"
 #import "RMDBMapSource.h"
 #import "RMDatabaseCache.h"

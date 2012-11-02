@@ -28,6 +28,8 @@
 
 #import "RMTileSourcesContainer.h"
 
+#import "RMCompositeSource.h"
+
 @implementation RMTileSourcesContainer
 {
     NSMutableArray *_tileSources;
@@ -85,6 +87,38 @@
     [_tileSourcesLock unlock];
 
     return [tileSources autorelease];
+}
+
+- (id <RMTileSource>)tileSourceForUniqueTilecacheKey:(NSString *)uniqueTilecacheKey
+{
+    if (!uniqueTilecacheKey)
+        return nil;
+
+    id result = nil;
+
+    [_tileSourcesLock lock];
+
+    NSMutableArray *tileSources = [NSMutableArray arrayWithArray:_tileSources];
+
+    while ([tileSources count])
+    {
+        id <RMTileSource> currentTileSource = [tileSources objectAtIndex:0];
+        [tileSources removeObjectAtIndex:0];
+
+        if ([currentTileSource isKindOfClass:[RMCompositeSource class]])
+        {
+            [tileSources addObjectsFromArray:[(RMCompositeSource *)currentTileSource tileSources]];
+        }
+        else if ([[currentTileSource uniqueTilecacheKey] isEqualToString:uniqueTilecacheKey])
+        {
+            result = [currentTileSource retain];
+            break;
+        }
+    }
+
+    [_tileSourcesLock unlock];
+
+    return [result autorelease];
 }
 
 - (BOOL)setTileSource:(id <RMTileSource>)tileSource

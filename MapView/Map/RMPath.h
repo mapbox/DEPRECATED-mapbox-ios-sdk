@@ -80,7 +80,7 @@
 }
 
 // DEPRECATED. Use RMShape instead.
-- (id)initWithView:(RMMapView *)aMapView __attribute__ ((deprecated));;
+- (id)initWithView:(RMMapView *)aMapView __attribute__ ((deprecated));
 
 @property (nonatomic, assign) CGPathDrawingMode drawingMode;
 @property (nonatomic, assign) CGLineCap lineCap;

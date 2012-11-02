@@ -177,4 +177,20 @@
     });
 }
 
+- (void)removeAllCachedImagesForCacheKey:(NSString *)cacheKey
+{
+    dispatch_barrier_async(_memoryCacheQueue, ^{
+
+        NSMutableArray *keysToRemove = [NSMutableArray array];
+
+        [_memoryCache enumerateKeysAndObjectsUsingBlock:^(id key, RMCacheObject *cachedObject, BOOL *stop) {
+            if ([[cachedObject cacheKey] isEqualToString:cacheKey])
+                [keysToRemove addObject:key];
+        }];
+
+        [_memoryCache removeObjectsForKeys:keysToRemove];
+
+    });
+}
+
 @end
