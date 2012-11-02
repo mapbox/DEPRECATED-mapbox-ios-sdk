@@ -1188,12 +1188,15 @@
     UITapGestureRecognizer *doubleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)] autorelease];
     doubleTapRecognizer.numberOfTouchesRequired = 1;
     doubleTapRecognizer.numberOfTapsRequired = 2;
+    doubleTapRecognizer.delegate = self;
 
     UITapGestureRecognizer *singleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)] autorelease];
     singleTapRecognizer.numberOfTouchesRequired = 1;
     [singleTapRecognizer requireGestureRecognizerToFail:doubleTapRecognizer];
+    singleTapRecognizer.delegate = self;
 
     UILongPressGestureRecognizer *longPressRecognizer = [[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)] autorelease];
+    longPressRecognizer.delegate = self;
 
     [self addGestureRecognizer:singleTapRecognizer];
     [self addGestureRecognizer:doubleTapRecognizer];
@@ -1202,6 +1205,7 @@
     // two finger taps
     UITapGestureRecognizer *twoFingerSingleTapRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTwoFingerSingleTap:)] autorelease];
     twoFingerSingleTapRecognizer.numberOfTouchesRequired = 2;
+    twoFingerSingleTapRecognizer.delegate = self;
 
     [self addGestureRecognizer:twoFingerSingleTapRecognizer];
 
@@ -1592,6 +1596,14 @@
         if ( ! [self shouldDragAnnotation:[self findAnnotationInLayer:hit]])
             return NO;
     }
+
+    return YES;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    if ([touch.view isKindOfClass:[UIControl class]])
+        return NO;
 
     return YES;
 }
