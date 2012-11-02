@@ -3275,7 +3275,7 @@
         
         _attributionButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
         
-        [_attributionButton addTarget:self action:@selector(showAttribution:) forControlEvents:UIControlEventTouchDown];
+        [_attributionButton addTarget:self action:@selector(showAttribution:) forControlEvents:UIControlEventTouchUpInside];
         
         _attributionButton.frame = CGRectMake(self.bounds.size.width  - 30,
                                               self.bounds.size.height - 30,
