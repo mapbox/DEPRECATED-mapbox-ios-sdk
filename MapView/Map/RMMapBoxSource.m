@@ -50,6 +50,11 @@
 
 @synthesize infoDictionary=_infoDictionary, imageQuality=_imageQuality;
 
+- (id)initWithMapID:(NSString *)mapID
+{
+    return [self initWithMapID:mapID enablingDataOnMapView:nil];
+}
+
 - (id)initWithTileJSON:(NSString *)tileJSON
 {
     return [self initWithTileJSON:tileJSON enablingDataOnMapView:nil];
@@ -159,6 +164,13 @@
     }
 
     return nil;
+}
+
+- (id)initWithMapID:(NSString *)mapID enablingDataOnMapView:(RMMapView *)mapView
+{
+    NSString *referenceURLString = [NSString stringWithFormat:@"http://a.tiles.mapbox.com/v3/%@.jsonp", mapID];
+
+    return [self initWithReferenceURL:[NSURL URLWithString:referenceURLString] enablingDataOnMapView:mapView];
 }
 
 - (void)dealloc

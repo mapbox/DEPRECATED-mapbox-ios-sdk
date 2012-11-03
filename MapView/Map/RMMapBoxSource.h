@@ -53,12 +53,17 @@ typedef enum : NSUInteger {
 
 @class RMMapView;
 
-/** An RMMapBoxSource is used to display map tiles from a network-based map hosted on [MapBox](http://mapbox.com/plans) or the open source [TileStream](https://github.com/mapbox/tilestream) software. Maps are reference by their [TileJSON](http://mapbox.com/developers/tilejson/) endpoint or file. */
+/** An RMMapBoxSource is used to display map tiles from a network-based map hosted on [MapBox](http://mapbox.com/plans) or the open source [TileStream](https://github.com/mapbox/tilestream) software. Maps are reference by their [TileJSON endpoint or MapBox ID](http://mapbox.com/developers/tilejson/) or by a file containing TileJSON. */
 @interface RMMapBoxSource : RMAbstractWebMapSource
 
 /** @name Creating Tile Sources */
 
-/** Designated initializer. Point to either a remote or local TileJSON structure.
+/** Initialize a tile source using the MapBox map ID.
+*   @param mapID The MapBox map ID string, typically in the format `<username>.map-<random characters>`.
+*   @return An initialized MapBox tile source. */
+- (id)initWithMapID:(NSString *)mapID;
+
+/** Initialize a tile source with either a remote or local TileJSON structure.
 *   @param referenceURL A remote or local URL pointing to a TileJSON structure. 
 *   @return An initialized MapBox tile source. */
 - (id)initWithReferenceURL:(NSURL *)referenceURL;
@@ -68,16 +73,22 @@ typedef enum : NSUInteger {
 *   @return An initialized MapBox tile source. */
 - (id)initWithTileJSON:(NSString *)tileJSON;
 
-/** For TileJSON 2.1.0+ layers, automatically find and add annotations from [simplestyle](http://mapbox.com/developers/simplestyle/) data.
+/** For TileJSON 2.1.0+ layers, initialize a tile source and automatically find and add annotations from [simplestyle](http://mapbox.com/developers/simplestyle/) data.
+*   @param mapID The MapBox map ID string, typically in the format `<username>.map-<random characters>`.
+*   @param mapView A map view on which to display the annotations.
+*   @return An initialized MapBox tile source. */
+- (id)initWithMapID:(NSString *)mapID enablingDataOnMapView:(RMMapView *)mapView;
+
+/** For TileJSON 2.1.0+ layers, initialize a tile source and automatically find and add annotations from [simplestyle](http://mapbox.com/developers/simplestyle/) data.
 *   @param tileJSON A string containing TileJSON. 
 *   @param mapView A map view on which to display the annotations. 
 *   @return An initialized MapBox tile source. */
 - (id)initWithTileJSON:(NSString *)tileJSON enablingDataOnMapView:(RMMapView *)mapView;
 
-/** For TileJSON 2.1.0+ layers, automatically find and add annotations from [simplestyle](http://mapbox.com/developers/simplestyle/) data.
- *   @param referenceURL A remote or local URL pointing to a TileJSON structure.
- *   @param mapView A map view on which to display the annotations.
- *   @return An initialized MapBox tile source. */
+/** For TileJSON 2.1.0+ layers, initialize a tile source and automatically find and add annotations from [simplestyle](http://mapbox.com/developers/simplestyle/) data.
+*   @param referenceURL A remote or local URL pointing to a TileJSON structure.
+*   @param mapView A map view on which to display the annotations.
+*   @return An initialized MapBox tile source. */
 - (id)initWithReferenceURL:(NSURL *)referenceURL enablingDataOnMapView:(RMMapView *)mapView;
 
 /** @name Querying Tile Source Information */
