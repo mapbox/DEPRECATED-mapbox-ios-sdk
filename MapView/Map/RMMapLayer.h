@@ -62,9 +62,9 @@
 
 /** A Boolean value indicating whether the annotation layer is able to display extra information in a callout bubble.
 *
-*   If the value of this property is `YES`, a standard callout bubble is shown when the user taps the layer. The callout uses the title text from the associated annotation object. If there is no title text, though, the annotation layer is treated as if its enabled property is set to `NO`. The callout also displays any custom callout views stored in the leftCalloutAccessoryView and rightCalloutAccessoryView properties.
+*   If the value of this property is `YES`, a standard callout bubble is shown when the user taps the layer. The callout uses the title text from the associated annotation object. If there is no title text, though, the annotation is treated as if its enabled property is set to `NO`. The callout also displays any custom callout views stored in the leftCalloutAccessoryView and rightCalloutAccessoryView properties.
 *
-*   If the value of this property is `NO`, the value of the title string is ignored and the annotation layer remains enabled by default. You can still disable the layer explicitly using the enabled property. */
+*   If the value of this property is `NO`, the value of the title string is ignored and the annotation remains enabled by default. You can still disable the annotation explicitly using the enabled property. */
 @property (nonatomic, assign) BOOL canShowCallout;
 
 /** The view to display on the left side of the standard callout bubble.
