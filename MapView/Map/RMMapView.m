@@ -393,6 +393,17 @@
     }
 }
 
++ (UIImage *)resourceImageNamed:(NSString *)imageName
+{
+    NSAssert([[NSBundle mainBundle] pathForResource:@"MapBox" ofType:@"bundle"], @"Resource bundle not found in application.");
+
+    NSString *bundlePath = [[NSBundle mainBundle] pathForResource:@"MapBox" ofType:@"bundle"];
+    NSBundle *resourcesBundle = [NSBundle bundleWithPath:bundlePath];
+    NSString *imagePath = [resourcesBundle pathForResource:imageName ofType:nil];
+
+    return [UIImage imageWithContentsOfFile:imagePath];
+}
+
 - (void)dealloc
 {
     LogMethod();
@@ -2245,7 +2256,7 @@
 {
     if (showLogoBug && ! _logoBug)
     {
-        _logoBug = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"mapbox.png"]];
+        _logoBug = [[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"mapbox.png"]];
 
         _logoBug.frame = CGRectMake(8, self.bounds.size.height - _logoBug.bounds.size.height - 4, _logoBug.bounds.size.width, _logoBug.bounds.size.height);
         _logoBug.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin;
@@ -2761,12 +2772,6 @@
 
     if (newShowsUserLocation)
     {
-        RMRequireAsset(@"HeadingAngleSmall.png");
-        RMRequireAsset(@"TrackingDot.png");
-        RMRequireAsset(@"TrackingDotHalo.png");
-        RMRequireAsset(@"TrackingHeading.png");
-        RMRequireAsset(@"TrackingLocation.png");
-
         if (_delegateHasWillStartLocatingUser)
             [_delegate mapViewWillStartLocatingUser:self];
 
@@ -2935,7 +2940,7 @@
 
             self.userLocation.layer.hidden = YES;
 
-            _userHaloTrackingView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"TrackingDotHalo"]];
+            _userHaloTrackingView = [[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"TrackingDotHalo"]];
 
             _userHaloTrackingView.center = CGPointMake(round([self bounds].size.width  / 2),
                                                       round([self bounds].size.height / 2));
@@ -2950,7 +2955,7 @@
 
             [self insertSubview:_userHaloTrackingView belowSubview:_overlayView];
 
-            _userHeadingTrackingView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"HeadingAngleSmall.png"]];
+            _userHeadingTrackingView = [[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"HeadingAngleSmall.png"]];
 
             _userHeadingTrackingView.frame = CGRectMake((self.bounds.size.width  / 2) - (_userHeadingTrackingView.bounds.size.width / 2),
                                                        (self.bounds.size.height / 2) - _userHeadingTrackingView.bounds.size.height,
@@ -2968,7 +2973,7 @@
 
             [self insertSubview:_userHeadingTrackingView belowSubview:_overlayView];
 
-            _userLocationTrackingView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"TrackingDot.png"]];
+            _userLocationTrackingView = [[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"TrackingDot.png"]];
 
             _userLocationTrackingView.center = CGPointMake(round([self bounds].size.width  / 2), 
                                                           round([self bounds].size.height / 2));
@@ -3087,7 +3092,7 @@
 
         // create image marker
         //
-        _trackingHaloAnnotation.layer = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDotHalo.png"]];
+        _trackingHaloAnnotation.layer = [[RMMarker alloc] initWithUIImage:[RMMapView resourceImageNamed:@"TrackingDotHalo.png"]];
         _trackingHaloAnnotation.layer.zPosition = -MAXFLOAT + 1;
         _trackingHaloAnnotation.isUserLocationAnnotation = YES;
 
