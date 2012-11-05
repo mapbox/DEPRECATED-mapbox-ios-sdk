@@ -839,7 +839,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
->>>>>>> origin/develop
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
