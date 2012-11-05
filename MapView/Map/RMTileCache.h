@@ -66,6 +66,7 @@ typedef enum : short {
 
 /** Removes all tile images from a cache. */
 - (void)removeAllCachedImages;
+- (void)removeAllCachedImagesForCacheKey:(NSString *)cacheKey;
 
 @end
 

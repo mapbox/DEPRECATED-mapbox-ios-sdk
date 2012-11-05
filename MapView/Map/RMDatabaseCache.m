@@ -360,6 +360,27 @@
     }];
 }
 
+- (void)removeAllCachedImagesForCacheKey:(NSString *)cacheKey
+{
+    RMLog(@"removing tiles for key '%@' from the db cache", cacheKey);
+
+    [_writeQueue addOperationWithBlock:^{
+        [_writeQueueLock lock];
+
+        [_queue inDatabase:^(FMDatabase *db)
+         {
+             BOOL result = [db executeUpdate:@"DELETE FROM ZCACHE WHERE cache_key = ?", cacheKey];
+
+             if (result == NO)
+                 RMLog(@"Error purging cache");
+         }];
+
+        [_writeQueueLock unlock];
+
+        _tileCount = [self countTiles];
+    }];
+}
+
 - (void)touchTile:(RMTile)tile withKey:(NSString *)cacheKey
 {
     [_writeQueue addOperationWithBlock:^{

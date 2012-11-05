@@ -11,17 +11,20 @@
 #import "RMMapView.h"
 #import "RMTileSource.h"
 
+@interface RMMapView (RMAttributionViewControllerPrivate)
+
+@property (nonatomic, assign) UIViewController *viewControllerPresentingAttribution;
+
+@end
+
+#pragma mark -
+
 @implementation RMAttributionViewController
 {
     RMMapView *_mapView;
 }
 
 - (id)initWithMapView:(RMMapView *)mapView
-{
-    return [self initWithMapView:mapView customAttributionString:nil];
-}
-
-- (id)initWithMapView:(RMMapView *)mapView customAttributionString:(NSString *)attributionString
 {
     self = [super initWithNibName:nil bundle:nil];
     
@@ -41,11 +44,23 @@
 
         webView.backgroundColor = [UIColor clearColor];
         webView.opaque = NO;
+
+        NSMutableString *attribution = [NSMutableString string];
+
+        for (id <RMTileSource>tileSource in mapView.tileSources)
+        {
+            if ([tileSource respondsToSelector:@selector(shortAttribution)])
+            {
+                if ([attribution length])
+                    [attribution appendString:@" "];
+
+                if ([tileSource shortAttribution])
+                    [attribution appendString:[tileSource shortAttribution]];
+            }
+        }
         
-        NSString *attribution = [mapView.tileSource shortAttribution];
-        
-        if ( ! attribution)
-            attribution = (attributionString ? attributionString : @"Map data © OpenStreetMap contributors, CC BY-SA <a href=\"http://mapbox.com/about/maps/\">(Details)</a>");
+        if ( ! [attribution length])
+              [attribution setString:@"Map data © OpenStreetMap contributors <a href=\"http://mapbox.com/about/maps/\">(Details)</a>"];
         
         NSMutableString *contentString = [NSMutableString string];
 

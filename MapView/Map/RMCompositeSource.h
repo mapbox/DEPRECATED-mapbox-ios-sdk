@@ -1,5 +1,6 @@
 //
-//  RMOpenSeaMapLayer.m
+//  RMCompositeSource.h
+//  MapView
 //
 // Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
@@ -25,55 +26,12 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import "RMOpenSeaMapLayer.h"
+#import "RMAbstractMercatorTileSource.h"
 
-@implementation RMOpenSeaMapLayer
+@interface RMCompositeSource : RMAbstractMercatorTileSource
 
-- (id)init
-{
-	if (!(self = [super init]))
-        return nil;
+- (id)initWithTileSources:(NSArray *)tileSources tileCacheKey:(NSString *)tileCacheKey;
 
-    self.minZoom = 1;
-    self.maxZoom = 18;
-
-    self.opaque = NO;
-
-	return self;
-}
-
-- (NSArray *)URLsForTile:(RMTile)tile
-{
-	NSAssert4(((tile.zoom >= self.minZoom) && (tile.zoom <= self.maxZoom)),
-			  @"%@ tried to retrieve tile with zoomLevel %d, outside source's defined range %f to %f",
-			  self, tile.zoom, self.minZoom, self.maxZoom);
-
-	return [NSArray arrayWithObject:[NSURL URLWithString:[NSString stringWithFormat:@"http://tiles.openseamap.org/seamark/%d/%d/%d.png", tile.zoom, tile.x, tile.y]]];
-}
-
-- (NSString *)uniqueTilecacheKey
-{
-	return @"OpenSeaMapLayer";
-}
-
-- (NSString *)shortName
-{
-	return @"Open Sea Map";
-}
-
-- (NSString *)longDescription
-{
-	return @"Open Sea Map/Open Street Map, the free wiki world map, provides freely usable map data for all parts of the world, under the Creative Commons Attribution-Share Alike 2.0 license.";
-}
-
-- (NSString *)shortAttribution
-{
-	return @"© OpenStreetMap CC-BY-SA";
-}
-
-- (NSString *)longAttribution
-{
-	return @"Map data © OpenStreetMap, licensed under Creative Commons Share Alike By Attribution.";
-}
+@property (nonatomic, readonly) NSArray *tileSources;
 
 @end

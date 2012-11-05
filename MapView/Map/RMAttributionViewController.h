@@ -13,6 +13,5 @@
 @interface RMAttributionViewController : UIViewController <UIWebViewDelegate>
 
 - (id)initWithMapView:(RMMapView *)mapView;
-- (id)initWithMapView:(RMMapView *)mapView customAttributionString:(NSString *)attributionString;
 
 @end

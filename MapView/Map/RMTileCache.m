@@ -217,6 +217,20 @@
     });
 }
 
+- (void)removeAllCachedImagesForCacheKey:(NSString *)cacheKey
+{
+    [_memoryCache removeAllCachedImagesForCacheKey:cacheKey];
+
+    dispatch_sync(_tileCacheQueue, ^{
+
+        for (id<RMTileCache> cache in _tileCaches)
+        {
+            [cache removeAllCachedImagesForCacheKey:cacheKey];
+        }
+
+    });
+}
+
 @end
 
 #pragma mark -

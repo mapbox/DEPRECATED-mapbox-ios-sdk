@@ -78,7 +78,7 @@
 @property (nonatomic, assign) RMProjectedRect  projectedBoundingBox;
 @property (nonatomic, assign) BOOL hasBoundingBox;
 
-/** Whether the annotation is currently enabled on the map view. Defaults to `YES`. */
+/** Whether touch events for the annotation's layer are recognized. Defaults to `YES`. */
 @property (nonatomic, assign) BOOL enabled;
 
 /** Whether the annotation should be clustered when map view clustering is enabled. Defaults to `YES`. */

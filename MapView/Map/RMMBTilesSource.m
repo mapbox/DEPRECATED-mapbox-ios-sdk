@@ -44,6 +44,8 @@
     RMFractalTileProjection *tileProjection;
 }
 
+@synthesize cacheable = _cacheable, opaque = _opaque;
+
 - (id)initWithTileSetURL:(NSURL *)tileSetURL
 {
 	if ( ! (self = [super init]))
@@ -62,6 +64,9 @@
     [queue inDatabase:^(FMDatabase *db) {
         [db setShouldCacheStatements:YES];
     }];
+
+    self.cacheable = NO;
+    self.opaque = YES;
 
 	return self;
 }
@@ -128,6 +133,11 @@
     });
 
     return image;
+}
+
+- (BOOL)tileSourceHasTile:(RMTile)tile
+{
+    return YES;
 }
 
 - (NSString *)tileURL:(RMTile)tile

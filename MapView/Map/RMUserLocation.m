@@ -21,7 +21,7 @@
     if ( ! (self = [super initWithMapView:aMapView coordinate:aCoordinate andTitle:aTitle]))
         return nil;
 
-    self.layer = [[[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDot.png"]] autorelease];
+    self.layer = [[[RMMarker alloc] initWithUIImage:[RMMapView resourceImageNamed:@"TrackingDot.png"]] autorelease];
 
     self.layer.zPosition = -MAXFLOAT + 2;
 
