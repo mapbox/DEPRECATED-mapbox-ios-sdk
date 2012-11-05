@@ -197,7 +197,7 @@
 		16FBF07515936BF1004ECAD1 /* RMTileSourcesContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMTileSourcesContainer.m; sourceTree = "<group>"; };
 		16FFF2C914E3DBF700A170EC /* RMMapQuestOpenAerialSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMapQuestOpenAerialSource.h; sourceTree = "<group>"; };
 		16FFF2CA14E3DBF700A170EC /* RMMapQuestOpenAerialSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMapQuestOpenAerialSource.m; sourceTree = "<group>"; };
-		17F31EFA1331050A00122B16 /* libMapView.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMapView.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		17F31EFA1331050A00122B16 /* libMapBox.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMapBox.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		23A0AAE80EB90A99003A4521 /* RMFoundation.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RMFoundation.c; sourceTree = "<group>"; };
@@ -354,7 +354,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				17F31EFA1331050A00122B16 /* libMapView.a */,
+				17F31EFA1331050A00122B16 /* libMapBox.a */,
 				DD6A83751644A20C0097F31F /* MapBox.bundle */,
 			);
 			name = Products;
@@ -674,7 +674,7 @@
 			);
 			name = MapView;
 			productName = MapView;
-			productReference = 17F31EFA1331050A00122B16 /* libMapView.a */;
+			productReference = 17F31EFA1331050A00122B16 /* libMapBox.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		DD6A83741644A20C0097F31F /* Resources */ = {
@@ -858,7 +858,7 @@
 					"\"$(SRCROOT)/Map/GRMustache/lib\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = MapView;
+				PRODUCT_NAME = MapBox;
 				RUN_CLANG_STATIC_ANALYZER = NO;
 			};
 			name = Debug;
@@ -878,7 +878,7 @@
 					"\"$(SRCROOT)/Map/GRMustache/lib\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = MapView;
+				PRODUCT_NAME = MapBox;
 				ZERO_LINK = NO;
 			};
 			name = Release;
