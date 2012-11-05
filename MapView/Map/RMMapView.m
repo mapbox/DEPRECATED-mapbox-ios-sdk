@@ -490,6 +490,8 @@
     {
         self.viewControllerPresentingAttribution = nil;
     }
+
+    [super layoutSubviews];
 }
 
 - (void)removeFromSuperview
