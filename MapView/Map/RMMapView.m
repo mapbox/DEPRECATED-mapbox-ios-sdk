@@ -2734,6 +2734,7 @@
         }
     }
 
+    // sort z-indexes based on latitude so that they overlap properly
     NSMutableArray *sortedAnnotations = [NSMutableArray arrayWithArray:[_visibleAnnotations allObjects]];
 
     [sortedAnnotations filterUsingPredicate:[NSPredicate predicateWithFormat:@"isUserLocationAnnotation = NO"]];
@@ -2764,6 +2765,7 @@
     for (CGFloat i = 0; i < [sortedAnnotations count]; i++)
         ((RMAnnotation *)[sortedAnnotations objectAtIndex:i]).layer.zPosition = (CGFloat)i;
 
+    // bring any active callout annotation to the front
     if (_currentAnnotation)
         _currentAnnotation.layer.zPosition = _currentCallout.layer.zPosition = MAXFLOAT;
 
