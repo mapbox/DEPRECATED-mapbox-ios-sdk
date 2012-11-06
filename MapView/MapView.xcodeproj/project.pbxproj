@@ -46,7 +46,6 @@
 		23A0AAEB0EB90AA6003A4521 /* RMFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 23A0AAEA0EB90AA6003A4521 /* RMFoundation.h */; };
 		25757F4F1291C8640083D504 /* RMCircle.h in Headers */ = {isa = PBXBuildFile; fileRef = 25757F4D1291C8640083D504 /* RMCircle.h */; };
 		25757F501291C8640083D504 /* RMCircle.m in Sources */ = {isa = PBXBuildFile; fileRef = 25757F4E1291C8640083D504 /* RMCircle.m */; };
-		3849889C0F6F758100496293 /* libProj4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38D818500F6F67B90034598B /* libProj4.a */; };
 		96492C400FA8AD3400EBA6D2 /* RMGlobalConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 96492C3F0FA8AD3400EBA6D2 /* RMGlobalConstants.h */; };
 		B1EB26C610B5D8E6009F8658 /* RMNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = B1EB26C510B5D8E6009F8658 /* RMNotifications.h */; };
 		B8474BA40EB40094006A0BC1 /* RMDatabaseCache.h in Headers */ = {isa = PBXBuildFile; fileRef = B8474B980EB40094006A0BC1 /* RMDatabaseCache.h */; };
@@ -129,6 +128,7 @@
 		DD8CDB4B14E0507100B73EB9 /* RMMapQuestOSMSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD8CDB4914E0507100B73EB9 /* RMMapQuestOSMSource.m */; };
 		DD8FD7541559E4A40044D96F /* RMUserLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = DD8FD7521559E4A40044D96F /* RMUserLocation.h */; };
 		DD8FD7551559E4A40044D96F /* RMUserLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = DD8FD7531559E4A40044D96F /* RMUserLocation.m */; };
+		DD97C11616489678007C4652 /* libProj4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD97C11516489678007C4652 /* libProj4.a */; };
 		DD98B6FA14D76B930092882F /* RMMapBoxSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DD98B6F814D76B930092882F /* RMMapBoxSource.h */; };
 		DD98B6FB14D76B930092882F /* RMMapBoxSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD98B6F914D76B930092882F /* RMMapBoxSource.m */; };
 		DDA6B8BD155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA6B8BB155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.h */; };
@@ -138,20 +138,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		38D8184F0F6F67B90034598B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B83E654A0E80E7A8001663B6 /* Proj4.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D2AAC07E0554694100DB518D;
-			remoteInfo = Proj4;
-		};
-		B8C974150E8A19B2007D16AD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B83E654A0E80E7A8001663B6 /* Proj4.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = D2AAC07D0554694100DB518D;
-			remoteInfo = Proj4;
-		};
 		DD6A838F1644A2810097F31F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -227,7 +213,6 @@
 		B83E64EC0E80E73F001663B6 /* RMTileSource.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = RMTileSource.h; sourceTree = "<group>"; };
 		B83E64ED0E80E73F001663B6 /* RMOpenStreetMapSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMOpenStreetMapSource.h; sourceTree = "<group>"; };
 		B83E64EE0E80E73F001663B6 /* RMOpenStreetMapSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMOpenStreetMapSource.m; sourceTree = "<group>"; };
-		B83E654A0E80E7A8001663B6 /* Proj4.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Proj4.xcodeproj; path = ../Proj4/Proj4.xcodeproj; sourceTree = SOURCE_ROOT; };
 		B83E65590E80E7EB001663B6 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		B83E65630E80E81C001663B6 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		B83E65680E80E830001663B6 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -280,6 +265,7 @@
 		DD8FD7661559EE120044D96F /* TrackingDot@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "TrackingDot@2x.png"; path = "Resources/TrackingDot@2x.png"; sourceTree = "<group>"; };
 		DD8FD7691559EE120044D96F /* TrackingDotHalo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "TrackingDotHalo@2x.png"; path = "Resources/TrackingDotHalo@2x.png"; sourceTree = "<group>"; };
 		DD8FD76C1559EE120044D96F /* TrackingDotHalo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = TrackingDotHalo.png; path = Resources/TrackingDotHalo.png; sourceTree = "<group>"; };
+		DD97C11516489678007C4652 /* libProj4.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libProj4.a; path = ../Proj4/libProj4.a; sourceTree = "<group>"; };
 		DD98B6F814D76B930092882F /* RMMapBoxSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMapBoxSource.h; sourceTree = "<group>"; };
 		DD98B6F914D76B930092882F /* RMMapBoxSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMapBoxSource.m; sourceTree = "<group>"; };
 		DDA6B8BB155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMUserTrackingBarButtonItem.h; sourceTree = "<group>"; };
@@ -305,8 +291,8 @@
 				B8C974530E8A19B2007D16AD /* UIKit.framework in Frameworks */,
 				B8C974540E8A19B2007D16AD /* QuartzCore.framework in Frameworks */,
 				B8474BC10EB4019A006A0BC1 /* libsqlite3.dylib in Frameworks */,
-				3849889C0F6F758100496293 /* libProj4.a in Frameworks */,
 				DD41961F16263E400049E6BA /* libGRMustache5-iOS.a in Frameworks */,
+				DD97C11616489678007C4652 /* libProj4.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -378,24 +364,16 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B83E654A0E80E7A8001663B6 /* Proj4.xcodeproj */,
-				B8474BC00EB4019A006A0BC1 /* libsqlite3.dylib */,
 				B83E65590E80E7EB001663B6 /* CoreFoundation.framework */,
+				288765A40DF7441C002DB57D /* CoreGraphics.framework */,
 				B83E65630E80E81C001663B6 /* CoreLocation.framework */,
+				1D30AB110D05D00D00671497 /* Foundation.framework */,
 				B83E65680E80E830001663B6 /* QuartzCore.framework */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
-				1D30AB110D05D00D00671497 /* Foundation.framework */,
-				288765A40DF7441C002DB57D /* CoreGraphics.framework */,
+				DD97C11516489678007C4652 /* libProj4.a */,
+				B8474BC00EB4019A006A0BC1 /* libsqlite3.dylib */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		38D8184C0F6F67B90034598B /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				38D818500F6F67B90034598B /* libProj4.a */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		B83E64CE0E80E73F001663B6 /* Tile Layer & Overlay */ = {
@@ -685,7 +663,6 @@
 			);
 			dependencies = (
 				DD6A83901644A2810097F31F /* PBXTargetDependency */,
-				B8C974140E8A19B2007D16AD /* PBXTargetDependency */,
 			);
 			name = MapView;
 			productName = MapView;
@@ -697,7 +674,6 @@
 			buildConfigurationList = DD6A837E1644A20C0097F31F /* Build configuration list for PBXNativeTarget "Resources" */;
 			buildPhases = (
 				DD6A83711644A20C0097F31F /* Sources */,
-				DD6A83721644A20C0097F31F /* Frameworks */,
 				DD6A83731644A20C0097F31F /* Resources */,
 			);
 			buildRules = (
@@ -730,12 +706,6 @@
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 38D8184C0F6F67B90034598B /* Products */;
-					ProjectRef = B83E654A0E80E7A8001663B6 /* Proj4.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				B8C974130E8A19B2007D16AD /* MapView */,
@@ -743,16 +713,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		38D818500F6F67B90034598B /* libProj4.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libProj4.a;
-			remoteRef = 38D8184F0F6F67B90034598B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		DD6A83731644A20C0097F31F /* Resources */ = {
@@ -845,11 +805,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B8C974140E8A19B2007D16AD /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Proj4;
-			targetProxy = B8C974150E8A19B2007D16AD /* PBXContainerItemProxy */;
-		};
 		DD6A83901644A2810097F31F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = DD6A83741644A20C0097F31F /* Resources */;
@@ -872,6 +827,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Map/GRMustache/lib\"",
+					"\"$(SRCROOT)/../Proj4\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = MapBox;
@@ -892,6 +848,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Map/GRMustache/lib\"",
+					"\"$(SRCROOT)/../Proj4\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = MapBox;
@@ -1033,6 +990,7 @@
 				DD6A83801644A20C0097F31F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
