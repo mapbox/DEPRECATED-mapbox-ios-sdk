@@ -29,3 +29,5 @@ Icon?
 docset-installed.txt
 *.xar
 Docs/docset
+MapView
+Proj4
