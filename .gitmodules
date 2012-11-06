@@ -1,3 +1,0 @@
-[submodule "CocoaPods"]
-	path = CocoaPods
-	url = git@github.com:CocoaPods/Specs.git
