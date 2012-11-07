@@ -20,24 +20,32 @@ scrape() {
 
 YAML="$YAML\n  Classes:"
 for file in `find /tmp/docset -wholename "*Classes/*.html" | sort`; do
-  YAML="$YAML\n  - $(basename $file .html)"
+  YAML="$YAML\n  - $(basename $file .html)-class"
   CONTENT="$CONTENT\n$(scrape $file)"
 done
 
 YAML="$YAML\n  Protocols:"
 for file in `find /tmp/docset -wholename "*Protocols/*.html" | sort`; do
-  YAML="$YAML\n  - $(basename $file .html)"
+  YAML="$YAML\n  - $(basename $file .html)-protocol"
   CONTENT="$CONTENT\n$(scrape $file)"
 done
 
 echo -e "$YAML"
 echo "---"
 echo -e "$CONTENT" | \
+  # Simplify CSS.
   sed 's,class="title ,class=",' | \
   sed 's,class="section ,class=",' | \
-  sed 's, Class Reference</h1>,</h1>,' | \
-  sed 's, Protocol Reference</h1>,</h1>,' | \
-  # Add an id to h1s so they can be looked up by anchor links.
-  sed 's,<h1 class="title-header">\([^<]*\)</h1>,<h1 class="title-header" id="\1">\1</h1>,' | \
+  # Add an id to <h1>'s so they can be looked up by anchor links.
+  sed '/Class Reference/s,<h1 class="title-header">\([^<]*\)</h1>,<h1 class="title-header" id="\1-class">\1</h1>,' | \
+  sed '/Protocol Reference/s,<h1 class="title-header">\([^<]*\)</h1>,<h1 class="title-header" id="\1-protocol">\1</h1>,' | \
   # Replace links to class/protocol pages with anchor links. Avoids http:// urls.
-  sed 's,<a href="[^#][^:\"]*">\([^<]*\)</a>,<a href="#\1">\1</a>,g'
+  sed 's,<a href="[^#\"]*Classes[^\"]*">\([^<]*\)</a>,<a href="#\1-class">\1</a>,g' | \
+  sed 's,<a href="[^#\"]*Protocols[^\"]*">\([^<]*\)</a>,<a href="#\1-protocol">\1</a>,g' | \
+  # Consider any pages left to also be protocols.
+  sed 's,<a href="[^#\"]*\.html">\([^<]*\)</a>,<a href="#\1-protocol">\1</a>,g' | \
+  # Simplify class/protocol titles.
+  sed 's, Class Reference,,g' | \
+  sed 's, Protocol Reference,,g' | \
+  # Link header files to GitHub.
+  sed 's,>\(.*\.h\)<,><a href="https://github.com/mapbox/mapbox-ios-sdk/blob/release/MapView/Map/\1">\1</a><,'
