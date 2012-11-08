@@ -2734,7 +2734,7 @@
         }
     }
 
-    // sort z-indexes based on latitude so that they overlap properly
+    // sort z-indexes based on y-value so that they overlap properly
     NSMutableArray *sortedAnnotations = [NSMutableArray arrayWithArray:[_visibleAnnotations allObjects]];
 
     [sortedAnnotations filterUsingPredicate:[NSPredicate predicateWithFormat:@"isUserLocationAnnotation = NO"]];
