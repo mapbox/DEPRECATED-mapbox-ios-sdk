@@ -68,6 +68,7 @@
 #import "RMProjection.h"
 #import "RMQuadTree.h"
 #import "RMShape.h"
+#import "RMStaticMapView.h"
 #import "RMTile.h"
 #import "RMTileCache.h"
 #import "RMTileImage.h"
