@@ -36,22 +36,81 @@
 {
     UIImageView *_logoBug;
     UIActivityIndicatorView *_spinner;
+    NSURL *_requestURL;
 }
 
 @synthesize showLogoBug=_showLogoBug;
 
-- (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID centerCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(CGFloat)initialZoomLevel
+- (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID centerCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(CGFloat)zoomLevel
 {
     if (!(self = [super initWithFrame:frame]))
         return nil;
 
+    [self createMapViewWithFrame:frame mapID:mapID centerCoordinate:centerCoordinate zoomLevel:zoomLevel];
+
+    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[_requestURL autorelease]]
+                                       queue:[NSOperationQueue new]
+                           completionHandler:^(NSURLResponse *response, NSData *responseData, NSError *error)
+                           {
+                               [_spinner removeFromSuperview];
+                               [_spinner release]; _spinner = nil;
+
+                               if (responseData)
+                               {
+                                   dispatch_async(dispatch_get_main_queue(), ^(void)
+                                   {
+                                       self.image = [UIImage imageWithData:responseData];
+                                   });
+                               }
+                           }];
+
+    return self;
+}
+
+- (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID centerCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(CGFloat)zoomLevel success:(void (^)(UIImage *))successBlock failure:(void (^)(NSError *))failureBlock
+{
+    if (!(self = [super initWithFrame:frame]))
+        return nil;
+
+    [self createMapViewWithFrame:frame mapID:mapID centerCoordinate:centerCoordinate zoomLevel:zoomLevel];
+
+    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[_requestURL autorelease]]
+                                       queue:[NSOperationQueue new]
+                           completionHandler:^(NSURLResponse *response, NSData *responseData, NSError *error)
+                           {
+                               [_spinner removeFromSuperview];
+                               [_spinner release]; _spinner = nil;
+
+                               if ([UIImage imageWithData:responseData])
+                               {
+                                   dispatch_async(dispatch_get_main_queue(), ^(void)
+                                   {
+                                       self.image = [UIImage imageWithData:responseData];
+
+                                       successBlock(self.image);
+                                   });
+                               }
+                               else
+                               {
+                                   dispatch_async(dispatch_get_main_queue(), ^(void)
+                                   {
+                                       failureBlock(error);
+                                   });
+                               }
+                           }];
+
+    return self;
+}
+
+- (void)createMapViewWithFrame:(CGRect)frame mapID:(NSString *)mapID centerCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(CGFloat)zoomLevel
+{
     CGRect requestFrame = CGRectMake(frame.origin.x, frame.origin.y, fminf(frame.size.width, RMStaticMapViewMaxWidth), fminf(frame.size.height, RMStaticMapViewMaxHeight));
 
     if ( ! CLLocationCoordinate2DIsValid(centerCoordinate))
         centerCoordinate = CLLocationCoordinate2DMake(0, 0);
 
-    initialZoomLevel = fmaxf(initialZoomLevel, RMStaticMapViewMinZoom);
-    initialZoomLevel = fminf(initialZoomLevel, RMStaticMapViewMaxZoom);
+    zoomLevel = fmaxf(zoomLevel, RMStaticMapViewMinZoom);
+    zoomLevel = fminf(zoomLevel, RMStaticMapViewMaxZoom);
 
     self.backgroundColor = [UIColor colorWithPatternImage:[RMMapView resourceImageNamed:@"LoadingTile.png"]];
 
@@ -69,34 +128,14 @@
 
     [self addSubview:_spinner];
 
-    NSURL *imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://api.tiles.mapbox.com/v3/%@/%f,%f,%i/%ix%i.png", mapID, centerCoordinate.longitude, centerCoordinate.latitude, (int)roundf(initialZoomLevel), (int)roundf(requestFrame.size.width), (int)roundf(requestFrame.size.height)]];
-
-    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:imageURL]
-                                       queue:[NSOperationQueue new]
-                           completionHandler:^(NSURLResponse *response, NSData *responseData, NSError *error)
-                           {
-                               [_spinner removeFromSuperview];
-                               [_spinner release]; _spinner = nil;
-
-                               if (responseData)
-                               {
-                                   dispatch_async(dispatch_get_main_queue(), ^(void)
-                                   {
-                                       self.image = [UIImage imageWithData:responseData];
-                                   });
-                               }
-
-                               else
-                                   return; // TODO: notify delegate of error & display something
-                           }];
-
-    return self;
+    _requestURL = [[NSURL URLWithString:[NSString stringWithFormat:@"http://api.tiles.mapbox.com/v3/%@/%f,%f,%i/%ix%i.png", mapID, centerCoordinate.longitude, centerCoordinate.latitude, (int)roundf(zoomLevel), (int)roundf(requestFrame.size.width), (int)roundf(requestFrame.size.height)]] retain];
 }
 
 - (void)dealloc
 {
     [_logoBug release]; _logoBug = nil;
     [_spinner release]; _spinner = nil;
+    [_requestURL release]; _requestURL = nil;
     [super dealloc];
 }
 
