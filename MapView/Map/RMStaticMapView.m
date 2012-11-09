@@ -33,6 +33,12 @@
 #define RMStaticMapViewMaxZoom    17.0f
 
 @implementation RMStaticMapView
+{
+    UIImageView *_logoBug;
+    UIActivityIndicatorView *_spinner;
+}
+
+@synthesize showLogoBug=_showLogoBug;
 
 - (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID centerCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(CGFloat)initialZoomLevel
 {
@@ -51,15 +57,17 @@
 
     self.contentMode = UIViewContentModeCenter;
 
-    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    self.showLogoBug = YES;
 
-    [spinner startAnimating];
+    _spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
 
-    spinner.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+    [_spinner startAnimating];
 
-    spinner.center = self.center;
+    _spinner.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
 
-    [self addSubview:spinner];
+    _spinner.center = self.center;
+
+    [self addSubview:_spinner];
 
     NSURL *imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://api.tiles.mapbox.com/v3/%@/%f,%f,%i/%ix%i.png", mapID, centerCoordinate.longitude, centerCoordinate.latitude, (int)roundf(initialZoomLevel), (int)roundf(requestFrame.size.width), (int)roundf(requestFrame.size.height)]];
 
@@ -67,7 +75,8 @@
                                        queue:[NSOperationQueue new]
                            completionHandler:^(NSURLResponse *response, NSData *responseData, NSError *error)
                            {
-                               [self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+                               [_spinner removeFromSuperview];
+                               [_spinner release]; _spinner = nil;
 
                                if (responseData)
                                {
@@ -82,6 +91,33 @@
                            }];
 
     return self;
+}
+
+- (void)dealloc
+{
+    [_logoBug release]; _logoBug = nil;
+    [_spinner release]; _spinner = nil;
+    [super dealloc];
+}
+
+- (void)setShowLogoBug:(BOOL)showLogoBug
+{
+    if (showLogoBug && ! _logoBug)
+    {
+        _logoBug = [[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"mapbox.png"]];
+
+        _logoBug.frame = CGRectMake(8, self.bounds.size.height - _logoBug.bounds.size.height - 4, _logoBug.bounds.size.width, _logoBug.bounds.size.height);
+        _logoBug.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin;
+
+        [self addSubview:_logoBug];
+    }
+    else if ( ! showLogoBug && _logoBug)
+    {
+        [_logoBug removeFromSuperview];
+        [_logoBug release]; _logoBug = nil;
+    }
+
+    _showLogoBug = showLogoBug;
 }
 
 @end

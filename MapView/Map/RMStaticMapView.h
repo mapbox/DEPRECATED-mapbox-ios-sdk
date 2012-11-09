@@ -31,9 +31,11 @@
 
 - (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID centerCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(CGFloat)initialZoomLevel;
 
-// TODO: delegate
+/** A Boolean value indicating whether to show a small logo in the corner of the map view. Defaults to `YES`. */
+@property (nonatomic, assign) BOOL showLogoBug;
+
+// TODO: success/failure blocks
 // TODO: markers
 // TODO: attribution
-// TODO: logo bug
 
 @end
