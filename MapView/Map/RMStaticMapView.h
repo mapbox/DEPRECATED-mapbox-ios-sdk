@@ -29,7 +29,7 @@
 
 /** An RMStaticMapView object provides an embeddable, static map image view. You use this class to display map information in your application that does not need to change or provide user interaction. You can center the map on a given coordinate and zoom level, specify the size of the area you want to display, and optionally provide callbacks that can be performed on map image retrieval success or failure.
  *
- *  @warning Please note that you are responsible for getting permission to use the map data, and for ensuring your use adheres to the relevant terms of use. */
+ *  @warning Please note that you are responsible for getting permission to use the map data, and for ensuring your use adheres to the relevant terms of use. You are also responsible for displaying attribution details for the data elsewhere in your application, if applicable. */
 @interface RMStaticMapView : UIImageView
 
 /** @name Initializing a Static Map View */
@@ -58,6 +58,5 @@
 @property (nonatomic, assign) BOOL showLogoBug;
 
 // TODO: markers
-// TODO: attribution
 
 @end
