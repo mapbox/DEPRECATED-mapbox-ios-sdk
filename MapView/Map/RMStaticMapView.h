@@ -27,10 +27,12 @@
 
 #import <UIKit/UIKit.h>
 
-/** An RMStaticMapView object provides an embeddable, static map image view. You use this class to display map information in your application that does not need to change or provide user interaction. You can center the map on a given coordinate and zoom level, specify the size of the area you want to display, and optionally provide callbacks that can be performed on map image retrieval success or failure.
+/** An RMStaticMapView object provides an embeddable, static map image view. You use this class to display map information in your application that does not need to change or provide user interaction. You can center the map on a given coordinate and zoom level, specify the size of the area you want to display, and optionally provide a completion handler that can be performed upon map load.
+ *
+ *  Note that although RMStaticMapView is a subclass of RMMapView, it is provided for convenience only. Unpredictable results may occur if the view is treated as a normal, dynamic map view. If you need to support annotations, multiple tile sources, or other complex functionality, you should use RMMapView directly. 
  *
  *  @warning Please note that you are responsible for getting permission to use the map data, and for ensuring your use adheres to the relevant terms of use. You are also responsible for displaying attribution details for the data elsewhere in your application, if applicable. */
-@interface RMStaticMapView : UIImageView
+@interface RMStaticMapView : RMMapView
 
 /** @name Initializing a Static Map View */
 
@@ -42,21 +44,15 @@
  *  @return An initialized map view, or `nil` if the map view was unable to be initialized. */
 - (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID centerCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(CGFloat)zoomLevel;
 
-/** Initialize a static map view with a given frame, mapID, center coordinate, and zoom level, performing success or failure callbacks based on retrieval of the map image.
+/** Initialize a static map view with a given frame, mapID, center coordinate, and zoom level, performing a block upon completion of the map load.
  *  @param frame The frame with which to initialize the map view.
  *  @param mapID The MapBox map ID string, typically in the format `<username>.map-<random characters>`.
  *  @param centerCoordinate The map center coordinate.
  *  @param zoomLevel The map zoom level.
- *  @param successBlock A block to be performed upon map image retrieval success. The map image is passed as an argument to the block in the event that you wish to use it elsewhere or modify it.
- *  @param failureBlock A block to be performed upon map image retrieval failure. The retrieval error is passed as an argument to the block. 
+ *  @param handler A block to be performed upon map load completion. An image of the map is passed as an argument to the block in the event that you wish to use it elsewhere. The handler will be called on the main dispatch queue. 
  *  @return An initialized map view, or `nil` if the map view was unable to be initialized. */
-- (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID centerCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(CGFloat)zoomLevel success:(void (^)(UIImage *))successBlock failure:(void (^)(NSError *))failureBlock;
+- (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID centerCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(CGFloat)zoomLevel completionHandler:(void (^)(UIImage *))handler;
 
-/** @name Fine-Tuning the Map Appearance */
-
-/** A Boolean value indicating whether to show a small logo in the corner of the map view. Defaults to `YES`. */
-@property (nonatomic, assign) BOOL showLogoBug;
-
-// TODO: markers
+// TODO: static markers
 
 @end
