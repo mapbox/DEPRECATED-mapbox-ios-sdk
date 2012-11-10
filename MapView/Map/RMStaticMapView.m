@@ -28,6 +28,19 @@
 #import "RMStaticMapView.h"
 
 @implementation RMStaticMapView
+{
+    __weak RMStaticMapView *_weakSelf;
+}
+
+- (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID
+{
+    return [self initWithFrame:frame mapID:mapID centerCoordinate:CLLocationCoordinate2DMake(MAXFLOAT, MAXFLOAT) zoomLevel:-1 completionHandler:nil];
+}
+
+- (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID completionHandler:(void (^)(UIImage *))handler
+{
+    return [self initWithFrame:frame mapID:mapID centerCoordinate:CLLocationCoordinate2DMake(MAXFLOAT, MAXFLOAT) zoomLevel:-1 completionHandler:handler];
+}
 
 - (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID centerCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(CGFloat)zoomLevel
 {
@@ -36,8 +49,22 @@
 
 - (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID centerCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(CGFloat)zoomLevel completionHandler:(void (^)(UIImage *))handler
 {
-    if (!(self = [super initWithFrame:frame andTilesource:[[[RMMapBoxSource alloc] initWithMapID:mapID] autorelease] centerCoordinate:centerCoordinate zoomLevel:zoomLevel maxZoomLevel:zoomLevel minZoomLevel:zoomLevel backgroundImage:nil]))
+    if (!(self = [super initWithFrame:frame]))
         return nil;
+
+    RMMapBoxSource *tileSource = [[[RMMapBoxSource alloc] initWithMapID:mapID enablingDataOnMapView:self] autorelease];
+
+    self.tileSource = tileSource;
+
+    if ( ! CLLocationCoordinate2DIsValid(centerCoordinate))
+        centerCoordinate = [tileSource centerCoordinate];
+
+    [self setCenterCoordinate:centerCoordinate animated:NO];
+
+    if (zoomLevel < 0)
+        zoomLevel = [tileSource centerZoom];
+
+    [self setZoom:zoomLevel];
 
     self.backgroundColor = [UIColor colorWithPatternImage:[RMMapView resourceImageNamed:@"LoadingTile.png"]];
 
@@ -47,21 +74,29 @@
 
     self.userInteractionEnabled = NO;
 
-    __unsafe_unretained RMStaticMapView *weakSelf = self;
+    _weakSelf = self;
 
-    dispatch_async(dispatch_get_main_queue(), ^(void)
+    dispatch_async(tileSource.dataQueue, ^(void)
     {
-        if (weakSelf)
+        dispatch_sync(dispatch_get_main_queue(), ^(void)
         {
-            UIImage *image = [weakSelf takeSnapshot];
+            UIImage *image = [_weakSelf takeSnapshot];
 
-            if (image)
-                handler(image);
-        }
+            handler(image);
+        });
     });
 
     return self;
     
+}
+
+- (void)addAnnotation:(RMAnnotation *)annotation
+{
+    annotation.layer = [[RMMarker alloc] initWithMapBoxMarkerImage:[annotation.userInfo objectForKey:@"marker-symbol"]
+                                                      tintColorHex:[annotation.userInfo objectForKey:@"marker-color"]
+                                                        sizeString:[annotation.userInfo objectForKey:@"marker-size"]];
+
+    [super addAnnotation:annotation];
 }
 
 @end

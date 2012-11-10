@@ -27,32 +27,49 @@
 
 #import <UIKit/UIKit.h>
 
-/** An RMStaticMapView object provides an embeddable, static map image view. You use this class to display map information in your application that does not need to change or provide user interaction. You can center the map on a given coordinate and zoom level, specify the size of the area you want to display, and optionally provide a completion handler that can be performed upon map load.
- *
- *  Note that although RMStaticMapView is a subclass of RMMapView, it is provided for convenience only. Unpredictable results may occur if the view is treated as a normal, dynamic map view. If you need to support annotations, multiple tile sources, or other complex functionality, you should use RMMapView directly. 
- *
- *  @warning Please note that you are responsible for getting permission to use the map data, and for ensuring your use adheres to the relevant terms of use. You are also responsible for displaying attribution details for the data elsewhere in your application, if applicable. */
+/** An RMStaticMapView object provides an embeddable, static map image view. You use this class to display map information in your application that does not need to change or provide user interaction. You can center the map on a given coordinate and zoom level, specify the size of the area you want to display, and optionally provide a completion handler that can be performed upon map load. The map can also automatically have markers added to it if they were provided in simplestyle data when the map was created. 
+*
+*   @warning Please note that you are responsible for getting permission to use the map data, and for ensuring your use adheres to the relevant terms of use. You are also responsible for displaying attribution details for the data elsewhere in your application, if applicable. */
 @interface RMStaticMapView : RMMapView
 
 /** @name Initializing a Static Map View */
 
+/** Initialize a static map view with a given frame and mapID. 
+*
+*   The map ID is expected to provide initial center coordinate and zoom level information, and may optionally also include simplestyle marker data, which will automatically be added to the map view.
+*   @param frame The frame with which to initialize the map view.
+*   @param mapID The MapBox map ID string, typically in the format `<username>.map-<mapname>`.
+*   @return An initialized map view, or `nil` if the map view was unable to be initialized. */
+- (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID;
+
+/** Initialize a static map view with a given frame and mapID, performing a block upon completion of the map load. 
+*
+*   The map ID is expected to provide initial center coordinate and zoom level information, and may optionally also include simplestyle marker data, which will automatically be added to the map view. The block will be performed upon completion of the load of both the map and of any simplestyle markers included with the map ID.
+*   @param frame The frame with which to initialize the map view.
+*   @param mapID The MapBox map ID string, typically in the format `<username>.map-<mapname>`.
+*   @param handler A block to be performed upon map and marker load completion. An image of the map, including markers, is passed as an argument to the block in the event that you wish to use it elsewhere. The handler will be called on the main dispatch queue.
+*   @return An initialized map view, or `nil` if the map view was unable to be initialized. */
+- (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID completionHandler:(void (^)(UIImage *))handler;
+
 /** Initialize a static map view with a given frame, mapID, center coordinate, and zoom level.
- *  @param frame The frame with which to initialize the map view.
- *  @param mapID The MapBox map ID string, typically in the format `<username>.map-<random characters>`.
- *  @param centerCoordinate The map center coordinate.
- *  @param zoomLevel The map zoom level.
- *  @return An initialized map view, or `nil` if the map view was unable to be initialized. */
+*
+*   The map ID may optionally also include simplestyle marker data, which will automatically be added to the map view.
+*   @param frame The frame with which to initialize the map view.
+*   @param mapID The MapBox map ID string, typically in the format `<username>.map-<mapname>`.
+*   @param centerCoordinate The map center coordinate.
+*   @param zoomLevel The map zoom level.
+*   @return An initialized map view, or `nil` if the map view was unable to be initialized. */
 - (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID centerCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(CGFloat)zoomLevel;
 
-/** Initialize a static map view with a given frame, mapID, center coordinate, and zoom level, performing a block upon completion of the map load.
- *  @param frame The frame with which to initialize the map view.
- *  @param mapID The MapBox map ID string, typically in the format `<username>.map-<random characters>`.
- *  @param centerCoordinate The map center coordinate.
- *  @param zoomLevel The map zoom level.
- *  @param handler A block to be performed upon map load completion. An image of the map is passed as an argument to the block in the event that you wish to use it elsewhere. The handler will be called on the main dispatch queue. 
- *  @return An initialized map view, or `nil` if the map view was unable to be initialized. */
+/** Designated initializer. Initialize a static map view with a given frame, mapID, center coordinate, and zoom level, performing a block upon completion of the map load.
+*
+*   The map ID may optionally also include simplestyle marker data, which will automatically be added to the map view. The block will be performed upon completion of the load of both the map and of any simplestyle markers included with the map ID. 
+*   @param frame The frame with which to initialize the map view.
+*   @param mapID The MapBox map ID string, typically in the format `<username>.map-<mapname>`.
+*   @param centerCoordinate The map center coordinate.
+*   @param zoomLevel The map zoom level.
+*   @param handler A block to be performed upon map load completion. An image of the map, including markers, is passed as an argument to the block in the event that you wish to use it elsewhere. The handler will be called on the main dispatch queue.
+*   @return An initialized map view, or `nil` if the map view was unable to be initialized. */
 - (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID centerCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(CGFloat)zoomLevel completionHandler:(void (^)(UIImage *))handler;
-
-// TODO: static markers
 
 @end
