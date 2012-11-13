@@ -1,6 +1,7 @@
 //
-// MapBox.h
-// 
+//  RMShapeAnnotation.m
+//  MapView
+//
 // Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
@@ -25,27 +26,33 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-// The list of header files for more convenient Route-Me import to projects.
-// (in alphabetic order)
+#import "RMShapeAnnotation.h"
 
-#import "RMAnnotation.h"
-#import "RMCacheObject.h"
-#import "RMCircle.h"
-#import "RMCompositeSource.h"
-#import "RMCoordinateGridSource.h"
-#import "RMDatabaseCache.h"
-#import "RMInteractiveSource.h"
-#import "RMMBTilesSource.h"
-#import "RMMapBoxSource.h"
-#import "RMMapView.h"
-#import "RMMapViewDelegate.h"
-#import "RMMarker.h"
-#import "RMMemoryCache.h"
-#import "RMPointAnnotation.h"
-#import "RMPolygonAnnotation.h"
-#import "RMPolylineAnnotation.h"
-#import "RMShape.h"
-#import "RMStaticMapView.h"
-#import "RMTileCache.h"
-#import "RMUserLocation.h"
-#import "RMUserTrackingBarButtonItem.h"
+@implementation RMShapeAnnotation
+
+@synthesize points=_points;
+
+- (id)initWithMapView:(RMMapView *)aMapView coordinate:(CLLocationCoordinate2D)aCoordinate andTitle:(NSString *)aTitle
+{
+    return [self initWithMapView:aMapView points:nil];
+}
+
+- (id)initWithMapView:(RMMapView *)aMapView points:(NSArray *)points
+{
+    if (!(self = [super initWithMapView:aMapView coordinate:((CLLocation *)[points objectAtIndex:0]).coordinate andTitle:nil]))
+        return nil;
+
+    _points = [points copy];
+
+    [self setBoundingBoxFromLocations:points];
+
+    return self;
+}
+
+- (void)dealloc
+{
+    [_points release]; _points = nil;
+    [super dealloc];
+}
+
+@end

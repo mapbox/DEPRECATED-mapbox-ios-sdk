@@ -34,7 +34,7 @@
 #import "RMMapBoxSource.h"
 
 #import "RMMapView.h"
-#import "RMAnnotation.h"
+#import "RMPointAnnotation.h"
 
 @interface RMMapBoxSource ()
 
@@ -103,7 +103,7 @@
                                     .latitude  = [[[[feature objectForKey:@"geometry"] objectForKey:@"coordinates"] objectAtIndex:1] floatValue]
                                 };
                                 
-                                RMAnnotation *pointAnnotation = [RMAnnotation annotationWithMapView:mapView coordinate:coordinate andTitle:[properties objectForKey:@"title"]];
+                                RMPointAnnotation *pointAnnotation = [RMPointAnnotation annotationWithMapView:mapView coordinate:coordinate andTitle:[properties objectForKey:@"title"]];
                                 
                                 pointAnnotation.userInfo = properties;
                                 

@@ -64,7 +64,8 @@
 #define kDefaultMaximumZoomLevel 25.0
 #define kDefaultInitialZoomLevel 11.0
 
-#define kDefaultAnnotationMarker [[[RMMarker alloc] initWithMapBoxMarkerImage:@"star" tintColor:[UIColor redColor]] autorelease]
+#define kRMTrackingHaloAnnotationTypeName   @"RMTrackingHaloAnnotation"
+#define kRMAccuracyCircleAnnotationTypeName @"RMAccuracyCircleAnnotation"
 
 #pragma mark --- end constants ----
 
@@ -2624,11 +2625,7 @@
         {
             if (annotation.layer == nil && _delegateHasLayerForAnnotation)
                 annotation.layer = [_delegate mapView:self layerForAnnotation:annotation];
-            if (annotation.layer == nil && [annotation.annotationType isEqualToString:kRMPointAnnotationTypeName])
-            {
-                annotation.layer = kDefaultAnnotationMarker;
-                annotation.layer.canShowCallout = YES;
-            }
+
             if (annotation.layer == nil)
                 continue;
 
@@ -2683,11 +2680,7 @@
                     {
                         if (annotation.layer == nil && _delegateHasLayerForAnnotation)
                             annotation.layer = [_delegate mapView:self layerForAnnotation:annotation];
-                        if (annotation.layer == nil && [annotation.annotationType isEqualToString:kRMPointAnnotationTypeName])
-                        {
-                            annotation.layer = kDefaultAnnotationMarker;
-                            annotation.layer.canShowCallout = YES;
-                        }
+
                         if (annotation.layer == nil)
                             continue;
 
@@ -2804,12 +2797,6 @@
 
         if (annotation.layer == nil && [annotation isAnnotationOnScreen] && _delegateHasLayerForAnnotation)
             annotation.layer = [_delegate mapView:self layerForAnnotation:annotation];
-
-        if ( ! annotation.layer && [annotation.annotationType isEqualToString:kRMPointAnnotationTypeName])
-        {
-            annotation.layer = kDefaultAnnotationMarker;
-            annotation.layer.canShowCallout = YES;
-        }
 
         if (annotation.layer)
         {

@@ -30,7 +30,9 @@
 
 @class RMMapView, RMMapLayer, RMQuadTreeNode;
 
-/** An RMAnnotation defines a container for annotation data to be placed on a map. At a future point in time, depending on map use, a visible layer may be requested and displayed for the annotation. The layer can be set ahead of time using the annotation's layer property, or, in the recommended approach, can be provided by an RMMapView's delegate when first needed for display. */
+/** An RMAnnotation defines a container for annotation data to be placed on a map. At a future point in time, depending on map use, a visible layer may be requested and displayed for the annotation. The layer can be set ahead of time using the annotation's layer property, or, in the recommended approach, can be provided by an RMMapView's delegate when first needed for display. 
+*
+*   Subclasses of RMAnnotation such as RMPointAnnotation, RMPolylineAnnotation, and RMPolygonAnnotation are useful for simple needs such as easily putting points and shapes onto a map view. They manage their own layer and don't require configuration in the map view delegate in order to be displayed. */
 @interface RMAnnotation : NSObject
 {
     CLLocationCoordinate2D coordinate;
@@ -63,7 +65,7 @@
 /** Storage for arbitrary data. */
 @property (nonatomic, retain) id userInfo;
 
-/** An arbitrary string representing the type of annotation. Useful for determining which layer to draw for the annotation when requested. Setting an annotationType of `kRMPointAnnotationTypeName` will provide a default marker layer for the annotation. */
+/** An arbitrary string representing the type of annotation. Useful for determining which layer to draw for the annotation when requested in the delegate. Cluster annotations, which are automatically created by a map view, will automatically have an annotationType of `RMClusterAnnotation`. */
 @property (nonatomic, retain) NSString *annotationType;
 
 /** An arbitrary icon image for the annotation. Useful to pass an image at annotation creation time for use in the layer at a later time. */

@@ -135,6 +135,14 @@
 		DDA6B8BE155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = DDA6B8BC155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.m */; };
 		DDC4BED5152E3BD700089409 /* RMInteractiveSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DDC4BED3152E3BD700089409 /* RMInteractiveSource.h */; };
 		DDC4BEF2152E3FAE00089409 /* RMInteractiveSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DDC4BED4152E3BD700089409 /* RMInteractiveSource.m */; };
+		DDE357E71651F570001DB842 /* RMPointAnnotation.h in Headers */ = {isa = PBXBuildFile; fileRef = DDE357E51651F570001DB842 /* RMPointAnnotation.h */; };
+		DDE357E81651F570001DB842 /* RMPointAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = DDE357E61651F570001DB842 /* RMPointAnnotation.m */; };
+		DDE357F0165223A3001DB842 /* RMShapeAnnotation.h in Headers */ = {isa = PBXBuildFile; fileRef = DDE357EE165223A3001DB842 /* RMShapeAnnotation.h */; };
+		DDE357F1165223A3001DB842 /* RMShapeAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = DDE357EF165223A3001DB842 /* RMShapeAnnotation.m */; };
+		DDE357F416522661001DB842 /* RMPolylineAnnotation.h in Headers */ = {isa = PBXBuildFile; fileRef = DDE357F216522661001DB842 /* RMPolylineAnnotation.h */; };
+		DDE357F516522661001DB842 /* RMPolylineAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = DDE357F316522661001DB842 /* RMPolylineAnnotation.m */; };
+		DDE357F816522CD8001DB842 /* RMPolygonAnnotation.h in Headers */ = {isa = PBXBuildFile; fileRef = DDE357F616522CD8001DB842 /* RMPolygonAnnotation.h */; };
+		DDE357F916522CD8001DB842 /* RMPolygonAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = DDE357F716522CD8001DB842 /* RMPolygonAnnotation.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -278,6 +286,14 @@
 		DDC006D01601580F00E42892 /* mapbox@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "mapbox@2x.png"; path = "Resources/mapbox@2x.png"; sourceTree = "<group>"; };
 		DDC4BED3152E3BD700089409 /* RMInteractiveSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMInteractiveSource.h; sourceTree = "<group>"; };
 		DDC4BED4152E3BD700089409 /* RMInteractiveSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMInteractiveSource.m; sourceTree = "<group>"; };
+		DDE357E51651F570001DB842 /* RMPointAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMPointAnnotation.h; sourceTree = "<group>"; };
+		DDE357E61651F570001DB842 /* RMPointAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMPointAnnotation.m; sourceTree = "<group>"; };
+		DDE357EE165223A3001DB842 /* RMShapeAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMShapeAnnotation.h; sourceTree = "<group>"; };
+		DDE357EF165223A3001DB842 /* RMShapeAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMShapeAnnotation.m; sourceTree = "<group>"; };
+		DDE357F216522661001DB842 /* RMPolylineAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMPolylineAnnotation.h; sourceTree = "<group>"; };
+		DDE357F316522661001DB842 /* RMPolylineAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMPolylineAnnotation.m; sourceTree = "<group>"; };
+		DDE357F616522CD8001DB842 /* RMPolygonAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMPolygonAnnotation.h; sourceTree = "<group>"; };
+		DDE357F716522CD8001DB842 /* RMPolygonAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMPolygonAnnotation.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -376,7 +392,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		B83E64CE0E80E73F001663B6 /* Tile Layer & Overlay */ = {
+		B83E64CE0E80E73F001663B6 /* Tile & Overlay Rendering */ = {
 			isa = PBXGroup;
 			children = (
 				B83E64D80E80E73F001663B6 /* RMTileImage.h */,
@@ -390,7 +406,7 @@
 				DD5FA1E915E2B020004EB6C5 /* RMLoadingTileView.h */,
 				DD5FA1EA15E2B020004EB6C5 /* RMLoadingTileView.m */,
 			);
-			name = "Tile Layer & Overlay";
+			name = "Tile & Overlay Rendering";
 			sourceTree = "<group>";
 		};
 		B83E64CF0E80E73F001663B6 /* Tile Cache */ = {
@@ -453,11 +469,19 @@
 			path = FMDB/src;
 			sourceTree = "<group>";
 		};
-		B86F26A80E8742ED007A3773 /* Markers and other layers */ = {
+		B86F26A80E8742ED007A3773 /* Annotation Layers */ = {
 			isa = PBXGroup;
 			children = (
 				160EEDAD13D41DEC007C5501 /* RMAnnotation.h */,
 				160EEDAE13D41DEC007C5501 /* RMAnnotation.m */,
+				DDE357E51651F570001DB842 /* RMPointAnnotation.h */,
+				DDE357E61651F570001DB842 /* RMPointAnnotation.m */,
+				DDE357EE165223A3001DB842 /* RMShapeAnnotation.h */,
+				DDE357EF165223A3001DB842 /* RMShapeAnnotation.m */,
+				DDE357F216522661001DB842 /* RMPolylineAnnotation.h */,
+				DDE357F316522661001DB842 /* RMPolylineAnnotation.m */,
+				DDE357F616522CD8001DB842 /* RMPolygonAnnotation.h */,
+				DDE357F716522CD8001DB842 /* RMPolygonAnnotation.m */,
 				16FAB66213E03D55002F4E1C /* RMQuadTree.h */,
 				16FAB66313E03D55002F4E1C /* RMQuadTree.m */,
 				B86F26AC0E87442C007A3773 /* RMMapLayer.h */,
@@ -470,7 +494,7 @@
 				25757F4E1291C8640083D504 /* RMCircle.m */,
 				DD76E12E161E347B00F60F43 /* SMCallout */,
 			);
-			name = "Markers and other layers";
+			name = "Annotation Layers";
 			sourceTree = "<group>";
 		};
 		B8C9740D0E8A196E007D16AD /* Map */ = {
@@ -488,8 +512,8 @@
 				B83E64E20E80E73F001663B6 /* Projections */,
 				B83E64CF0E80E73F001663B6 /* Tile Cache */,
 				B83E64EB0E80E73F001663B6 /* Tile Source */,
-				B83E64CE0E80E73F001663B6 /* Tile Layer & Overlay */,
-				B86F26A80E8742ED007A3773 /* Markers and other layers */,
+				B83E64CE0E80E73F001663B6 /* Tile & Overlay Rendering */,
+				B86F26A80E8742ED007A3773 /* Annotation Layers */,
 				DD8FD7571559ED930044D96F /* User Location */,
 				DD3BEF71159134E0007892D8 /* Attribution */,
 				1266929E0EB75BEA00E002D5 /* Configuration */,
@@ -645,6 +669,10 @@
 				DD4195C9162356900049E6BA /* RMBingSource.h in Headers */,
 				DD1E3C6E161F954F004FC649 /* SMCalloutView.h in Headers */,
 				DD7C7E38164C894F0021CCA5 /* RMStaticMapView.h in Headers */,
+				DDE357E71651F570001DB842 /* RMPointAnnotation.h in Headers */,
+				DDE357F0165223A3001DB842 /* RMShapeAnnotation.h in Headers */,
+				DDE357F416522661001DB842 /* RMPolylineAnnotation.h in Headers */,
+				DDE357F816522CD8001DB842 /* RMPolygonAnnotation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -792,6 +820,10 @@
 				DD4195CA162356900049E6BA /* RMBingSource.m in Sources */,
 				DD1E3C6F161F954F004FC649 /* SMCalloutView.m in Sources */,
 				DD7C7E39164C894F0021CCA5 /* RMStaticMapView.m in Sources */,
+				DDE357E81651F570001DB842 /* RMPointAnnotation.m in Sources */,
+				DDE357F1165223A3001DB842 /* RMShapeAnnotation.m in Sources */,
+				DDE357F516522661001DB842 /* RMPolylineAnnotation.m in Sources */,
+				DDE357F916522CD8001DB842 /* RMPolygonAnnotation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
