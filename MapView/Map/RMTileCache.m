@@ -59,7 +59,7 @@
     if (!(self = [super init]))
         return nil;
 
-    _tileCaches = [[NSMutableArray alloc] init];
+    _tileCaches = [NSMutableArray new];
     _tileCacheQueue = dispatch_queue_create("routeme.tileCacheQueue", DISPATCH_QUEUE_CONCURRENT);
 
     _memoryCache = nil;

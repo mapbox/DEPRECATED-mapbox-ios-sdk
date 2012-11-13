@@ -62,11 +62,11 @@
 
     mapView = aMapView;
 
-    bezierPath = [[UIBezierPath alloc] init];
+    bezierPath = [UIBezierPath new];
     lineWidth = kDefaultLineWidth;
     ignorePathUpdates = NO;
 
-    shapeLayer = [[CAShapeLayer alloc] init];
+    shapeLayer = [CAShapeLayer new];
     shapeLayer.rasterizationScale = [[UIScreen mainScreen] scale];
     shapeLayer.lineWidth = lineWidth;
     shapeLayer.lineCap = kCALineCapButt;

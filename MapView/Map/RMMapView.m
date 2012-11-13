@@ -252,13 +252,13 @@
     _clusterMarkerSize = CGSizeMake(100.0, 100.0);
     _clusterAreaSize = CGSizeMake(150.0, 150.0);
 
-    _moveDelegateQueue = [[NSOperationQueue alloc] init];
+    _moveDelegateQueue = [NSOperationQueue new];
     [_moveDelegateQueue setMaxConcurrentOperationCount:1];
 
-    _zoomDelegateQueue = [[NSOperationQueue alloc] init];
+    _zoomDelegateQueue = [NSOperationQueue new];
     [_zoomDelegateQueue setMaxConcurrentOperationCount:1];
 
-    [self setTileCache:[[[RMTileCache alloc] init] autorelease]];
+    [self setTileCache:[[RMTileCache new] autorelease]];
 
     if (backgroundImage)
     {
@@ -1687,7 +1687,7 @@
     {
         _currentAnnotation = [anAnnotation retain];
 
-        _currentCallout = [[SMCalloutView alloc] init];
+        _currentCallout = [SMCalloutView new];
 
         _currentCallout.title = anAnnotation.title;
 
@@ -2891,7 +2891,7 @@
 
         self.userLocation = [RMUserLocation annotationWithMapView:self coordinate:CLLocationCoordinate2DMake(MAXFLOAT, MAXFLOAT) andTitle:nil];
 
-        _locationManager = [[CLLocationManager alloc] init];
+        _locationManager = [CLLocationManager new];
         _locationManager.headingFilter = 5.0;
         _locationManager.delegate = self;
         [_locationManager startUpdatingLocation];
