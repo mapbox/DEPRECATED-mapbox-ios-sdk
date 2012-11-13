@@ -32,6 +32,11 @@
 
 @implementation RMPointAnnotation
 
+- (void)setLayer:(RMMapLayer *)layer
+{
+    // no-op
+}
+
 - (RMMapLayer *)layer
 {
     if ( ! [super layer])
@@ -40,7 +45,7 @@
 
         marker.canShowCallout = YES;
 
-        self.layer = marker;
+        super.layer = marker;
     }
 
     return [super layer];

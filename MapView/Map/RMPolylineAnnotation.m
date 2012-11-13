@@ -32,6 +32,11 @@
 
 @implementation RMPolylineAnnotation
 
+- (void)setLayer:(RMMapLayer *)layer
+{
+    // no-op
+}
+
 - (RMMapLayer *)layer
 {
     if ( ! [super layer])
@@ -46,7 +51,7 @@
                 [aShape addLineToCoordinate:point.coordinate];
         }];
 
-        self.layer = shape;
+        super.layer = shape;
     }
 
     return [super layer];

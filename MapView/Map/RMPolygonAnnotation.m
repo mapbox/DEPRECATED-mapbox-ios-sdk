@@ -55,6 +55,11 @@
     [super dealloc];
 }
 
+- (void)setLayer:(RMMapLayer *)layer
+{
+    // no-op
+}
+
 - (RMMapLayer *)layer
 {
     if ( ! [super layer])
@@ -87,7 +92,7 @@
             }
         }];
 
-        self.layer = shape;
+        super.layer = shape;
     }
     
     return [super layer];

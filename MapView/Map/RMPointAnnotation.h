@@ -30,7 +30,7 @@
 
 /** An RMPointAnnotation is used to represent a single point on a map. The annotation will automatically have a layer created when needed that displays an RMMarker with a default point icon. 
 *
-*   If you wish to customize the appearance, you should instead create an RMAnnotation and configure its layer directly. */
+*   If you wish to customize the appearance, you should instead create an RMAnnotation and configure its layer directly. Providing a layer manually for instances of RMPointAnnotation will not have any effect. */
 @interface RMPointAnnotation : RMAnnotation
 
 @end
