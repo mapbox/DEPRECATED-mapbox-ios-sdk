@@ -131,9 +131,9 @@
 
         if (zoom >= _tileSource.minZoom && zoom <= _tileSource.maxZoom)
         {
-            if ([_tileSource isKindOfClass:[RMMBTilesSource class]] || [_tileSource isKindOfClass:[RMDBMapSource class]])
+            if ( ! [_tileSource isKindOfClass:[RMAbstractWebMapSource class]])
             {
-                // for local tiles, query the source directly since trivial blocking
+                // for non-web tiles, query the source directly since trivial blocking
                 //
                 tileImage = [_tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[_mapView tileCache]];
             }
