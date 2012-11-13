@@ -32,7 +32,6 @@
 #import "RMFoundation.h"
 #import "RMProjection.h"
 #import "RMMarker.h"
-#import "RMPath.h"
 #import "RMCircle.h"
 #import "RMShape.h"
 #import "RMAnnotation.h"
