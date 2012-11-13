@@ -339,7 +339,7 @@
     [self addLineToProjectedPoint:mercator];
 }
 
-- (void)performBatchOperations:(void (^)(RMShape *aPath))block
+- (void)performBatchOperations:(void (^)(RMShape *aShape))block
 {
     ignorePathUpdates = YES;
     block(self);
