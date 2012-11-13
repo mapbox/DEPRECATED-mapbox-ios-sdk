@@ -113,7 +113,7 @@
 
                 if (tileData)
                 {
-                    @synchronized(self)
+                    @synchronized (self)
                     {
                         // safely put into collection array in proper order
                         //
