@@ -14,6 +14,7 @@
 #import "RMTileCache.h"
 #import "RMMBTilesSource.h"
 #import "RMDBMapSource.h"
+#import "RMAbstractWebMapSource.h"
 
 #define IS_VALID_TILE_IMAGE(image) (image != nil && [image isKindOfClass:[UIImage class]])
 

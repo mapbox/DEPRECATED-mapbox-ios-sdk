@@ -8,7 +8,7 @@
     #import <CoreLocation/CoreLocation.h>
     #import <QuartzCore/QuartzCore.h>
 
-    #import "MapBox.h"
+    #import "RMGlobalConstants.h"
 #endif
 
 #if DEBUG

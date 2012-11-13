@@ -27,6 +27,10 @@
 
 #import "RMStaticMapView.h"
 
+#import "RMAnnotation.h"
+#import "RMMapBoxSource.h"
+#import "RMMarker.h"
+
 @implementation RMStaticMapView
 {
     __weak RMStaticMapView *_weakSelf;

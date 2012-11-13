@@ -27,6 +27,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import "RMMapView.h"
+
 /** An RMStaticMapView object provides an embeddable, static map image view. You use this class to display map information in your application that does not need to change or provide user interaction. You can center the map on a given coordinate and zoom level, specify the size of the area you want to display, and optionally provide a completion handler that can be performed upon map load. The map can also automatically have markers added to it if they were provided as simplestyle data when the map was created. 
 *
 *   @warning Please note that you are responsible for getting permission to use the map data, and for ensuring your use adheres to the relevant terms of use. You are also responsible for displaying attribution details for the data elsewhere in your application, if applicable. */
