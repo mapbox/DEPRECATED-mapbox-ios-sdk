@@ -42,6 +42,8 @@
     CAShapeLayer *shapeLayer;
     UIBezierPath *bezierPath;
 
+    NSMutableArray *points;
+
     RMMapView *mapView;
 }
 
@@ -89,6 +91,8 @@
     scaleLineDash = NO;
     isFirstPoint = YES;
 
+    points = [[NSMutableArray array] retain];
+
     [(id)self setValue:[[UIScreen mainScreen] valueForKey:@"scale"] forKey:@"contentsScale"];
 
     return self;
@@ -99,6 +103,7 @@
     mapView = nil;
     [bezierPath release]; bezierPath = nil;
     [shapeLayer release]; shapeLayer = nil;
+    [points release]; points = nil;
     [super dealloc];
 }
 
@@ -273,12 +278,20 @@
     }
 
     self.anchorPoint = clippedAnchorPoint;
+
+    if (self.annotation && [points count])
+    {
+        self.annotation.coordinate = ((CLLocation *)[points objectAtIndex:0]).coordinate;
+        [self.annotation setBoundingBoxFromLocations:points];
+    }
 }
 
 #pragma mark -
 
 - (void)addPointToProjectedPoint:(RMProjectedPoint)point withDrawing:(BOOL)isDrawing
 {
+    [points addObject:[[[CLLocation alloc] initWithLatitude:[mapView projectedPointToCoordinate:point].latitude longitude:[mapView projectedPointToCoordinate:point].longitude] autorelease]];
+
     if (isFirstPoint)
     {
         isFirstPoint = FALSE;
@@ -479,6 +492,12 @@
         return;
 
     [self recalculateGeometryAnimated:animated];
+}
+
+- (void)setAnnotation:(RMAnnotation *)newAnnotation
+{
+    super.annotation = newAnnotation;
+    [self recalculateGeometryAnimated:NO];
 }
 
 @end
