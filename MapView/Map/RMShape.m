@@ -366,7 +366,8 @@
 
 - (void)closePath
 {
-    [self addLineToCoordinate:((CLLocation *)[points objectAtIndex:0]).coordinate];
+    if ([points count])
+        [self addLineToCoordinate:((CLLocation *)[points objectAtIndex:0]).coordinate];
 }
 
 - (float)lineWidth
