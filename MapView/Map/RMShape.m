@@ -366,7 +366,7 @@
 
 - (void)closePath
 {
-    [bezierPath closePath];
+    [self addLineToCoordinate:((CLLocation *)[points objectAtIndex:0]).coordinate];
 }
 
 - (float)lineWidth
