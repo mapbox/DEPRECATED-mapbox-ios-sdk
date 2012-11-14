@@ -34,7 +34,7 @@
 
 - (void)setLayer:(RMMapLayer *)layer
 {
-    // no-op
+    RMLog(@"Setting a custom layer on an %@ is a no-op", [self class]);
 }
 
 - (RMMapLayer *)layer
