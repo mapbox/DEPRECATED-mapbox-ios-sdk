@@ -2726,7 +2726,8 @@
         }
     }
 
-    // sort z-indexes based on y-value so that they overlap properly
+    // sort annotation layer z-indexes so that they overlap properly
+    //
     NSMutableArray *sortedAnnotations = [NSMutableArray arrayWithArray:[_visibleAnnotations allObjects]];
 
     [sortedAnnotations filterUsingPredicate:[NSPredicate predicateWithFormat:@"isUserLocationAnnotation = NO"]];
@@ -2736,12 +2737,24 @@
         RMAnnotation *annotation1 = (RMAnnotation *)obj1;
         RMAnnotation *annotation2 = (RMAnnotation *)obj2;
 
+        // clusters above/below non-clusters (based on _orderClusterMarkersAboveOthers)
+        //
         if (   [annotation1.annotationType isEqualToString:kRMClusterAnnotationTypeName] && ! [annotation2.annotationType isEqualToString:kRMClusterAnnotationTypeName])
             return (_orderClusterMarkersAboveOthers ? NSOrderedDescending : NSOrderedAscending);
 
         if ( ! [annotation1.annotationType isEqualToString:kRMClusterAnnotationTypeName] &&   [annotation2.annotationType isEqualToString:kRMClusterAnnotationTypeName])
             return (_orderClusterMarkersAboveOthers ? NSOrderedAscending : NSOrderedDescending);
 
+        // markers above shapes
+        //
+        if (   [annotation1.layer isKindOfClass:[RMMarker class]] && [annotation2.layer isKindOfClass:[RMShape class]])
+            return NSOrderedDescending;
+
+        if (   [annotation1.layer isKindOfClass:[RMShape class]] && [annotation2.layer isKindOfClass:[RMMarker class]])
+            return NSOrderedAscending;
+
+        // the rest in increasing y-position
+        //
         CGPoint obj1Point = [self convertPoint:annotation1.position fromView:_overlayView];
         CGPoint obj2Point = [self convertPoint:annotation2.position fromView:_overlayView];
 
@@ -2758,6 +2771,7 @@
         ((RMAnnotation *)[sortedAnnotations objectAtIndex:i]).layer.zPosition = (CGFloat)i;
 
     // bring any active callout annotation to the front
+    //
     if (_currentAnnotation)
         _currentAnnotation.layer.zPosition = _currentCallout.layer.zPosition = MAXFLOAT;
 
