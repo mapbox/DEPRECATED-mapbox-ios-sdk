@@ -14,6 +14,7 @@
 #import "RMTileCache.h"
 #import "RMMBTilesSource.h"
 #import "RMDBMapSource.h"
+#import "RMAbstractWebMapSource.h"
 
 #define IS_VALID_TILE_IMAGE(image) (image != nil && [image isKindOfClass:[UIImage class]])
 
@@ -79,7 +80,7 @@
 
 //    NSLog(@"drawLayer: {{%f,%f},{%f,%f}}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    NSAutoreleasePool *pool = [NSAutoreleasePool new];
 
     if (self.useSnapshotRenderer)
     {
@@ -131,28 +132,40 @@
 
         if (zoom >= _tileSource.minZoom && zoom <= _tileSource.maxZoom)
         {
-            if ([_tileSource isKindOfClass:[RMMBTilesSource class]] || [_tileSource isKindOfClass:[RMDBMapSource class]])
+            if ( ! [_tileSource isKindOfClass:[RMAbstractWebMapSource class]])
             {
-                // for local tiles, query the source directly since trivial blocking
+                // for non-web tiles, query the source directly since trivial blocking
                 //
                 tileImage = [_tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[_mapView tileCache]];
             }
             else
             {
-                // for non-local tiles, consult cache directly first, else fetch asynchronously
+                // for non-local tiles, consult cache directly first (if possible)
                 //
-                tileImage = [[_mapView tileCache] cachedImage:RMTileMake(x, y, zoom) withCacheKey:[_tileSource uniqueTilecacheKey]];
+                if (_tileSource.isCacheable)
+                    tileImage = [[_mapView tileCache] cachedImage:RMTileMake(x, y, zoom) withCacheKey:[_tileSource uniqueTilecacheKey]];
 
                 if ( ! tileImage)
                 {
+                    // fire off an asynchronous retrieval
+                    //
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void)
                     {
-                        if ([_tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[_mapView tileCache]])
+                        // ensure only one request for a URL at a time
+                        //
+                        @synchronized ([(RMAbstractWebMapSource *)_tileSource URLForTile:RMTileMake(x, y, zoom)])
                         {
-                            dispatch_async(dispatch_get_main_queue(), ^(void)
+                            // this will return quicker if cached since above attempt, else block on fetch
+                            //
+                            if (_tileSource.isCacheable && [_tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[_mapView tileCache]])
                             {
-                                [self.layer setNeedsDisplay];
-                            });
+                                dispatch_async(dispatch_get_main_queue(), ^(void)
+                                {
+                                    // do it all again for this tile, next time synchronously from cache
+                                    //
+                                    [self.layer setNeedsDisplayInRect:rect];
+                                });
+                            }
                         }
                     });
                 }

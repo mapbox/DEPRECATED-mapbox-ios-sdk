@@ -1,6 +1,7 @@
 //
-// MapBox.h
-// 
+//  RMPointAnnotation.h
+//  MapView
+//
 // Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
@@ -25,27 +26,11 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-// The list of header files for more convenient Route-Me import to projects.
-// (in alphabetic order)
-
 #import "RMAnnotation.h"
-#import "RMCacheObject.h"
-#import "RMCircle.h"
-#import "RMCompositeSource.h"
-#import "RMCoordinateGridSource.h"
-#import "RMDatabaseCache.h"
-#import "RMInteractiveSource.h"
-#import "RMMBTilesSource.h"
-#import "RMMapBoxSource.h"
-#import "RMMapView.h"
-#import "RMMapViewDelegate.h"
-#import "RMMarker.h"
-#import "RMMemoryCache.h"
-#import "RMPointAnnotation.h"
-#import "RMPolygonAnnotation.h"
-#import "RMPolylineAnnotation.h"
-#import "RMShape.h"
-#import "RMStaticMapView.h"
-#import "RMTileCache.h"
-#import "RMUserLocation.h"
-#import "RMUserTrackingBarButtonItem.h"
+
+/** An RMPointAnnotation is used to represent a single point on a map. The annotation will automatically have a layer created when needed that displays an RMMarker with a default point icon. 
+*
+*   If you wish to customize the appearance, you should instead create an RMAnnotation and configure its layer directly. Providing a layer manually for instances of RMPointAnnotation will not have any effect. */
+@interface RMPointAnnotation : RMAnnotation
+
+@end

@@ -10,6 +10,8 @@
 #import "RMMarker.h"
 #import "RMMapView.h"
 
+#define kRMUserLocationAnnotationTypeName @"RMUserLocationAnnotation"
+
 @implementation RMUserLocation
 
 @synthesize updating = _updating;

@@ -8,6 +8,8 @@
 
 #import "RMLoadingTileView.h"
 
+#import "RMMapView.h"
+
 @implementation RMLoadingTileView
 {
     UIView *_contentView;

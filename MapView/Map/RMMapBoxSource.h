@@ -113,4 +113,6 @@ typedef enum : NSUInteger {
 *   Note that you may want to clear the tile cache after changing this value in order to provide a consistent experience. */
 @property (nonatomic, assign) RMMapBoxSourceQuality imageQuality;
 
+@property (nonatomic, readonly, assign) dispatch_queue_t dataQueue;
+
 @end

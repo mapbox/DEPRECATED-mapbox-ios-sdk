@@ -32,7 +32,6 @@
 #import "RMFoundation.h"
 #import "RMProjection.h"
 #import "RMMarker.h"
-#import "RMPath.h"
 #import "RMCircle.h"
 #import "RMShape.h"
 #import "RMAnnotation.h"
@@ -65,7 +64,8 @@
 #define kDefaultMaximumZoomLevel 25.0
 #define kDefaultInitialZoomLevel 11.0
 
-#define kDefaultAnnotationMarker [[[RMMarker alloc] initWithMapBoxMarkerImage:@"star" tintColor:[UIColor redColor]] autorelease]
+#define kRMTrackingHaloAnnotationTypeName   @"RMTrackingHaloAnnotation"
+#define kRMAccuracyCircleAnnotationTypeName @"RMAccuracyCircleAnnotation"
 
 #pragma mark --- end constants ----
 
@@ -81,6 +81,7 @@
 
 - (void)correctPositionOfAllAnnotations;
 - (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllLayers animated:(BOOL)animated;
+- (void)correctOrderingOfAllAnnotations;
 
 - (void)correctMinZoomScaleForBoundingMask;
 
@@ -253,13 +254,13 @@
     _clusterMarkerSize = CGSizeMake(100.0, 100.0);
     _clusterAreaSize = CGSizeMake(150.0, 150.0);
 
-    _moveDelegateQueue = [[NSOperationQueue alloc] init];
+    _moveDelegateQueue = [NSOperationQueue new];
     [_moveDelegateQueue setMaxConcurrentOperationCount:1];
 
-    _zoomDelegateQueue = [[NSOperationQueue alloc] init];
+    _zoomDelegateQueue = [NSOperationQueue new];
     [_zoomDelegateQueue setMaxConcurrentOperationCount:1];
 
-    [self setTileCache:[[[RMTileCache alloc] init] autorelease]];
+    [self setTileCache:[[RMTileCache new] autorelease]];
 
     if (backgroundImage)
     {
@@ -1688,7 +1689,7 @@
     {
         _currentAnnotation = [anAnnotation retain];
 
-        _currentCallout = [[SMCalloutView alloc] init];
+        _currentCallout = [SMCalloutView new];
 
         _currentCallout.title = anAnnotation.title;
 
@@ -2625,11 +2626,7 @@
         {
             if (annotation.layer == nil && _delegateHasLayerForAnnotation)
                 annotation.layer = [_delegate mapView:self layerForAnnotation:annotation];
-            if (annotation.layer == nil && [annotation.annotationType isEqualToString:kRMPointAnnotationTypeName])
-            {
-                annotation.layer = kDefaultAnnotationMarker;
-                annotation.layer.canShowCallout = YES;
-            }
+
             if (annotation.layer == nil)
                 continue;
 
@@ -2684,11 +2681,7 @@
                     {
                         if (annotation.layer == nil && _delegateHasLayerForAnnotation)
                             annotation.layer = [_delegate mapView:self layerForAnnotation:annotation];
-                        if (annotation.layer == nil && [annotation.annotationType isEqualToString:kRMPointAnnotationTypeName])
-                        {
-                            annotation.layer = kDefaultAnnotationMarker;
-                            annotation.layer.canShowCallout = YES;
-                        }
+
                         if (annotation.layer == nil)
                             continue;
 
@@ -2734,40 +2727,7 @@
         }
     }
 
-    // sort z-indexes based on y-value so that they overlap properly
-    NSMutableArray *sortedAnnotations = [NSMutableArray arrayWithArray:[_visibleAnnotations allObjects]];
-
-    [sortedAnnotations filterUsingPredicate:[NSPredicate predicateWithFormat:@"isUserLocationAnnotation = NO"]];
-
-    [sortedAnnotations sortUsingComparator:^(id obj1, id obj2)
-    {
-        RMAnnotation *annotation1 = (RMAnnotation *)obj1;
-        RMAnnotation *annotation2 = (RMAnnotation *)obj2;
-
-        if (   [annotation1.annotationType isEqualToString:kRMClusterAnnotationTypeName] && ! [annotation2.annotationType isEqualToString:kRMClusterAnnotationTypeName])
-            return (_orderClusterMarkersAboveOthers ? NSOrderedDescending : NSOrderedAscending);
-
-        if ( ! [annotation1.annotationType isEqualToString:kRMClusterAnnotationTypeName] &&   [annotation2.annotationType isEqualToString:kRMClusterAnnotationTypeName])
-            return (_orderClusterMarkersAboveOthers ? NSOrderedAscending : NSOrderedDescending);
-
-        CGPoint obj1Point = [self convertPoint:annotation1.position fromView:_overlayView];
-        CGPoint obj2Point = [self convertPoint:annotation2.position fromView:_overlayView];
-
-        if (obj1Point.y > obj2Point.y)
-            return NSOrderedDescending;
-
-        if (obj1Point.y < obj2Point.y)
-            return NSOrderedAscending;
-
-        return NSOrderedSame;
-    }];
-
-    for (CGFloat i = 0; i < [sortedAnnotations count]; i++)
-        ((RMAnnotation *)[sortedAnnotations objectAtIndex:i]).layer.zPosition = (CGFloat)i;
-
-    // bring any active callout annotation to the front
-    if (_currentAnnotation)
-        _currentAnnotation.layer.zPosition = _currentCallout.layer.zPosition = MAXFLOAT;
+    [self correctOrderingOfAllAnnotations];
 
     [CATransaction commit];
 }
@@ -2775,6 +2735,58 @@
 - (void)correctPositionOfAllAnnotations
 {
     [self correctPositionOfAllAnnotationsIncludingInvisibles:YES animated:NO];
+}
+
+- (void)correctOrderingOfAllAnnotations
+{
+    // sort annotation layer z-indexes so that they overlap properly
+    //
+    NSMutableArray *sortedAnnotations = [NSMutableArray arrayWithArray:[_visibleAnnotations allObjects]];
+
+    [sortedAnnotations filterUsingPredicate:[NSPredicate predicateWithFormat:@"isUserLocationAnnotation = NO"]];
+
+    [sortedAnnotations sortUsingComparator:^(id obj1, id obj2)
+     {
+         RMAnnotation *annotation1 = (RMAnnotation *)obj1;
+         RMAnnotation *annotation2 = (RMAnnotation *)obj2;
+
+         // clusters above/below non-clusters (based on _orderClusterMarkersAboveOthers)
+         //
+         if (   [annotation1.annotationType isEqualToString:kRMClusterAnnotationTypeName] && ! [annotation2.annotationType isEqualToString:kRMClusterAnnotationTypeName])
+             return (_orderClusterMarkersAboveOthers ? NSOrderedDescending : NSOrderedAscending);
+
+         if ( ! [annotation1.annotationType isEqualToString:kRMClusterAnnotationTypeName] &&   [annotation2.annotationType isEqualToString:kRMClusterAnnotationTypeName])
+             return (_orderClusterMarkersAboveOthers ? NSOrderedAscending : NSOrderedDescending);
+
+         // markers above shapes
+         //
+         if (   [annotation1.layer isKindOfClass:[RMMarker class]] && [annotation2.layer isKindOfClass:[RMShape class]])
+             return NSOrderedDescending;
+
+         if (   [annotation1.layer isKindOfClass:[RMShape class]] && [annotation2.layer isKindOfClass:[RMMarker class]])
+             return NSOrderedAscending;
+
+         // the rest in increasing y-position
+         //
+         CGPoint obj1Point = [self convertPoint:annotation1.position fromView:_overlayView];
+         CGPoint obj2Point = [self convertPoint:annotation2.position fromView:_overlayView];
+
+         if (obj1Point.y > obj2Point.y)
+             return NSOrderedDescending;
+
+         if (obj1Point.y < obj2Point.y)
+             return NSOrderedAscending;
+
+         return NSOrderedSame;
+     }];
+
+    for (CGFloat i = 0; i < [sortedAnnotations count]; i++)
+        ((RMAnnotation *)[sortedAnnotations objectAtIndex:i]).layer.zPosition = (CGFloat)i;
+
+    // bring any active callout annotation to the front
+    //
+    if (_currentAnnotation)
+        _currentAnnotation.layer.zPosition = _currentCallout.layer.zPosition = MAXFLOAT;
 }
 
 - (NSArray *)annotations
@@ -2806,17 +2818,13 @@
         if (annotation.layer == nil && [annotation isAnnotationOnScreen] && _delegateHasLayerForAnnotation)
             annotation.layer = [_delegate mapView:self layerForAnnotation:annotation];
 
-        if ( ! annotation.layer && [annotation.annotationType isEqualToString:kRMPointAnnotationTypeName])
-        {
-            annotation.layer = kDefaultAnnotationMarker;
-            annotation.layer.canShowCallout = YES;
-        }
-
         if (annotation.layer)
         {
             [_overlayView addSublayer:annotation.layer];
             [_visibleAnnotations addObject:annotation];
         }
+
+        [self correctOrderingOfAllAnnotations];
     }
 }
 
@@ -2892,7 +2900,7 @@
 
         self.userLocation = [RMUserLocation annotationWithMapView:self coordinate:CLLocationCoordinate2DMake(MAXFLOAT, MAXFLOAT) andTitle:nil];
 
-        _locationManager = [[CLLocationManager alloc] init];
+        _locationManager = [CLLocationManager new];
         _locationManager.headingFilter = 5.0;
         _locationManager.delegate = self;
         [_locationManager startUpdatingLocation];

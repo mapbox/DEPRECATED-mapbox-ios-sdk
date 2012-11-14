@@ -1,6 +1,7 @@
 //
-// MapBox.h
-// 
+//  RMPolylineAnnotation.h
+//  MapView
+//
 // Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
@@ -25,27 +26,11 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-// The list of header files for more convenient Route-Me import to projects.
-// (in alphabetic order)
+#import "RMShapeAnnotation.h"
 
-#import "RMAnnotation.h"
-#import "RMCacheObject.h"
-#import "RMCircle.h"
-#import "RMCompositeSource.h"
-#import "RMCoordinateGridSource.h"
-#import "RMDatabaseCache.h"
-#import "RMInteractiveSource.h"
-#import "RMMBTilesSource.h"
-#import "RMMapBoxSource.h"
-#import "RMMapView.h"
-#import "RMMapViewDelegate.h"
-#import "RMMarker.h"
-#import "RMMemoryCache.h"
-#import "RMPointAnnotation.h"
-#import "RMPolygonAnnotation.h"
-#import "RMPolylineAnnotation.h"
-#import "RMShape.h"
-#import "RMStaticMapView.h"
-#import "RMTileCache.h"
-#import "RMUserLocation.h"
-#import "RMUserTrackingBarButtonItem.h"
+/** An RMPolylineAnnotation is a concrete subclass of RMShapeAnnotation that is used to represent a shape consisting of one or more points that define connecting line segments. The points are connected end-to-end in the order they are provided. The first and last points are not connected to each other. The annotation will automatically have a layer created when needed that displays an RMShape. 
+ *
+ *   If you wish to customize the appearance, you should instead create an RMAnnotation and configure its layer directly. Providing a layer manually for instances of RMPolylineAnnotation will not have any effect. */
+@interface RMPolylineAnnotation : RMShapeAnnotation
+
+@end

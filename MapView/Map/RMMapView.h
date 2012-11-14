@@ -38,12 +38,6 @@
 #import "RMMapScrollView.h"
 #import "RMTileSourcesContainer.h"
 
-#define kRMPointAnnotationTypeName          @"RMPointAnnotation"
-#define kRMShapeAnnotationTypeName          @"RMShapeAnnotation"
-#define kRMUserLocationAnnotationTypeName   @"RMUserLocationAnnotation"
-#define kRMTrackingHaloAnnotationTypeName   @"RMTrackingHaloAnnotation"
-#define kRMAccuracyCircleAnnotationTypeName @"RMAccuracyCircleAnnotation"
-
 @class RMProjection;
 @class RMFractalTileProjection;
 @class RMTileCache;

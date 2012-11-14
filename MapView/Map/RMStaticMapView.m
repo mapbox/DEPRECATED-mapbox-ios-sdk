@@ -27,61 +27,80 @@
 
 #import "RMStaticMapView.h"
 
-#define RMStaticMapViewMaxWidth  640.0f
-#define RMStaticMapViewMaxHeight 640.0f
-#define RMStaticMapViewMinZoom     0.0f
-#define RMStaticMapViewMaxZoom    17.0f
+#import "RMAnnotation.h"
+#import "RMMapBoxSource.h"
+#import "RMMarker.h"
 
 @implementation RMStaticMapView
+{
+    __weak RMStaticMapView *_weakSelf;
+}
 
-- (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID centerCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(CGFloat)initialZoomLevel
+- (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID
+{
+    return [self initWithFrame:frame mapID:mapID centerCoordinate:CLLocationCoordinate2DMake(MAXFLOAT, MAXFLOAT) zoomLevel:-1 completionHandler:nil];
+}
+
+- (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID completionHandler:(void (^)(UIImage *))handler
+{
+    return [self initWithFrame:frame mapID:mapID centerCoordinate:CLLocationCoordinate2DMake(MAXFLOAT, MAXFLOAT) zoomLevel:-1 completionHandler:handler];
+}
+
+- (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID centerCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(CGFloat)zoomLevel
+{
+    return [self initWithFrame:frame mapID:mapID centerCoordinate:centerCoordinate zoomLevel:zoomLevel completionHandler:nil];
+}
+
+- (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID centerCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(CGFloat)zoomLevel completionHandler:(void (^)(UIImage *))handler
 {
     if (!(self = [super initWithFrame:frame]))
         return nil;
 
-    CGRect requestFrame = CGRectMake(frame.origin.x, frame.origin.y, fminf(frame.size.width, RMStaticMapViewMaxWidth), fminf(frame.size.height, RMStaticMapViewMaxHeight));
+    RMMapBoxSource *tileSource = [[[RMMapBoxSource alloc] initWithMapID:mapID enablingDataOnMapView:self] autorelease];
+
+    self.tileSource = tileSource;
 
     if ( ! CLLocationCoordinate2DIsValid(centerCoordinate))
-        centerCoordinate = CLLocationCoordinate2DMake(0, 0);
+        centerCoordinate = [tileSource centerCoordinate];
 
-    initialZoomLevel = fmaxf(initialZoomLevel, RMStaticMapViewMinZoom);
-    initialZoomLevel = fminf(initialZoomLevel, RMStaticMapViewMaxZoom);
+    [self setCenterCoordinate:centerCoordinate animated:NO];
+
+    if (zoomLevel < 0)
+        zoomLevel = [tileSource centerZoom];
+
+    [self setZoom:zoomLevel];
 
     self.backgroundColor = [UIColor colorWithPatternImage:[RMMapView resourceImageNamed:@"LoadingTile.png"]];
 
-    self.contentMode = UIViewContentModeCenter;
+    self.hideAttribution = YES;
 
-    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    self.showsUserLocation = NO;
 
-    [spinner startAnimating];
+    self.userInteractionEnabled = NO;
 
-    spinner.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+    _weakSelf = self;
 
-    spinner.center = self.center;
+    dispatch_async(tileSource.dataQueue, ^(void)
+    {
+        dispatch_sync(dispatch_get_main_queue(), ^(void)
+        {
+            UIImage *image = [_weakSelf takeSnapshot];
 
-    [self addSubview:spinner];
-
-    NSURL *imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://api.tiles.mapbox.com/v3/%@/%f,%f,%i/%ix%i.png", mapID, centerCoordinate.longitude, centerCoordinate.latitude, (int)roundf(initialZoomLevel), (int)roundf(requestFrame.size.width), (int)roundf(requestFrame.size.height)]];
-
-    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:imageURL]
-                                       queue:[NSOperationQueue new]
-                           completionHandler:^(NSURLResponse *response, NSData *responseData, NSError *error)
-                           {
-                               [self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-
-                               if (responseData)
-                               {
-                                   dispatch_async(dispatch_get_main_queue(), ^(void)
-                                   {
-                                       self.image = [UIImage imageWithData:responseData];
-                                   });
-                               }
-
-                               else
-                                   return; // TODO: notify delegate of error & display something
-                           }];
+            handler(image);
+        });
+    });
 
     return self;
+    
+}
+
+- (void)addAnnotation:(RMAnnotation *)annotation
+{
+    annotation.layer = [[RMMarker alloc] initWithMapBoxMarkerImage:[annotation.userInfo objectForKey:@"marker-symbol"]
+                                                      tintColorHex:[annotation.userInfo objectForKey:@"marker-color"]
+                                                        sizeString:[annotation.userInfo objectForKey:@"marker-size"]];
+
+    [super addAnnotation:annotation];
 }
 
 @end

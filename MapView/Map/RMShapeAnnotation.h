@@ -1,6 +1,7 @@
 //
-// MapBox.h
-// 
+//  RMShapeAnnotation.h
+//  MapView
+//
 // Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
@@ -25,27 +26,20 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-// The list of header files for more convenient Route-Me import to projects.
-// (in alphabetic order)
-
 #import "RMAnnotation.h"
-#import "RMCacheObject.h"
-#import "RMCircle.h"
-#import "RMCompositeSource.h"
-#import "RMCoordinateGridSource.h"
-#import "RMDatabaseCache.h"
-#import "RMInteractiveSource.h"
-#import "RMMBTilesSource.h"
-#import "RMMapBoxSource.h"
-#import "RMMapView.h"
-#import "RMMapViewDelegate.h"
-#import "RMMarker.h"
-#import "RMMemoryCache.h"
-#import "RMPointAnnotation.h"
-#import "RMPolygonAnnotation.h"
-#import "RMPolylineAnnotation.h"
-#import "RMShape.h"
-#import "RMStaticMapView.h"
-#import "RMTileCache.h"
-#import "RMUserLocation.h"
-#import "RMUserTrackingBarButtonItem.h"
+
+/** An RMShapeAnnotation is an abstract subclass of RMAnnotation that is used to represent a shape consisting of one or more points. You should not create instances of this class directly. Instead, you should create instances of the RMPolylineAnnotation or RMPolygonAnnotation classes. However, you can use the properties of this class to access information about the specific points associated with the line or polygon. 
+*
+*   Providing a layer manually for instances of RMShapeAnnotation subclasses will not have any effect. */
+@interface RMShapeAnnotation : RMAnnotation
+
+/** Initialize a shape annotation.
+*   @param aMapView The map view on which to place the annotation.
+*   @param points An array of CLLocation points defining the shape. The data in this array is copied to the new object.
+*   @return An initialized shape annotation object, or `nil` if an annotation was unable to be initialized. */
+- (id)initWithMapView:(RMMapView *)aMapView points:(NSArray *)points;
+
+/** The array of points associated with the shape. (read-only) */
+@property (nonatomic, readonly, retain) NSArray *points;
+
+@end

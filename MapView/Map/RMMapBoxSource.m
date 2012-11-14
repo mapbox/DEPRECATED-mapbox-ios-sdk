@@ -34,7 +34,7 @@
 #import "RMMapBoxSource.h"
 
 #import "RMMapView.h"
-#import "RMAnnotation.h"
+#import "RMPointAnnotation.h"
 
 @interface RMMapBoxSource ()
 
@@ -48,7 +48,7 @@
 
 @implementation RMMapBoxSource
 
-@synthesize infoDictionary=_infoDictionary, imageQuality=_imageQuality;
+@synthesize infoDictionary=_infoDictionary, imageQuality=_imageQuality, dataQueue=_dataQueue;
 
 - (id)initWithMapID:(NSString *)mapID
 {
@@ -64,15 +64,17 @@
 {
     if (self = [super init])
     {
+        _dataQueue = dispatch_queue_create(nil, DISPATCH_QUEUE_SERIAL);
+
         _infoDictionary = (NSDictionary *)[[NSJSONSerialization JSONObjectWithData:[tileJSON dataUsingEncoding:NSUTF8StringEncoding]
                                                                            options:0
                                                                              error:nil] retain];
-        
+
         id dataObject;
         
         if (mapView && (dataObject = [_infoDictionary objectForKey:@"data"]) && dataObject)
         {
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(void)
+            dispatch_async(_dataQueue, ^(void)
             {
                 if ([dataObject isKindOfClass:[NSArray class]] && [[dataObject objectAtIndex:0] isKindOfClass:[NSString class]])
                 {
@@ -101,14 +103,14 @@
                                     .latitude  = [[[[feature objectForKey:@"geometry"] objectForKey:@"coordinates"] objectAtIndex:1] floatValue]
                                 };
                                 
-                                RMAnnotation *pointAnnotation = [RMAnnotation annotationWithMapView:mapView coordinate:coordinate andTitle:[properties objectForKey:@"title"]];
+                                RMPointAnnotation *pointAnnotation = [RMPointAnnotation annotationWithMapView:mapView coordinate:coordinate andTitle:[properties objectForKey:@"title"]];
                                 
                                 pointAnnotation.userInfo = properties;
                                 
                                 dispatch_async(dispatch_get_main_queue(), ^(void)
                                 {
                                     [mapView addAnnotation:pointAnnotation];
-                                });                                
+                                });
                             }
                         }
                     }
@@ -175,6 +177,7 @@
 
 - (void)dealloc
 {
+    dispatch_release(_dataQueue);
     [_infoDictionary release];
     [super dealloc];
 }

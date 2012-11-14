@@ -11,6 +11,7 @@
 #import "RMAnnotation.h"
 #import "RMPixel.h"
 #import "RMMapView.h"
+#import "RMUserLocation.h"
 
 @implementation RMMapOverlayView
 
