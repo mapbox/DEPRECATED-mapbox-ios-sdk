@@ -55,9 +55,10 @@
     [super dealloc];
 }
 
-- (void)setLayer:(RMMapLayer *)layer
+- (void)setLayer:(RMMapLayer *)newLayer
 {
-    RMLog(@"Setting a custom layer on an %@ is a no-op", [self class]);
+    if (newLayer)
+        RMLog(@"Setting a custom layer on an %@ is a no-op", [self class]);
 }
 
 - (RMMapLayer *)layer
