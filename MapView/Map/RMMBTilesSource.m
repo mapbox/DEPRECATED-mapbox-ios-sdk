@@ -248,18 +248,6 @@
     return bounds;
 }
 
-- (BOOL)coversFullWorld
-{
-    RMSphericalTrapezium ownBounds     = [self latitudeLongitudeBoundingBox];
-    RMSphericalTrapezium defaultBounds = kMBTilesDefaultLatLonBoundingBox;
-
-    if (ownBounds.southWest.longitude <= defaultBounds.southWest.longitude + 10 && 
-        ownBounds.northEast.longitude >= defaultBounds.northEast.longitude - 10)
-        return YES;
-
-    return NO;
-}
-
 - (NSString *)legend
 {
     __block NSString *legend;
@@ -279,6 +267,57 @@
     }];
 
     return legend;
+}
+
+- (CLLocationCoordinate2D)centerCoordinate
+{
+    __block CLLocationCoordinate2D centerCoordinate = CLLocationCoordinate2DMake(0, 0);
+
+    [queue inDatabase:^(FMDatabase *db)
+    {
+        FMResultSet *results = [db executeQuery:@"select value from metadata where name = 'center'"];
+
+        [results next];
+
+        if ([results stringForColumn:@"value"] && [[[results stringForColumn:@"value"] componentsSeparatedByString:@","] count] >= 2)
+            centerCoordinate = CLLocationCoordinate2DMake([[[[results stringForColumn:@"value"] componentsSeparatedByString:@","] objectAtIndex:1] doubleValue],
+                                                          [[[[results stringForColumn:@"value"] componentsSeparatedByString:@","] objectAtIndex:0] doubleValue]);
+
+        [results close];
+    }];
+    
+    return centerCoordinate;
+}
+
+- (float)centerZoom
+{
+    __block CGFloat centerZoom = [self minZoom];
+
+    [queue inDatabase:^(FMDatabase *db)
+    {
+        FMResultSet *results = [db executeQuery:@"select value from metadata where name = 'center'"];
+
+        [results next];
+
+        if ([results stringForColumn:@"value"] && [[[results stringForColumn:@"value"] componentsSeparatedByString:@","] count] >= 3)
+            centerZoom = [[[[results stringForColumn:@"value"] componentsSeparatedByString:@","] objectAtIndex:2] floatValue];
+
+         [results close];
+     }];
+    
+    return centerZoom;
+}
+
+- (BOOL)coversFullWorld
+{
+    RMSphericalTrapezium ownBounds     = [self latitudeLongitudeBoundingBox];
+    RMSphericalTrapezium defaultBounds = kMBTilesDefaultLatLonBoundingBox;
+
+    if (ownBounds.southWest.longitude <= defaultBounds.southWest.longitude + 10 &&
+        ownBounds.northEast.longitude >= defaultBounds.northEast.longitude - 10)
+        return YES;
+
+    return NO;
 }
 
 - (void)didReceiveMemoryWarning
