@@ -3067,7 +3067,7 @@
 
             self.userLocation.layer.hidden = YES;
 
-            _userHaloTrackingView = [[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"TrackingDotHalo"]];
+            _userHaloTrackingView = [[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"TrackingDotHalo.png"]];
 
             _userHaloTrackingView.center = CGPointMake(round([self bounds].size.width  / 2),
                                                       round([self bounds].size.height / 2));
