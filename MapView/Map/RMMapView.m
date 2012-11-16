@@ -313,8 +313,6 @@
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
-    LogMethod();
-
     if (!(self = [super initWithCoder:aDecoder]))
         return nil;
 
@@ -334,15 +332,11 @@
 
 - (id)initWithFrame:(CGRect)frame
 {
-    LogMethod();
-
     return [self initWithFrame:frame andTilesource:[[RMOpenStreetMapSource new] autorelease]];
 }
 
 - (id)initWithFrame:(CGRect)frame andTilesource:(id <RMTileSource>)newTilesource
 {
-	LogMethod();
-
 	CLLocationCoordinate2D coordinate;
 	coordinate.latitude = kDefaultInitialLatitude;
 	coordinate.longitude = kDefaultInitialLongitude;
@@ -364,8 +358,6 @@
        minZoomLevel:(float)minZoomLevel
     backgroundImage:(UIImage *)backgroundImage
 {
-    LogMethod();
-
     if (!(self = [super initWithFrame:frame]))
         return nil;
 
@@ -417,8 +409,6 @@
 
 - (void)dealloc
 {
-    LogMethod();
-
     [self setDelegate:nil];
     [self setBackgroundView:nil];
     [self setQuadTree:nil];
