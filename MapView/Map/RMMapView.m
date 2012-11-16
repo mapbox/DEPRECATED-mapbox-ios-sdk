@@ -3077,9 +3077,6 @@
                                                      UIViewAutoresizingFlexibleTopMargin   |
                                                      UIViewAutoresizingFlexibleBottomMargin;
 
-            for (NSString *animationKey in _trackingHaloAnnotation.layer.animationKeys)
-                [_userHaloTrackingView.layer addAnimation:[[[_trackingHaloAnnotation.layer animationForKey:animationKey] copy] autorelease] forKey:animationKey];
-
             [self insertSubview:_userHaloTrackingView belowSubview:_overlayView];
 
             _userHeadingTrackingView = [[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"HeadingAngleSmall.png"]];
@@ -3269,7 +3266,15 @@
     _trackingHaloAnnotation.layer.hidden = ( ! CLLocationCoordinate2DIsValid(self.userLocation.coordinate) || newLocation.horizontalAccuracy > 10 || self.userTrackingMode == RMUserTrackingModeFollowWithHeading || self.userLocation.hasCustomLayer);
 
     if (_userHaloTrackingView)
+    {
         _userHaloTrackingView.hidden = ( ! CLLocationCoordinate2DIsValid(self.userLocation.coordinate) || newLocation.horizontalAccuracy > 10 || self.userLocation.hasCustomLayer);
+
+        // ensure animations are copied from layer
+        //
+        if ( ! [_userHaloTrackingView.layer.animationKeys count])
+            for (NSString *animationKey in _trackingHaloAnnotation.layer.animationKeys)
+                [_userHaloTrackingView.layer addAnimation:[[[_trackingHaloAnnotation.layer animationForKey:animationKey] copy] autorelease] forKey:animationKey];
+    }
 
     if ( ! [_annotations containsObject:self.userLocation])
         [self addAnnotation:self.userLocation];
