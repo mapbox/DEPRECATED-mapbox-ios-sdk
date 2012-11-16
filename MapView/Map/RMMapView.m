@@ -405,6 +405,9 @@
 {
     NSAssert([[NSBundle mainBundle] pathForResource:@"MapBox" ofType:@"bundle"], @"Resource bundle not found in application.");
 
+    if ( ! [[imageName pathExtension] length])
+        imageName = [imageName stringByAppendingString:@".png"];
+
     NSString *bundlePath = [[NSBundle mainBundle] pathForResource:@"MapBox" ofType:@"bundle"];
     NSBundle *resourcesBundle = [NSBundle bundleWithPath:bundlePath];
     NSString *imagePath = [resourcesBundle pathForResource:imageName ofType:nil];
