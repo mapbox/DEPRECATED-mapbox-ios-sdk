@@ -47,6 +47,8 @@ typedef enum : NSUInteger {
 *
 *   An annotation layer can be created using RMMapLayer and its subclasses, such as RMMarker for points and RMShape for shapes such as lines and polygons.
 *
+*   If the object in the annotation parameter is an instance of the RMUserLocation class, you can provide a custom layer to denote the user’s location. To display the user’s location using the default system layer, return `nil`.
+*
 *   If you do not implement this method, or if you return `nil` from your implementation for annotations other than the user location annotation, the map view does not display a layer for the annotation.
 *
 *   @param mapView The map view that requested the annotation layer.
