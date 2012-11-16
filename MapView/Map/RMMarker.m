@@ -67,6 +67,7 @@
         return nil;
 
     self.contents = (id)[image CGImage];
+    self.contentsScale = image.scale;
     self.bounds = CGRectMake(0, 0, image.size.width, image.size.height);
     self.anchorPoint = _anchorPoint;
 
