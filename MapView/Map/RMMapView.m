@@ -3070,12 +3070,12 @@
             _userHaloTrackingView = [[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"TrackingDotHalo.png"]];
 
             _userHaloTrackingView.center = CGPointMake(round([self bounds].size.width  / 2),
-                                                      round([self bounds].size.height / 2));
+                                                       round([self bounds].size.height / 2));
 
             _userHaloTrackingView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin  |
-                                                    UIViewAutoresizingFlexibleRightMargin |
-                                                    UIViewAutoresizingFlexibleTopMargin   |
-                                                    UIViewAutoresizingFlexibleBottomMargin;
+                                                     UIViewAutoresizingFlexibleRightMargin |
+                                                     UIViewAutoresizingFlexibleTopMargin   |
+                                                     UIViewAutoresizingFlexibleBottomMargin;
 
             for (NSString *animationKey in _trackingHaloAnnotation.layer.animationKeys)
                 [_userHaloTrackingView.layer addAnimation:[[[_trackingHaloAnnotation.layer animationForKey:animationKey] copy] autorelease] forKey:animationKey];
@@ -3085,9 +3085,9 @@
             _userHeadingTrackingView = [[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"HeadingAngleSmall.png"]];
 
             _userHeadingTrackingView.frame = CGRectMake((self.bounds.size.width  / 2) - (_userHeadingTrackingView.bounds.size.width / 2),
-                                                       (self.bounds.size.height / 2) - _userHeadingTrackingView.bounds.size.height,
-                                                       _userHeadingTrackingView.bounds.size.width,
-                                                       _userHeadingTrackingView.bounds.size.height * 2);
+                                                        (self.bounds.size.height / 2) - _userHeadingTrackingView.bounds.size.height,
+                                                        _userHeadingTrackingView.bounds.size.width,
+                                                        _userHeadingTrackingView.bounds.size.height * 2);
 
             _userHeadingTrackingView.contentMode = UIViewContentModeTop;
 
