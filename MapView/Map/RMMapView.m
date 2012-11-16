@@ -3096,10 +3096,12 @@
 
             [self insertSubview:_userHeadingTrackingView belowSubview:_overlayView];
 
-            _userLocationTrackingView = [[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"TrackingDot.png"]];
+            _userLocationTrackingView = [[UIImageView alloc] initWithImage:[UIImage imageWithCGImage:(CGImageRef)self.userLocation.layer.contents
+                                                                                               scale:self.userLocation.layer.contentsScale
+                                                                                         orientation:UIImageOrientationUp]];
 
             _userLocationTrackingView.center = CGPointMake(round([self bounds].size.width  / 2), 
-                                                          round([self bounds].size.height / 2));
+                                                           round([self bounds].size.height / 2));
 
             _userLocationTrackingView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin  |
                                                          UIViewAutoresizingFlexibleRightMargin |

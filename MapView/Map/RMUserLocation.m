@@ -23,10 +23,6 @@
     if ( ! (self = [super initWithMapView:aMapView coordinate:aCoordinate andTitle:aTitle]))
         return nil;
 
-    self.layer = [[[RMMarker alloc] initWithUIImage:[RMMapView resourceImageNamed:@"TrackingDot.png"]] autorelease];
-
-    self.layer.zPosition = -MAXFLOAT + 2;
-
     self.annotationType = kRMUserLocationAnnotationTypeName;
 
     self.clusteringEnabled = NO;
@@ -41,6 +37,22 @@
     [_location release]; _location = nil;
     [_heading release]; _heading = nil;
     [super dealloc];
+}
+
+- (RMMapLayer *)layer
+{
+    if ( ! super.layer)
+    {
+        if ([self.mapView.delegate respondsToSelector:@selector(mapView:layerForAnnotation:)])
+            super.layer = [self.mapView.delegate mapView:self.mapView layerForAnnotation:self];
+
+        if ( ! super.layer)
+            super.layer = [[[RMMarker alloc] initWithUIImage:[RMMapView resourceImageNamed:@"TrackingDot.png"]] autorelease];
+
+        super.layer.zPosition = -MAXFLOAT + 2;
+    }
+
+    return super.layer;
 }
 
 - (BOOL)isUpdating
