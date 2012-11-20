@@ -42,7 +42,7 @@
 {
     if ( ! [super layer])
     {
-        RMMarker *marker = [[[RMMarker alloc] initWithMapBoxMarkerImage:@"star" tintColor:[UIColor redColor]] autorelease];
+        RMMarker *marker = [[[RMMarker alloc] initWithMapBoxMarkerImage] autorelease];
 
         marker.canShowCallout = YES;
 
