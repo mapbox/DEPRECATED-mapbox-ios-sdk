@@ -506,15 +506,13 @@
 				12F2031E0EBB65E9003D7B6B /* RMMapViewDelegate.h */,
 				DD7C7E36164C894F0021CCA5 /* RMStaticMapView.h */,
 				DD7C7E37164C894F0021CCA5 /* RMStaticMapView.m */,
-				B8C974B30E8A23C5007D16AD /* Coordinate Systems */,
-				B83E64E20E80E73F001663B6 /* Projections */,
-				B83E64CF0E80E73F001663B6 /* Tile Cache */,
 				B83E64EB0E80E73F001663B6 /* Tile Sources */,
-				B83E64CE0E80E73F001663B6 /* Tile & Overlay Rendering */,
+				B83E64CF0E80E73F001663B6 /* Tile Cache */,
 				B86F26A80E8742ED007A3773 /* Annotation Layers */,
 				DD8FD7571559ED930044D96F /* User Location */,
 				DD3BEF71159134E0007892D8 /* Attribution */,
 				1266929E0EB75BEA00E002D5 /* Configuration */,
+				DD932B5B165C261A00D69D49 /* Low-Level Details */,
 				DD8FD7581559EDA80044D96F /* Resources */,
 				B8474B8C0EB40094006A0BC1 /* FMDB */,
 			);
@@ -583,6 +581,16 @@
 				DDA6B8C1155CAB9A003DB5D8 /* TrackingLocation@2x.png */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		DD932B5B165C261A00D69D49 /* Low-Level Details */ = {
+			isa = PBXGroup;
+			children = (
+				B8C974B30E8A23C5007D16AD /* Coordinate Systems */,
+				B83E64E20E80E73F001663B6 /* Projections */,
+				B83E64CE0E80E73F001663B6 /* Tile & Overlay Rendering */,
+			);
+			name = "Low-Level Details";
 			sourceTree = "<group>";
 		};
 		DDC4BED1152E3BC200089409 /* Interactivity */ = {
