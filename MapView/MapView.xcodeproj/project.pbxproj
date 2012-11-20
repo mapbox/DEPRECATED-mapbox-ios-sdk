@@ -199,7 +199,7 @@
 		25757F4D1291C8640083D504 /* RMCircle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMCircle.h; sourceTree = "<group>"; };
 		25757F4E1291C8640083D504 /* RMCircle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMCircle.m; sourceTree = "<group>"; };
 		288765A40DF7441C002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		32CA4F630368D1EE00C91783 /* MapView_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapView_Prefix.pch; sourceTree = "<group>"; };
+		32CA4F630368D1EE00C91783 /* MapView_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapView_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		96492C3F0FA8AD3400EBA6D2 /* RMGlobalConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMGlobalConstants.h; sourceTree = "<group>"; };
 		B1EB26C510B5D8E6009F8658 /* RMNotifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMNotifications.h; sourceTree = "<group>"; };
 		B83E64B60E80E73F001663B6 /* RMPixel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMPixel.h; sourceTree = "<group>"; };
@@ -371,7 +371,6 @@
 				DD932BC2165C294100D69D49 /* Externals */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				32CA4F630368D1EE00C91783 /* MapView_Prefix.pch */,
 			);
 			name = CustomTemplate;
 			sourceTree = "<group>";
@@ -498,8 +497,6 @@
 			isa = PBXGroup;
 			children = (
 				DD4BE197161CE296003EF677 /* MapBox.h */,
-				96492C3F0FA8AD3400EBA6D2 /* RMGlobalConstants.h */,
-				B1EB26C510B5D8E6009F8658 /* RMNotifications.h */,
 				B8C974690E8A1A50007D16AD /* RMMapView.h */,
 				B8C9746A0E8A1A50007D16AD /* RMMapView.m */,
 				12F2031E0EBB65E9003D7B6B /* RMMapViewDelegate.h */,
@@ -563,6 +560,9 @@
 		DD932B5B165C261A00D69D49 /* Low-Level Details */ = {
 			isa = PBXGroup;
 			children = (
+				32CA4F630368D1EE00C91783 /* MapView_Prefix.pch */,
+				96492C3F0FA8AD3400EBA6D2 /* RMGlobalConstants.h */,
+				B1EB26C510B5D8E6009F8658 /* RMNotifications.h */,
 				B8C974B30E8A23C5007D16AD /* Coordinate Systems */,
 				B83E64E20E80E73F001663B6 /* Projections */,
 				B83E64CE0E80E73F001663B6 /* Tile & Overlay Rendering */,
