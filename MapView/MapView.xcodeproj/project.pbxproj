@@ -368,6 +368,7 @@
 			isa = PBXGroup;
 			children = (
 				B8C9740D0E8A196E007D16AD /* Map */,
+				DD932BC2165C294100D69D49 /* Externals */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 				32CA4F630368D1EE00C91783 /* MapView_Prefix.pch */,
@@ -384,7 +385,6 @@
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
 				B83E65680E80E830001663B6 /* QuartzCore.framework */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
-				DD97C11516489678007C4652 /* libProj4.a */,
 				B8474BC00EB4019A006A0BC1 /* libsqlite3.dylib */,
 			);
 			name = Frameworks;
@@ -464,7 +464,7 @@
 				DD2B374E14CF814F008DE8CB /* FMDatabaseQueue.m */,
 			);
 			name = FMDB;
-			path = FMDB/src;
+			path = Map/FMDB/src;
 			sourceTree = "<group>";
 		};
 		B86F26A80E8742ED007A3773 /* Annotation Layers */ = {
@@ -490,7 +490,6 @@
 				16F98C951590CFF000FF90CE /* RMShape.m */,
 				25757F4D1291C8640083D504 /* RMCircle.h */,
 				25757F4E1291C8640083D504 /* RMCircle.m */,
-				DD76E12E161E347B00F60F43 /* SMCallout */,
 			);
 			name = "Annotation Layers";
 			sourceTree = "<group>";
@@ -514,7 +513,6 @@
 				1266929E0EB75BEA00E002D5 /* Configuration */,
 				DD932B5B165C261A00D69D49 /* Low-Level Details */,
 				DD932BC1165C287600D69D49 /* Resources */,
-				B8474B8C0EB40094006A0BC1 /* FMDB */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -548,6 +546,7 @@
 				DD1E3C6D161F954F004FC649 /* SMCalloutView.m */,
 			);
 			name = SMCallout;
+			path = Map;
 			sourceTree = "<group>";
 		};
 		DD8FD7571559ED930044D96F /* User Location */ = {
@@ -593,12 +592,22 @@
 			path = ..;
 			sourceTree = "<group>";
 		};
+		DD932BC2165C294100D69D49 /* Externals */ = {
+			isa = PBXGroup;
+			children = (
+				B8474B8C0EB40094006A0BC1 /* FMDB */,
+				DDC4BEEE152E3DEC00089409 /* GRMustache */,
+				DD76E12E161E347B00F60F43 /* SMCallout */,
+				DD97C11516489678007C4652 /* libProj4.a */,
+			);
+			name = Externals;
+			sourceTree = "<group>";
+		};
 		DDC4BED1152E3BC200089409 /* Interactivity */ = {
 			isa = PBXGroup;
 			children = (
 				DDC4BED3152E3BD700089409 /* RMInteractiveSource.h */,
 				DDC4BED4152E3BD700089409 /* RMInteractiveSource.m */,
-				DDC4BEEE152E3DEC00089409 /* GRMustache */,
 			);
 			name = Interactivity;
 			sourceTree = "<group>";
@@ -610,6 +619,7 @@
 				DD41961E16263E400049E6BA /* libGRMustache5-iOS.a */,
 			);
 			name = GRMustache;
+			path = Map;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
