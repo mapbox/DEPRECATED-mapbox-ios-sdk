@@ -433,7 +433,7 @@
 			name = Projections;
 			sourceTree = "<group>";
 		};
-		B83E64EB0E80E73F001663B6 /* Tile Source */ = {
+		B83E64EB0E80E73F001663B6 /* Tile Sources */ = {
 			isa = PBXGroup;
 			children = (
 				16EC85CB133CA69A00219947 /* Map sources */,
@@ -446,7 +446,7 @@
 				16EC85CE133CA6C300219947 /* RMAbstractWebMapSource.h */,
 				16EC85CF133CA6C300219947 /* RMAbstractWebMapSource.m */,
 			);
-			name = "Tile Source";
+			name = "Tile Sources";
 			sourceTree = "<group>";
 		};
 		B8474B8C0EB40094006A0BC1 /* FMDB */ = {
@@ -509,7 +509,7 @@
 				B8C974B30E8A23C5007D16AD /* Coordinate Systems */,
 				B83E64E20E80E73F001663B6 /* Projections */,
 				B83E64CF0E80E73F001663B6 /* Tile Cache */,
-				B83E64EB0E80E73F001663B6 /* Tile Source */,
+				B83E64EB0E80E73F001663B6 /* Tile Sources */,
 				B83E64CE0E80E73F001663B6 /* Tile & Overlay Rendering */,
 				B86F26A80E8742ED007A3773 /* Annotation Layers */,
 				DD8FD7571559ED930044D96F /* User Location */,
