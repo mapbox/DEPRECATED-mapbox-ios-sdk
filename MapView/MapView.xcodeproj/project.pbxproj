@@ -322,7 +322,7 @@
 			name = Configuration;
 			sourceTree = "<group>";
 		};
-		16EC85CB133CA69A00219947 /* Map sources */ = {
+		16EC85CB133CA69A00219947 /* Map Sources */ = {
 			isa = PBXGroup;
 			children = (
 				16E5A63815E531F200C92A5A /* RMCompositeSource.h */,
@@ -352,7 +352,7 @@
 				DD4195C7162356900049E6BA /* RMBingSource.h */,
 				DD4195C8162356900049E6BA /* RMBingSource.m */,
 			);
-			name = "Map sources";
+			name = "Map Sources";
 			sourceTree = "<group>";
 		};
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
@@ -435,7 +435,7 @@
 		B83E64EB0E80E73F001663B6 /* Tile Sources */ = {
 			isa = PBXGroup;
 			children = (
-				16EC85CB133CA69A00219947 /* Map sources */,
+				16EC85CB133CA69A00219947 /* Map Sources */,
 				DDC4BED1152E3BC200089409 /* Interactivity */,
 				B83E64EC0E80E73F001663B6 /* RMTileSource.h */,
 				16FBF07415936BF1004ECAD1 /* RMTileSourcesContainer.h */,
