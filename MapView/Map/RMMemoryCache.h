@@ -39,6 +39,11 @@
 *   @return An initialized memory cache object or `nil` if the object couldn't be created. */
 - (id)initWithCapacity:(NSUInteger)aCapacity;
 
+/** @name Cache Capacity */
+
+/** The capacity, in number of tiles, that the memory cache can hold. */
+@property (nonatomic, readonly, assign) NSUInteger capacity;
+
 /** @name Making Space in the Cache */
 
 /** Remove the least-recently used image from the cache if the cache is at or over capacity. This removes a single image from the cache. */

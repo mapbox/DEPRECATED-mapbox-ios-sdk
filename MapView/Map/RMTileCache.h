@@ -101,6 +101,9 @@ typedef enum : short {
 - (void)addCache:(id <RMTileCache>)cache;
 - (void)insertCache:(id <RMTileCache>)cache atIndex:(NSUInteger)index;
 
+/** The list of caches managed by a cache manager. This could include memory-based, disk-based, or other types of caches. */
+@property (nonatomic, readonly, retain) NSArray *tileCaches;
+
 - (void)didReceiveMemoryWarning;
 
 @end

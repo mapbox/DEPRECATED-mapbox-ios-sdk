@@ -15,6 +15,7 @@
 #import "RMMBTilesSource.h"
 #import "RMDBMapSource.h"
 #import "RMAbstractWebMapSource.h"
+#import "RMDatabaseCache.h"
 
 #define IS_VALID_TILE_IMAGE(image) (image != nil && [image isKindOfClass:[UIImage class]])
 
@@ -132,7 +133,13 @@
 
         if (zoom >= _tileSource.minZoom && zoom <= _tileSource.maxZoom)
         {
-            if ( ! [_tileSource isKindOfClass:[RMAbstractWebMapSource class]])
+            RMDatabaseCache *databaseCache = nil;
+
+            for (RMTileCache *componentCache in _mapView.tileCache.tileCaches)
+                if ([componentCache isKindOfClass:[RMDatabaseCache class]])
+                    databaseCache = (RMDatabaseCache *)componentCache;
+
+            if ( ! [_tileSource isKindOfClass:[RMAbstractWebMapSource class]] || ! databaseCache || ! databaseCache.capacity)
             {
                 // for non-web tiles, query the source directly since trivial blocking
                 //

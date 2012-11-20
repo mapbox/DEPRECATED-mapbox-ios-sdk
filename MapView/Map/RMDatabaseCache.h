@@ -62,6 +62,9 @@
 *   @param theCapacity The number of tiles to allow to accumulate in the database before purging begins. */
 - (void)setCapacity:(NSUInteger)theCapacity;
 
+/** The capacity, in number of tiles, that the database cache can hold. */
+@property (nonatomic, readonly, assign) NSUInteger capacity;
+
 /** Set the minimum number of tiles to purge when clearing space in the cache.
 *   @param thePurgeMinimum The number of tiles to delete at the time the cache is purged. */
 - (void)setMinimalPurge:(NSUInteger)thePurgeMinimum;

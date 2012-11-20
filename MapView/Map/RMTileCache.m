@@ -138,6 +138,11 @@
     });
 }
 
+- (NSArray *)tileCaches
+{
+    return [NSArray arrayWithArray:_tileCaches];
+}
+
 + (NSNumber *)tileHash:(RMTile)tile
 {
 	return [NSNumber numberWithUnsignedLongLong:RMTileKey(tile)];
