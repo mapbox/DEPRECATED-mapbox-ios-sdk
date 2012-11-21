@@ -341,20 +341,23 @@
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void)
     {
-        if (_backgroundFetchQueue)
+        @synchronized (self)
         {
-            [_backgroundFetchQueue cancelAllOperations];
-            [_backgroundFetchQueue waitUntilAllOperationsAreFinished];
-            [_backgroundFetchQueue release]; _backgroundFetchQueue = nil;
+            if (_backgroundFetchQueue)
+            {
+                [_backgroundFetchQueue cancelAllOperations];
+                [_backgroundFetchQueue waitUntilAllOperationsAreFinished];
+                [_backgroundFetchQueue release]; _backgroundFetchQueue = nil;
+            }
+
+            if (_activeTileSource)
+                [_activeTileSource release]; _activeTileSource = nil;
+
+            dispatch_async(dispatch_get_main_queue(), ^(void)
+            {
+                [_backgroundCacheDelegate tileCacheDidCancelBackgroundCache:self];
+            });
         }
-
-        if (_activeTileSource)
-            [_activeTileSource release]; _activeTileSource = nil;
-
-        dispatch_async(dispatch_get_main_queue(), ^(void)
-        {
-            [_backgroundCacheDelegate tileCacheDidCancelBackgroundCache:self];
-        });
     });
 }
 
