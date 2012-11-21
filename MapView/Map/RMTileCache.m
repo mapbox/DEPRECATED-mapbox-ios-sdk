@@ -313,7 +313,7 @@
                         {
                             progTile++;
 
-                            [_backgroundCacheDelegate tileCache:self didBackgroundCacheTileIndex:progTile ofTotalTileCount:totalTiles];
+                            [_backgroundCacheDelegate tileCache:self didBackgroundCacheTile:RMTileMake(x, y, zoom) withIndex:progTile ofTotalTileCount:totalTiles];
 
                             if (progTile == totalTiles)
                             {
