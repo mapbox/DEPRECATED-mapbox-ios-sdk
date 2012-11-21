@@ -305,11 +305,13 @@
                                                                                                 forTileSource:_activeTileSource
                                                                                                    usingCache:self] autorelease];
 
+                __block RMTileCacheDownloadOperation *internalOperation = operation;
+
                 [operation setCompletionBlock:^(void)
                 {
-                    dispatch_async(dispatch_get_main_queue(), ^(void)
+                    dispatch_sync(dispatch_get_main_queue(), ^(void)
                     {
-                        if ( ! [operation isCancelled])
+                        if ( ! [internalOperation isCancelled])
                         {
                             progTile++;
 
@@ -326,6 +328,8 @@
                                 [_backgroundCacheDelegate tileCacheDidFinishBackgroundCache:self];
                             }
                         }
+
+                        internalOperation = nil;
                     });
                 }];
 
@@ -357,7 +361,7 @@
 
             if (didCancel)
             {
-                dispatch_async(dispatch_get_main_queue(), ^(void)
+                dispatch_sync(dispatch_get_main_queue(), ^(void)
                 {
                     [_backgroundCacheDelegate tileCacheDidCancelBackgroundCache:self];
                 });
