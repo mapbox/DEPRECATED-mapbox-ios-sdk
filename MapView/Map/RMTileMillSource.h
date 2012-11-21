@@ -27,10 +27,26 @@
 
 #import "RMGenericMapSource.h"
 
+/** An RMTileMillSource is used to display map tiles from a live, running instance of [TileMill](http://mapbox.com/tilemill). All instances of TileMill automatically include an HTTP server, allowing network access outside of the application. This tile source allows for an easier development cycle between map editing and testing in an iOS application. */
 @interface RMTileMillSource : RMGenericMapSource
 
+/** @name Creating Tile Sources */
+
+/** Initialize and return a newly allocated TileMill tile source based on a given map name. This assumes that TileMill is running on the local development computer (e.g., `localhost`), which will not work from an iOS device but will work in the iOS Simulator.
+*   @param mapName The name of the map in TileMill, substituting dashes for spaces.
+*   @param tileCacheKey A unique cache string to use for this tile source's tiles in the tile cache. 
+*   @param minZoom The minimum zoom level supported by the map.
+*   @param maxZoom The maximum zoom level supported by the map.
+*   @return An initialized TileMill tile source. */
 - (id)initWithMapName:(NSString *)mapName tileCacheKey:(NSString *)tileCacheKey minZoom:(float)minZoom maxZoom:(float)maxZoom;
 
+/** Initialize and return a newly allocated TileMill tile source based on a given host and map name. This is ideal for testing on an actual iOS device if the network name or address of the computer running TileMill is passed as the `host` parameter. 
+*   @param host The hostname or IP address of the computer running TileMill. 
+*   @param mapName The name of the map in TileMill, substituting dashes for spaces.
+*   @param tileCacheKey A unique cache string to use for this tile source's tiles in the tile cache.
+*   @param minZoom The minimum zoom level supported by the map.
+*   @param maxZoom The maximum zoom level supported by the map.
+*   @return An initialized TileMill tile source. */
 - (id)initWithHost:(NSString *)host mapName:(NSString *)mapName tileCacheKey:(NSString *)tileCacheKey minZoom:(float)minZoom maxZoom:(float)maxZoom;
 
 @end
