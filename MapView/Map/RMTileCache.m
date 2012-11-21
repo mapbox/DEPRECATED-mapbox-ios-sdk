@@ -341,20 +341,27 @@
     {
         @synchronized (self)
         {
+            BOOL didCancel;
+
             if (_backgroundFetchQueue)
             {
                 [_backgroundFetchQueue cancelAllOperations];
                 [_backgroundFetchQueue waitUntilAllOperationsAreFinished];
                 [_backgroundFetchQueue release]; _backgroundFetchQueue = nil;
+
+                didCancel = YES;
             }
 
             if (_activeTileSource)
                 [_activeTileSource release]; _activeTileSource = nil;
 
-            dispatch_async(dispatch_get_main_queue(), ^(void)
+            if (didCancel)
             {
-                [_backgroundCacheDelegate tileCacheDidCancelBackgroundCache:self];
-            });
+                dispatch_async(dispatch_get_main_queue(), ^(void)
+                {
+                    [_backgroundCacheDelegate tileCacheDidCancelBackgroundCache:self];
+                });
+            }
         }
     });
 }
