@@ -603,8 +603,8 @@
 			children = (
 				B8474B8C0EB40094006A0BC1 /* FMDB */,
 				DDC4BEEE152E3DEC00089409 /* GRMustache */,
+				DDDFF7FE165D5BA200A9D877 /* Proj4 */,
 				DD76E12E161E347B00F60F43 /* SMCallout */,
-				DD97C11516489678007C4652 /* libProj4.a */,
 			);
 			name = Externals;
 			sourceTree = "<group>";
@@ -626,6 +626,14 @@
 			);
 			name = GRMustache;
 			path = Map;
+			sourceTree = "<group>";
+		};
+		DDDFF7FE165D5BA200A9D877 /* Proj4 */ = {
+			isa = PBXGroup;
+			children = (
+				DD97C11516489678007C4652 /* libProj4.a */,
+			);
+			name = Proj4;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
