@@ -345,7 +345,7 @@
     {
         @synchronized (self)
         {
-            BOOL didCancel;
+            BOOL didCancel = NO;
 
             if (_backgroundFetchQueue)
             {
