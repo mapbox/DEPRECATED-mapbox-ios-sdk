@@ -257,10 +257,8 @@
 - (void)beginBackgroundCacheForTileSource:(id <RMTileSource>)tileSource southWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast minZoom:(float)minZoom maxZoom:(float)maxZoom
 {
     if (self.isBackgroundCaching)
-        [self cancelBackgroundCache];
-        
-//    NSLog(@"resuming cache of %@ for %f, %f to %f, %f (z%f-%f)", tileSource, southWest.latitude, southWest.longitude, northEast.latitude, northEast.longitude, minZoom, maxZoom);
-    
+        return;
+
     _activeTileSource = [tileSource retain];
     
     _backgroundFetchQueue = [[NSOperationQueue alloc] init];
