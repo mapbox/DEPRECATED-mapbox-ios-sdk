@@ -264,41 +264,45 @@
     _backgroundFetchQueue = [[NSOperationQueue alloc] init];
     [_backgroundFetchQueue setMaxConcurrentOperationCount:6];
     
-    int   MINZOOM = (int)minZoom;
-    int   MAXZOOM = (int)maxZoom;
-    float MINLAT  = southWest.latitude;
-    float MAXLAT  = northEast.latitude;
-    float MINLONG = southWest.longitude;
-    float MAXLONG = northEast.longitude;
-    
+    int   minCacheZoom = (int)minZoom;
+    int   maxCacheZoom = (int)maxZoom;
+    float minCacheLat  = southWest.latitude;
+    float maxCacheLat  = northEast.latitude;
+    float minCacheLon  = southWest.longitude;
+    float maxCacheLon  = northEast.longitude;
+
+    if (maxCacheZoom < minCacheZoom || maxCacheLat <= minCacheLat || maxCacheLon <= minCacheLon)
+        return;
+
+    int n, xMin, yMax, xMax, yMin;
+
     int totalTiles = 0;
-    __block int progTile = 0;
-    
-    for (int zoom = MINZOOM; zoom <= MAXZOOM; zoom++)
+
+    for (int zoom = minCacheZoom; zoom <= maxCacheZoom; zoom++)
     {
-        int n = pow(2.0, zoom);   //n=2^ZOOM
-        int xMin = floor(((MINLONG + 180.0) / 360.0) * n);  //longitude in degrees
-        int yMax = floor((1.0 - (logf(tanf(MINLAT * M_PI / 180.0) + 1.0 / cosf(MINLAT * M_PI / 180.0)) / M_PI)) / 2.0 * n);  //latitude in degrees
-        int xMax = floor(((MAXLONG + 180.0) / 360.0) * n);  //longitude in degrees
-        int yMin = floor((1.0 - (logf(tanf(MAXLAT * M_PI / 180.0) + 1.0 / cosf(MAXLAT * M_PI / 180.0)) / M_PI)) / 2.0 * n);
-//        NSLog(@"n=%d, xMin=%d, xMax=%d, yMin=%d, yMax=%d",n,xMin,xMax,yMin,yMax);
+        n = pow(2.0, zoom);
+        xMin = floor(((minCacheLon + 180.0) / 360.0) * n);
+        yMax = floor((1.0 - (logf(tanf(minCacheLat * M_PI / 180.0) + 1.0 / cosf(minCacheLat * M_PI / 180.0)) / M_PI)) / 2.0 * n);
+        xMax = floor(((maxCacheLon + 180.0) / 360.0) * n);
+        yMin = floor((1.0 - (logf(tanf(maxCacheLat * M_PI / 180.0) + 1.0 / cosf(maxCacheLat * M_PI / 180.0)) / M_PI)) / 2.0 * n);
+
         totalTiles += (xMax + 1 - xMin) * (yMax + 1 - yMin);
-//        NSLog(@"Total tiles for this zoom level: %d", totalTiles);
     }
 
     [_backgroundCacheDelegate tileCache:self didBeginBackgroundCacheWithCount:totalTiles forTileSource:_activeTileSource];
 
-    for (int zoom = MINZOOM; zoom <= MAXZOOM; zoom++)
-    {
-        int n = pow(2.0, zoom);   //n=2^ZOOM
-        int xMin = floor(((MINLONG + 180.0) / 360.0) * n);  //longitude in degrees
-        int yMax = floor((1.0 - (logf(tanf(MINLAT * M_PI / 180.0) + 1.0 / cosf(MINLAT * M_PI / 180.0)) / M_PI)) / 2.0 * n);  //latitude in degrees
-        int xMax = floor(((MAXLONG + 180.0) / 360.0) * n);  //longitude in degrees
-        int yMin = floor((1.0 - (logf(tanf(MAXLAT * M_PI / 180.0) + 1.0 / cosf(MAXLAT * M_PI / 180.0)) / M_PI)) / 2.0 * n);
+    __block int progTile = 0;
 
-        for (int x = xMin; x<=xMax; x++)
+    for (int zoom = minCacheZoom; zoom <= maxCacheZoom; zoom++)
+    {
+        n = pow(2.0, zoom);
+        xMin = floor(((minCacheLon + 180.0) / 360.0) * n);
+        yMax = floor((1.0 - (logf(tanf(minCacheLat * M_PI / 180.0) + 1.0 / cosf(minCacheLat * M_PI / 180.0)) / M_PI)) / 2.0 * n);
+        xMax = floor(((maxCacheLon + 180.0) / 360.0) * n);
+        yMin = floor((1.0 - (logf(tanf(maxCacheLat * M_PI / 180.0) + 1.0 / cosf(maxCacheLat * M_PI / 180.0)) / M_PI)) / 2.0 * n);
+
+        for (int x = xMin; x <= xMax; x++)
         {
-            // TODO: Create & drain autorelease pool for each iteration of the outer loop (we don't use the returned UIImages)
             for (int y = yMin; y <= yMax; y++)
             {
                 RMTileCacheDownloadOperation *operation = [[[RMTileCacheDownloadOperation alloc] initWithTile:RMTileMake(x, y, zoom)
