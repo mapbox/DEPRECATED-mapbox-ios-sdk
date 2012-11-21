@@ -1,7 +1,7 @@
 //
-//  RMMemoryCache.h
+//  RMTileMillSource.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,28 +25,25 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import <Foundation/Foundation.h>
-#import "RMTile.h"
-#import "RMTileCache.h"
+#import "RMTileMillSource.h"
 
-/** An RMMemoryCache object represents memory-based caching of map tile images. Since memory is constrained in the iOS environment, this cache is relatively small, but useful for increasing performance. */
-@interface RMMemoryCache : NSObject <RMTileCache>
+@implementation RMTileMillSource
 
-/** @name Initializing Memory Caches */
+- (id)initWithMapName:(NSString *)mapName tileCacheKey:(NSString *)tileCacheKey minZoom:(float)minZoom maxZoom:(float)maxZoom
+{
+    return [self initWithHost:@"localhost" mapName:mapName tileCacheKey:tileCacheKey minZoom:minZoom maxZoom:maxZoom];
+}
 
-/** Initializes and returns a newly allocated memory cache object with the specified tile count capacity.
-*   @param aCapacity The maximum number of tiles to be held in the cache.
-*   @return An initialized memory cache object or `nil` if the object couldn't be created. */
-- (id)initWithCapacity:(NSUInteger)aCapacity;
+- (id)initWithHost:(NSString *)host mapName:(NSString *)mapName tileCacheKey:(NSString *)tileCacheKey minZoom:(float)minZoom maxZoom:(float)maxZoom
+{
+    return [super initWithHost:[NSString stringWithFormat:@"%@:20008/tile/%@", host, mapName] tileCacheKey:tileCacheKey minZoom:minZoom maxZoom:maxZoom];
+}
 
-/** @name Cache Capacity */
+- (NSURL *)URLForTile:(RMTile)tile
+{
+    NSURL *tileURL = [super URLForTile:tile];
 
-/** The capacity, in number of tiles, that the memory cache can hold. */
-@property (nonatomic, readonly, assign) NSUInteger capacity;
-
-/** @name Making Space in the Cache */
-
-/** Remove the least-recently used image from the cache if the cache is at or over capacity. This removes a single image from the cache. */
-- (void)makeSpaceInCache;
+    return [NSURL URLWithString:[[tileURL absoluteString] stringByAppendingFormat:@"?updated=%i", (int)[[NSDate date] timeIntervalSince1970]]];
+}
 
 @end

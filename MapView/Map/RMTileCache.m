@@ -66,7 +66,7 @@
     if (!(self = [super init]))
         return nil;
 
-    _tileCaches = [[NSMutableArray alloc] init];
+    _tileCaches = [NSMutableArray new];
     _tileCacheQueue = dispatch_queue_create("routeme.tileCacheQueue", DISPATCH_QUEUE_CONCURRENT);
 
     _memoryCache = nil;
@@ -152,6 +152,11 @@
     });
 }
 
+- (NSArray *)tileCaches
+{
+    return [NSArray arrayWithArray:_tileCaches];
+}
+
 + (NSNumber *)tileHash:(RMTile)tile
 {
 	return [NSNumber numberWithUnsignedLongLong:RMTileKey(tile)];
@@ -228,6 +233,19 @@
             [cache removeAllCachedImages];
         }
 
+    });
+}
+
+- (void)removeAllCachedImagesForCacheKey:(NSString *)cacheKey
+{
+    [_memoryCache removeAllCachedImagesForCacheKey:cacheKey];
+
+    dispatch_sync(_tileCacheQueue, ^{
+
+        for (id<RMTileCache> cache in _tileCaches)
+        {
+            [cache removeAllCachedImagesForCacheKey:cacheKey];
+        }
     });
 }
 

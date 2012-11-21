@@ -74,7 +74,7 @@ typedef enum {
 
     [self.customView addSubview:_segmentedControl];
 
-    _buttonImageView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"TrackingLocation.png"]] retain];
+    _buttonImageView = [[[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"TrackingLocation.png"]] retain];
     _buttonImageView.contentMode = UIViewContentModeCenter;
     _buttonImageView.frame = CGRectMake(0, 0, 32, 32);
     _buttonImageView.center = self.customView.center;
@@ -192,7 +192,7 @@ typedef enum {
                              }
                              completion:^(BOOL finished)
                              {
-                                 _buttonImageView.image  = [UIImage imageNamed:(_mapView.userTrackingMode == RMUserTrackingModeFollowWithHeading ? @"TrackingHeading.png" : @"TrackingLocation.png")];
+                                 _buttonImageView.image  = [RMMapView resourceImageNamed:(_mapView.userTrackingMode == RMUserTrackingModeFollowWithHeading ? @"TrackingHeading.png" : @"TrackingLocation.png")];
                                  _buttonImageView.hidden = NO;
 
                                  [_activityView stopAnimating];

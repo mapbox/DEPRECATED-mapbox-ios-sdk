@@ -1,7 +1,8 @@
 //
-//  RMMemoryCache.h
+//  RMShapeAnnotation.m
+//  MapView
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,28 +26,33 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import <Foundation/Foundation.h>
-#import "RMTile.h"
-#import "RMTileCache.h"
+#import "RMShapeAnnotation.h"
 
-/** An RMMemoryCache object represents memory-based caching of map tile images. Since memory is constrained in the iOS environment, this cache is relatively small, but useful for increasing performance. */
-@interface RMMemoryCache : NSObject <RMTileCache>
+@implementation RMShapeAnnotation
 
-/** @name Initializing Memory Caches */
+@synthesize points=_points;
 
-/** Initializes and returns a newly allocated memory cache object with the specified tile count capacity.
-*   @param aCapacity The maximum number of tiles to be held in the cache.
-*   @return An initialized memory cache object or `nil` if the object couldn't be created. */
-- (id)initWithCapacity:(NSUInteger)aCapacity;
+- (id)initWithMapView:(RMMapView *)aMapView coordinate:(CLLocationCoordinate2D)aCoordinate andTitle:(NSString *)aTitle
+{
+    return [self initWithMapView:aMapView points:nil];
+}
 
-/** @name Cache Capacity */
+- (id)initWithMapView:(RMMapView *)aMapView points:(NSArray *)points
+{
+    if (!(self = [super initWithMapView:aMapView coordinate:((CLLocation *)[points objectAtIndex:0]).coordinate andTitle:nil]))
+        return nil;
 
-/** The capacity, in number of tiles, that the memory cache can hold. */
-@property (nonatomic, readonly, assign) NSUInteger capacity;
+    _points = [points copy];
 
-/** @name Making Space in the Cache */
+    [self setBoundingBoxFromLocations:points];
 
-/** Remove the least-recently used image from the cache if the cache is at or over capacity. This removes a single image from the cache. */
-- (void)makeSpaceInCache;
+    return self;
+}
+
+- (void)dealloc
+{
+    [_points release]; _points = nil;
+    [super dealloc];
+}
 
 @end

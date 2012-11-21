@@ -4,3 +4,6 @@
 [submodule "MapView/Map/GRMustache"]
 	path = MapView/Map/GRMustache
 	url = https://github.com/groue/GRMustache.git
+[submodule "MapView/Map/SMCalloutView"]
+	path = MapView/Map/SMCalloutView
+	url = https://github.com/nfarina/calloutview.git

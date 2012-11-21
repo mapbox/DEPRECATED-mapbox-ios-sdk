@@ -203,10 +203,14 @@
     __block UIImage *image = nil;
 
 	tile = [[self mercatorToTileProjection] normaliseTile:tile];
-    image = [tileCache cachedImage:tile withCacheKey:[self uniqueTilecacheKey]];
 
-    if (image)
-        return image;
+    if (self.isCacheable)
+    {
+        image = [tileCache cachedImage:tile withCacheKey:[self uniqueTilecacheKey]];
+
+        if (image)
+            return image;
+    }
 
     // get the unique key for the tile
     NSNumber *key = [NSNumber numberWithLongLong:RMTileKey(tile)];
@@ -227,7 +231,7 @@
         [result close];
     }];
 
-    if (image)
+    if (image && self.isCacheable)
         [tileCache addImage:image forTile:tile withCacheKey:[self uniqueTilecacheKey]];
 
 	return image;

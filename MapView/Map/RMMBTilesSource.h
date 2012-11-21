@@ -57,10 +57,18 @@
 
 /** @name Querying Tile Source Information */
 
+/** Any available HTML-formatted map legend data for the tile source, suitable for display in a UIWebView. */
+- (NSString *)legend;
+
+/** A suggested starting center coordinate for the map layer. */
+- (CLLocationCoordinate2D)centerCoordinate;
+
+/** A suggested starting center zoom level for the map layer. */
+- (float)centerZoom;
+
 /** Returns YES if the tile source provides full-world coverage; otherwise, returns NO. */
 - (BOOL)coversFullWorld;
 
-/** Any available HTML-formatted map legend data for the tile source, suitable for display in a UIWebView. */
-- (NSString *)legend;
+
 
 @end

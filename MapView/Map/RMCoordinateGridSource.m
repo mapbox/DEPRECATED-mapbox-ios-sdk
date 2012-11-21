@@ -81,7 +81,7 @@ static double coordinateGridSpacingDecimal[19] = {
 @synthesize gridColor = _gridColor;
 @synthesize gridLineWidth = _gridLineWidth;
 @synthesize gridLabelInterval = _gridLabelInterval;
-@synthesize gridMode = _labelingMode;
+@synthesize gridMode = _gridMode;
 @synthesize minorLabelColor = _minorLabelColor;
 @synthesize minorLabelFont = _minorLabelFont;
 @synthesize majorLabelColor = _majorLabelColor;
@@ -93,14 +93,16 @@ static double coordinateGridSpacingDecimal[19] = {
         return nil;
 
     self.minZoom = 5;
-    self.maxZoom = 18;
+    self.maxZoom = 17;
+
+    self.opaque = NO;
 
     self.gridColor = [UIColor colorWithWhite:0.1 alpha:0.6];
     self.gridLineWidth = 2.0;
     self.gridLabelInterval = 1;
 
     self.gridMode = GridModeGeographicDecimal;
-    self.minorLabelColor = self.majorLabelColor = [UIColor colorWithWhite:0.1 alpha:0.6];
+    self.minorLabelColor = self.majorLabelColor = [UIColor colorWithWhite:0.1 alpha:0.7];
     self.minorLabelFont = [UIFont boldSystemFontOfSize:14.0];
     self.majorLabelFont = [UIFont boldSystemFontOfSize:11.0];
 
@@ -314,7 +316,29 @@ static double coordinateGridSpacingDecimal[19] = {
 
 - (NSString *)uniqueTilecacheKey
 {
-    return @"RMCoordinateGrid";
+    NSString *tileCacheKey = nil;
+
+    switch (self.gridMode)
+    {
+        case GridModeGeographic: {
+            tileCacheKey = @"RMCoordinateGridGeographic";
+            break;
+        }
+        case GridModeGeographicDecimal:
+        {
+            tileCacheKey = @"RMCoordinateGridDecimal";
+            break;
+        }
+        case GridModeUTM: {
+            tileCacheKey = @"RMCoordinateGridUTM";
+            break;
+        }
+    }
+
+    if ( ! tileCacheKey)
+        tileCacheKey = @"RMCoordinateGrid";
+
+    return tileCacheKey;
 }
 
 - (NSString *)shortName

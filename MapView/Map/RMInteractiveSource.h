@@ -42,7 +42,7 @@ typedef enum {
     RMInteractiveSourceOutputTypeFull   = 1,
 } RMInteractiveSourceOutputType;
 
-/** Developers can import RMInteractiveSource in order to enable embedded interactivity in their RMMapView, RMMBTilesSource, and RMMapBoxSource objects. Interactivity is based on the [UTFGrid specification](https://github.com/mapbox/utfgrid-spec) and is best described by [this web demo](http://mapbox.com/demo/visiblemap/).
+/** Developers can import RMInteractiveSource in order to enable embedded interactivity in their RMMapView, RMMBTilesSource, and RMMapBoxSource objects. Interactivity is based on the UTFGrid specification, which is a space-efficient way to encode many arbitrary values for pixel coordinates at every zoom level, allowing later retrieval based on user events on those coordinates. For example, the user touching a pixel in Spain could trigger retrieval of Spain's flag image for display. 
 *
 *   Interactive map views adopt the RMInteractiveMapView protocol.
 *

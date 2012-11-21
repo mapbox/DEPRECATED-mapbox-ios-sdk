@@ -37,6 +37,8 @@
     self.minZoom = 1;
     self.maxZoom = 18;
 
+    self.opaque = NO;
+
 	return self;
 }
 

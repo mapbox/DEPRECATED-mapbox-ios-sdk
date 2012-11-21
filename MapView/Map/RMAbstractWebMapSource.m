@@ -62,10 +62,19 @@
     __block UIImage *image = nil;
 
 	tile = [[self mercatorToTileProjection] normaliseTile:tile];
-    image = [tileCache cachedImage:tile withCacheKey:[self uniqueTilecacheKey]];
 
-    if (image)
-        return image;
+    // Return NSNull here so that the RMMapTiledLayerView will try to
+    // fetch another tile if missingTilesDepth > 0
+    if ( ! [self tileSourceHasTile:tile])
+        return (UIImage *)[NSNull null];
+
+    if (self.isCacheable)
+    {
+        image = [tileCache cachedImage:tile withCacheKey:[self uniqueTilecacheKey]];
+
+        if (image)
+            return image;
+    }
 
     dispatch_async(dispatch_get_main_queue(), ^(void)
     {
@@ -104,7 +113,7 @@
 
                 if (tileData)
                 {
-                    @synchronized(self)
+                    @synchronized (self)
                     {
                         // safely put into collection array in proper order
                         //
@@ -155,7 +164,7 @@
         }
     }
 
-    if (image)
+    if (image && self.isCacheable)
         [tileCache addImage:image forTile:tile withCacheKey:[self uniqueTilecacheKey]];
 
     [tileCache release];

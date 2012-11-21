@@ -8,7 +8,7 @@
     #import <CoreLocation/CoreLocation.h>
     #import <QuartzCore/QuartzCore.h>
 
-    #import "RouteMe.h"
+    #import "RMGlobalConstants.h"
 #endif
 
 #if DEBUG
@@ -23,5 +23,3 @@
 #define WarnDeprecated() 
 #define NS_BLOCK_ASSERTIONS 1
 #endif
-
-#define RMRequireAsset(asset) NSAssert([[NSBundle mainBundle] pathForResource:[asset stringByReplacingOccurrencesOfString:[@"." stringByAppendingString:[asset pathExtension]] withString:@""] ofType:[asset pathExtension]], @"Unable to find %@ (copy from framework 'Resources' folder)", asset);

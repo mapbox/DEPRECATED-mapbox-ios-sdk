@@ -1,7 +1,7 @@
 //
-//  RMMemoryCache.h
+//  RMBingSource.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,28 +25,17 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import <Foundation/Foundation.h>
-#import "RMTile.h"
-#import "RMTileCache.h"
+#import "RMAbstractWebMapSource.h"
 
-/** An RMMemoryCache object represents memory-based caching of map tile images. Since memory is constrained in the iOS environment, this cache is relatively small, but useful for increasing performance. */
-@interface RMMemoryCache : NSObject <RMTileCache>
+typedef enum NSUInteger {
+    RMBingImagerySetRoad             = 0, // default
+    RMBingImagerySetAerial           = 1,
+    RMBingImagerySetAerialWithLabels = 2,
+} RMBingImagerySet;
 
-/** @name Initializing Memory Caches */
+@interface RMBingSource : RMAbstractWebMapSource
 
-/** Initializes and returns a newly allocated memory cache object with the specified tile count capacity.
-*   @param aCapacity The maximum number of tiles to be held in the cache.
-*   @return An initialized memory cache object or `nil` if the object couldn't be created. */
-- (id)initWithCapacity:(NSUInteger)aCapacity;
-
-/** @name Cache Capacity */
-
-/** The capacity, in number of tiles, that the memory cache can hold. */
-@property (nonatomic, readonly, assign) NSUInteger capacity;
-
-/** @name Making Space in the Cache */
-
-/** Remove the least-recently used image from the cache if the cache is at or over capacity. This removes a single image from the cache. */
-- (void)makeSpaceInCache;
+- (id)initWithMapsKey:(NSString *)mapsKey;
+- (id)initWithMapsKey:(NSString *)mapsKey forImagerySet:(RMBingImagerySet)imagerySet;
 
 @end

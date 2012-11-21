@@ -1,7 +1,8 @@
 //
-//  RMMemoryCache.h
+//  RMShapeAnnotation.h
+//  MapView
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,28 +26,20 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import <Foundation/Foundation.h>
-#import "RMTile.h"
-#import "RMTileCache.h"
+#import "RMAnnotation.h"
 
-/** An RMMemoryCache object represents memory-based caching of map tile images. Since memory is constrained in the iOS environment, this cache is relatively small, but useful for increasing performance. */
-@interface RMMemoryCache : NSObject <RMTileCache>
+/** An RMShapeAnnotation is an abstract subclass of RMAnnotation that is used to represent a shape consisting of one or more points. You should not create instances of this class directly. Instead, you should create instances of the RMPolylineAnnotation or RMPolygonAnnotation classes. However, you can use the properties of this class to access information about the specific points associated with the line or polygon. 
+*
+*   Providing a layer manually for instances of RMShapeAnnotation subclasses will not have any effect. */
+@interface RMShapeAnnotation : RMAnnotation
 
-/** @name Initializing Memory Caches */
+/** Initialize a shape annotation.
+*   @param aMapView The map view on which to place the annotation.
+*   @param points An array of CLLocation points defining the shape. The data in this array is copied to the new object.
+*   @return An initialized shape annotation object, or `nil` if an annotation was unable to be initialized. */
+- (id)initWithMapView:(RMMapView *)aMapView points:(NSArray *)points;
 
-/** Initializes and returns a newly allocated memory cache object with the specified tile count capacity.
-*   @param aCapacity The maximum number of tiles to be held in the cache.
-*   @return An initialized memory cache object or `nil` if the object couldn't be created. */
-- (id)initWithCapacity:(NSUInteger)aCapacity;
-
-/** @name Cache Capacity */
-
-/** The capacity, in number of tiles, that the memory cache can hold. */
-@property (nonatomic, readonly, assign) NSUInteger capacity;
-
-/** @name Making Space in the Cache */
-
-/** Remove the least-recently used image from the cache if the cache is at or over capacity. This removes a single image from the cache. */
-- (void)makeSpaceInCache;
+/** The array of points associated with the shape. (read-only) */
+@property (nonatomic, readonly, retain) NSArray *points;
 
 @end

@@ -66,6 +66,7 @@ typedef enum : short {
 
 /** Removes all tile images from a cache. */
 - (void)removeAllCachedImages;
+- (void)removeAllCachedImagesForCacheKey:(NSString *)cacheKey;
 
 @end
 
@@ -128,6 +129,9 @@ typedef enum : short {
 *   @param cache A memory-based or disk-based cache. */
 - (void)addCache:(id <RMTileCache>)cache;
 - (void)insertCache:(id <RMTileCache>)cache atIndex:(NSUInteger)index;
+
+/** The list of caches managed by a cache manager. This could include memory-based, disk-based, or other types of caches. */
+@property (nonatomic, readonly, retain) NSArray *tileCaches;
 
 - (void)didReceiveMemoryWarning;
 

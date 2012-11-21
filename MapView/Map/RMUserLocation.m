@@ -10,20 +10,27 @@
 #import "RMMarker.h"
 #import "RMMapView.h"
 
+#define kRMUserLocationAnnotationTypeName @"RMUserLocationAnnotation"
+
+@interface RMUserLocation ()
+
+@property (nonatomic, assign) BOOL hasCustomLayer;
+
+@end
+
+#pragma mark -
+
 @implementation RMUserLocation
 
 @synthesize updating = _updating;
 @synthesize location = _location;
 @synthesize heading = _heading;
+@synthesize hasCustomLayer = _hasCustomLayer;
 
 - (id)initWithMapView:(RMMapView *)aMapView coordinate:(CLLocationCoordinate2D)aCoordinate andTitle:(NSString *)aTitle
 {
     if ( ! (self = [super initWithMapView:aMapView coordinate:aCoordinate andTitle:aTitle]))
         return nil;
-
-    self.layer = [[[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDot.png"]] autorelease];
-
-    self.layer.zPosition = -MAXFLOAT + 2;
 
     self.annotationType = kRMUserLocationAnnotationTypeName;
 
@@ -39,6 +46,25 @@
     [_location release]; _location = nil;
     [_heading release]; _heading = nil;
     [super dealloc];
+}
+
+- (RMMapLayer *)layer
+{
+    if ( ! super.layer)
+    {
+        if ([self.mapView.delegate respondsToSelector:@selector(mapView:layerForAnnotation:)])
+            super.layer = [self.mapView.delegate mapView:self.mapView layerForAnnotation:self];
+
+        if (super.layer)
+            self.hasCustomLayer = YES;
+
+        if ( ! super.layer)
+            super.layer = [[[RMMarker alloc] initWithUIImage:[RMMapView resourceImageNamed:@"TrackingDot.png"]] autorelease];
+
+        super.layer.zPosition = -MAXFLOAT + 2;
+    }
+
+    return super.layer;
 }
 
 - (BOOL)isUpdating

@@ -109,7 +109,7 @@
 
 /** Alter the path without rerecalculating the geometry. Recommended for many operations in order to increase performance. 
 *   @param block A block containing the operations to perform. */
-- (void)performBatchOperations:(void (^)(RMShape *aPath))block;
+- (void)performBatchOperations:(void (^)(RMShape *aShape))block;
 
 /** Closes the path, connecting the last point to the first. After this action, no further points can be added to the path.
 *

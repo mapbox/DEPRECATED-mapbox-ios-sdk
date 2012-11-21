@@ -120,6 +120,11 @@
     return [cachedObject cachedObject];
 }
 
+- (NSUInteger)capacity
+{
+    return _memoryCacheCapacity;
+}
+
 /// Remove the least-recently used image from cache, if cache is at or over capacity. Removes only 1 image.
 - (void)makeSpaceInCache
 {
@@ -174,6 +179,22 @@
 
     dispatch_barrier_async(_memoryCacheQueue, ^{
         [_memoryCache removeAllObjects];
+    });
+}
+
+- (void)removeAllCachedImagesForCacheKey:(NSString *)cacheKey
+{
+    dispatch_barrier_async(_memoryCacheQueue, ^{
+
+        NSMutableArray *keysToRemove = [NSMutableArray array];
+
+        [_memoryCache enumerateKeysAndObjectsUsingBlock:^(id key, RMCacheObject *cachedObject, BOOL *stop) {
+            if ([[cachedObject cacheKey] isEqualToString:cacheKey])
+                [keysToRemove addObject:key];
+        }];
+
+        [_memoryCache removeObjectsForKeys:keysToRemove];
+
     });
 }
 

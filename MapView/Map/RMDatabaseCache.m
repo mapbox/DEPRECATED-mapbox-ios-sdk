@@ -164,6 +164,11 @@
 	_capacity = theCapacity;
 }
 
+- (NSUInteger)capacity
+{
+    return _capacity;
+}
+
 - (void)setMinimalPurge:(NSUInteger)theMinimalPurge
 {
 	_minimalPurge = theMinimalPurge;
@@ -352,6 +357,27 @@
                  RMLog(@"Error purging cache");
 
              [[db executeQuery:@"VACUUM"] close];
+         }];
+
+        [_writeQueueLock unlock];
+
+        _tileCount = [self countTiles];
+    }];
+}
+
+- (void)removeAllCachedImagesForCacheKey:(NSString *)cacheKey
+{
+    RMLog(@"removing tiles for key '%@' from the db cache", cacheKey);
+
+    [_writeQueue addOperationWithBlock:^{
+        [_writeQueueLock lock];
+
+        [_queue inDatabase:^(FMDatabase *db)
+         {
+             BOOL result = [db executeUpdate:@"DELETE FROM ZCACHE WHERE cache_key = ?", cacheKey];
+
+             if (result == NO)
+                 RMLog(@"Error purging cache");
          }];
 
         [_writeQueueLock unlock];
