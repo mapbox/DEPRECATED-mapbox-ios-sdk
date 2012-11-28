@@ -2915,21 +2915,14 @@
 
         [self setUserTrackingMode:RMUserTrackingModeNone animated:YES];
 
-        NSMutableArray *annotationsToRemove = [NSMutableArray array];
+        for (RMAnnotation *annotation in [NSArray arrayWithObjects:_trackingHaloAnnotation, _accuracyCircleAnnotation, self.userLocation, nil])
+            [self removeAnnotation:annotation];
 
-        for (RMAnnotation *annotation in _annotations)
-        {
-            if (annotation.isUserLocationAnnotation)
-                [annotationsToRemove addObject:annotation];
-        }
-
-        for (RMAnnotation *annotationToRemove in annotationsToRemove)
-        {
-            [self removeAnnotation:annotationToRemove];
-        }
+        [_trackingHaloAnnotation release]; _trackingHaloAnnotation = nil;
+        [_accuracyCircleAnnotation release]; _accuracyCircleAnnotation = nil;
 
         self.userLocation = nil;
-    }    
+    }
 }
 
 - (void)setUserLocation:(RMUserLocation *)newUserLocation
