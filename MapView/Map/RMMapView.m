@@ -949,6 +949,8 @@
                      {
                          [self setZoom:newZoom];
                          [self setCenterCoordinate:newCenter animated:NO];
+
+                         self.userTrackingMode = RMUserTrackingModeNone;
                      }
                      completion:nil];
 }
