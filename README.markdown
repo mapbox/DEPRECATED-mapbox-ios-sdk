@@ -12,11 +12,15 @@ Major differences from [Alpstein fork of Route-Me](https://github.com/Alpstein/r
  * [MapBox Markers](http://mapbox.com/blog/markers/) support. 
  * [UTFGrid interactivity](http://mapbox.com/mbtiles-spec/utfgrid/). 
  * Improved network tile loading performance. 
+ * A bulk, background map tile downloader for cache pre-population. 
+ * Annotation callouts that behave like MapKit. 
+ * Annotation convenience subclasses for points and shapes. 
  * Prepackaged [binary framework](http://mapbox.com/blog/ios-sdk-framework/). 
  * [CocoaPods](http://cocoapods.org) support. 
  * Removal of two-finger double-tap gesture for zoom out (to speed up two-finger single-tap recognition like MapKit). 
  * Different default starting location for maps. 
  * Built-in attribution view controller with button on map views & default OpenStreetMap attribution. 
+ * Easy static map view support. 
  * Removal of included example projects in favor of separate examples on GitHub. 
  * A few added defaults for convenience. 
  * Improved documentation. 
