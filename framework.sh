@@ -11,6 +11,7 @@ FW_FOLDER="build/$FW_NAME.framework"
 # clean old version
 #
 if [ -d $FW_FOLDER ]; then
+  echo "Removing old build..."
   rm -rf $FW_FOLDER
 fi
 
@@ -30,7 +31,7 @@ cd ../../..
 #
 # Info.plist & version
 #
-cp framework.plist $FW_FOLDER/Versions/A/Resources/Info.plist
+cp -v framework.plist $FW_FOLDER/Versions/A/Resources/Info.plist
 PlistBuddy $FW_FOLDER/Versions/A/Resources/Info.plist -c "Set :CFBundleVersion $VERSION"
 
 #
@@ -48,14 +49,11 @@ lipo -create MapView/build/Debug-iphoneos/lib${TARGET}.a   MapView/build/Debug-i
 lipo -create MapView/build/Release-iphoneos/lib${TARGET}.a MapView/build/Release-iphonesimulator/lib${TARGET}.a -o $FW_FOLDER/${FW_NAME}
 
 #
-# copy headers & create all-inclusive
+# copy unified header
 #
-for header in `ls MapView/Map/*.h | grep -v RouteMe.h | sed 's/MapView\/Map\///'`; do
-  cp -v "MapView/Map/$header" $FW_FOLDER/Versions/A/Headers
-  echo "#import \"$header\"" >> $FW_FOLDER/Versions/A/Headers/$FW_NAME.h
-done
+cp -v MapView/Map/$FW_NAME.h $FW_FOLDER/Versions/A/Headers/$FW_NAME.h
 
 #
-# copy resources
+# copy resource bundle
 #
-cp -v MapView/Map/Resources/*  $FW_FOLDER/Versions/A/Resources
+cp -r -v MapView/build/Release-iphoneos/$FW_NAME.bundle $FW_FOLDER/Versions/A/Resources

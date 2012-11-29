@@ -12,9 +12,11 @@ appledoc \
     --ignore build \
     --ignore FMDB \
     --ignore GRMustache \
+    --ignore SMCalloutView \
     --ignore .c \
     --ignore .m \
     --ignore RMAttributionViewController.h \
+    --ignore RMBingSource.h \
     --ignore RMConfiguration.h \
     --ignore RMCoordinateGridSource.h \
     --ignore RMDBMapSource.h \
@@ -32,7 +34,6 @@ appledoc \
     --ignore RMOpenCycleMapSource.h \
     --ignore RMOpenSeaMapLayer.h \
     --ignore RMOpenSeaMapSource.h \
-    --ignore RMPath.h \
     --ignore RMPixel.h \
     --ignore RMProjection.h \
     --ignore RMTile.h \
