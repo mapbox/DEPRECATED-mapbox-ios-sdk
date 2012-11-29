@@ -221,6 +221,17 @@ typedef enum : NSUInteger {
 // recenter the map on #boundsRect, expressed in projected meters
 - (void)setProjectedBounds:(RMProjectedRect)boundsRect animated:(BOOL)animated;
 
+/** Set zoom level, optionally with an animation. 
+*   @param newZoom The desired zoom level.
+*   @param animated: Whether to animate the map change. */
+- (void)setZoom:(float)newZoom animated:(BOOL)animated;
+
+/** Set both zoom level and center coordinate at the same time, optionally with an animation. 
+*   @param newZoom The desired zoom level. 
+*   @param newCenter The desired center coordinate. 
+*   @param animated Whether to animate the map change. */
+- (void)setZoom:(float)newZoom atCoordinate:(CLLocationCoordinate2D)newCenter animated:(BOOL)animated;
+
 /** Zoom the map by a given factor near a certain point. 
 *   @param zoomFactor The factor by which to zoom the map. 
 *   @param center The point at which to zoom the map. 

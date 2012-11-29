@@ -935,6 +935,24 @@
         return NO;
 }
 
+- (void)setZoom:(float)newZoom animated:(BOOL)animated
+{
+    [self setZoom:newZoom atCoordinate:self.centerCoordinate animated:animated];
+}
+
+- (void)setZoom:(float)newZoom atCoordinate:(CLLocationCoordinate2D)newCenter animated:(BOOL)animated
+{
+    [UIView animateWithDuration:(animated ? 0.3 : 0.0)
+                          delay:0.0
+                        options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveEaseInOut
+                     animations:^(void)
+                     {
+                         [self setZoom:newZoom];
+                         [self setCenterCoordinate:newCenter animated:NO];
+                     }
+                     completion:nil];
+}
+
 - (void)zoomByFactor:(float)zoomFactor near:(CGPoint)pivot animated:(BOOL)animated
 {
     if (![self tileSourceBoundsContainScreenPoint:pivot])
