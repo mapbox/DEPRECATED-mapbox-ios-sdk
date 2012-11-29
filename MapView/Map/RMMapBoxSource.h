@@ -39,15 +39,31 @@
 #define kMapBoxDefaultLatLonBoundingBox ((RMSphericalTrapezium){ .northEast = { .latitude =  90, .longitude =  180 }, \
                                                                  .southWest = { .latitude = -90, .longitude = -180 } })
 
+// constants for the image quality API (see http://mapbox.com/developers/api/#image_quality)
+typedef enum : NSUInteger {
+    RMMapBoxSourceQualityFull   = 0, // default
+    RMMapBoxSourceQualityPNG32  = 1, // 32 color indexed PNG
+    RMMapBoxSourceQualityPNG64  = 2, // 64 color indexed PNG
+    RMMapBoxSourceQualityPNG128 = 3, // 128 color indexed PNG
+    RMMapBoxSourceQualityPNG256 = 4, // 256 color indexed PNG
+    RMMapBoxSourceQualityJPEG70 = 5, // 70% quality JPEG
+    RMMapBoxSourceQualityJPEG80 = 6, // 80% quality JPEG
+    RMMapBoxSourceQualityJPEG90 = 7  // 90% quality JPEG
+} RMMapBoxSourceQuality;
+
 @class RMMapView;
 
-
-/** An RMMapBoxSource is used to display map tiles from a network-based map hosted on [MapBox](http://mapbox.com/plans) or the open source [TileStream](https://github.com/mapbox/tilestream) software. Maps are reference by their [TileJSON](http://mapbox.com/developers/tilejson/) endpoint or file. */
+/** An RMMapBoxSource is used to display map tiles from a network-based map hosted on [MapBox](http://mapbox.com/plans) or the open source [TileStream](https://github.com/mapbox/tilestream) software. Maps are reference by their [TileJSON endpoint or MapBox ID](http://mapbox.com/developers/tilejson/) or by a file containing TileJSON. */
 @interface RMMapBoxSource : RMAbstractWebMapSource
 
 /** @name Creating Tile Sources */
 
-/** Designated initializer. Point to either a remote or local TileJSON structure.
+/** Initialize a tile source using the MapBox map ID.
+*   @param mapID The MapBox map ID string, typically in the format `<username>.map-<random characters>`.
+*   @return An initialized MapBox tile source. */
+- (id)initWithMapID:(NSString *)mapID;
+
+/** Initialize a tile source with either a remote or local TileJSON structure.
 *   @param referenceURL A remote or local URL pointing to a TileJSON structure. 
 *   @return An initialized MapBox tile source. */
 - (id)initWithReferenceURL:(NSURL *)referenceURL;
@@ -57,16 +73,22 @@
 *   @return An initialized MapBox tile source. */
 - (id)initWithTileJSON:(NSString *)tileJSON;
 
-/** For TileJSON 2.1.0+ layers, automatically find and add annotations from [simplestyle](http://mapbox.com/developers/simplestyle/) data.
+/** For TileJSON 2.1.0+ layers, initialize a tile source and automatically find and add annotations from [simplestyle](http://mapbox.com/developers/simplestyle/) data.
+*   @param mapID The MapBox map ID string, typically in the format `<username>.map-<random characters>`.
+*   @param mapView A map view on which to display the annotations.
+*   @return An initialized MapBox tile source. */
+- (id)initWithMapID:(NSString *)mapID enablingDataOnMapView:(RMMapView *)mapView;
+
+/** For TileJSON 2.1.0+ layers, initialize a tile source and automatically find and add annotations from [simplestyle](http://mapbox.com/developers/simplestyle/) data.
 *   @param tileJSON A string containing TileJSON. 
 *   @param mapView A map view on which to display the annotations. 
 *   @return An initialized MapBox tile source. */
 - (id)initWithTileJSON:(NSString *)tileJSON enablingDataOnMapView:(RMMapView *)mapView;
 
-/** For TileJSON 2.1.0+ layers, automatically find and add annotations from [simplestyle](http://mapbox.com/developers/simplestyle/) data.
- *   @param referenceURL A remote or local URL pointing to a TileJSON structure.
- *   @param mapView A map view on which to display the annotations.
- *   @return An initialized MapBox tile source. */
+/** For TileJSON 2.1.0+ layers, initialize a tile source and automatically find and add annotations from [simplestyle](http://mapbox.com/developers/simplestyle/) data.
+*   @param referenceURL A remote or local URL pointing to a TileJSON structure.
+*   @param mapView A map view on which to display the annotations.
+*   @return An initialized MapBox tile source. */
 - (id)initWithReferenceURL:(NSURL *)referenceURL enablingDataOnMapView:(RMMapView *)mapView;
 
 /** @name Querying Tile Source Information */
@@ -85,5 +107,12 @@
 
 /** Info about the TileJSON in a Cocoa-native format. */
 @property (nonatomic, readonly, retain) NSDictionary *infoDictionary;
+
+/** Image quality that is retrieved from the network. Useful for lower-bandwidth environments. The default is to provide full-quality imagery. 
+*
+*   Note that you may want to clear the tile cache after changing this value in order to provide a consistent experience. */
+@property (nonatomic, assign) RMMapBoxSourceQuality imageQuality;
+
+@property (nonatomic, readonly, assign) dispatch_queue_t dataQueue;
 
 @end

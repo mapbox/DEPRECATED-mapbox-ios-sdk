@@ -1,7 +1,7 @@
 //
-//  RMMemoryCache.h
-//
-// Copyright (c) 2008-2009, Route-Me Contributors
+// MapBox.h
+// 
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,28 +25,28 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import <Foundation/Foundation.h>
-#import "RMTile.h"
+// The list of header files for more convenient Route-Me import to projects.
+// (in alphabetic order)
+
+#import "RMAnnotation.h"
+#import "RMCacheObject.h"
+#import "RMCircle.h"
+#import "RMCompositeSource.h"
+#import "RMCoordinateGridSource.h"
+#import "RMDatabaseCache.h"
+#import "RMInteractiveSource.h"
+#import "RMMBTilesSource.h"
+#import "RMMapBoxSource.h"
+#import "RMMapView.h"
+#import "RMMapViewDelegate.h"
+#import "RMMarker.h"
+#import "RMMemoryCache.h"
+#import "RMPointAnnotation.h"
+#import "RMPolygonAnnotation.h"
+#import "RMPolylineAnnotation.h"
+#import "RMShape.h"
+#import "RMStaticMapView.h"
 #import "RMTileCache.h"
-
-/** An RMMemoryCache object represents memory-based caching of map tile images. Since memory is constrained in the iOS environment, this cache is relatively small, but useful for increasing performance. */
-@interface RMMemoryCache : NSObject <RMTileCache>
-
-/** @name Initializing Memory Caches */
-
-/** Initializes and returns a newly allocated memory cache object with the specified tile count capacity.
-*   @param aCapacity The maximum number of tiles to be held in the cache.
-*   @return An initialized memory cache object or `nil` if the object couldn't be created. */
-- (id)initWithCapacity:(NSUInteger)aCapacity;
-
-/** @name Cache Capacity */
-
-/** The capacity, in number of tiles, that the memory cache can hold. */
-@property (nonatomic, readonly, assign) NSUInteger capacity;
-
-/** @name Making Space in the Cache */
-
-/** Remove the least-recently used image from the cache if the cache is at or over capacity. This removes a single image from the cache. */
-- (void)makeSpaceInCache;
-
-@end
+#import "RMTileMillSource.h"
+#import "RMUserLocation.h"
+#import "RMUserTrackingBarButtonItem.h"

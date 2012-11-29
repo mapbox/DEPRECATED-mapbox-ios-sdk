@@ -140,6 +140,8 @@
 
 - (void)setLayer:(RMMapLayer *)aLayer
 {
+    CALayer *superLayer = [layer superlayer];
+
     if (layer != aLayer)
     {
         if (layer.superlayer)
@@ -153,6 +155,7 @@
         layer = aLayer;
         [layer retain];
         layer.annotation = self;
+        [superLayer addSublayer:layer];
         [layer setPosition:self.position animated:NO];
     }
 }

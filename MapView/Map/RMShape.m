@@ -42,6 +42,8 @@
     CAShapeLayer *shapeLayer;
     UIBezierPath *bezierPath;
 
+    NSMutableArray *points;
+
     RMMapView *mapView;
 }
 
@@ -62,11 +64,11 @@
 
     mapView = aMapView;
 
-    bezierPath = [[UIBezierPath alloc] init];
+    bezierPath = [UIBezierPath new];
     lineWidth = kDefaultLineWidth;
     ignorePathUpdates = NO;
 
-    shapeLayer = [[CAShapeLayer alloc] init];
+    shapeLayer = [CAShapeLayer new];
     shapeLayer.rasterizationScale = [[UIScreen mainScreen] scale];
     shapeLayer.lineWidth = lineWidth;
     shapeLayer.lineCap = kCALineCapButt;
@@ -89,6 +91,8 @@
     scaleLineDash = NO;
     isFirstPoint = YES;
 
+    points = [[NSMutableArray array] retain];
+
     [(id)self setValue:[[UIScreen mainScreen] valueForKey:@"scale"] forKey:@"contentsScale"];
 
     return self;
@@ -99,6 +103,7 @@
     mapView = nil;
     [bezierPath release]; bezierPath = nil;
     [shapeLayer release]; shapeLayer = nil;
+    [points release]; points = nil;
     [super dealloc];
 }
 
@@ -273,12 +278,21 @@
     }
 
     self.anchorPoint = clippedAnchorPoint;
+
+    if (self.annotation && [points count])
+    {
+        self.annotation.coordinate = ((CLLocation *)[points objectAtIndex:0]).coordinate;
+        [self.annotation setBoundingBoxFromLocations:points];
+    }
 }
 
 #pragma mark -
 
-- (void)addPointToProjectedPoint:(RMProjectedPoint)point withDrawing:(BOOL)isDrawing
+
+- (void)addCurveToProjectedPoint:(RMProjectedPoint)point controlPoint1:(RMProjectedPoint)controlPoint1 controlPoint2:(RMProjectedPoint)controlPoint2 withDrawing:(BOOL)isDrawing
 {
+    [points addObject:[[[CLLocation alloc] initWithLatitude:[mapView projectedPointToCoordinate:point].latitude longitude:[mapView projectedPointToCoordinate:point].longitude] autorelease]];
+
     if (isFirstPoint)
     {
         isFirstPoint = FALSE;
@@ -294,9 +308,35 @@
         point.y = point.y - projectedLocation.y;
 
         if (isDrawing)
-            [bezierPath addLineToPoint:CGPointMake(point.x, -point.y)];
+        {
+            if (isnan(controlPoint1.x) && isnan(controlPoint2.x))
+            {
+                [bezierPath addLineToPoint:CGPointMake(point.x, -point.y)];
+            }
+            else if (isnan(controlPoint2.x))
+            {
+                controlPoint1.x = controlPoint1.x - projectedLocation.x;
+                controlPoint1.y = controlPoint1.y - projectedLocation.y;
+
+                [bezierPath addQuadCurveToPoint:CGPointMake(point.x, -point.y)
+                                   controlPoint:CGPointMake(controlPoint1.x, -controlPoint1.y)];
+            }
+            else
+            {
+                controlPoint1.x = controlPoint1.x - projectedLocation.x;
+                controlPoint1.y = controlPoint1.y - projectedLocation.y;
+                controlPoint2.x = controlPoint2.x - projectedLocation.x;
+                controlPoint2.y = controlPoint2.y - projectedLocation.y;
+
+                [bezierPath addCurveToPoint:CGPointMake(point.x, -point.y)
+                              controlPoint1:CGPointMake(controlPoint1.x, -controlPoint1.y)
+                              controlPoint2:CGPointMake(controlPoint2.x, -controlPoint2.y)];
+            }
+        }
         else
+        {
             [bezierPath moveToPoint:CGPointMake(point.x, -point.y)];
+        }
 
         lastScale = 0.0;
         [self recalculateGeometryAnimated:NO];
@@ -307,7 +347,10 @@
 
 - (void)moveToProjectedPoint:(RMProjectedPoint)projectedPoint
 {
-    [self addPointToProjectedPoint:projectedPoint withDrawing:NO];
+    [self addCurveToProjectedPoint:projectedPoint
+                     controlPoint1:RMProjectedPointMake((double)NAN, (double)NAN)
+                     controlPoint2:RMProjectedPointMake((double)NAN, (double)NAN)
+                       withDrawing:NO];
 }
 
 - (void)moveToScreenPoint:(CGPoint)point
@@ -324,7 +367,10 @@
 
 - (void)addLineToProjectedPoint:(RMProjectedPoint)projectedPoint
 {
-    [self addPointToProjectedPoint:projectedPoint withDrawing:YES];
+    [self addCurveToProjectedPoint:projectedPoint
+                     controlPoint1:RMProjectedPointMake((double)NAN, (double)NAN)
+                     controlPoint2:RMProjectedPointMake((double)NAN, (double)NAN)
+                       withDrawing:YES];
 }
 
 - (void)addLineToScreenPoint:(CGPoint)point
@@ -339,7 +385,45 @@
     [self addLineToProjectedPoint:mercator];
 }
 
-- (void)performBatchOperations:(void (^)(RMShape *aPath))block
+- (void)addCurveToCoordinate:(CLLocationCoordinate2D)coordinate controlCoordinate1:(CLLocationCoordinate2D)controlCoordinate1 controlCoordinate2:(CLLocationCoordinate2D)controlCoordinate2
+{
+    RMProjectedPoint projectedPoint = [[mapView projection] coordinateToProjectedPoint:coordinate];
+
+    RMProjectedPoint controlProjectedPoint1 = [[mapView projection] coordinateToProjectedPoint:controlCoordinate1];
+    RMProjectedPoint controlProjectedPoint2 = [[mapView projection] coordinateToProjectedPoint:controlCoordinate2];
+
+    [self addCurveToProjectedPoint:projectedPoint
+            controlProjectedPoint1:controlProjectedPoint1
+            controlProjectedPoint2:controlProjectedPoint2];
+}
+
+- (void)addQuadCurveToCoordinate:(CLLocationCoordinate2D)coordinate controlCoordinate:(CLLocationCoordinate2D)controlCoordinate
+{
+    RMProjectedPoint projectedPoint = [[mapView projection] coordinateToProjectedPoint:coordinate];
+
+    RMProjectedPoint controlProjectedPoint = [[mapView projection] coordinateToProjectedPoint:controlCoordinate];
+
+    [self addQuadCurveToProjectedPoint:projectedPoint
+                 controlProjectedPoint:controlProjectedPoint];
+}
+
+- (void)addCurveToProjectedPoint:(RMProjectedPoint)projectedPoint controlProjectedPoint1:(RMProjectedPoint)controlProjectedPoint1 controlProjectedPoint2:(RMProjectedPoint)controlProjectedPoint2
+{
+    [self addCurveToProjectedPoint:projectedPoint
+                     controlPoint1:controlProjectedPoint1
+                     controlPoint2:controlProjectedPoint2
+                       withDrawing:YES];
+}
+
+- (void)addQuadCurveToProjectedPoint:(RMProjectedPoint)projectedPoint controlProjectedPoint:(RMProjectedPoint)controlProjectedPoint
+{
+    [self addCurveToProjectedPoint:projectedPoint
+                     controlPoint1:controlProjectedPoint
+                     controlPoint2:RMProjectedPointMake((double)NAN, (double)NAN)
+                       withDrawing:YES];
+}
+
+- (void)performBatchOperations:(void (^)(RMShape *aShape))block
 {
     ignorePathUpdates = YES;
     block(self);
@@ -353,7 +437,8 @@
 
 - (void)closePath
 {
-    [bezierPath closePath];
+    if ([points count])
+        [self addLineToCoordinate:((CLLocation *)[points objectAtIndex:0]).coordinate];
 }
 
 - (float)lineWidth
@@ -479,6 +564,12 @@
         return;
 
     [self recalculateGeometryAnimated:animated];
+}
+
+- (void)setAnnotation:(RMAnnotation *)newAnnotation
+{
+    super.annotation = newAnnotation;
+    [self recalculateGeometryAnimated:NO];
 }
 
 @end

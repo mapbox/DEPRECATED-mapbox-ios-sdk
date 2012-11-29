@@ -8,11 +8,11 @@
     #import <CoreLocation/CoreLocation.h>
     #import <QuartzCore/QuartzCore.h>
 
-    #import "RouteMe.h"
+    #import "RMGlobalConstants.h"
 #endif
 
 #if DEBUG
-#define RMLog(args...)    NSLog(@"%@", [NSString stringWithFormat: args])
+#define RMLog(args...) NSLog(@"%@", [NSString stringWithFormat: args])
 #define LogMethod() NSLog(@"logged method call: -[%@ %@] (line %d)", self, NSStringFromSelector(_cmd), __LINE__)
 #define WarnDeprecated() NSLog(@"***** WARNING: deprecated method call: -[%@ %@] (line %d)", self, NSStringFromSelector(_cmd), __LINE__)
 #else  
@@ -23,5 +23,3 @@
 #define WarnDeprecated() 
 #define NS_BLOCK_ASSERTIONS 1
 #endif
-
-#define RMRequireAsset(asset) NSAssert([[NSBundle mainBundle] pathForResource:[asset stringByReplacingOccurrencesOfString:[@"." stringByAppendingString:[asset pathExtension]] withString:@""] ofType:[asset pathExtension]], @"Unable to find %@ (copy from framework 'Resources' folder)", asset);

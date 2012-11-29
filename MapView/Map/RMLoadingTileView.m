@@ -8,6 +8,8 @@
 
 #import "RMLoadingTileView.h"
 
+#import "RMMapView.h"
+
 @implementation RMLoadingTileView
 {
     UIView *_contentView;
@@ -21,9 +23,6 @@
 
     if (self)
     {
-        RMRequireAsset(@"LoadingTile.png");
-        RMRequireAsset(@"LoadingTileZoom.png");
-
         _contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width * 3, frame.size.height * 3)];
         [self addSubview:_contentView];
 
@@ -47,11 +46,11 @@
 {
     if (zooming)
     {
-        _contentView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"LoadingTileZoom.png"]];
+        _contentView.backgroundColor = [UIColor colorWithPatternImage:[RMMapView resourceImageNamed:@"LoadingTileZoom.png"]];
     }
     else
     {
-        _contentView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"LoadingTile.png"]];
+        _contentView.backgroundColor = [UIColor colorWithPatternImage:[RMMapView resourceImageNamed:@"LoadingTile.png"]];
         
         _contentView.frame = CGRectMake(0, 0, self.frame.size.width * 3, self.frame.size.height * 3);
         self.contentSize = _contentView.bounds.size;

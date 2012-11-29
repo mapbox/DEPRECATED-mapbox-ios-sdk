@@ -1,7 +1,8 @@
 //
-//  RMMemoryCache.h
+//  RMPolylineAnnotation.h
+//  MapView
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,28 +26,11 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import <Foundation/Foundation.h>
-#import "RMTile.h"
-#import "RMTileCache.h"
+#import "RMShapeAnnotation.h"
 
-/** An RMMemoryCache object represents memory-based caching of map tile images. Since memory is constrained in the iOS environment, this cache is relatively small, but useful for increasing performance. */
-@interface RMMemoryCache : NSObject <RMTileCache>
-
-/** @name Initializing Memory Caches */
-
-/** Initializes and returns a newly allocated memory cache object with the specified tile count capacity.
-*   @param aCapacity The maximum number of tiles to be held in the cache.
-*   @return An initialized memory cache object or `nil` if the object couldn't be created. */
-- (id)initWithCapacity:(NSUInteger)aCapacity;
-
-/** @name Cache Capacity */
-
-/** The capacity, in number of tiles, that the memory cache can hold. */
-@property (nonatomic, readonly, assign) NSUInteger capacity;
-
-/** @name Making Space in the Cache */
-
-/** Remove the least-recently used image from the cache if the cache is at or over capacity. This removes a single image from the cache. */
-- (void)makeSpaceInCache;
+/** An RMPolylineAnnotation is a concrete subclass of RMShapeAnnotation that is used to represent a shape consisting of one or more points that define connecting line segments. The points are connected end-to-end in the order they are provided. The first and last points are not connected to each other. The annotation will automatically have a layer created when needed that displays an RMShape. 
+ *
+ *   If you wish to customize the appearance, you should instead create an RMAnnotation and configure its layer directly. Providing a layer manually for instances of RMPolylineAnnotation will not have any effect. */
+@interface RMPolylineAnnotation : RMShapeAnnotation
 
 @end

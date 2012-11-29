@@ -47,6 +47,8 @@ typedef enum : NSUInteger {
 *
 *   An annotation layer can be created using RMMapLayer and its subclasses, such as RMMarker for points and RMShape for shapes such as lines and polygons.
 *
+*   If the object in the annotation parameter is an instance of the RMUserLocation class, you can provide a custom layer to denote the user’s location. To display the user’s location using the default system layer, return `nil`.
+*
 *   If you do not implement this method, or if you return `nil` from your implementation for annotations other than the user location annotation, the map view does not display a layer for the annotation.
 *
 *   @param mapView The map view that requested the annotation layer.
@@ -135,6 +137,16 @@ typedef enum : NSUInteger {
 *   @param annotation The annotation whose label was was double-tapped.
 *   @param map The map view. */
 - (void)doubleTapOnLabelForAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map;
+
+/** Tells the delegate that the user tapped one of the annotation view’s accessory buttons.
+*
+*   Accessory views contain custom content and are positioned on either side of the annotation title text. If a view you specify is a descendant of the UIControl class, the map view calls this method as a convenience whenever the user taps your view. You can use this method to respond to taps and perform any actions associated with that control. For example, if your control displayed additional information about the annotation, you could use this method to present a modal panel with that information.
+*
+*   If your custom accessory views are not descendants of the UIControl class, the map view does not call this method.
+*   @param control The control that was tapped. 
+*   @param annotation The annotation whose callout control was tapped. 
+*   @param map The map view containing the specified annotation. */
+- (void)tapOnCalloutAccessoryControl:(UIControl *)control forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map;
 
 /** Asks the delegate whether the user should be allowed to drag the layer for an annotation. 
 *   @param map The map view. 

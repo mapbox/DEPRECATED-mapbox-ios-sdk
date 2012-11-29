@@ -1,7 +1,7 @@
 //
-//  RMMemoryCache.h
+//  RMTileCacheDownloadOperation.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2012, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,28 +25,50 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import <Foundation/Foundation.h>
-#import "RMTile.h"
-#import "RMTileCache.h"
+#import "RMTileCacheDownloadOperation.h"
 
-/** An RMMemoryCache object represents memory-based caching of map tile images. Since memory is constrained in the iOS environment, this cache is relatively small, but useful for increasing performance. */
-@interface RMMemoryCache : NSObject <RMTileCache>
+@implementation RMTileCacheDownloadOperation
+{
+    RMTile _tile;
+    id <RMTileSource>_source;
+    RMTileCache *_cache;
+}
 
-/** @name Initializing Memory Caches */
+- (id)initWithTile:(RMTile)tile forTileSource:(id <RMTileSource>)source usingCache:(RMTileCache *)cache
+{
+    if (!(self = [super init]))
+        return nil;
 
-/** Initializes and returns a newly allocated memory cache object with the specified tile count capacity.
-*   @param aCapacity The maximum number of tiles to be held in the cache.
-*   @return An initialized memory cache object or `nil` if the object couldn't be created. */
-- (id)initWithCapacity:(NSUInteger)aCapacity;
+    _tile   = tile;
+    _source = [source retain];
+    _cache  = [cache retain];
 
-/** @name Cache Capacity */
+    return self;
+}
 
-/** The capacity, in number of tiles, that the memory cache can hold. */
-@property (nonatomic, readonly, assign) NSUInteger capacity;
+- (void)main
+{
+    if ( ! _source || ! _cache)
+        [self cancel];
 
-/** @name Making Space in the Cache */
+    if ([self isCancelled])
+        return;
 
-/** Remove the least-recently used image from the cache if the cache is at or over capacity. This removes a single image from the cache. */
-- (void)makeSpaceInCache;
+    if ( ! [_cache cachedImage:_tile withCacheKey:[_source uniqueTilecacheKey]])
+    {
+        if ([self isCancelled])
+            return;
+
+        if ( ! [_source imageForTile:_tile inCache:_cache])
+            [self cancel];
+    }
+}
+
+- (void)dealloc
+{
+    [_source release]; _source = nil;
+    [_cache release]; _cache = nil;
+    [super dealloc];
+}
 
 @end

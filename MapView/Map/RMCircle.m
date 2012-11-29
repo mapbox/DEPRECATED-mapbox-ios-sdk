@@ -54,7 +54,7 @@
     if (!(self = [super init]))
         return nil;
 
-    shapeLayer = [[CAShapeLayer alloc] init];
+    shapeLayer = [CAShapeLayer new];
     [self addSublayer:shapeLayer];
 
     mapView = aMapView;

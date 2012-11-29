@@ -10,20 +10,27 @@
 #import "RMMarker.h"
 #import "RMMapView.h"
 
+#define kRMUserLocationAnnotationTypeName @"RMUserLocationAnnotation"
+
+@interface RMUserLocation ()
+
+@property (nonatomic, assign) BOOL hasCustomLayer;
+
+@end
+
+#pragma mark -
+
 @implementation RMUserLocation
 
-@synthesize updating;
-@synthesize location;
-@synthesize heading;
+@synthesize updating = _updating;
+@synthesize location = _location;
+@synthesize heading = _heading;
+@synthesize hasCustomLayer = _hasCustomLayer;
 
 - (id)initWithMapView:(RMMapView *)aMapView coordinate:(CLLocationCoordinate2D)aCoordinate andTitle:(NSString *)aTitle
 {
     if ( ! (self = [super initWithMapView:aMapView coordinate:aCoordinate andTitle:aTitle]))
         return nil;
-
-    self.layer = [[[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDot.png"]] autorelease];
-
-    self.layer.zPosition = -MAXFLOAT + 2;
 
     self.annotationType = kRMUserLocationAnnotationTypeName;
 
@@ -34,9 +41,30 @@
 
 - (void)dealloc
 {
-    [location release]; location = nil;
-    [heading release]; heading = nil;
+    [layer release]; layer = nil;
+    [annotationType release]; annotationType = nil;
+    [_location release]; _location = nil;
+    [_heading release]; _heading = nil;
     [super dealloc];
+}
+
+- (RMMapLayer *)layer
+{
+    if ( ! super.layer)
+    {
+        if ([self.mapView.delegate respondsToSelector:@selector(mapView:layerForAnnotation:)])
+            super.layer = [self.mapView.delegate mapView:self.mapView layerForAnnotation:self];
+
+        if (super.layer)
+            self.hasCustomLayer = YES;
+
+        if ( ! super.layer)
+            super.layer = [[[RMMarker alloc] initWithUIImage:[RMMapView resourceImageNamed:@"TrackingDot.png"]] autorelease];
+
+        super.layer.zPosition = -MAXFLOAT + 2;
+    }
+
+    return super.layer;
 }
 
 - (BOOL)isUpdating
@@ -46,23 +74,23 @@
 
 - (void)setLocation:(CLLocation *)newLocation
 {
-    if ([newLocation distanceFromLocation:location] && newLocation.coordinate.latitude != 0 && newLocation.coordinate.longitude != 0)
+    if ([newLocation distanceFromLocation:_location] && newLocation.coordinate.latitude != 0 && newLocation.coordinate.longitude != 0)
     {
         [self willChangeValueForKey:@"location"];
-        [location release];
-        location = [newLocation retain];
-        self.coordinate = location.coordinate;
+        [_location release];
+        _location = [newLocation retain];
+        self.coordinate = _location.coordinate;
         [self didChangeValueForKey:@"location"];
     }
 }
 
 - (void)setHeading:(CLHeading *)newHeading
 {
-    if (newHeading.trueHeading != heading.trueHeading)
+    if (newHeading.trueHeading != _heading.trueHeading)
     {
         [self willChangeValueForKey:@"heading"];
-        [heading release];
-        heading = [newHeading retain];
+        [_heading release];
+        _heading = [newHeading retain];
         [self didChangeValueForKey:@"heading"];
     }
 }
