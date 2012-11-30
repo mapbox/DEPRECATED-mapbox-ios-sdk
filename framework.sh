@@ -12,7 +12,8 @@ FW_FOLDER="build/$FW_NAME.framework"
 #
 if [ -d $FW_FOLDER ]; then
   echo "Removing old build..."
-  rm -rf $FW_FOLDER
+  rm -rf MapView/build
+  rm -rf build
 fi
 
 #
@@ -45,13 +46,17 @@ xcodebuild -project MapView/MapView.xcodeproj -target $TARGET -configuration Rel
 #
 # make fat binaries
 #
-lipo -create MapView/build/Debug-iphoneos/lib${TARGET}.a   MapView/build/Debug-iphonesimulator/lib${TARGET}.a   -o $FW_FOLDER/${FW_NAME}Debug
-lipo -create MapView/build/Release-iphoneos/lib${TARGET}.a MapView/build/Release-iphonesimulator/lib${TARGET}.a -o $FW_FOLDER/${FW_NAME}
+lipo -create MapView/build/Debug-iphoneos/lib${FW_NAME}.a   MapView/build/Debug-iphonesimulator/lib${FW_NAME}.a   -o $FW_FOLDER/${FW_NAME}Debug
+lipo -create MapView/build/Release-iphoneos/lib${FW_NAME}.a MapView/build/Release-iphonesimulator/lib${FW_NAME}.a -o $FW_FOLDER/${FW_NAME}
 
 #
-# copy unified header
+# copy headers
 #
-cp -v MapView/Map/$FW_NAME.h $FW_FOLDER/Versions/A/Headers/$FW_NAME.h
+for header in `ls MapView/Map/*.h | grep -v $FW_NAME.h`; do
+  cp -v $header $FW_FOLDER/Versions/A/Headers
+done
+
+cp -v MapView/Map/$FW_NAME.h $FW_FOLDER/Versions/A/Headers
 
 #
 # copy resource bundle
