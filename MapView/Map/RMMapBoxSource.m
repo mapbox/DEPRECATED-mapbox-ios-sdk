@@ -102,14 +102,19 @@
                                     .longitude = [[[[feature objectForKey:@"geometry"] objectForKey:@"coordinates"] objectAtIndex:0] floatValue],
                                     .latitude  = [[[[feature objectForKey:@"geometry"] objectForKey:@"coordinates"] objectAtIndex:1] floatValue]
                                 };
+
+                                RMAnnotation *annotation = nil;
+
+                                if ([mapView.delegate respondsToSelector:@selector(mapView:layerForAnnotation:)])
+                                    annotation = [RMAnnotation annotationWithMapView:mapView coordinate:coordinate andTitle:[properties objectForKey:@"title"]];
+                                else
+                                    annotation = [RMPointAnnotation annotationWithMapView:mapView coordinate:coordinate andTitle:[properties objectForKey:@"title"]];
                                 
-                                RMPointAnnotation *pointAnnotation = [RMPointAnnotation annotationWithMapView:mapView coordinate:coordinate andTitle:[properties objectForKey:@"title"]];
-                                
-                                pointAnnotation.userInfo = properties;
+                                annotation.userInfo = properties;
                                 
                                 dispatch_async(dispatch_get_main_queue(), ^(void)
                                 {
-                                    [mapView addAnnotation:pointAnnotation];
+                                    [mapView addAnnotation:annotation];
                                 });
                             }
                         }
