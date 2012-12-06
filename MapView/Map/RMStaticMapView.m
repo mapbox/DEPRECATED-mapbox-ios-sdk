@@ -78,17 +78,20 @@
 
     self.userInteractionEnabled = NO;
 
-    _weakSelf = self;
-
-    dispatch_async(tileSource.dataQueue, ^(void)
+    if (handler)
     {
-        dispatch_sync(dispatch_get_main_queue(), ^(void)
-        {
-            UIImage *image = [_weakSelf takeSnapshot];
+        _weakSelf = self;
 
-            handler(image);
+        dispatch_async(tileSource.dataQueue, ^(void)
+        {
+            dispatch_sync(dispatch_get_main_queue(), ^(void)
+            {
+                UIImage *image = [_weakSelf takeSnapshot];
+
+                handler(image);
+            });
         });
-    });
+    }
 
     return self;
     
