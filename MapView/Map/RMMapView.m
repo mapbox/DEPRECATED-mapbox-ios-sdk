@@ -1705,7 +1705,8 @@
 
         _currentCallout = [SMCalloutView new];
 
-        _currentCallout.title = anAnnotation.title;
+        _currentCallout.title    = anAnnotation.title;
+        _currentCallout.subtitle = anAnnotation.subtitle;
 
         if (anAnnotation.layer.leftCalloutAccessoryView)
         {
