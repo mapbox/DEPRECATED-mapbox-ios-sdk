@@ -85,7 +85,7 @@
     previousBounds = CGRectZero;
     lastScale = 0.0;
 
-    self.masksToBounds = YES;
+    self.masksToBounds = NO;
 
     scaleLineWidth = NO;
     scaleLineDash = NO;

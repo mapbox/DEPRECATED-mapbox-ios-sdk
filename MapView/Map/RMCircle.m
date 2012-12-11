@@ -70,6 +70,8 @@
     circlePath = NULL;
     [self updateCirclePathAnimated:NO];
 
+    self.masksToBounds = NO;
+
     return self;
 }
 
