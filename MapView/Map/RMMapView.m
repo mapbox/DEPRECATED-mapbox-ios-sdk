@@ -1766,6 +1766,8 @@
     _currentCallout.title    = anAnnotation.title;
     _currentCallout.subtitle = anAnnotation.subtitle;
 
+    _currentCallout.calloutOffset = anAnnotation.layer.calloutOffset;
+
     if (anAnnotation.layer.leftCalloutAccessoryView)
     {
         if ([anAnnotation.layer.leftCalloutAccessoryView isKindOfClass:[UIControl class]])

@@ -67,6 +67,11 @@
 *   If the value of this property is `NO`, the value of the title string is ignored and the annotation remains enabled by default. You can still disable the annotation explicitly using the enabled property. */
 @property (nonatomic, assign) BOOL canShowCallout;
 
+/** The offset (in pixels) at which to place the callout bubble.
+*
+*   This property determines the additional distance by which to move the callout bubble. When this property is set to (0, 0), the anchor point of the callout bubble is placed on the top-center point of the annotation view’s frame. Specifying positive offset values moves the callout bubble down and to the right, while specifying negative values moves it up and to the left. */
+@property (nonatomic, assign) CGPoint calloutOffset;
+
 /** The view to display on the left side of the standard callout bubble.
 *
 *   The default value of this property is `nil`. The left callout view is typically used to display information about the annotation or to link to custom information provided by your application. The height of your view should be 32 pixels or less.

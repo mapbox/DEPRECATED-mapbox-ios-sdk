@@ -35,6 +35,7 @@
 @synthesize enableDragging;
 @synthesize userInfo;
 @synthesize canShowCallout;
+@synthesize calloutOffset;
 @synthesize leftCalloutAccessoryView;
 @synthesize rightCalloutAccessoryView;
 
@@ -45,6 +46,7 @@
 
     self.annotation = nil;
     self.enableDragging = NO;
+    self.calloutOffset = CGPointZero;
 
 	return self;
 }
@@ -56,6 +58,7 @@
 
     self.annotation = nil;
     self.userInfo = nil;
+    self.calloutOffset = CGPointZero;
 
     return self;
 }
