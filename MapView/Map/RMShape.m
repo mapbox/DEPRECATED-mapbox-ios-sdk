@@ -187,7 +187,7 @@
     // Clip bound rect to screen bounds.
     // If bounds are not clipped, they won't display when you zoom in too much.
 
-    CGRect screenBounds = [mapView frame];
+    CGRect screenBounds = [mapView bounds];
 
     // we start with the non-clipped bounds and clip them
     CGRect clippedBounds = nonClippedBounds;
