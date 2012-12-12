@@ -435,6 +435,11 @@
 
 #pragma mark - Accessors
 
+- (BOOL)containsPoint:(CGPoint)thePoint
+{
+    return CGPathContainsPoint(shapeLayer.path, nil, thePoint, [shapeLayer.fillRule isEqualToString:kCAFillRuleEvenOdd]);
+}
+
 - (void)closePath
 {
     if ([points count])

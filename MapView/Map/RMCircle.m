@@ -134,6 +134,11 @@
 
 #pragma mark - Accessors
 
+- (BOOL)containsPoint:(CGPoint)thePoint
+{
+    return CGPathContainsPoint(shapeLayer.path, nil, thePoint, [shapeLayer.fillRule isEqualToString:kCAFillRuleEvenOdd]);
+}
+
 - (void)setLineColor:(UIColor *)newLineColor
 {
     if (lineColor != newLineColor)
