@@ -90,3 +90,12 @@ To report bugs and help fix them, please use the [issue tracker][tracker].
 [support]: http://support.mapbox.com/discussions/mapbox-ios-sdk
 [docs]: http://mapbox.com/mapbox-ios-sdk/
 [tracker]: https://github.com/mapbox/mapbox-ios-sdk/issues
+
+Dependent Libraries
+-------------------
+
+The MapBox iOS SDK makes use of several sub-libraries, listed below. See License.txt for more detailed information about Route-Me and Proj4 and see the individual license files in the sub-libraries for more information on each. 
+
+FMDB by Gus Mueller (SQLite for caching and MBTiles)
+GRMustache by Gwendal Roué (Mustache templates)
+SMCalloutView by Nick Farina (annotation callouts)
