@@ -67,7 +67,7 @@
 {
     if ( ! _imageURLString)
     {
-        NSString *imagerySetString;
+        NSString *imagerySetString = nil;
 
         if (_imagerySet == RMBingImagerySetAerial)
             imagerySetString = @"Aerial";
