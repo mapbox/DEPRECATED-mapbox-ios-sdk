@@ -2869,6 +2869,9 @@
 {
     @synchronized (_annotations)
     {
+        if ([_annotations containsObject:annotation])
+            return;
+
         [_annotations addObject:annotation];
         [self.quadTree addAnnotation:annotation];
     }
