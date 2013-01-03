@@ -631,7 +631,8 @@
 {
     @synchronized (self)
     {
-        [_rootNode addAnnotation:annotation];
+        if ( ! [_rootNode.annotations containsObject:annotation])
+            [_rootNode addAnnotation:annotation];
     }
 }
 
@@ -643,9 +644,8 @@
     @synchronized (self)
     {
         for (RMAnnotation *annotation in annotations)
-        {
-            [_rootNode addAnnotation:annotation];
-        }
+            if ( ! [_rootNode.annotations containsObject:annotation])
+                [_rootNode addAnnotation:annotation];
     }
 }
 

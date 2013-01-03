@@ -103,7 +103,7 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:RMTileRequested object:[NSNumber numberWithUnsignedLongLong:RMTileKey(tile)]];
     });
     
-    __block UIImage *image;
+    __block UIImage *image = nil;
 
     [queue inDatabase:^(FMDatabase *db)
     {
@@ -250,7 +250,7 @@
 
 - (NSString *)legend
 {
-    __block NSString *legend;
+    __block NSString *legend  = nil;
 
     [queue inDatabase:^(FMDatabase *db)
     {
@@ -332,7 +332,7 @@
 
 - (NSString *)shortName
 {
-    __block NSString *shortName;
+    __block NSString *shortName = nil;
 
     [queue inDatabase:^(FMDatabase *db)
     {
@@ -353,7 +353,7 @@
 
 - (NSString *)longDescription
 {
-    __block NSString *description;
+    __block NSString *description = nil;
 
     [queue inDatabase:^(FMDatabase *db)
     {
@@ -374,7 +374,7 @@
 
 - (NSString *)shortAttribution
 {
-    __block NSString *attribution;
+    __block NSString *attribution = nil;
 
     [queue inDatabase:^(FMDatabase *db)
     {

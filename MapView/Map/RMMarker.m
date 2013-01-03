@@ -94,7 +94,7 @@
 
 - (id)initWithMapBoxMarkerImage:(NSString *)symbolName tintColor:(UIColor *)color size:(RMMarkerMapBoxImageSize)size
 {
-    NSString *sizeString;
+    NSString *sizeString = nil;
     
     switch (size)
     {
@@ -112,7 +112,7 @@
             break;
     }
     
-    NSString *colorHex;
+    NSString *colorHex = nil;
     
     if (color)
     {
@@ -140,7 +140,7 @@
                                                (colorHex   ? [@"+" stringByAppendingString:[colorHex stringByReplacingOccurrencesOfString:@"#" withString:@""]] : @"+ff0000"),
                                                (useRetina  ? @"@2x" : @"")]];
 
-    UIImage *image;
+    UIImage *image = nil;
     
     NSString *cachePath = [NSString stringWithFormat:@"%@/%@", kCachesPath, [imageURL lastPathComponent]];
     

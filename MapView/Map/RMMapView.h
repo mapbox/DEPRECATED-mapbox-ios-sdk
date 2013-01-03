@@ -330,6 +330,21 @@ typedef enum : NSUInteger {
 *   @return The screen position of the annotation. */
 - (CGPoint)mapPositionForAnnotation:(RMAnnotation *)annotation;
 
+/** Selects the specified annotation and displays a callout view for it.
+*
+*   If the specified annotation is not onscreen, and therefore does not have an associated annotation layer, this method has no effect.
+*   @param annotation The annotation object to select.
+*   @param animated If `YES`, the callout view is animated into position. */
+- (void)selectAnnotation:(RMAnnotation *)annotation animated:(BOOL)animated;
+
+/** Deselects the specified annotation and hides its callout view.
+*   @param annotation The annotation object to deselect.
+*   @param animated If `YES`, the callout view is animated offscreen. */
+- (void)deselectAnnotation:(RMAnnotation *)annotation animated:(BOOL)animated;
+
+/** The annotation that is currently selected. */
+@property (nonatomic, retain) RMAnnotation *selectedAnnotation;
+
 #pragma mark - TileSources
 
 @property (nonatomic, retain) RMQuadTree *quadTree;

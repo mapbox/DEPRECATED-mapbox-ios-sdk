@@ -85,7 +85,7 @@
     previousBounds = CGRectZero;
     lastScale = 0.0;
 
-    self.masksToBounds = YES;
+    self.masksToBounds = NO;
 
     scaleLineWidth = NO;
     scaleLineDash = NO;
@@ -187,7 +187,7 @@
     // Clip bound rect to screen bounds.
     // If bounds are not clipped, they won't display when you zoom in too much.
 
-    CGRect screenBounds = [mapView frame];
+    CGRect screenBounds = [mapView bounds];
 
     // we start with the non-clipped bounds and clip them
     CGRect clippedBounds = nonClippedBounds;
@@ -434,6 +434,11 @@
 }
 
 #pragma mark - Accessors
+
+- (BOOL)containsPoint:(CGPoint)thePoint
+{
+    return CGPathContainsPoint(shapeLayer.path, nil, thePoint, [shapeLayer.fillRule isEqualToString:kCAFillRuleEvenOdd]);
+}
 
 - (void)closePath
 {
