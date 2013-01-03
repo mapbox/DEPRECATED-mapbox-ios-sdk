@@ -44,6 +44,6 @@ appledoc \
     --index-desc README.markdown \
     --docset-atom-filename docset.atom \
     --docset-feed-url "http://mapbox.com/mapbox-ios-sdk/Docs/publish/%DOCSETATOMFILENAME" \
-    --docset-package-url "https://github.com/mapbox/mapbox-ios-sdk/blob/packaging/Downloads/%DOCSETPACKAGEFILENAME" \
+    --docset-package-url "https://github.com/mapbox/mapbox-ios-sdk/raw/packaging/Downloads/%DOCSETPACKAGEFILENAME" \
     --publish-docset \
     .
