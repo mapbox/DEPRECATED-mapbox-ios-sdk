@@ -1,18 +1,18 @@
 <?xml version="1.0" standalone="no"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xmlns:docset="http://developer.apple.com/rss/docset_extensions" xml:lang="en">
-    <id>http://mapbox.com/mapbox-ios-sdk/Docs/publish/docset.atom/20130103144901</id>
+    <id>http://mapbox.com/mapbox-ios-sdk/Docs/publish/docset.atom/20130103150107</id>
     <title type="text">MapBox 0.5.2 Documentation</title>
     <rights>Copyright © 2013 MapBox. All rights reserved.</rights>
     <link rel="self" href="http://mapbox.com/mapbox-ios-sdk/Docs/publish/docset.atom"></link>
     <docset:publisherName>MapBox</docset:publisherName>
     <docset:publisherID>com.mapbox.documentation</docset:publisherID>
-    <updated>2013-01-03T14:49:01-08:00</updated>
+    <updated>2013-01-03T15:01:07-08:00</updated>
     <entry>
         <id>tag:mapbox.com,2013-01-03:com.mapbox.MapBox-0.5.2/1.0.0</id>
         <title type="text">MapBox 0.5.2 Documentation</title>
-        <updated>2013-01-03T14:49:01-08:00</updated>
+        <updated>2013-01-03T15:01:07-08:00</updated>
         <content type="text">MapBox 0.5.2 Documentation (v1.0.0)</content>
-        <link rel="enclosure" type="application/octet-stream" href="https://github.com/mapbox/mapbox-ios-sdk/raw/packaging/Downloads/com.mapbox.MapBox-0.5.2-1.0.xar" length="201075"></link>
+        <link rel="enclosure" type="application/octet-stream" href="https://github.com/mapbox/mapbox-ios-sdk/raw/packaging/Downloads/com.mapbox.MapBox-0.5.2-1.0.xar" length="201130"></link>
         <docset:identifier>com.mapbox.MapBox-0.5.2</docset:identifier>
         <docset:version>1.0.0</docset:version>
         <docset:minimumXcodeVersion>3.0.0</docset:minimumXcodeVersion>
