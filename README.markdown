@@ -96,6 +96,6 @@ Dependent Libraries
 
 The MapBox iOS SDK makes use of several sub-libraries, listed below. See License.txt for more detailed information about Route-Me and Proj4 and see the individual license files in the sub-libraries for more information on each. 
 
- * FMDB by Gus Mueller (SQLite for caching and MBTiles)
- * GRMustache by Gwendal Roué (Mustache templates)
- * SMCalloutView by Nick Farina (annotation callouts)
+ * [FMDB](https://github.com/ccgus/fmdb) by Gus Mueller (SQLite for caching and MBTiles)
+ * [GRMustache](https://github.com/groue/GRMustache) by Gwendal Roué (Mustache templates)
+ * [SMCalloutView](https://github.com/nfarina/calloutview) by Nick Farina (annotation callouts)
