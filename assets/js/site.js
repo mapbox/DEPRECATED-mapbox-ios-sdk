@@ -69,11 +69,16 @@
             if (!next.length) {
                 next = $(this.$menu.find('li')[0]);
                 next.addClass('active');
-                $('html, body').animate({
-                    scrollTop: 0
-                }, {
-                    duration: 300
-                });
+
+                // Execute only if the height of the menu and its offset
+                // is greater than the height of the window.
+                if ((this.$menu.offset().top) < this.$menu.height()) {
+                    $('html, body').animate({
+                        scrollTop: 0
+                    }, {
+                        duration: 300
+                    });
+                }
             } else {
                 next.addClass('active');
                 var windowOffset = $(window).scrollTop() + $(window).height(),
@@ -94,12 +99,16 @@
             if (!prev.length) {
                 prev = this.$menu.find('li').last();
                 prev.addClass('active');
-                $('html, body').animate({
-                    scrollTop: this.$menu.height()
-                }, {
-                    duration: 300
-                });
 
+                // Execute only if the height of the menu and its offset
+                // is greater than the height of the window.
+                if ((this.$menu.offset().top) < this.$menu.height()) {
+                    $('html, body').animate({
+                        scrollTop: this.$menu.height()
+                    }, {
+                        duration: 300
+                    });
+                }
             } else {
                 prev.addClass('active');
 
