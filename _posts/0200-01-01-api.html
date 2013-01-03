@@ -1,5 +1,5 @@
 ---
-title: iOS SDK 0.5.0
+title: iOS SDK 0.5.2
 layout: api
 permalink: /api
 categories: api
@@ -419,6 +419,13 @@ navigation:
 	<span class="tooltip">
 		<code><a href="#//api/name/title">&nbsp;&nbsp;title</a></code>
 		<span class="tooltip"><p>The annotation&rsquo;s title.</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/subtitle">&nbsp;&nbsp;subtitle</a></code>
+		<span class="tooltip"><p>The annotation&rsquo;s sub<a href="#//api/name/title">title</a>.</p></span>
 	</span>
 	<span class="task-item-suffix">property</span>
 	
@@ -945,6 +952,45 @@ navigation:
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>The annotation&rsquo;s current location on screen. Do not set this directly unless during temporary operations like annotation drags, but rather use the <a href="#//api/name/coordinate">coordinate</a> property to permanently change the annotation&rsquo;s location on the map.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref"><a href="https://github.com/mapbox/mapbox-ios-sdk/blob/release/MapView/Map/RMAnnotation.h">RMAnnotation.h</a></code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/subtitle" title="subtitle"></a>
+	<h3 class="subsubtitle method-title">subtitle</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The annotation&rsquo;s sub<a href="#//api/name/title">title</a>.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, retain) NSString *subtitle</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The annotation&rsquo;s sub<a href="#//api/name/title">title</a>.</p>
 	</div>
 	
 	
@@ -3687,6 +3733,13 @@ navigation:
 	
 </li><li>
 	<span class="tooltip">
+		<code><a href="#//api/name/calloutOffset">&nbsp;&nbsp;calloutOffset</a></code>
+		<span class="tooltip"><p>The offset (in pixels) at which to place the callout bubble.</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
 		<code><a href="#//api/name/leftCalloutAccessoryView">&nbsp;&nbsp;leftCalloutAccessoryView</a></code>
 		<span class="tooltip"><p>The view to display on the left side of the standard callout bubble.</p></span>
 	</span>
@@ -3742,6 +3795,47 @@ navigation:
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>The annotation associated with the layer. This can be useful to inspect the annotation&rsquo;s <a href="#//api/name/userInfo">userInfo</a> in order to customize the visual representation.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref"><a href="https://github.com/mapbox/mapbox-ios-sdk/blob/release/MapView/Map/RMMapLayer.h">RMMapLayer.h</a></code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/calloutOffset" title="calloutOffset"></a>
+	<h3 class="subsubtitle method-title">calloutOffset</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The offset (in pixels) at which to place the callout bubble.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) CGPoint calloutOffset</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The offset (in pixels) at which to place the callout bubble.</p>
+
+<p>This property determines the additional distance by which to move the callout bubble. When this property is set to (0, 0), the anchor point of the callout bubble is placed on the top-center point of the <a href="#//api/name/annotation">annotation</a> view’s frame. Specifying positive offset values moves the callout bubble down and to the right, while specifying negative values moves it up and to the left.</p>
 	</div>
 	
 	
@@ -4478,6 +4572,27 @@ navigation:
 		<span class="tooltip"><p>The screen position for a given annotation.</p></span>
 	</span>
 	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/selectAnnotation:animated:">&ndash;&nbsp;selectAnnotation:animated:</a></code>
+		<span class="tooltip"><p>Selects the specified annotation and displays a callout view for it.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/deselectAnnotation:animated:">&ndash;&nbsp;deselectAnnotation:animated:</a></code>
+		<span class="tooltip"><p>Deselects the specified annotation and hides its callout view.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/selectedAnnotation">&nbsp;&nbsp;selectedAnnotation</a></code>
+		<span class="tooltip"><p>The annotation that is currently selected.</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
 	
 </li>
 						</ul>
@@ -5456,6 +5571,45 @@ navigation:
 </div>
 						
 						<div class="section-method">
+	<a name="//api/name/selectedAnnotation" title="selectedAnnotation"></a>
+	<h3 class="subsubtitle method-title">selectedAnnotation</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The annotation that is currently selected.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, retain) RMAnnotation *selectedAnnotation</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The annotation that is currently selected.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref"><a href="https://github.com/mapbox/mapbox-ios-sdk/blob/release/MapView/Map/RMMapView.h">RMMapView.h</a></code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
 	<a name="//api/name/showLogoBug" title="showLogoBug"></a>
 	<h3 class="subsubtitle method-title">showLogoBug</h3>
 	
@@ -6195,6 +6349,60 @@ navigation:
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Convert a coordiante to a projected point.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref"><a href="https://github.com/mapbox/mapbox-ios-sdk/blob/release/MapView/Map/RMMapView.h">RMMapView.h</a></code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/deselectAnnotation:animated:" title="deselectAnnotation:animated:"></a>
+	<h3 class="subsubtitle method-title">deselectAnnotation:animated:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Deselects the specified annotation and hides its callout view.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)deselectAnnotation:(RMAnnotation *)<em>annotation</em> animated:(BOOL)<em>animated</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>annotation</em></dt>
+			<dd><p>The annotation object to deselect.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>animated</em></dt>
+			<dd><p>If <code>YES</code>, the callout view is animated offscreen.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Deselects the specified annotation and hides its callout view.</p>
 	</div>
 	
 	
@@ -7225,6 +7433,62 @@ navigation:
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Remove the tile source at a given index from the map view.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref"><a href="https://github.com/mapbox/mapbox-ios-sdk/blob/release/MapView/Map/RMMapView.h">RMMapView.h</a></code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/selectAnnotation:animated:" title="selectAnnotation:animated:"></a>
+	<h3 class="subsubtitle method-title">selectAnnotation:animated:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Selects the specified annotation and displays a callout view for it.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)selectAnnotation:(RMAnnotation *)<em>annotation</em> animated:(BOOL)<em>animated</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>annotation</em></dt>
+			<dd><p>The annotation object to select.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>animated</em></dt>
+			<dd><p>If <code>YES</code>, the callout view is animated into position.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Selects the specified annotation and displays a callout view for it.</p>
+
+<p>If the specified annotation is not onscreen, and therefore does not have an associated annotation layer, this method has no effect.</p>
 	</div>
 	
 	
