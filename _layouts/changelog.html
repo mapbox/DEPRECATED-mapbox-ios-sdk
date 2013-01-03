@@ -11,16 +11,22 @@ class: box
   <ul class='cell6 doc-subnav clearfix'>
     <li><a href='{{site.baseurl}}/'>Guide</a></li>
     <li><a href='{{site.baseurl}}/api/'>API</a></li>
-    <li><a href='{{site.baseurl}}/examples/' class='active'>Examples</a></li>
-    <li><a href='{{site.baseurl}}/changelog/'>Changelog</a></li>
+    <li><a href='{{site.baseurl}}/examples/'>Examples</a></li>
+    <li><a href='{{site.baseurl}}/changelog/' class='active'>Changelog</a></li>
   </ul>
 </div>
 
 <div class='doc-page pad3c fillM clearfix'>
   <div class='fillW prose doc-content clearfix' style='border:0'>
     <div class='doc pad2'>
-      <h1>{{page.title}}</h1>
-      {{content}}
+      {% for item in page.releases %}
+        <h2 id='{{item.version|replace:' ', '_'}}'>{{item.version}} {% if item.date %}<small>{{item.date|date:'%B %d %Y'}}</small>{% endif %}</h2>
+        <ul class='checklist'>
+          {% for item in item.notes %}
+          <li class='check'>{{item | markdownify}}</li>
+          {% endfor %}
+        </ul>
+      {% endfor %}
     </div>
     <div class='doc-footer'>
       <div class='pad2'>
