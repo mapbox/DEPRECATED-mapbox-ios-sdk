@@ -46,6 +46,11 @@
 
 @synthesize cacheable = _cacheable, opaque = _opaque;
 
+- (id)initWithTileSetResource:(NSString *)name ofType:(NSString *)extension
+{
+    return [self initWithTileSetURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:name ofType:extension]]];
+}
+
 - (id)initWithTileSetURL:(NSURL *)tileSetURL
 {
 	if ( ! (self = [super init]))
