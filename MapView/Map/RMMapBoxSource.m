@@ -39,8 +39,6 @@
 @interface RMMapBoxSource ()
 
 @property (nonatomic, retain) NSDictionary *infoDictionary;
-
-- (id)initWithInfo:(NSDictionary *)info;
 @property (nonatomic, retain) NSString *tileJSON;
 
 @end
@@ -130,18 +128,6 @@
     return self;
 }
 
-- (id)initWithInfo:(NSDictionary *)info
-{
-    WarnDeprecated();
-
-    if ( ! (self = [super init]))
-        return nil;
-
-    _infoDictionary = [[NSDictionary dictionaryWithDictionary:info] retain];
-
-	return self;
-}
-
 - (id)initWithReferenceURL:(NSURL *)referenceURL
 {
     return [self initWithReferenceURL:referenceURL enablingDataOnMapView:nil];
@@ -160,19 +146,6 @@
     if ([[referenceURL pathExtension] isEqualToString:@"json"] && (dataObject = [NSString stringWithContentsOfURL:referenceURL encoding:NSUTF8StringEncoding error:nil]) && dataObject)
         return [self initWithTileJSON:dataObject enablingDataOnMapView:mapView];
     
-    else if ([[referenceURL pathExtension] isEqualToString:@"plist"])
-    {
-        NSMutableDictionary *mutableInfoDictionary = [NSMutableDictionary dictionaryWithContentsOfURL:referenceURL];
-        
-        if (mutableInfoDictionary)
-        {
-            if ( ! [mutableInfoDictionary objectForKey:@"scheme"])
-                [mutableInfoDictionary setObject:@"tms" forKey:@"scheme"]; // assume older plists are TMS, not XYZ per TileJSON default
-        
-            return [self initWithInfo:mutableInfoDictionary];
-        }
-    }
-
     return nil;
 }
 
