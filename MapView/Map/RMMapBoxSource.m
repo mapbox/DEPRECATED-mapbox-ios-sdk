@@ -41,6 +41,7 @@
 @property (nonatomic, retain) NSDictionary *infoDictionary;
 
 - (id)initWithInfo:(NSDictionary *)info;
+@property (nonatomic, retain) NSString *tileJSON;
 
 @end
 
@@ -48,7 +49,7 @@
 
 @implementation RMMapBoxSource
 
-@synthesize infoDictionary=_infoDictionary, imageQuality=_imageQuality, dataQueue=_dataQueue;
+@synthesize infoDictionary=_infoDictionary, tileJSON=_tileJSON, imageQuality=_imageQuality, dataQueue=_dataQueue;
 
 - (id)initWithMapID:(NSString *)mapID
 {
@@ -69,6 +70,8 @@
         _infoDictionary = (NSDictionary *)[[NSJSONSerialization JSONObjectWithData:[tileJSON dataUsingEncoding:NSUTF8StringEncoding]
                                                                            options:0
                                                                              error:nil] retain];
+
+        _tileJSON = [tileJSON retain];
 
         id dataObject = nil;
         
@@ -184,10 +187,16 @@
 {
     dispatch_release(_dataQueue);
     [_infoDictionary release];
+    [_tileJSON release];
     [super dealloc];
 }
 
 #pragma mark 
+
+- (NSURL *)tileJSONURL
+{
+    return [NSURL URLWithString:[NSString stringWithFormat:@"http://a.tiles.mapbox.com/v3/%@.json", [self.infoDictionary objectForKey:@"id"]]];
+}
 
 - (NSURL *)URLForTile:(RMTile)tile
 {
