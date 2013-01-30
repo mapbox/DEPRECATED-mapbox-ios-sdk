@@ -114,7 +114,7 @@ typedef enum : NSUInteger {
 /** Tells the delegate when the user long-presses a map view.
 *   @param map The map that was long-pressed.
 *   @param point The point at which the map was long-pressed. */
-- (void)longSingleTapOnMap:(RMMapView *)map at:(CGPoint)point;
+- (void)longPressOnMap:(RMMapView *)map at:(CGPoint)point;
 
 /** @name Responding to User Annotation Gestures */
 

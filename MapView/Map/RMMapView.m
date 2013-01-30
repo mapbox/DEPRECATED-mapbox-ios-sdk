@@ -122,7 +122,7 @@
     BOOL _delegateHasDoubleTapOnMap;
     BOOL _delegateHasSingleTapOnMap;
     BOOL _delegateHasSingleTapTwoFingersOnMap;
-    BOOL _delegateHasLongSingleTapOnMap;
+    BOOL _delegateHasLongPressOnMap;
     BOOL _delegateHasTapOnAnnotation;
     BOOL _delegateHasDoubleTapOnAnnotation;
     BOOL _delegateHasTapOnCalloutAccessoryControlForAnnotation;
@@ -535,7 +535,7 @@
     _delegateHasDoubleTapOnMap = [_delegate respondsToSelector:@selector(doubleTapOnMap:at:)];
     _delegateHasSingleTapOnMap = [_delegate respondsToSelector:@selector(singleTapOnMap:at:)];
     _delegateHasSingleTapTwoFingersOnMap = [_delegate respondsToSelector:@selector(singleTapTwoFingersOnMap:at:)];
-    _delegateHasLongSingleTapOnMap = [_delegate respondsToSelector:@selector(longSingleTapOnMap:at:)];
+    _delegateHasLongPressOnMap = [_delegate respondsToSelector:@selector(longPressOnMap:at:)];
 
     _delegateHasTapOnAnnotation = [_delegate respondsToSelector:@selector(tapOnAnnotation:onMap:)];
     _delegateHasDoubleTapOnAnnotation = [_delegate respondsToSelector:@selector(doubleTapOnAnnotation:onMap:)];
@@ -1631,8 +1631,8 @@
     if (recognizer.state != UIGestureRecognizerStateBegan)
         return;
 
-    if (_delegateHasLongSingleTapOnMap)
-        [_delegate longSingleTapOnMap:self at:[recognizer locationInView:self]];
+    if (_delegateHasLongPressOnMap)
+        [_delegate longPressOnMap:self at:[recognizer locationInView:self]];
 }
 
 // defines when the additional pan gesture recognizer on the scroll should handle the gesture
