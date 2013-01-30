@@ -1734,6 +1734,9 @@
 
 - (void)selectAnnotation:(RMAnnotation *)annotation animated:(BOOL)animated
 {
+    if ( ! annotation && _currentAnnotation)
+        [self deselectAnnotation:_currentAnnotation animated:animated];
+
     if (annotation.isAnnotationOnScreen && ! [annotation isEqual:_currentAnnotation])
     {
         [self deselectAnnotation:_currentAnnotation animated:NO];
