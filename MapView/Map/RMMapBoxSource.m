@@ -151,7 +151,7 @@
 
 - (id)initWithMapID:(NSString *)mapID enablingDataOnMapView:(RMMapView *)mapView
 {
-    NSString *referenceURLString = [NSString stringWithFormat:@"http://a.tiles.mapbox.com/v3/%@.jsonp", mapID];
+    NSString *referenceURLString = [NSString stringWithFormat:@"http://a.tiles.mapbox.com/v3/%@.json", mapID];
 
     return [self initWithReferenceURL:[NSURL URLWithString:referenceURLString] enablingDataOnMapView:mapView];
 }
