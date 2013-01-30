@@ -125,6 +125,7 @@
     BOOL _delegateHasLongPressOnMap;
     BOOL _delegateHasTapOnAnnotation;
     BOOL _delegateHasDoubleTapOnAnnotation;
+    BOOL _delegateHasLongPressOnAnnotation;
     BOOL _delegateHasTapOnCalloutAccessoryControlForAnnotation;
     BOOL _delegateHasTapOnLabelForAnnotation;
     BOOL _delegateHasDoubleTapOnLabelForAnnotation;
@@ -539,6 +540,7 @@
 
     _delegateHasTapOnAnnotation = [_delegate respondsToSelector:@selector(tapOnAnnotation:onMap:)];
     _delegateHasDoubleTapOnAnnotation = [_delegate respondsToSelector:@selector(doubleTapOnAnnotation:onMap:)];
+    _delegateHasLongPressOnAnnotation = [_delegate respondsToSelector:@selector(longPressOnAnnotation:onMap:)];
     _delegateHasTapOnCalloutAccessoryControlForAnnotation = [_delegate respondsToSelector:@selector(tapOnCalloutAccessoryControl:forAnnotation:onMap:)];
     _delegateHasTapOnLabelForAnnotation = [_delegate respondsToSelector:@selector(tapOnLabelForAnnotation:onMap:)];
     _delegateHasDoubleTapOnLabelForAnnotation = [_delegate respondsToSelector:@selector(doubleTapOnLabelForAnnotation:onMap:)];
@@ -1631,7 +1633,18 @@
     if (recognizer.state != UIGestureRecognizerStateBegan)
         return;
 
-    if (_delegateHasLongPressOnMap)
+    if ( ! _delegateHasLongPressOnMap && ! _delegateHasLongPressOnAnnotation)
+        return;
+
+    CALayer *hit = [_overlayView overlayHitTest:[recognizer locationInView:self]];
+
+    if (_currentAnnotation && [hit isEqual:_currentAnnotation.layer])
+        [self deselectAnnotation:_currentAnnotation animated:NO];
+
+    if ([hit isKindOfClass:[RMMapLayer class]] && _delegateHasLongPressOnAnnotation)
+        [_delegate longPressOnAnnotation:[((RMMapLayer *)hit) annotation] onMap:self];
+
+    else if (_delegateHasLongPressOnMap)
         [_delegate longPressOnMap:self at:[recognizer locationInView:self]];
 }
 
