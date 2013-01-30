@@ -358,7 +358,7 @@
        minZoomLevel:(float)minZoomLevel
     backgroundImage:(UIImage *)backgroundImage
 {
-    if (!(self = [super initWithFrame:frame]))
+    if (!newTilesource || !(self = [super initWithFrame:frame]))
         return nil;
 
     [self performInitializationWithTilesource:newTilesource
