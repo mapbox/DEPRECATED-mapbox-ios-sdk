@@ -122,9 +122,10 @@
     BOOL _delegateHasDoubleTapOnMap;
     BOOL _delegateHasSingleTapOnMap;
     BOOL _delegateHasSingleTapTwoFingersOnMap;
-    BOOL _delegateHasLongSingleTapOnMap;
+    BOOL _delegateHasLongPressOnMap;
     BOOL _delegateHasTapOnAnnotation;
     BOOL _delegateHasDoubleTapOnAnnotation;
+    BOOL _delegateHasLongPressOnAnnotation;
     BOOL _delegateHasTapOnCalloutAccessoryControlForAnnotation;
     BOOL _delegateHasTapOnLabelForAnnotation;
     BOOL _delegateHasDoubleTapOnLabelForAnnotation;
@@ -358,7 +359,7 @@
        minZoomLevel:(float)minZoomLevel
     backgroundImage:(UIImage *)backgroundImage
 {
-    if (!(self = [super initWithFrame:frame]))
+    if (!newTilesource || !(self = [super initWithFrame:frame]))
         return nil;
 
     [self performInitializationWithTilesource:newTilesource
@@ -535,10 +536,11 @@
     _delegateHasDoubleTapOnMap = [_delegate respondsToSelector:@selector(doubleTapOnMap:at:)];
     _delegateHasSingleTapOnMap = [_delegate respondsToSelector:@selector(singleTapOnMap:at:)];
     _delegateHasSingleTapTwoFingersOnMap = [_delegate respondsToSelector:@selector(singleTapTwoFingersOnMap:at:)];
-    _delegateHasLongSingleTapOnMap = [_delegate respondsToSelector:@selector(longSingleTapOnMap:at:)];
+    _delegateHasLongPressOnMap = [_delegate respondsToSelector:@selector(longPressOnMap:at:)];
 
     _delegateHasTapOnAnnotation = [_delegate respondsToSelector:@selector(tapOnAnnotation:onMap:)];
     _delegateHasDoubleTapOnAnnotation = [_delegate respondsToSelector:@selector(doubleTapOnAnnotation:onMap:)];
+    _delegateHasLongPressOnAnnotation = [_delegate respondsToSelector:@selector(longPressOnAnnotation:onMap:)];
     _delegateHasTapOnCalloutAccessoryControlForAnnotation = [_delegate respondsToSelector:@selector(tapOnCalloutAccessoryControl:forAnnotation:onMap:)];
     _delegateHasTapOnLabelForAnnotation = [_delegate respondsToSelector:@selector(tapOnLabelForAnnotation:onMap:)];
     _delegateHasDoubleTapOnLabelForAnnotation = [_delegate respondsToSelector:@selector(doubleTapOnLabelForAnnotation:onMap:)];
@@ -1631,8 +1633,19 @@
     if (recognizer.state != UIGestureRecognizerStateBegan)
         return;
 
-    if (_delegateHasLongSingleTapOnMap)
-        [_delegate longSingleTapOnMap:self at:[recognizer locationInView:self]];
+    if ( ! _delegateHasLongPressOnMap && ! _delegateHasLongPressOnAnnotation)
+        return;
+
+    CALayer *hit = [_overlayView overlayHitTest:[recognizer locationInView:self]];
+
+    if (_currentAnnotation && [hit isEqual:_currentAnnotation.layer])
+        [self deselectAnnotation:_currentAnnotation animated:NO];
+
+    if ([hit isKindOfClass:[RMMapLayer class]] && _delegateHasLongPressOnAnnotation)
+        [_delegate longPressOnAnnotation:[((RMMapLayer *)hit) annotation] onMap:self];
+
+    else if (_delegateHasLongPressOnMap)
+        [_delegate longPressOnMap:self at:[recognizer locationInView:self]];
 }
 
 // defines when the additional pan gesture recognizer on the scroll should handle the gesture
@@ -2829,10 +2842,10 @@
 
         // markers above shapes
         //
-        if (   [annotation1.layer isKindOfClass:[RMMarker class]] && [annotation2.layer isKindOfClass:[RMShape class]])
+        if (   [annotation1.layer isKindOfClass:[RMMarker class]] && [@[[RMShape class], [RMCircle class]] containsObject:[annotation2.layer class]])
             return NSOrderedDescending;
 
-        if (   [annotation1.layer isKindOfClass:[RMShape class]] && [annotation2.layer isKindOfClass:[RMMarker class]])
+        if (   [@[[RMShape class], [RMCircle class]] containsObject:[annotation1.layer class]] && [annotation2.layer isKindOfClass:[RMMarker class]])
             return NSOrderedAscending;
 
         // the rest in increasing y-position

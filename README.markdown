@@ -58,7 +58,7 @@ Then, update the submodules:
 
       git submodule update --init
 
-Some example apps showing usage of the SDK:
+Some example apps showing usage of the SDK (with screenshots):
 
  * [MapBox iOS Example](https://github.com/mapbox/mapbox-ios-example) - online, offline, and interactive tile sources
  * [MapBox Me](https://github.com/mapbox/mapbox-me) - user location services and terrain toggling

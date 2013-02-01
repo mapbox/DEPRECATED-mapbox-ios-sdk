@@ -152,6 +152,13 @@
     return [self initWithUIImage:[UIImage imageWithData:[NSData dataWithContentsOfFile:cachePath] scale:(useRetina ? 2.0 : 1.0)]];
 }
 
++ (void)clearCachedMapBoxMarkers
+{
+    for (NSString *filePath in [[NSFileManager defaultManager] contentsOfDirectoryAtPath:kCachesPath error:nil])
+        if ([[filePath lastPathComponent] hasPrefix:@"pin-"] && [[filePath lastPathComponent] hasSuffix:@".png"])
+            [[NSFileManager defaultManager] removeItemAtPath:[NSString stringWithFormat:@"%@/%@", kCachesPath, filePath] error:nil];
+}
+
 - (void)dealloc
 {
     self.label = nil;
