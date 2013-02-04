@@ -3103,7 +3103,10 @@
             [_locationManager stopUpdatingHeading];
 
             if (self.userLocation)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
                 [self locationManager:_locationManager didUpdateToLocation:self.userLocation.location fromLocation:self.userLocation.location];
+#pragma clang diagnostic pop
 
             if (_userLocationTrackingView || _userHeadingTrackingView || _userHaloTrackingView)
             {
@@ -3192,7 +3195,10 @@
                 [self zoomByFactor:exp2f(3 - [self zoom]) near:self.center animated:YES];
 
             if (self.userLocation)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
                 [self locationManager:_locationManager didUpdateToLocation:self.userLocation.location fromLocation:self.userLocation.location];
+#pragma clang diagnostic pop
 
             [self updateHeadingForDeviceOrientation];
 
@@ -3515,7 +3521,10 @@
         
         attributionViewController.modalTransitionStyle = UIModalTransitionStylePartialCurl;
         
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [_viewControllerPresentingAttribution presentModalViewController:attributionViewController animated:YES];
+#pragma clang diagnostic pop
     }
 }
 

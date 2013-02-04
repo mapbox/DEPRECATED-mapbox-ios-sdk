@@ -250,7 +250,10 @@
     [aLabel setBackgroundColor:backgroundColor];
     [aLabel setTextColor:textColor];
     [aLabel setFont:font];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [aLabel setTextAlignment:UITextAlignmentCenter];
+#pragma clang diagnostic pop
     [aLabel setText:text];
 
     [self setLabel:aLabel];
