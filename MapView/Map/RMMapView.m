@@ -3521,10 +3521,7 @@
         
         attributionViewController.modalTransitionStyle = UIModalTransitionStylePartialCurl;
         
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        [_viewControllerPresentingAttribution presentModalViewController:attributionViewController animated:YES];
-        #pragma clang diagnostic pop
+        [_viewControllerPresentingAttribution presentViewController:attributionViewController animated:YES completion:nil];
     }
 }
 
