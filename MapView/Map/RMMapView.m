@@ -779,6 +779,9 @@
 
 - (void)setCenterProjectedPoint:(RMProjectedPoint)centerProjectedPoint animated:(BOOL)animated
 {
+    if (RMProjectedPointEqualToProjectedPoint(centerProjectedPoint, [self centerProjectedPoint]))
+        return;
+
     [self registerMoveEventByUser:NO];
 
 //    RMLog(@"Current contentSize: {%.0f,%.0f}, zoom: %f", mapScrollView.contentSize.width, mapScrollView.contentSize.height, self.zoom);
