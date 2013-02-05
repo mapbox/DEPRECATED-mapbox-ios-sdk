@@ -44,7 +44,7 @@
 
 + (id)cacheObject:(id)anObject forTile:(RMTile)aTile withCacheKey:(NSString *)aCacheKey
 {
-    return [[[self alloc] initWithObject:anObject forTile:aTile withCacheKey:aCacheKey] autorelease];
+    return [[self alloc] initWithObject:anObject forTile:aTile withCacheKey:aCacheKey];
 }
 
 - (id)initWithObject:(id)anObject forTile:(RMTile)aTile withCacheKey:(NSString *)aCacheKey
@@ -52,27 +52,18 @@
     if (!(self = [super init]))
         return nil;
 
-    _cachedObject = [anObject retain];
-    _cacheKey = [aCacheKey retain];
+    _cachedObject = anObject;
+    _cacheKey = aCacheKey;
     _tile = aTile;
     _timestamp = [NSDate new];
 
     return self;
 }
 
-- (void)dealloc
-{
-    [_cachedObject release]; _cachedObject = nil;
-    [_cacheKey release]; _cacheKey = nil;
-    [_timestamp release]; _timestamp = nil;
-    [super dealloc];
-}
-
 - (void)touch
 {
     @synchronized (self)
     {
-        [_timestamp autorelease];
         _timestamp = [NSDate new];
     }
 }

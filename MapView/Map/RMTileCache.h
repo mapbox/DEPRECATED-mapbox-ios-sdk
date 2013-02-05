@@ -138,14 +138,14 @@ typedef enum : short {
 - (void)insertCache:(id <RMTileCache>)cache atIndex:(NSUInteger)index;
 
 /** The list of caches managed by a cache manager. This could include memory-based, disk-based, or other types of caches. */
-@property (nonatomic, readonly, retain) NSArray *tileCaches;
+@property (nonatomic, readonly, strong) NSArray *tileCaches;
 
 - (void)didReceiveMemoryWarning;
 
 /** @name Background Downloading */
 
 /** A delegate to notify of background tile cache download operations. */
-@property (nonatomic, assign) id <RMTileCacheBackgroundDelegate>backgroundCacheDelegate;
+@property (nonatomic, weak) id <RMTileCacheBackgroundDelegate>backgroundCacheDelegate;
 
 /** Whether or not the tile cache is currently background caching. */
 @property (nonatomic, readonly, assign) BOOL isBackgroundCaching;

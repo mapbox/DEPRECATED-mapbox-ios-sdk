@@ -35,7 +35,7 @@
 /** RMMapLayer is a generic class for displaying scrollable vector layers on a map view. Generally, a more specialized subclass such as RMMarker will be used for a specific purpose, but RMMapLayer can also be used directly for special purposes. */
 @interface RMMapLayer : CAScrollLayer
 {
-    RMAnnotation *annotation;
+    __weak RMAnnotation *annotation;
 
     // expressed in projected meters. The anchorPoint of the image/path/etc. is plotted here.
     RMProjectedPoint projectedLocation;
@@ -49,7 +49,7 @@
 /** @name Configuring Map Layer Properties */
 
 /** The annotation associated with the layer. This can be useful to inspect the annotation's userInfo in order to customize the visual representation. */
-@property (nonatomic, assign) RMAnnotation *annotation;
+@property (nonatomic, weak) RMAnnotation *annotation;
 
 /** The current projected location of the layer on the map. */
 @property (nonatomic, assign) RMProjectedPoint projectedLocation;
@@ -58,7 +58,7 @@
 @property (nonatomic, assign) BOOL enableDragging;
 
 /** Storage for arbitrary data. */
-@property (nonatomic, retain) id userInfo;
+@property (nonatomic, strong) id userInfo;
 
 /** A Boolean value indicating whether the annotation layer is able to display extra information in a callout bubble.
 *
@@ -77,14 +77,14 @@
 *   The default value of this property is `nil`. The left callout view is typically used to display information about the annotation or to link to custom information provided by your application. The height of your view should be 32 pixels or less.
 *
 *   If the view you specify is also a descendant of the UIControl class, you can use the map view’s delegate to receive notifications when your control is tapped. If it does not descend from UIControl, your view is responsible for handling any touch events within its bounds. */
-@property (nonatomic, retain) UIView *leftCalloutAccessoryView;
+@property (nonatomic, strong) UIView *leftCalloutAccessoryView;
 
 /** The view to display on the right side of the standard callout bubble.
 *
 *   This property is set to `nil` by default. The right callout view is typically used to link to more detailed information about the annotation. The height of your view should be 32 pixels or less. A common view to specify for this property is UIButton object whose type is set to UIButtonTypeDetailDisclosure.
 *
 *   If the view you specify is also a descendant of the UIControl class, you can use the map view’s delegate to receive notifications when your control is tapped. If it does not descend from UIControl, your view is responsible for handling any touch events within its bounds. */
-@property (nonatomic, retain) UIView *rightCalloutAccessoryView;
+@property (nonatomic, strong) UIView *rightCalloutAccessoryView;
 
 /** Set the screen position of the layer.
 *   @param position The desired screen position.

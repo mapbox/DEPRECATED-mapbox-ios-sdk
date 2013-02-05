@@ -32,6 +32,6 @@
 
 - (id)initWithTileSources:(NSArray *)tileSources tileCacheKey:(NSString *)tileCacheKey;
 
-@property (nonatomic, readonly) NSArray *tileSources;
+@property (nonatomic, weak, readonly) NSArray *tileSources;
 
 @end

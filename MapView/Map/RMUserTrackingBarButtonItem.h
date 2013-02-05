@@ -23,6 +23,6 @@
 /** @name Accessing Properties */
 
 /** The map view associated with this bar button item. */
-@property (nonatomic, retain) IBOutlet RMMapView *mapView;
+@property (nonatomic, strong) IBOutlet RMMapView *mapView;
 
 @end

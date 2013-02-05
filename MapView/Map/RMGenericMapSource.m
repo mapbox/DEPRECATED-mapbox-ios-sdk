@@ -40,20 +40,13 @@
     NSAssert(host != nil, @"Empty host parameter not allowed");
     NSAssert(tileCacheKey != nil, @"Empty tileCacheKey paramter not allowed");
 
-    _host = [host retain];
-    _uniqueTilecacheKey = [tileCacheKey retain];
+    _host = host;
+    _uniqueTilecacheKey = tileCacheKey;
 
     self.minZoom = minZoom;
     self.maxZoom = maxZoom;
 
     return self;
-}
-
-- (void)dealloc
-{
-    [_uniqueTilecacheKey release]; _uniqueTilecacheKey = nil;
-    [_host release]; _host = nil;
-    [super dealloc];
 }
 
 - (NSURL *)URLForTile:(RMTile)tile

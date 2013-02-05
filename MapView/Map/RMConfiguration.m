@@ -60,24 +60,17 @@ static RMConfiguration *RMConfigurationSharedInstance = nil;
     NSString *error = nil;
     NSData *plistData = [NSData dataWithContentsOfFile:path];
 
-    _propertyList = [[NSPropertyListSerialization propertyListFromData:plistData
-                                                      mutabilityOption:NSPropertyListImmutable
-                                                                format:NULL
-                                                      errorDescription:&error] retain];
+    _propertyList = [NSPropertyListSerialization propertyListFromData:plistData
+                                                     mutabilityOption:NSPropertyListImmutable
+                                                               format:NULL
+                                                     errorDescription:&error];
 
     if ( ! _propertyList)
     {
         RMLog(@"problem reading route-me configuration from %@: %@", path, error);
-        [error release];
     }
 
     return self;
-}
-
-- (void)dealloc
-{
-    [_propertyList release]; _propertyList = nil;
-    [super dealloc];
 }
 
 - (NSDictionary *)cacheConfiguration

@@ -126,9 +126,9 @@
 	if (!(self = [super init]))
         return nil;
 
-    _uniqueTilecacheKey = [[[path lastPathComponent] stringByDeletingPathExtension] retain];
+    _uniqueTilecacheKey = [[path lastPathComponent] stringByDeletingPathExtension];
 
-    _queue = [[FMDatabaseQueue databaseQueueWithPath:path] retain];
+    _queue = [FMDatabaseQueue databaseQueueWithPath:path];
 
     if ( ! _queue)
     {
@@ -174,13 +174,6 @@
 	return self;
 }
 
-- (void)dealloc
-{
-    [_uniqueTilecacheKey release]; _uniqueTilecacheKey = nil;
-    [_queue release]; _queue = nil;
-    [super dealloc];
-}
-
 - (CLLocationCoordinate2D)topLeftOfCoverage
 {
     return _topLeft;
@@ -224,7 +217,7 @@
             NSLog(@"DB error %d on line %d: %@", [db lastErrorCode], __LINE__, [db lastErrorMessage]);
 
         if ([result next])
-            image = [[[UIImage alloc] initWithData:[result dataForColumnIndex:0]] autorelease];
+            image = [[UIImage alloc] initWithData:[result dataForColumnIndex:0]];
         else
             image = [RMTileImage missingTile];
 

@@ -19,9 +19,9 @@ typedef enum {
 
 @interface RMUserTrackingBarButtonItem ()
 
-@property (nonatomic, retain) UISegmentedControl *segmentedControl;
-@property (nonatomic, retain) UIImageView *buttonImageView;
-@property (nonatomic, retain) UIActivityIndicatorView *activityView;
+@property (nonatomic, strong) UISegmentedControl *segmentedControl;
+@property (nonatomic, strong) UIImageView *buttonImageView;
+@property (nonatomic, strong) UIActivityIndicatorView *activityView;
 @property (nonatomic, assign) RMUserTrackingButtonState state;
 
 - (void)createBarButtonItem;
@@ -65,7 +65,7 @@ typedef enum {
 
 - (void)createBarButtonItem
 {
-    _segmentedControl = [[[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@""]] retain];
+    _segmentedControl = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@""]];
     _segmentedControl.segmentedControlStyle = UISegmentedControlStyleBar;
     [_segmentedControl setWidth:32.0 forSegmentAtIndex:0];
     _segmentedControl.userInteractionEnabled = NO;
@@ -74,7 +74,7 @@ typedef enum {
 
     [self.customView addSubview:_segmentedControl];
 
-    _buttonImageView = [[[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"TrackingLocation.png"]] retain];
+    _buttonImageView = [[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"TrackingLocation.png"]];
     _buttonImageView.contentMode = UIViewContentModeCenter;
     _buttonImageView.frame = CGRectMake(0, 0, 32, 32);
     _buttonImageView.center = self.customView.center;
@@ -82,7 +82,7 @@ typedef enum {
 
     [self.customView addSubview:_buttonImageView];
 
-    _activityView = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite] retain];
+    _activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     _activityView.hidesWhenStopped = YES;
     _activityView.center = self.customView.center;
     _activityView.userInteractionEnabled = NO;
@@ -96,14 +96,8 @@ typedef enum {
 
 - (void)dealloc
 {
-    [_segmentedControl release]; _segmentedControl = nil;
-    [_buttonImageView release]; _buttonImageView = nil;
-    [_activityView release]; _activityView = nil;
     [_mapView removeObserver:self forKeyPath:@"userTrackingMode"];
     [_mapView removeObserver:self forKeyPath:@"userLocation.location"];
-    [_mapView release]; _mapView = nil;
-    
-    [super dealloc];
 }
 
 #pragma mark -
@@ -114,9 +108,8 @@ typedef enum {
     {
         [_mapView removeObserver:self forKeyPath:@"userTrackingMode"];
         [_mapView removeObserver:self forKeyPath:@"userLocation.location"];
-        [_mapView release];
 
-        _mapView = [newMapView retain];
+        _mapView = newMapView;
         [_mapView addObserver:self forKeyPath:@"userTrackingMode"      options:NSKeyValueObservingOptionNew context:nil];
         [_mapView addObserver:self forKeyPath:@"userLocation.location" options:NSKeyValueObservingOptionNew context:nil];
 

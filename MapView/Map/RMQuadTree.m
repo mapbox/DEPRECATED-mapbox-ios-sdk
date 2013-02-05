@@ -87,7 +87,7 @@
 //    RMLog(@"New quadtree node at {(%.0f,%.0f),(%.0f,%.0f)}", aBoundingBox.origin.easting, aBoundingBox.origin.northing, aBoundingBox.size.width, aBoundingBox.size.height);
 
     _mapView = aMapView;
-    _parentNode = [aParentNode retain];
+    _parentNode = aParentNode;
     _northWest = _northEast = _southWest = _southEast = nil;
     _annotations = [NSMutableArray new];
     _boundingBox = aBoundingBox;
@@ -112,8 +112,8 @@
 
     @synchronized (_cachedClusterAnnotation)
     {
-        [_cachedClusterEnclosedAnnotations release]; _cachedClusterEnclosedAnnotations = nil;
-        [_cachedClusterAnnotation release]; _cachedClusterAnnotation = nil;
+         _cachedClusterEnclosedAnnotations = nil;
+         _cachedClusterAnnotation = nil;
     }
 
     @synchronized (_annotations)
@@ -123,18 +123,6 @@
             annotation.quadTreeNode = nil;
         }
     }
-
-    [_annotations release]; _annotations = nil;
-    [_cachedEnclosedAnnotations release]; _cachedEnclosedAnnotations = nil;
-    [_cachedUnclusteredAnnotations release]; _cachedUnclusteredAnnotations = nil;
-
-    [_northWest release]; _northWest = nil;
-    [_northEast release]; _northEast = nil;
-    [_southWest release]; _southWest = nil;
-    [_southEast release]; _southEast = nil;
-    [_parentNode release]; _parentNode = nil;
-
-    [super dealloc];
 }
 
 - (NSArray *)annotations
@@ -202,8 +190,8 @@
 
     @synchronized (_cachedClusterAnnotation)
     {
-        [_cachedClusterEnclosedAnnotations release]; _cachedClusterEnclosedAnnotations = nil;
-        [_cachedClusterAnnotation release]; _cachedClusterAnnotation = nil;
+         _cachedClusterEnclosedAnnotations = nil;
+         _cachedClusterAnnotation = nil;
     }
 
     if (RMProjectedRectIntersectsProjectedRect(quadTreeBounds, _northWestBoundingBox))
@@ -318,8 +306,6 @@
     if (RMProjectedRectContainsProjectedRect(_boundingBox, annotation.projectedBoundingBox))
         return;
 
-    [annotation retain];
-
     [self removeAnnotation:annotation];
 
     RMQuadTreeNode *nextParentNode = self;
@@ -332,8 +318,6 @@
             break;
         }
     }
-
-    [annotation release];
 }
 
 - (NSArray *)enclosedAnnotations
@@ -453,8 +437,8 @@
             {
                 @synchronized (_cachedClusterAnnotation)
                 {
-                    [_cachedClusterEnclosedAnnotations release]; _cachedClusterEnclosedAnnotations = nil;
-                    [_cachedClusterAnnotation release]; _cachedClusterAnnotation = nil;
+                     _cachedClusterEnclosedAnnotations = nil;
+                     _cachedClusterAnnotation = nil;
                 }
 
                 enclosedAnnotations = [NSArray arrayWithArray:annotationsToCheck];
@@ -470,8 +454,8 @@
             {
                 if (_cachedClusterAnnotation && [enclosedAnnotations count] != [_cachedClusterEnclosedAnnotations count])
                 {
-                    [_cachedClusterEnclosedAnnotations release]; _cachedClusterEnclosedAnnotations = nil;
-                    [_cachedClusterAnnotation release]; _cachedClusterAnnotation = nil;
+                     _cachedClusterEnclosedAnnotations = nil;
+                     _cachedClusterAnnotation = nil;
                 }
             }
 
@@ -591,12 +575,12 @@
 
     @synchronized (_cachedClusterAnnotation)
     {
-        [_cachedClusterEnclosedAnnotations release]; _cachedClusterEnclosedAnnotations = nil;
-        [_cachedClusterAnnotation release]; _cachedClusterAnnotation = nil;
+         _cachedClusterEnclosedAnnotations = nil;
+         _cachedClusterAnnotation = nil;
     }
 
-    [_cachedEnclosedAnnotations release]; _cachedEnclosedAnnotations = nil;
-    [_cachedUnclusteredAnnotations release]; _cachedUnclusteredAnnotations = nil;
+     _cachedEnclosedAnnotations = nil;
+     _cachedUnclusteredAnnotations = nil;
 }
 
 @end
@@ -618,13 +602,6 @@
     _rootNode = [[RMQuadTreeNode alloc] initWithMapView:_mapView forParent:nil inBoundingBox:[[RMProjection googleProjection] planetBounds]];
 
     return self;
-}
-
-- (void)dealloc
-{
-    _mapView = nil;
-    [_rootNode release]; _rootNode = nil;
-    [super dealloc];
 }
 
 - (void)addAnnotation:(RMAnnotation *)annotation
@@ -661,7 +638,6 @@
 {
     @synchronized (self)
     {
-        [_rootNode release];
         _rootNode = [[RMQuadTreeNode alloc] initWithMapView:_mapView forParent:nil inBoundingBox:[[RMProjection googleProjection] planetBounds]];
     }
 }

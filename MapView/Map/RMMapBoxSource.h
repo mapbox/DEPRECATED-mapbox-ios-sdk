@@ -106,13 +106,13 @@ typedef enum : NSUInteger {
 - (BOOL)coversFullWorld;
 
 /** The TileJSON for the map layer. Useful for saving locally to use in instantiating a tile source while offline. */
-@property (nonatomic, readonly, retain) NSString *tileJSON;
+@property (nonatomic, readonly, strong) NSString *tileJSON;
 
 /** The TileJSON URL for the map layer. Useful for retrieving TileJSON to save locally to use in instantiating a tile source while offline. */
-@property (nonatomic, readonly, retain) NSURL *tileJSONURL;
+@property (nonatomic, readonly, strong) NSURL *tileJSONURL;
 
 /** The TileJSON data in dictionary format. Useful for retrieving info about the layer without having to parse TileJSON. */
-@property (nonatomic, readonly, retain) NSDictionary *infoDictionary;
+@property (nonatomic, readonly, strong) NSDictionary *infoDictionary;
 
 /** Image quality that is retrieved from the network. Useful for lower-bandwidth environments. The default is to provide full-quality imagery. 
 *

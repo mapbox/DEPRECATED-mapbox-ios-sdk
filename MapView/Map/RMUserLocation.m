@@ -39,15 +39,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-    [layer release]; layer = nil;
-    [annotationType release]; annotationType = nil;
-    [_location release]; _location = nil;
-    [_heading release]; _heading = nil;
-    [super dealloc];
-}
-
 - (RMMapLayer *)layer
 {
     if ( ! super.layer)
@@ -59,7 +50,7 @@
             self.hasCustomLayer = YES;
 
         if ( ! super.layer)
-            super.layer = [[[RMMarker alloc] initWithUIImage:[RMMapView resourceImageNamed:@"TrackingDot.png"]] autorelease];
+            super.layer = [[RMMarker alloc] initWithUIImage:[RMMapView resourceImageNamed:@"TrackingDot.png"]];
 
         super.layer.zPosition = -MAXFLOAT + 2;
     }
@@ -77,8 +68,7 @@
     if ([newLocation distanceFromLocation:_location] && newLocation.coordinate.latitude != 0 && newLocation.coordinate.longitude != 0)
     {
         [self willChangeValueForKey:@"location"];
-        [_location release];
-        _location = [newLocation retain];
+        _location = newLocation;
         self.coordinate = _location.coordinate;
         [self didChangeValueForKey:@"location"];
     }
@@ -89,8 +79,7 @@
     if (newHeading.trueHeading != _heading.trueHeading)
     {
         [self willChangeValueForKey:@"heading"];
-        [_heading release];
-        _heading = [newHeading retain];
+        _heading = newHeading;
         [self didChangeValueForKey:@"heading"];
     }
 }

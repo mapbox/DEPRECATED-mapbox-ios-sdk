@@ -44,7 +44,7 @@
 {
     if ( ! [super layer])
     {
-        RMMarker *marker = [[[RMMarker alloc] initWithMapBoxMarkerImage] autorelease];
+        RMMarker *marker = [[RMMarker alloc] initWithMapBoxMarkerImage];
 
         marker.canShowCallout = YES;
 

@@ -45,8 +45,8 @@
 
     self.opaque = NO;
 
-    _mapView = [aMapView retain];
-    _tileSource = [aTileSource retain];
+    _mapView = aMapView;
+    _tileSource = aTileSource;
 
     self.useSnapshotRenderer = NO;
 
@@ -63,9 +63,7 @@
 {
     [_tileSource cancelAllDownloads];
     self.layer.contents = nil;
-    [_tileSource release]; _tileSource = nil;
-    [_mapView release]; _mapView = nil;
-    [super dealloc];
+     _mapView = nil;
 }
 
 - (void)didMoveToWindow
@@ -80,8 +78,6 @@
     short zoom    = log2(bounds.size.width / rect.size.width);
 
 //    NSLog(@"drawLayer: {{%f,%f},{%f,%f}}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
 
     if (self.useSnapshotRenderer)
     {
@@ -286,8 +282,6 @@
 
         UIGraphicsPopContext();
     }
-
-    [pool release]; pool = nil;
 }
 
 @end

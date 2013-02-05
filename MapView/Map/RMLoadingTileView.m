@@ -36,12 +36,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-    [_contentView release]; _contentView = nil;
-    [super dealloc];
-}
-
 - (void)setMapZooming:(BOOL)zooming
 {
     if (zooming)

@@ -54,12 +54,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-    [_tileProjection release]; _tileProjection = nil;
-    [super dealloc];
-}
-
 - (RMSphericalTrapezium)latitudeLongitudeBoundingBox
 {
     return kDefaultLatLonBoundingBox;
@@ -96,7 +90,7 @@
                                                                       minZoom:self.minZoom];
     }
 
-    return [[_tileProjection retain] autorelease];
+    return _tileProjection;
 }
 
 - (void)didReceiveMemoryWarning
