@@ -38,10 +38,10 @@
 #import "RMQuadTree.h"
 
 #import "RMFractalTileProjection.h"
-#import "RMOpenStreetMapSource.h"
 
 #import "RMTileCache.h"
 #import "RMTileSource.h"
+#import "RMMapBoxSource.h"
 
 #import "RMMapTiledLayerView.h"
 #import "RMMapOverlayView.h"
@@ -321,7 +321,7 @@
 	coordinate.latitude = kDefaultInitialLatitude;
 	coordinate.longitude = kDefaultInitialLongitude;
 
-    [self performInitializationWithTilesource:[[RMOpenStreetMapSource new] autorelease]
+    [self performInitializationWithTilesource:[[RMMapBoxSource new] autorelease]
                              centerCoordinate:coordinate
                                     zoomLevel:kDefaultInitialZoomLevel
                                  maxZoomLevel:kDefaultMaximumZoomLevel
@@ -333,7 +333,7 @@
 
 - (id)initWithFrame:(CGRect)frame
 {
-    return [self initWithFrame:frame andTilesource:[[RMOpenStreetMapSource new] autorelease]];
+    return [self initWithFrame:frame andTilesource:[[RMMapBoxSource new] autorelease]];
 }
 
 - (id)initWithFrame:(CGRect)frame andTilesource:(id <RMTileSource>)newTilesource
