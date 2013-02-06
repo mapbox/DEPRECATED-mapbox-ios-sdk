@@ -36,9 +36,6 @@
 #import "RMMapView.h"
 #import "RMPointAnnotation.h"
 
-#define kMapBoxNormalMapID @"examples.map-z2effxa8"
-#define kMapBoxRetinaMapID @"examples.map-zswgei2n"
-
 @interface RMMapBoxSource ()
 
 @property (nonatomic, retain) NSDictionary *infoDictionary;
@@ -54,7 +51,7 @@
 
 - (id)init
 {
-    return [self initWithMapID:([[UIScreen mainScreen] scale] > 1.0 ? kMapBoxRetinaMapID : kMapBoxNormalMapID)];
+    return [self initWithMapID:([[UIScreen mainScreen] scale] > 1.0 ? kMapBoxPlaceholderRetinaMapID : kMapBoxPlaceholderNormalMapID)];
 }
 
 - (id)initWithMapID:(NSString *)mapID

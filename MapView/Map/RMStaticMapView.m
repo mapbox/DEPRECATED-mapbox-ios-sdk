@@ -36,6 +36,11 @@
     __weak RMStaticMapView *_weakSelf;
 }
 
+- (id)initWithFrame:(CGRect)frame
+{
+    return [self initWithFrame:frame mapID:([[UIScreen mainScreen] scale] > 1.0 ? kMapBoxPlaceholderRetinaMapID : kMapBoxPlaceholderNormalMapID)];
+}
+
 - (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID
 {
     return [self initWithFrame:frame mapID:mapID centerCoordinate:CLLocationCoordinate2DMake(MAXFLOAT, MAXFLOAT) zoomLevel:-1 completionHandler:nil];
