@@ -32,7 +32,7 @@
 
 @synthesize annotation;
 @synthesize projectedLocation;
-@synthesize enableDragging;
+@synthesize draggingEnabled;
 @synthesize userInfo;
 @synthesize canShowCallout;
 @synthesize calloutOffset;
@@ -45,7 +45,7 @@
 		return nil;
 
     self.annotation = nil;
-    self.enableDragging = NO;
+    self.draggingEnabled = NO;
     self.calloutOffset = CGPointZero;
 
 	return self;

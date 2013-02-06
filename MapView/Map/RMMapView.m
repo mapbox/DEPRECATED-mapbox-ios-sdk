@@ -163,7 +163,7 @@
     CGSize _lastContentSize;
     BOOL _mapScrollViewIsZooming;
 
-    BOOL _enableDragging, _enableBouncing;
+    BOOL _draggingEnabled, _bouncingEnabled;
 
     CGPoint _lastDraggingTranslation;
     RMAnnotation *_draggedAnnotation;
@@ -200,7 +200,7 @@
 @synthesize screenScale = _screenScale;
 @synthesize tileCache = _tileCache;
 @synthesize quadTree = _quadTree;
-@synthesize enableClustering = _enableClustering;
+@synthesize clusteringEnabled = _clusteringEnabled;
 @synthesize positionClusterMarkersAtTheGravityCenter = _positionClusterMarkersAtTheGravityCenter;
 @synthesize orderClusterMarkersAboveOthers = _orderClusterMarkersAboveOthers;
 @synthesize clusterMarkerSize = _clusterMarkerSize, clusterAreaSize = _clusterAreaSize;
@@ -224,8 +224,8 @@
                                minZoomLevel:(float)initialTileSourceMinZoomLevel
                             backgroundImage:(UIImage *)backgroundImage
 {
-    _constrainMovement = _enableBouncing = _zoomingInPivotsAroundCenter = NO;
-    _enableDragging = YES;
+    _constrainMovement = _bouncingEnabled = _zoomingInPivotsAroundCenter = NO;
+    _draggingEnabled = YES;
 
     _lastDraggingTranslation = CGPointZero;
     _draggedAnnotation = nil;
@@ -252,7 +252,7 @@
     _annotations = [NSMutableSet new];
     _visibleAnnotations = [NSMutableSet new];
     [self setQuadTree:[[[RMQuadTree alloc] initWithMapView:self] autorelease]];
-    _enableClustering = _positionClusterMarkersAtTheGravityCenter = NO;
+    _clusteringEnabled = _positionClusterMarkersAtTheGravityCenter = NO;
     _clusterMarkerSize = CGSizeMake(100.0, 100.0);
     _clusterAreaSize = CGSizeMake(150.0, 150.0);
 
@@ -1178,9 +1178,9 @@
     _mapScrollView.showsVerticalScrollIndicator = NO;
     _mapScrollView.showsHorizontalScrollIndicator = NO;
     _mapScrollView.scrollsToTop = NO;
-    _mapScrollView.scrollEnabled = _enableDragging;
-    _mapScrollView.bounces = _enableBouncing;
-    _mapScrollView.bouncesZoom = _enableBouncing;
+    _mapScrollView.scrollEnabled = _draggingEnabled;
+    _mapScrollView.bounces = _bouncingEnabled;
+    _mapScrollView.bouncesZoom = _bouncingEnabled;
     _mapScrollView.contentSize = contentSize;
     _mapScrollView.minimumZoomScale = exp2f([self minZoom]);
     _mapScrollView.maximumZoomScale = exp2f([self maxZoom]);
@@ -1662,7 +1662,7 @@
         if ([hit isEqual:_overlayView.layer])
             return NO;
         
-        if (!hit || ([hit respondsToSelector:@selector(enableDragging)] && ![(RMMarker *)hit enableDragging]))
+        if (!hit || ([hit respondsToSelector:@selector(draggingEnabled)] && ![(RMMarker *)hit draggingEnabled]))
             return NO;
 
         if ( ! [self shouldDragAnnotation:[self findAnnotationInLayer:hit]])
@@ -1689,7 +1689,7 @@
         if ( ! hit)
             return;
 
-        if ([hit respondsToSelector:@selector(enableDragging)] && ![(RMMarker *)hit enableDragging])
+        if ([hit respondsToSelector:@selector(draggingEnabled)] && ![(RMMarker *)hit draggingEnabled])
             return;
 
         _lastDraggingTranslation = CGPointZero;
@@ -2352,9 +2352,9 @@
     [self setZoom:tileSourcesZoom];
 }
 
-- (void)setEnableClustering:(BOOL)doEnableClustering
+- (void)setClusteringEnabled:(BOOL)doEnableClustering
 {
-    _enableClustering = doEnableClustering;
+    _clusteringEnabled = doEnableClustering;
 
     [self correctPositionOfAllAnnotations];
 }
@@ -2373,25 +2373,25 @@
     [_mapScrollView setDecelerationRate:decelerationRate];
 }
 
-- (BOOL)enableDragging
+- (BOOL)draggingEnabled
 {
-    return _enableDragging;
+    return _draggingEnabled;
 }
 
-- (void)setEnableDragging:(BOOL)enableDragging
+- (void)setDraggingEnabled:(BOOL)enableDragging
 {
-    _enableDragging = enableDragging;
+    _draggingEnabled = enableDragging;
     _mapScrollView.scrollEnabled = enableDragging;
 }
 
-- (BOOL)enableBouncing
+- (BOOL)bouncingEnabled
 {
-    return _enableBouncing;
+    return _bouncingEnabled;
 }
 
-- (void)setEnableBouncing:(BOOL)enableBouncing
+- (void)setBouncingEnabled:(BOOL)enableBouncing
 {
-    _enableBouncing = enableBouncing;
+    _bouncingEnabled = enableBouncing;
     _mapScrollView.bounces = enableBouncing;
     _mapScrollView.bouncesZoom = enableBouncing;
 }
@@ -2701,7 +2701,7 @@
         boundingBox.size.height += (2.0 * boundingBoxBuffer);
 
         NSArray *annotationsToCorrect = [self.quadTree annotationsInProjectedRect:boundingBox
-                                                         createClusterAnnotations:self.enableClustering
+                                                         createClusterAnnotations:self.clusteringEnabled
                                                          withProjectedClusterSize:RMProjectedSizeMake(self.clusterAreaSize.width * _metersPerPixel, self.clusterAreaSize.height * _metersPerPixel)
                                                     andProjectedClusterMarkerSize:RMProjectedSizeMake(self.clusterMarkerSize.width * _metersPerPixel, self.clusterMarkerSize.height * _metersPerPixel)
                                                                 findGravityCenter:self.positionClusterMarkersAtTheGravityCenter];
@@ -2895,7 +2895,7 @@
         [self.quadTree addAnnotation:annotation];
     }
 
-    if (_enableClustering)
+    if (_clusteringEnabled)
     {
         [self correctPositionOfAllAnnotations];
     }

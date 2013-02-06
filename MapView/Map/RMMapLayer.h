@@ -40,7 +40,7 @@
     // expressed in projected meters. The anchorPoint of the image/path/etc. is plotted here.
     RMProjectedPoint projectedLocation;
 
-    BOOL enableDragging;
+    BOOL draggingEnabled;
 
     // provided for storage of arbitrary user data
     id userInfo;
@@ -55,7 +55,7 @@
 @property (nonatomic, assign) RMProjectedPoint projectedLocation;
 
 /** When set to YES, the layer can be dragged by the user. */
-@property (nonatomic, assign) BOOL enableDragging;
+@property (nonatomic, assign) BOOL draggingEnabled;
 
 /** Storage for arbitrary data. */
 @property (nonatomic, retain) id userInfo;
