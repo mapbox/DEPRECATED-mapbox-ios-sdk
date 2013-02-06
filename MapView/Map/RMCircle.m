@@ -65,7 +65,6 @@
     fillColor = kDefaultFillColor;
 
     scaleLineWidth = NO;
-    draggingEnabled = YES;
 
     circlePath = NULL;
     [self updateCirclePathAnimated:NO];
