@@ -86,9 +86,6 @@
 /** Whether touch events for the annotation's layer are recognized. Defaults to `YES`. */
 @property (nonatomic, assign) BOOL enabled;
 
-/** Whether the annotation should be clustered when map view clustering is enabled. Defaults to `YES`. */
-@property (nonatomic, assign) BOOL clusteringEnabled;
-
 /** @name Representing an Annotation Visually */
 
 /** An object representing the annotation's visual appearance.
@@ -97,7 +94,17 @@
 *   @see RMCircle */
 @property (nonatomic, retain) RMMapLayer *layer;
 
-// This is for the QuadTree. Don't mess this up.
+/** @name Annotation Clustering */
+
+/** Whether the annotation should be clustered when map view clustering is enabled. Defaults to `YES`. */
+@property (nonatomic, assign) BOOL clusteringEnabled;
+
+/** Whether an annotation is an automatically-managed cluster annotation. */
+@property (nonatomic, readonly, assign) BOOL isClusterAnnotation;
+
+/** If the annotation is a cluster annotation, returns an array containing the annotations in the cluster. Returns `nil` if the annotation is not a cluster annotation. */
+@property (nonatomic, readonly, assign) NSArray *clusteredAnnotations;
+
 @property (nonatomic, assign) RMQuadTreeNode *quadTreeNode;
 
 /** @name Filtering Types of Annotations */

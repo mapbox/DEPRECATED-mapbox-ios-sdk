@@ -35,8 +35,6 @@ typedef enum : short {
     nodeTypeNode
 } RMQuadTreeNodeType;
 
-#define kRMClusterAnnotationTypeName @"RMClusterAnnotation"
-
 #pragma mark - RMQuadTree nodes
 
 @interface RMQuadTreeNode : NSObject

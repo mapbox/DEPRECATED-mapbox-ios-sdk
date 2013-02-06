@@ -252,7 +252,8 @@
     _annotations = [NSMutableSet new];
     _visibleAnnotations = [NSMutableSet new];
     [self setQuadTree:[[[RMQuadTree alloc] initWithMapView:self] autorelease]];
-    _clusteringEnabled = _positionClusterMarkersAtTheGravityCenter = NO;
+    _clusteringEnabled = NO;
+    _positionClusterMarkersAtTheGravityCenter = YES;
     _clusterMarkerSize = CGSizeMake(100.0, 100.0);
     _clusterAreaSize = CGSizeMake(150.0, 150.0);
 
@@ -2837,10 +2838,10 @@
 
         // clusters above/below non-clusters (based on _orderClusterMarkersAboveOthers)
         //
-        if (   [annotation1.annotationType isEqualToString:kRMClusterAnnotationTypeName] && ! [annotation2.annotationType isEqualToString:kRMClusterAnnotationTypeName])
+        if (   annotation1.isClusterAnnotation && ! annotation2.isClusterAnnotation)
             return (_orderClusterMarkersAboveOthers ? NSOrderedDescending : NSOrderedAscending);
 
-        if ( ! [annotation1.annotationType isEqualToString:kRMClusterAnnotationTypeName] &&   [annotation2.annotationType isEqualToString:kRMClusterAnnotationTypeName])
+        if ( ! annotation1.isClusterAnnotation &&   annotation2.isClusterAnnotation)
             return (_orderClusterMarkersAboveOthers ? NSOrderedAscending : NSOrderedDescending);
 
         // markers above shapes
