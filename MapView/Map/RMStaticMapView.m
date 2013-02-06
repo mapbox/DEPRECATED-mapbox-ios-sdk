@@ -31,6 +31,17 @@
 #import "RMMapBoxSource.h"
 #import "RMMarker.h"
 
+#define kMapBoxDefaultCenter CLLocationCoordinate2DMake(MAXFLOAT, MAXFLOAT)
+#define kMapBoxDefaultZoom   -1.0f
+
+@interface RMStaticMapView ()
+
+- (void)performInitializationWithMapID:(NSString *)mapID centerCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(CGFloat)zoomLevel completionHandler:(void (^)(UIImage *))handler;
+
+@end
+
+#pragma mark -
+
 @implementation RMStaticMapView
 {
     __weak RMStaticMapView *_weakSelf;
@@ -38,17 +49,17 @@
 
 - (id)initWithFrame:(CGRect)frame
 {
-    return [self initWithFrame:frame mapID:([[UIScreen mainScreen] scale] > 1.0 ? kMapBoxPlaceholderRetinaMapID : kMapBoxPlaceholderNormalMapID)];
+    return [self initWithFrame:frame mapID:nil];
 }
 
 - (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID
 {
-    return [self initWithFrame:frame mapID:mapID centerCoordinate:CLLocationCoordinate2DMake(MAXFLOAT, MAXFLOAT) zoomLevel:-1 completionHandler:nil];
+    return [self initWithFrame:frame mapID:mapID centerCoordinate:kMapBoxDefaultCenter zoomLevel:kMapBoxDefaultZoom completionHandler:nil];
 }
 
 - (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID completionHandler:(void (^)(UIImage *))handler
 {
-    return [self initWithFrame:frame mapID:mapID centerCoordinate:CLLocationCoordinate2DMake(MAXFLOAT, MAXFLOAT) zoomLevel:-1 completionHandler:handler];
+    return [self initWithFrame:frame mapID:mapID centerCoordinate:kMapBoxDefaultCenter zoomLevel:kMapBoxDefaultZoom completionHandler:handler];
 }
 
 - (id)initWithFrame:(CGRect)frame mapID:(NSString *)mapID centerCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(CGFloat)zoomLevel
@@ -60,6 +71,25 @@
 {
     if (!(self = [super initWithFrame:frame]))
         return nil;
+
+    [self performInitializationWithMapID:mapID centerCoordinate:centerCoordinate zoomLevel:zoomLevel completionHandler:handler];
+
+    return self;
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    if (!(self = [super initWithCoder:aDecoder]))
+        return nil;
+
+    [self performInitializationWithMapID:nil centerCoordinate:kMapBoxDefaultCenter zoomLevel:kMapBoxDefaultZoom completionHandler:nil];
+
+    return self;
+}
+
+- (void)performInitializationWithMapID:(NSString *)mapID centerCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(CGFloat)zoomLevel completionHandler:(void (^)(UIImage *))handler
+{
+    mapID = (mapID ? mapID : (([[UIScreen mainScreen] scale] > 1.0 ? kMapBoxPlaceholderRetinaMapID : kMapBoxPlaceholderNormalMapID)));
 
     RMMapBoxSource *tileSource = [[[RMMapBoxSource alloc] initWithMapID:mapID enablingDataOnMapView:self] autorelease];
 
@@ -97,9 +127,6 @@
             });
         });
     }
-
-    return self;
-    
 }
 
 - (void)addAnnotation:(RMAnnotation *)annotation
