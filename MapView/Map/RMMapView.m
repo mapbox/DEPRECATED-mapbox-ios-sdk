@@ -3159,7 +3159,7 @@
 
             [self insertSubview:_userHaloTrackingView belowSubview:_overlayView];
 
-            _userHeadingTrackingView = [[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"HeadingAngleSmall.png"]];
+            _userHeadingTrackingView = [[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"HeadingAngleLarge.png"]];
 
             _userHeadingTrackingView.frame = CGRectMake((self.bounds.size.width  / 2) - (_userHeadingTrackingView.bounds.size.width / 2),
                                                         (self.bounds.size.height / 2) - _userHeadingTrackingView.bounds.size.height,
@@ -3375,6 +3375,13 @@
 {
     if ( ! _showsUserLocation || _mapScrollView.isDragging || newHeading.headingAccuracy < 0)
         return;
+
+    if (newHeading.headingAccuracy > 40)
+        _userHeadingTrackingView.image = [RMMapView resourceImageNamed:@"HeadingAngleLarge.png"];
+    else if (newHeading.headingAccuracy >= 25 && newHeading.headingAccuracy <= 40)
+        _userHeadingTrackingView.image = [RMMapView resourceImageNamed:@"HeadingAngleMedium.png"];
+    else
+        _userHeadingTrackingView.image = [RMMapView resourceImageNamed:@"HeadingAngleSmall.png"];
 
     self.userLocation.heading = newHeading;
 
