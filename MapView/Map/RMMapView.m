@@ -1536,7 +1536,7 @@
         [self deselectAnnotation:_currentAnnotation animated:( ! [hit isKindOfClass:[RMMarker class]])];
     }
 
-    if ( ! hit)
+    if ( ! [hit isKindOfClass:[CALayer class]])
     {
         [self singleTapAtPoint:[recognizer locationInView:self]];
         return;
@@ -1556,10 +1556,6 @@
     else if ([superlayer superlayer] != nil && [[superlayer superlayer] isKindOfClass:[RMMarker class]])
     {
         [self tapOnLabelForAnnotation:[((RMMarker *)[superlayer superlayer]) annotation] atPoint:[recognizer locationInView:self]];
-    }
-    else
-    {
-        [self singleTapAtPoint:[recognizer locationInView:self]];
     }
 }
 
