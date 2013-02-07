@@ -1561,21 +1561,24 @@
 
 - (void)doubleTapAtPoint:(CGPoint)aPoint
 {
-    [self registerZoomEventByUser:YES];
+    if (self.zoom < self.maxZoom)
+    {
+        [self registerZoomEventByUser:YES];
 
-    if (self.zoomingInPivotsAroundCenter)
-    {
-        [self zoomInToNextNativeZoomAt:[self convertPoint:self.center fromView:self.superview] animated:YES];
-    }
-    else if (self.userTrackingMode != RMUserTrackingModeNone && fabsf(aPoint.x - [self coordinateToPixel:self.userLocation.location.coordinate].x) < 75 && fabsf(aPoint.y - [self coordinateToPixel:self.userLocation.location.coordinate].y) < 75)
-    {
-        [self zoomInToNextNativeZoomAt:[self coordinateToPixel:self.userLocation.location.coordinate] animated:YES];
-    }
-    else
-    {
-        [self registerMoveEventByUser:YES];
+        if (self.zoomingInPivotsAroundCenter)
+        {
+            [self zoomInToNextNativeZoomAt:[self convertPoint:self.center fromView:self.superview] animated:YES];
+        }
+        else if (self.userTrackingMode != RMUserTrackingModeNone && fabsf(aPoint.x - [self coordinateToPixel:self.userLocation.location.coordinate].x) < 75 && fabsf(aPoint.y - [self coordinateToPixel:self.userLocation.location.coordinate].y) < 75)
+        {
+            [self zoomInToNextNativeZoomAt:[self coordinateToPixel:self.userLocation.location.coordinate] animated:YES];
+        }
+        else
+        {
+            [self registerMoveEventByUser:YES];
 
-        [self zoomInToNextNativeZoomAt:aPoint animated:YES];
+            [self zoomInToNextNativeZoomAt:aPoint animated:YES];
+        }
     }
 
     if (_delegateHasDoubleTapOnMap)
@@ -1615,14 +1618,17 @@
 
 - (void)handleTwoFingerSingleTap:(UIGestureRecognizer *)recognizer
 {
-    [self registerZoomEventByUser:YES];
+    if (self.zoom > self.minZoom)
+    {
+        [self registerZoomEventByUser:YES];
 
-    CGPoint centerPoint = [self convertPoint:self.center fromView:self.superview];
+        CGPoint centerPoint = [self convertPoint:self.center fromView:self.superview];
 
-    if (self.userTrackingMode != RMUserTrackingModeNone)
-        centerPoint = [self coordinateToPixel:self.userLocation.location.coordinate];
+        if (self.userTrackingMode != RMUserTrackingModeNone)
+            centerPoint = [self coordinateToPixel:self.userLocation.location.coordinate];
 
-    [self zoomOutToNextNativeZoomAt:centerPoint animated:YES];
+        [self zoomOutToNextNativeZoomAt:centerPoint animated:YES];
+    }
 
     if (_delegateHasSingleTapTwoFingersOnMap)
         [_delegate singleTapTwoFingersOnMap:self at:[recognizer locationInView:self]];
