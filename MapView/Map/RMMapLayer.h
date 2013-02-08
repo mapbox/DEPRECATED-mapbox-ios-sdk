@@ -64,7 +64,9 @@
 *
 *   If the value of this property is `YES`, a standard callout bubble is shown when the user taps the layer. The callout uses the title text from the associated annotation object. If there is no title text, though, the annotation is treated as if its enabled property is set to `NO`. The callout also displays any custom callout views stored in the leftCalloutAccessoryView and rightCalloutAccessoryView properties.
 *
-*   If the value of this property is `NO`, the value of the title string is ignored and the annotation remains enabled by default. You can still disable the annotation explicitly using the enabled property. */
+*   If the value of this property is `NO`, the value of the title string is ignored and the annotation remains enabled by default. You can still disable the annotation explicitly using the enabled property. 
+*
+*   Note that callouts are not supported on cluster annotation layers. These annotations can be interacted with, but do not remain consistent visually during map pan and zoom events; thus, callout behavior would be inconsistent. */
 @property (nonatomic, assign) BOOL canShowCallout;
 
 /** The offset (in pixels) at which to place the callout bubble.
