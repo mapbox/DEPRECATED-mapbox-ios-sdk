@@ -3303,6 +3303,30 @@
         [self addAnnotation:_accuracyCircleAnnotation];
     }
 
+    if ( ! oldLocation)
+    {
+        // make accuracy circle bounce until we get our second update
+        //
+        [CATransaction begin];
+        [CATransaction setAnimationDuration:0.75];
+        [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+
+        CABasicAnimation *bounceAnimation = [CABasicAnimation animationWithKeyPath:@"transform"];
+        bounceAnimation.repeatCount = MAXFLOAT;
+        bounceAnimation.fromValue = [NSValue valueWithCATransform3D:CATransform3DMakeScale(1.2, 1.2, 1.0)];
+        bounceAnimation.toValue   = [NSValue valueWithCATransform3D:CATransform3DMakeScale(0.8, 0.8, 1.0)];
+        bounceAnimation.removedOnCompletion = NO;
+        bounceAnimation.autoreverses = YES;
+
+        [_accuracyCircleAnnotation.layer addAnimation:bounceAnimation forKey:@"animateScale"];
+
+        [CATransaction commit];
+    }
+    else
+    {
+        [_accuracyCircleAnnotation.layer removeAnimationForKey:@"animateScale"];
+    }
+
     if ([newLocation distanceFromLocation:oldLocation])
         _accuracyCircleAnnotation.coordinate = newLocation.coordinate;
 
