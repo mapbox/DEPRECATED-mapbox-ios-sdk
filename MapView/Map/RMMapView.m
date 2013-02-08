@@ -3333,7 +3333,6 @@
         boundsAnimation.fromValue = [NSValue valueWithCATransform3D:CATransform3DMakeScale(0.1, 0.1, 1.0)];
         boundsAnimation.toValue   = [NSValue valueWithCATransform3D:CATransform3DMakeScale(2.0, 2.0, 1.0)];
         boundsAnimation.removedOnCompletion = NO;
-        boundsAnimation.fillMode = kCAFillModeForwards;
 
         [_trackingHaloAnnotation.layer addAnimation:boundsAnimation forKey:@"animateScale"];
 
@@ -3344,7 +3343,6 @@
         opacityAnimation.fromValue = [NSNumber numberWithFloat:1.0];
         opacityAnimation.toValue   = [NSNumber numberWithFloat:-1.0];
         opacityAnimation.removedOnCompletion = NO;
-        opacityAnimation.fillMode = kCAFillModeForwards;
 
         [_trackingHaloAnnotation.layer addAnimation:opacityAnimation forKey:@"animateOpacity"];
 
