@@ -49,13 +49,6 @@
 @class RMQuadTree;
 @class RMUserLocation;
 
-// constants for boundingMask
-enum : NSUInteger {
-    RMMapNoMinBound		= 0, // Map can be zoomed out past view limits
-    RMMapMinHeightBound	= 1, // Minimum map height when zooming out restricted to view height
-    RMMapMinWidthBound	= 2  // Minimum map width when zooming out restricted to view width (default)
-};
-
 // constants for the scrollview deceleration mode
 typedef enum : NSUInteger {
     RMMapDecelerationNormal = 0,
@@ -128,8 +121,6 @@ typedef enum : NSUInteger {
 
 /** Take missing tiles from lower-numbered zoom levels, up to a given number of zoom levels. This can be used in order to increase perceived tile load performance or to allow zooming in beyond levels supported natively by a given tile source. Defaults to 1. */
 @property (nonatomic, assign) NSUInteger missingTilesDepth;
-
-@property (nonatomic, assign) NSUInteger boundingMask;
 
 /** A custom, static view to use behind the map tiles. The default behavior is to use grid imagery that moves with map panning like MapKit. */
 @property (nonatomic, retain) UIView *backgroundView;

@@ -85,8 +85,6 @@
 - (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllLayers animated:(BOOL)animated;
 - (void)correctOrderingOfAllAnnotations;
 
-- (void)correctMinZoomScaleForBoundingMask;
-
 - (void)updateHeadingForDeviceOrientation;
 
 @end
@@ -192,11 +190,12 @@
 
     RMAnnotation *_currentAnnotation;
     SMCalloutView *_currentCallout;
+
+    BOOL _rotateAtMinZoom;
 }
 
 @synthesize decelerationMode = _decelerationMode;
 
-@synthesize boundingMask = _boundingMask;
 @synthesize zoomingInPivotsAroundCenter = _zoomingInPivotsAroundCenter;
 @synthesize minZoom = _minZoom, maxZoom = _maxZoom;
 @synthesize screenScale = _screenScale;
@@ -246,7 +245,6 @@
 
     _screenScale = [UIScreen mainScreen].scale;
 
-    _boundingMask = RMMapMinWidthBound;
     _adjustTilesForRetinaDisplay = NO;
     _missingTilesDepth = 1;
     _debugTiles = NO;
@@ -288,7 +286,6 @@
     [self setCenterCoordinate:initialCenterCoordinate animated:NO];
 
     [self setDecelerationMode:RMMapDecelerationFast];
-    [self setBoundingMask:RMMapMinHeightBound];
 
     self.showLogoBug = YES;
 
@@ -393,7 +390,8 @@
         [self setCenterProjectedPoint:centerPoint animated:NO];
 
         [self correctPositionOfAllAnnotations];
-        [self correctMinZoomScaleForBoundingMask];
+
+        self.minZoom = 0; // force new minZoom calculation
     }
 }
 
@@ -466,10 +464,17 @@
     //
     if (self.userTrackingMode == RMUserTrackingModeFollowWithHeading)
         [self locationManager:_locationManager didUpdateHeading:_locationManager.heading];
+
+    // fix UIScrollView artifacts from rotation at minZoomScale
+    //
+    _rotateAtMinZoom = fabs(self.zoom - self.minZoom) < 0.1;
 }
 
 - (void)handleDidChangeOrientationNotification:(NSNotification *)notification
 {
+    if (_rotateAtMinZoom)
+        [_mapScrollView setZoomScale:_mapScrollView.minimumZoomScale animated:YES];
+
     [self updateHeadingForDeviceOrientation];
 }
 
@@ -833,31 +838,6 @@
 #pragma mark -
 #pragma mark Zoom
 
-- (void)setBoundingMask:(NSUInteger)mask
-{
-    _boundingMask = mask;
-
-    [self correctMinZoomScaleForBoundingMask];
-}
-
-- (void)correctMinZoomScaleForBoundingMask
-{
-    if (self.boundingMask != RMMapNoMinBound)
-    {
-        if ([_tiledLayersSuperview.subviews count] == 0)
-            return;
-
-        CGFloat newMinZoomScale = (self.boundingMask == RMMapMinWidthBound ? self.bounds.size.width : self.bounds.size.height) / ((CATiledLayer *)((RMMapTiledLayerView *)[_tiledLayersSuperview.subviews objectAtIndex:0]).layer).tileSize.width;
-
-        if (_mapScrollView.minimumZoomScale > 0 && newMinZoomScale > _mapScrollView.minimumZoomScale)
-        {
-            RMLog(@"clamping min zoom of %f to %f due to %@", log2f(_mapScrollView.minimumZoomScale), log2f(newMinZoomScale), (self.boundingMask == RMMapMinWidthBound ? @"RMMapMinWidthBound" : @"RMMapMinHeightBound"));
-
-            _mapScrollView.minimumZoomScale = newMinZoomScale;
-        }
-    }
-}
-
 - (RMProjectedRect)projectedBounds
 {
     CGPoint bottomLeft = CGPointMake(_mapScrollView.contentOffset.x, _mapScrollView.contentSize.height - (_mapScrollView.contentOffset.y + _mapScrollView.bounds.size.height));
@@ -893,48 +873,6 @@
                                  (boundsRect.size.width / _metersPerPixel) / zoomScale,
                                  (boundsRect.size.height / _metersPerPixel) / zoomScale);
     [_mapScrollView zoomToRect:zoomRect animated:animated];
-}
-
-- (float)adjustedZoomForCurrentBoundingMask:(float)zoomFactor
-{
-    if (_boundingMask == RMMapNoMinBound)
-        return zoomFactor;
-
-    double newMetersPerPixel = _metersPerPixel / zoomFactor;
-
-    RMProjectedRect mercatorBounds = [_projection planetBounds];
-
-    // Check for MinWidthBound
-    if (_boundingMask & RMMapMinWidthBound)
-    {
-        double newMapContentsWidth = mercatorBounds.size.width / newMetersPerPixel;
-        double screenBoundsWidth = [self bounds].size.width;
-        double mapContentWidth;
-
-        if (newMapContentsWidth < screenBoundsWidth)
-        {
-            // Calculate new zoom facter so that it does not shrink the map any further.
-            mapContentWidth = mercatorBounds.size.width / _metersPerPixel;
-            zoomFactor = screenBoundsWidth / mapContentWidth;
-        }
-    }
-
-    // Check for MinHeightBound
-    if (_boundingMask & RMMapMinHeightBound)
-    {
-        double newMapContentsHeight = mercatorBounds.size.height / newMetersPerPixel;
-        double screenBoundsHeight = [self bounds].size.height;
-        double mapContentHeight;
-
-        if (newMapContentsHeight < screenBoundsHeight)
-        {
-            // Calculate new zoom facter so that it does not shrink the map any further.
-            mapContentHeight = mercatorBounds.size.height / _metersPerPixel;
-            zoomFactor = screenBoundsHeight / mapContentHeight;
-        }
-    }
-
-    return zoomFactor;
 }
 
 - (BOOL)shouldZoomToTargetZoom:(float)targetZoom withZoomFactor:(float)zoomFactor
@@ -978,7 +916,6 @@
     if (![self tileSourceBoundsContainScreenPoint:pivot])
         return;
 
-    zoomFactor = [self adjustedZoomForCurrentBoundingMask:zoomFactor];
     float zoomDelta = log2f(zoomFactor);
     float targetZoom = zoomDelta + [self zoom];
 
@@ -1330,6 +1267,12 @@
     [self completeZoomEventAfterDelay:0];
 
     _mapScrollViewIsZooming = NO;
+
+    // slight jiggle fixes problems with UIScrollView
+    // briefly allowing zoom beyond min
+    //
+    [self moveBy:CGSizeMake(-1, -1)];
+    [self moveBy:CGSizeMake( 1,  1)];
 
     [self correctPositionOfAllAnnotations];
 
@@ -2275,16 +2218,18 @@
 
 - (void)setMinZoom:(float)newMinZoom
 {
-    if (newMinZoom < 0.0)
-        newMinZoom = 0.0;
+    float boundingDimension = fmaxf(self.bounds.size.width, self.bounds.size.height);
+    float tileSideLength    = _tileSourcesContainer.tileSideLength;
+    float clampedMinZoom    = log2(boundingDimension / tileSideLength);
+
+    if (newMinZoom < clampedMinZoom)
+        newMinZoom = clampedMinZoom;
 
     _minZoom = newMinZoom;
 
 //    RMLog(@"New minZoom:%f", newMinZoom);
 
     _mapScrollView.minimumZoomScale = exp2f(newMinZoom);
-
-    [self correctMinZoomScaleForBoundingMask];
 }
 
 - (float)tileSourcesMinZoom
