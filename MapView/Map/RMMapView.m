@@ -77,7 +77,9 @@
 - (void)createMapView;
 
 - (void)registerMoveEventByUser:(BOOL)wasUserEvent;
+- (void)completeMoveEventAfterDelay:(NSTimeInterval)delay;
 - (void)registerZoomEventByUser:(BOOL)wasUserEvent;
+- (void)completeZoomEventAfterDelay:(NSTimeInterval)delay;
 
 - (void)correctPositionOfAllAnnotations;
 - (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllLayers animated:(BOOL)animated;
@@ -592,6 +594,11 @@
     }
 }
 
+- (void)completeMoveEventAfterDelay:(NSTimeInterval)delay
+{
+    [_moveDelegateQueue performSelector:@selector(setSuspended:) withObject:[NSNumber numberWithBool:NO] afterDelay:delay];
+}
+
 - (void)registerZoomEventByUser:(BOOL)wasUserEvent
 {
     @synchronized (_zoomDelegateQueue)
@@ -621,6 +628,11 @@
             }];
         }
     }
+}
+
+- (void)completeZoomEventAfterDelay:(NSTimeInterval)delay
+{
+    [_zoomDelegateQueue performSelector:@selector(setSuspended:) withObject:[NSNumber numberWithBool:NO] afterDelay:delay];
 }
 
 #pragma mark -
@@ -799,7 +811,7 @@
 //    RMLog(@"setMapCenterProjectedPoint: {%f,%f} -> {%.0f,%.0f}", centerProjectedPoint.x, centerProjectedPoint.y, mapScrollView.contentOffset.x, mapScrollView.contentOffset.y);
 
     if ( ! animated)
-        [_moveDelegateQueue setSuspended:NO];
+        [self completeMoveEventAfterDelay:0];
 
     [self correctPositionOfAllAnnotations];
 }
@@ -815,7 +827,7 @@
     contentOffset.y += delta.height;
     _mapScrollView.contentOffset = contentOffset;
 
-    [_moveDelegateQueue setSuspended:NO];
+    [self completeMoveEventAfterDelay:0];
 }
 
 #pragma mark -
@@ -1283,7 +1295,7 @@
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
     if ( ! decelerate)
-        [_moveDelegateQueue setSuspended:NO];
+        [self completeMoveEventAfterDelay:0];
 }
 
 - (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView
@@ -1294,12 +1306,12 @@
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    [_moveDelegateQueue setSuspended:NO];
+    [self completeMoveEventAfterDelay:0];
 }
 
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
 {
-    [_moveDelegateQueue setSuspended:NO];
+    [self completeMoveEventAfterDelay:0];
 }
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
@@ -1314,8 +1326,8 @@
 
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(float)scale
 {
-    [_moveDelegateQueue setSuspended:NO];
-    [_zoomDelegateQueue setSuspended:NO];
+    [self completeMoveEventAfterDelay:0];
+    [self completeZoomEventAfterDelay:0];
 
     _mapScrollViewIsZooming = NO;
 
@@ -1846,7 +1858,7 @@
 
     [_mapScrollView setContentOffset:contentOffset animated:YES];
 
-    [_moveDelegateQueue performSelector:@selector(setSuspended:) withObject:[NSNumber numberWithBool:NO] afterDelay:kSMCalloutViewRepositionDelayForUIScrollView];
+    [self completeMoveEventAfterDelay:kSMCalloutViewRepositionDelayForUIScrollView];
 
     return kSMCalloutViewRepositionDelayForUIScrollView;
 }
@@ -2334,7 +2346,7 @@
 
     _mapScrollView.zoomScale = exp2f(_zoom);
 
-    [_zoomDelegateQueue setSuspended:NO];
+    [self completeZoomEventAfterDelay:0];
 }
 
 - (float)tileSourcesZoom
