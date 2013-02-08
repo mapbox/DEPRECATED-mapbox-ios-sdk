@@ -1846,6 +1846,8 @@
 
     [_mapScrollView setContentOffset:contentOffset animated:YES];
 
+    [_moveDelegateQueue performSelector:@selector(setSuspended:) withObject:[NSNumber numberWithBool:NO] afterDelay:kSMCalloutViewRepositionDelayForUIScrollView];
+
     return kSMCalloutViewRepositionDelayForUIScrollView;
 }
 
