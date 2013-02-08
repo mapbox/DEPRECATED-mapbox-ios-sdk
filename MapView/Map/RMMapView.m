@@ -1548,7 +1548,7 @@
         [self deselectAnnotation:_currentAnnotation animated:( ! [hit isKindOfClass:[RMMarker class]])];
     }
 
-    if ( ! [hit isKindOfClass:[CALayer class]])
+    if ( ! hit)
     {
         [self singleTapAtPoint:[recognizer locationInView:self]];
         return;
