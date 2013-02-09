@@ -1512,6 +1512,10 @@
     {
         [self tapOnLabelForAnnotation:[((RMMarker *)[superlayer superlayer]) annotation] atPoint:[recognizer locationInView:self]];
     }
+    else
+    {
+        [self singleTapAtPoint:[recognizer locationInView:self]];
+    }
 }
 
 - (void)doubleTapAtPoint:(CGPoint)aPoint
