@@ -26,7 +26,9 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import "RMMarker.h"
+
 #import "RMPixel.h"
+#import "RMConfiguration.h"
 
 @implementation RMMarker
 
@@ -147,7 +149,7 @@
     if ((image = [UIImage imageWithData:[NSData dataWithContentsOfFile:cachePath] scale:(useRetina ? 2.0 : 1.0)]) && image)
         return [self initWithUIImage:image];
     
-    [[NSFileManager defaultManager] createFileAtPath:cachePath contents:[NSData dataWithContentsOfURL:imageURL] attributes:nil];
+    [[NSFileManager defaultManager] createFileAtPath:cachePath contents:[NSData brandedDataWithContentsOfURL:imageURL] attributes:nil];
     
     return [self initWithUIImage:[UIImage imageWithData:[NSData dataWithContentsOfFile:cachePath] scale:(useRetina ? 2.0 : 1.0)]];
 }
