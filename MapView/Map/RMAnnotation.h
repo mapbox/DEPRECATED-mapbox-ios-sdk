@@ -116,7 +116,7 @@
 
 /** @name Initializing Annotations */
 
-/** Create an initialize an annotation. 
+/** Create and initialize an annotation. 
 *   @param aMapView The map view on which to place the annotation. 
 *   @param aCoordinate The location for the annotation. 
 *   @param aTitle The annotation's title. 
