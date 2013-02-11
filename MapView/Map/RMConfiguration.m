@@ -29,10 +29,53 @@
 
 static RMConfiguration *RMConfigurationSharedInstance = nil;
 
+@implementation NSURLConnection (RMUserAgent)
+
++ (NSData *)sendBrandedSynchronousRequest:(NSURLRequest *)request returningResponse:(NSURLResponse **)response error:(NSError **)error
+{
+    NSMutableURLRequest *newRequest = [NSMutableURLRequest requestWithURL:request.URL cachePolicy:request.cachePolicy timeoutInterval:request.timeoutInterval];
+
+    [newRequest setValue:[[RMConfiguration configuration] userAgent] forHTTPHeaderField:@"User-Agent"];
+
+    return [NSURLConnection sendSynchronousRequest:newRequest returningResponse:response error:error];
+}
+
+@end
+
+#pragma mark -
+
+@implementation NSData (RMUserAgent)
+
++ (NSData *)brandedDataWithContentsOfURL:(NSURL *)aURL
+{
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aURL];
+
+    [request setValue:[[RMConfiguration configuration] userAgent] forHTTPHeaderField:@"User-Agent"];
+
+    return [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
+}
+
+@end
+
+#pragma mark -
+
+@implementation NSString (RMUserAgent)
+
++ (id)brandedStringWithContentsOfURL:(NSURL *)url encoding:(NSStringEncoding)enc error:(NSError **)error
+{
+    return [[self class] stringWithContentsOfURL:url encoding:enc error:error];
+}
+
+@end
+
+#pragma mark -
+
 @implementation RMConfiguration
 {
     id _propertyList;
 }
+
+@synthesize userAgent=_userAgent;
 
 + (RMConfiguration *)configuration
 {
@@ -48,6 +91,8 @@ static RMConfiguration *RMConfigurationSharedInstance = nil;
 {
     if (!(self = [super init]))
         return nil;
+
+    _userAgent = [NSString stringWithFormat:@"MapBox iOS SDK (%@/%@)", [[UIDevice currentDevice] model], [[UIDevice currentDevice] systemVersion]];
 
     if (path == nil)
     {

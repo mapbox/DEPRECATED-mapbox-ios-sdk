@@ -35,9 +35,7 @@
 
 #import "RMMapView.h"
 #import "RMPointAnnotation.h"
-
-#define kMapBoxNormalMapID @"examples.map-z2effxa8"
-#define kMapBoxRetinaMapID @"examples.map-zswgei2n"
+#import "RMConfiguration.h"
 
 @interface RMMapBoxSource ()
 
@@ -54,7 +52,7 @@
 
 - (id)init
 {
-    return [self initWithMapID:([[UIScreen mainScreen] scale] > 1.0 ? kMapBoxRetinaMapID : kMapBoxNormalMapID)];
+    return [self initWithMapID:([[UIScreen mainScreen] scale] > 1.0 ? kMapBoxPlaceholderRetinaMapID : kMapBoxPlaceholderNormalMapID)];
 }
 
 - (id)initWithMapID:(NSString *)mapID
@@ -91,7 +89,7 @@
                     
                     NSMutableString *jsonString = nil;
                     
-                    if (dataURL && (jsonString = [NSMutableString stringWithContentsOfURL:dataURL encoding:NSUTF8StringEncoding error:nil]) && jsonString)
+                    if (dataURL && (jsonString = [NSMutableString brandedStringWithContentsOfURL:dataURL encoding:NSUTF8StringEncoding error:nil]) && jsonString)
                     {
                         if ([jsonString hasPrefix:@"grid("])
                         {
@@ -151,7 +149,7 @@
                                                                                                         options:NSAnchoredSearch & NSBackwardsSearch
                                                                                                           range:NSMakeRange(0, [[referenceURL absoluteString] length])]];
     
-    if ([[referenceURL pathExtension] isEqualToString:@"json"] && (dataObject = [NSString stringWithContentsOfURL:referenceURL encoding:NSUTF8StringEncoding error:nil]) && dataObject)
+    if ([[referenceURL pathExtension] isEqualToString:@"json"] && (dataObject = [NSString brandedStringWithContentsOfURL:referenceURL encoding:NSUTF8StringEncoding error:nil]) && dataObject)
         return [self initWithTileJSON:dataObject enablingDataOnMapView:mapView];
     
     return nil;

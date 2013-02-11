@@ -51,6 +51,8 @@
 @synthesize enabled, clusteringEnabled;
 @synthesize position;
 @synthesize quadTreeNode;
+@synthesize isClusterAnnotation=_isClusterAnnotation;
+@synthesize clusteredAnnotations;
 @synthesize isUserLocationAnnotation;
 
 + (id)annotationWithMapView:(RMMapView *)aMapView coordinate:(CLLocationCoordinate2D)aCoordinate andTitle:(NSString *)aTitle
@@ -170,6 +172,16 @@
 - (BOOL)isAnnotationVisibleOnScreen
 {
     return (layer != nil && [self isAnnotationOnScreen]);
+}
+
+- (void)setIsClusterAnnotation:(BOOL)isClusterAnnotation
+{
+    _isClusterAnnotation = isClusterAnnotation;
+}
+
+- (NSArray *)clusteredAnnotations
+{
+    return (self.isClusterAnnotation ? ((RMQuadTreeNode *)self.userInfo).clusteredAnnotations : nil);
 }
 
 - (void)setIsUserLocationAnnotation:(BOOL)flag

@@ -33,6 +33,8 @@
 
 #import "RMInteractiveSource.h"
 
+#import "RMConfiguration.h"
+
 #import "FMDatabase.h"
 #import "FMDatabaseQueue.h"
 
@@ -542,7 +544,7 @@ RMTilePoint RMInteractiveSourceNormalizedTilePointForMapView(CGPoint point, RMMa
 
         // get the data for this tile
         //
-        NSData *gridData = [NSData dataWithContentsOfURL:[NSURL URLWithString:gridURLString]];
+        NSData *gridData = [NSData brandedDataWithContentsOfURL:[NSURL URLWithString:gridURLString]];
         
         if (gridData)
         {

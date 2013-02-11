@@ -130,6 +130,10 @@
 		DD932BBE165C287000D69D49 /* TrackingHeading@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DD932BB0165C287000D69D49 /* TrackingHeading@2x.png */; };
 		DD932BBF165C287000D69D49 /* TrackingLocation.png in Resources */ = {isa = PBXBuildFile; fileRef = DD932BB1165C287000D69D49 /* TrackingLocation.png */; };
 		DD932BC0165C287000D69D49 /* TrackingLocation@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DD932BB2165C287000D69D49 /* TrackingLocation@2x.png */; };
+		DD94D46A16C2E064003D5739 /* HeadingAngleLarge.png in Resources */ = {isa = PBXBuildFile; fileRef = DD94D46616C2E064003D5739 /* HeadingAngleLarge.png */; };
+		DD94D46B16C2E064003D5739 /* HeadingAngleLarge@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DD94D46716C2E064003D5739 /* HeadingAngleLarge@2x.png */; };
+		DD94D46C16C2E064003D5739 /* HeadingAngleMedium.png in Resources */ = {isa = PBXBuildFile; fileRef = DD94D46816C2E064003D5739 /* HeadingAngleMedium.png */; };
+		DD94D46D16C2E064003D5739 /* HeadingAngleMedium@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DD94D46916C2E064003D5739 /* HeadingAngleMedium@2x.png */; };
 		DD97C11616489678007C4652 /* libProj4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD97C11516489678007C4652 /* libProj4.a */; };
 		DD98B6FA14D76B930092882F /* RMMapBoxSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DD98B6F814D76B930092882F /* RMMapBoxSource.h */; };
 		DD98B6FB14D76B930092882F /* RMMapBoxSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD98B6F914D76B930092882F /* RMMapBoxSource.m */; };
@@ -287,6 +291,10 @@
 		DD932BB0165C287000D69D49 /* TrackingHeading@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "TrackingHeading@2x.png"; path = "Map/Resources/TrackingHeading@2x.png"; sourceTree = "<group>"; };
 		DD932BB1165C287000D69D49 /* TrackingLocation.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = TrackingLocation.png; path = Map/Resources/TrackingLocation.png; sourceTree = "<group>"; };
 		DD932BB2165C287000D69D49 /* TrackingLocation@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "TrackingLocation@2x.png"; path = "Map/Resources/TrackingLocation@2x.png"; sourceTree = "<group>"; };
+		DD94D46616C2E064003D5739 /* HeadingAngleLarge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = HeadingAngleLarge.png; path = Map/Resources/HeadingAngleLarge.png; sourceTree = "<group>"; };
+		DD94D46716C2E064003D5739 /* HeadingAngleLarge@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "HeadingAngleLarge@2x.png"; path = "Map/Resources/HeadingAngleLarge@2x.png"; sourceTree = "<group>"; };
+		DD94D46816C2E064003D5739 /* HeadingAngleMedium.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = HeadingAngleMedium.png; path = Map/Resources/HeadingAngleMedium.png; sourceTree = "<group>"; };
+		DD94D46916C2E064003D5739 /* HeadingAngleMedium@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "HeadingAngleMedium@2x.png"; path = "Map/Resources/HeadingAngleMedium@2x.png"; sourceTree = "<group>"; };
 		DD97C11516489678007C4652 /* libProj4.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libProj4.a; path = ../Proj4/libProj4.a; sourceTree = "<group>"; };
 		DD98B6F814D76B930092882F /* RMMapBoxSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMapBoxSource.h; sourceTree = "<group>"; };
 		DD98B6F914D76B930092882F /* RMMapBoxSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMapBoxSource.m; sourceTree = "<group>"; };
@@ -591,6 +599,10 @@
 				DD932BA6165C287000D69D49 /* mapbox@2x.png */,
 				DD932BA9165C287000D69D49 /* HeadingAngleSmall.png */,
 				DD932BAA165C287000D69D49 /* HeadingAngleSmall@2x.png */,
+				DD94D46816C2E064003D5739 /* HeadingAngleMedium.png */,
+				DD94D46916C2E064003D5739 /* HeadingAngleMedium@2x.png */,
+				DD94D46616C2E064003D5739 /* HeadingAngleLarge.png */,
+				DD94D46716C2E064003D5739 /* HeadingAngleLarge@2x.png */,
 				DD932BAB165C287000D69D49 /* LoadingTile.png */,
 				DD932BAC165C287000D69D49 /* LoadingTileZoom.png */,
 				DD932BA7165C287000D69D49 /* TrackingDot.png */,
@@ -800,6 +812,10 @@
 				DD932BBE165C287000D69D49 /* TrackingHeading@2x.png in Resources */,
 				DD932BBF165C287000D69D49 /* TrackingLocation.png in Resources */,
 				DD932BC0165C287000D69D49 /* TrackingLocation@2x.png in Resources */,
+				DD94D46A16C2E064003D5739 /* HeadingAngleLarge.png in Resources */,
+				DD94D46B16C2E064003D5739 /* HeadingAngleLarge@2x.png in Resources */,
+				DD94D46C16C2E064003D5739 /* HeadingAngleMedium.png in Resources */,
+				DD94D46D16C2E064003D5739 /* HeadingAngleMedium@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

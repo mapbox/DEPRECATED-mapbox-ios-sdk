@@ -49,13 +49,6 @@
 @class RMQuadTree;
 @class RMUserLocation;
 
-// constants for boundingMask
-enum : NSUInteger {
-    RMMapNoMinBound		= 0, // Map can be zoomed out past view limits
-    RMMapMinHeightBound	= 1, // Minimum map height when zooming out restricted to view height
-    RMMapMinWidthBound	= 2  // Minimum map width when zooming out restricted to view width (default)
-};
-
 // constants for the scrollview deceleration mode
 typedef enum : NSUInteger {
     RMMapDecelerationNormal = 0,
@@ -86,14 +79,14 @@ typedef enum : NSUInteger {
 *   This property controls only user interactions with the map. If you set the value of this property to `NO`, you may still change the map location programmatically.
 *
 *   The default value of this property is `YES`. */
-@property (nonatomic, assign) BOOL enableDragging;
+@property (nonatomic, assign) BOOL draggingEnabled;
 
 /** A Boolean value that determines whether the map view bounces past the edge of content and back again and whether it animates the content scaling when the scaling exceeds the maximum or minimum limits.
 *
 *   If the value of this property is `YES`, the map view bounces when it encounters a boundary of the content or when zooming exceeds either the maximum or minimum limits for scaling. Bouncing visually indicates that scrolling or zooming has reached an edge of the content. If the value is `NO`, scrolling and zooming stop immediately at the content boundary without bouncing.
 *
 *   The default value is `NO`. */
-@property (nonatomic, assign) BOOL enableBouncing;
+@property (nonatomic, assign) BOOL bouncingEnabled;
 
 /** A Boolean value that determines whether double-tap zooms of the map always zoom on the center of the map, or whether they zoom on the center of the double-tap gesture. The default value is `NO`, which zooms on the gesture. */
 @property (nonatomic, assign) BOOL zoomingInPivotsAroundCenter;
@@ -128,8 +121,6 @@ typedef enum : NSUInteger {
 
 /** Take missing tiles from lower-numbered zoom levels, up to a given number of zoom levels. This can be used in order to increase perceived tile load performance or to allow zooming in beyond levels supported natively by a given tile source. Defaults to 1. */
 @property (nonatomic, assign) NSUInteger missingTilesDepth;
-
-@property (nonatomic, assign) NSUInteger boundingMask;
 
 /** A custom, static view to use behind the map tiles. The default behavior is to use grid imagery that moves with map panning like MapKit. */
 @property (nonatomic, strong) UIView *backgroundView;
@@ -352,9 +343,9 @@ typedef enum : NSUInteger {
 /** @name Configuring Annotation Clustering */
 
 /** Whether to enable clustering of map point annotations. Defaults to `NO`. */
-@property (nonatomic, assign) BOOL enableClustering;
+@property (nonatomic, assign) BOOL clusteringEnabled;
 
-/** Whether to position cluster markers at the weighted center of the points they represent. If `YES`, position clusters in weighted fashion. If `NO`, position them on a rectangular grid. Defaults to `NO`. */
+/** Whether to position cluster markers at the weighted center of the points they represent. If `YES`, position clusters in weighted fashion. If `NO`, position them on a rectangular grid. Defaults to `YES`. */
 @property (nonatomic, assign) BOOL positionClusterMarkersAtTheGravityCenter;
 
 /** Whether to order cluster markers above non-clustered markers. Defaults to `NO`. */

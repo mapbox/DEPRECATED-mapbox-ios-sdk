@@ -27,14 +27,15 @@
 
 #import "RMMapLayer.h"
 #import "RMPixel.h"
+#import "RMAnnotation.h"
 
 @implementation RMMapLayer
 
 @synthesize annotation;
 @synthesize projectedLocation;
-@synthesize enableDragging;
+@synthesize draggingEnabled;
 @synthesize userInfo;
-@synthesize canShowCallout;
+@synthesize canShowCallout=_canShowCallout;
 @synthesize calloutOffset;
 @synthesize leftCalloutAccessoryView;
 @synthesize rightCalloutAccessoryView;
@@ -45,7 +46,7 @@
 		return nil;
 
     self.annotation = nil;
-    self.enableDragging = NO;
+    self.draggingEnabled = NO;
     self.calloutOffset = CGPointZero;
 
 	return self;
@@ -61,6 +62,12 @@
     self.calloutOffset = CGPointZero;
 
     return self;
+}
+
+- (void)setCanShowCallout:(BOOL)canShowCallout
+{
+    if ( ! self.annotation.isClusterAnnotation)
+        _canShowCallout = canShowCallout;
 }
 
 - (void)setPosition:(CGPoint)position animated:(BOOL)animated

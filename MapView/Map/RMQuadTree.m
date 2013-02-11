@@ -38,6 +38,12 @@
 #define kMaxAnnotationsPerLeaf 4
 #define kMinPixelDistanceForLeafClustering 100.0
 
+@interface RMAnnotation (RMQuadTree)
+
+@property (nonatomic, assign) BOOL isClusterAnnotation;
+
+@end
+
 @interface RMQuadTreeNode ()
 
 - (id)initWithMapView:(RMMapView *)aMapView forParent:(RMQuadTreeNode *)aParentNode inBoundingBox:(RMProjectedRect)aBoundingBox;
@@ -514,7 +520,7 @@
                 _cachedClusterAnnotation = [[RMAnnotation alloc] initWithMapView:_mapView
                                                                      coordinate:clusterMarkerCoordinate
                                                                        andTitle:[NSString stringWithFormat:@"%d", enclosedAnnotationsCount]];
-                _cachedClusterAnnotation.annotationType = kRMClusterAnnotationTypeName;
+                _cachedClusterAnnotation.isClusterAnnotation = YES;
                 _cachedClusterAnnotation.userInfo = self;
 
                 _cachedClusterEnclosedAnnotations = [[NSArray alloc] initWithArray:enclosedAnnotations];
