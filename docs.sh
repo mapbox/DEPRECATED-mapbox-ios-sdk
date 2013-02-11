@@ -17,7 +17,6 @@ appledoc \
     --ignore .m \
     --ignore RMAttributionViewController.h \
     --ignore RMBingSource.h \
-    --ignore RMConfiguration.h \
     --ignore RMCoordinateGridSource.h \
     --ignore RMDBMapSource.h \
     --ignore RMFoundation.h \
