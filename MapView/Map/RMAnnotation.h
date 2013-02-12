@@ -84,7 +84,7 @@
 @property (nonatomic, assign) BOOL hasBoundingBox;
 
 /** Whether touch events for the annotation's layer are recognized. Defaults to `YES`. */
-@property (nonatomic, assign) BOOL enabled;
+@property (nonatomic, assign, getter=isEnabled) BOOL enabled;
 
 /** @name Representing an Annotation Visually */
 
