@@ -1686,7 +1686,7 @@
 {
     if (anAnnotation.layer && anAnnotation.isAnnotationOnScreen && anAnnotation.layer.canShowCallout && anAnnotation.title && ! [anAnnotation isEqual:_currentAnnotation])
     {
-        [self performSelector:@selector(popupCalloutViewForAnnotation:) withObject:anAnnotation afterDelay:1.0/3.0]; // allows for MapKit-like delay
+        [self popupCalloutViewForAnnotation:anAnnotation];
     }
 
     if (_delegateHasTapOnAnnotation && anAnnotation)
