@@ -135,7 +135,25 @@
 
 - (BOOL)containsPoint:(CGPoint)thePoint
 {
-    return CGPathContainsPoint(shapeLayer.path, nil, thePoint, [shapeLayer.fillRule isEqualToString:kCAFillRuleEvenOdd]);
+    BOOL containsPoint = NO;
+
+    if ([self.fillColor isEqual:[UIColor clearColor]])
+    {
+        // if shape is not filled with a color, do a simple "point on path" test
+        //
+        UIGraphicsBeginImageContext(self.bounds.size);
+        CGContextAddPath(UIGraphicsGetCurrentContext(), shapeLayer.path);
+        containsPoint = CGContextPathContainsPoint(UIGraphicsGetCurrentContext(), thePoint, kCGPathStroke);
+        UIGraphicsEndImageContext();
+    }
+    else
+    {
+        // else do a "path contains point" test
+        //
+        containsPoint = CGPathContainsPoint(shapeLayer.path, nil, thePoint, [shapeLayer.fillRule isEqualToString:kCAFillRuleEvenOdd]);
+    }
+
+    return containsPoint;
 }
 
 - (void)setLineColor:(UIColor *)newLineColor
