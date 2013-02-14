@@ -487,19 +487,16 @@
 {
     if ( ! self.viewControllerPresentingAttribution && ! _hideAttribution)
     {
-        UIViewController *candidateViewController = self.window.rootViewController;
+        UIResponder *responder = self;
 
-        while ([self isDescendantOfView:candidateViewController.view])
+        while ((responder = [responder nextResponder]))
         {
-            for (UIViewController *childViewController in candidateViewController.childViewControllers)
-                if ([self isDescendantOfView:childViewController.view])
-                    candidateViewController = childViewController;
-
-            if ( ! [candidateViewController.childViewControllers count] || [candidateViewController isEqual:self.window.rootViewController])
+            if ([responder isKindOfClass:[UIViewController class]])
+            {
+                self.viewControllerPresentingAttribution = (UIViewController *)responder;
                 break;
+            }
         }
-
-        self.viewControllerPresentingAttribution = candidateViewController;
     }
     else if (self.viewControllerPresentingAttribution && _hideAttribution)
     {
