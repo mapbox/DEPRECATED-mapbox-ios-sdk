@@ -3,11 +3,12 @@ MapBox iOS SDK
 
 Based on the Route-Me iOS map library (Alpstein fork) with [MapBox][mapbox] customizations. 
 
-Requires iOS 5 and Xcode 4.3 or greater. Does not yet support ARC. 
+Requires iOS 5, Xcode 4.3 or greater, and ARC. 
 
 Major differences from [Alpstein fork of Route-Me](https://github.com/Alpstein/route-me): 
 
  * Requires iOS 5.0 and above. 
+ * Supports Automatic Reference Counting (ARC). 
  * [MapBox](http://mapbox.com) & [MBTiles](http://mbtiles.org) tile source integration code. 
  * [MapBox Markers](http://mapbox.com/blog/markers/) support. 
  * [UTFGrid interactivity](http://mapbox.com/mbtiles-spec/utfgrid/). 
