@@ -135,6 +135,8 @@
     BOOL _delegateHasLayerForAnnotation;
     BOOL _delegateHasWillHideLayerForAnnotation;
     BOOL _delegateHasDidHideLayerForAnnotation;
+    BOOL _delegateHasDidSelectAnnotation;
+    BOOL _delegateHasDidDeselectAnnotation;
     BOOL _delegateHasWillStartLocatingUser;
     BOOL _delegateHasDidStopLocatingUser;
     BOOL _delegateHasDidUpdateUserLocation;
@@ -461,19 +463,16 @@
 {
     if ( ! self.viewControllerPresentingAttribution && ! _hideAttribution)
     {
-        UIViewController *candidateViewController = self.window.rootViewController;
+        UIResponder *responder = self;
 
-        while ([self isDescendantOfView:candidateViewController.view])
+        while ((responder = [responder nextResponder]))
         {
-            for (UIViewController *childViewController in candidateViewController.childViewControllers)
-                if ([self isDescendantOfView:childViewController.view])
-                    candidateViewController = childViewController;
-
-            if ( ! [candidateViewController.childViewControllers count] || [candidateViewController isEqual:self.window.rootViewController])
+            if ([responder isKindOfClass:[UIViewController class]])
+            {
+                self.viewControllerPresentingAttribution = (UIViewController *)responder;
                 break;
+            }
         }
-
-        self.viewControllerPresentingAttribution = candidateViewController;
     }
     else if (self.viewControllerPresentingAttribution && _hideAttribution)
     {
@@ -539,6 +538,9 @@
     _delegateHasLayerForAnnotation = [_delegate respondsToSelector:@selector(mapView:layerForAnnotation:)];
     _delegateHasWillHideLayerForAnnotation = [_delegate respondsToSelector:@selector(mapView:willHideLayerForAnnotation:)];
     _delegateHasDidHideLayerForAnnotation = [_delegate respondsToSelector:@selector(mapView:didHideLayerForAnnotation:)];
+
+    _delegateHasDidSelectAnnotation = [_delegate respondsToSelector:@selector(mapView:didSelectAnnotation:)];
+    _delegateHasDidDeselectAnnotation = [_delegate respondsToSelector:@selector(mapView:didDeselectAnnotation:)];
 
     _delegateHasWillStartLocatingUser = [_delegate respondsToSelector:@selector(mapViewWillStartLocatingUser:)];
     _delegateHasDidStopLocatingUser = [_delegate respondsToSelector:@selector(mapViewDidStopLocatingUser:)];
@@ -1659,10 +1661,8 @@
 
 - (void)tapOnAnnotation:(RMAnnotation *)anAnnotation atPoint:(CGPoint)aPoint
 {
-    if (anAnnotation.layer && anAnnotation.isAnnotationOnScreen && anAnnotation.layer.canShowCallout && anAnnotation.title && ! [anAnnotation isEqual:_currentAnnotation])
-    {
-        [self performSelector:@selector(popupCalloutViewForAnnotation:) withObject:anAnnotation afterDelay:1.0/3.0]; // allows for MapKit-like delay
-    }
+    if (anAnnotation.isEnabled && ! [anAnnotation isEqual:_currentAnnotation])
+        [self selectAnnotation:anAnnotation animated:YES];
 
     if (_delegateHasTapOnAnnotation && anAnnotation)
     {
@@ -1688,21 +1688,64 @@
     return [super hitTest:point withEvent:event];
 }
 
-- (void)selectAnnotation:(RMAnnotation *)annotation animated:(BOOL)animated
+- (void)selectAnnotation:(RMAnnotation *)anAnnotation animated:(BOOL)animated
 {
-    if ( ! annotation && _currentAnnotation)
+    if ( ! anAnnotation && _currentAnnotation)
+    {
         [self deselectAnnotation:_currentAnnotation animated:animated];
-
-    if (annotation.isAnnotationOnScreen && ! [annotation isEqual:_currentAnnotation])
+    }
+    else if (anAnnotation.isEnabled && ! [anAnnotation isEqual:_currentAnnotation])
     {
         [self deselectAnnotation:_currentAnnotation animated:NO];
-        [self popupCalloutViewForAnnotation:annotation animated:animated];
+
+        _currentAnnotation = anAnnotation;
+
+        if (anAnnotation.layer.canShowCallout && anAnnotation.title)
+        {
+            _currentCallout = [SMCalloutView new];
+
+            _currentCallout.title    = anAnnotation.title;
+            _currentCallout.subtitle = anAnnotation.subtitle;
+
+            _currentCallout.calloutOffset = anAnnotation.layer.calloutOffset;
+
+            if (anAnnotation.layer.leftCalloutAccessoryView)
+            {
+                if ([anAnnotation.layer.leftCalloutAccessoryView isKindOfClass:[UIControl class]])
+                    [anAnnotation.layer.leftCalloutAccessoryView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapOnCalloutAccessoryWithGestureRecognizer:)]];
+
+                _currentCallout.leftAccessoryView = anAnnotation.layer.leftCalloutAccessoryView;
+            }
+
+            if (anAnnotation.layer.rightCalloutAccessoryView)
+            {
+                if ([anAnnotation.layer.rightCalloutAccessoryView isKindOfClass:[UIControl class]])
+                    [anAnnotation.layer.rightCalloutAccessoryView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapOnCalloutAccessoryWithGestureRecognizer:)]];
+
+                _currentCallout.rightAccessoryView = anAnnotation.layer.rightCalloutAccessoryView;
+            }
+
+            _currentCallout.delegate = self;
+
+            [_currentCallout presentCalloutFromRect:anAnnotation.layer.bounds
+                                            inLayer:anAnnotation.layer
+                                 constrainedToLayer:self.layer
+                           permittedArrowDirections:SMCalloutArrowDirectionDown
+                                           animated:animated];
+        }
+
+        [self correctPositionOfAllAnnotations];
+
+        anAnnotation.layer.zPosition = _currentCallout.layer.zPosition = MAXFLOAT;
+
+        if (_delegateHasDidSelectAnnotation)
+            [_delegate mapView:self didSelectAnnotation:anAnnotation];
     }
 }
 
 - (void)deselectAnnotation:(RMAnnotation *)annotation animated:(BOOL)animated
 {
-    if ([annotation isEqual:_currentAnnotation] && _currentCallout)
+    if ([annotation isEqual:_currentAnnotation])
     {
         [_currentCallout dismissCalloutAnimated:animated];
 
@@ -1713,63 +1756,20 @@
 
          _currentAnnotation = nil;
          _currentCallout = nil;
+
+        if (_delegateHasDidDeselectAnnotation)
+            [_delegate mapView:self didDeselectAnnotation:annotation];
     }
 }
 
 - (void)setSelectedAnnotation:(RMAnnotation *)selectedAnnotation
 {
-    if ( ! [selectedAnnotation isEqual:_currentAnnotation])
-        [self selectAnnotation:selectedAnnotation animated:YES];
+    [self selectAnnotation:selectedAnnotation animated:YES];
 }
 
 - (RMAnnotation *)selectedAnnotation
 {
     return _currentAnnotation;
-}
-
-- (void)popupCalloutViewForAnnotation:(RMAnnotation *)anAnnotation
-{
-    [self popupCalloutViewForAnnotation:anAnnotation animated:YES];
-}
-
-- (void)popupCalloutViewForAnnotation:(RMAnnotation *)anAnnotation animated:(BOOL)animated
-{
-    _currentAnnotation = anAnnotation;
-
-    _currentCallout = [SMCalloutView new];
-
-    _currentCallout.title    = anAnnotation.title;
-    _currentCallout.subtitle = anAnnotation.subtitle;
-
-    _currentCallout.calloutOffset = anAnnotation.layer.calloutOffset;
-
-    if (anAnnotation.layer.leftCalloutAccessoryView)
-    {
-        if ([anAnnotation.layer.leftCalloutAccessoryView isKindOfClass:[UIControl class]])
-            [anAnnotation.layer.leftCalloutAccessoryView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapOnCalloutAccessoryWithGestureRecognizer:)]];
-
-        _currentCallout.leftAccessoryView = anAnnotation.layer.leftCalloutAccessoryView;
-    }
-
-    if (anAnnotation.layer.rightCalloutAccessoryView)
-    {
-        if ([anAnnotation.layer.rightCalloutAccessoryView isKindOfClass:[UIControl class]])
-            [anAnnotation.layer.rightCalloutAccessoryView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapOnCalloutAccessoryWithGestureRecognizer:)]];
-
-        _currentCallout.rightAccessoryView = anAnnotation.layer.rightCalloutAccessoryView;
-    }
-
-    _currentCallout.delegate = self;
-
-    [self correctPositionOfAllAnnotations];
-
-    anAnnotation.layer.zPosition = _currentCallout.layer.zPosition = MAXFLOAT;
-
-    [_currentCallout presentCalloutFromRect:anAnnotation.layer.bounds
-                                    inLayer:anAnnotation.layer
-                         constrainedToLayer:self.layer
-                   permittedArrowDirections:SMCalloutArrowDirectionDown
-                                   animated:animated];
 }
 
 - (NSTimeInterval)calloutView:(SMCalloutView *)calloutView delayForRepositionWithSize:(CGSize)offset
@@ -2779,10 +2779,10 @@
 
         // markers above shapes
         //
-        if (   [annotation1.layer isKindOfClass:[RMMarker class]] && [@[[RMShape class], [RMCircle class]] containsObject:[annotation2.layer class]])
+        if (   [annotation1.layer isKindOfClass:[RMMarker class]] && ! [annotation2.layer isKindOfClass:[RMMarker class]])
             return NSOrderedDescending;
 
-        if (   [@[[RMShape class], [RMCircle class]] containsObject:[annotation1.layer class]] && [annotation2.layer isKindOfClass:[RMMarker class]])
+        if ( ! [annotation1.layer isKindOfClass:[RMMarker class]] &&   [annotation2.layer isKindOfClass:[RMMarker class]])
             return NSOrderedAscending;
 
         // the rest in increasing y-position
