@@ -27,12 +27,52 @@
 
 #import <UIKit/UIKit.h>
 
+/** The RMConfiguration object is a shared instance of the configuration for the library. */
 @interface RMConfiguration : NSObject
 
+/** @name Accessing the Configuration */
+
+/** Access the shared instance of the configuration. 
+*   @return The shared configuration instance. */
 + (RMConfiguration *)configuration;
 
 - (RMConfiguration *)initWithPath:(NSString *)path;
 
+/** Access the disk- and memory-based cache configuration. 
+*   @return A dictionary containing the cache configuration. */
 - (NSDictionary *)cacheConfiguration;
+
+/** @name Changing and Accessing a Custom User Agent */
+
+/** Access and change the global user agent for HTTP requests using the library.
+*
+*   If unset, defaults to `MapBox iOS SDK` followed by generic hardware model and software version information.
+*
+*   Example: `MyMapApp/1.2` */
+@property (nonatomic, retain) NSString *userAgent;
+
+@end
+
+#pragma mark -
+
+@interface NSURLConnection (RMUserAgent)
+
++ (NSData *)sendBrandedSynchronousRequest:(NSURLRequest *)request returningResponse:(NSURLResponse **)response error:(NSError **)error;
+
+@end
+
+#pragma mark -
+
+@interface NSData (RMUserAgent)
+
++ (NSData *)brandedDataWithContentsOfURL:(NSURL *)aURL;
+
+@end
+
+#pragma mark -
+
+@interface NSString (RMUserAgent)
+
++ (id)brandedStringWithContentsOfURL:(NSURL *)url encoding:(NSStringEncoding)enc error:(NSError **)error;
 
 @end
