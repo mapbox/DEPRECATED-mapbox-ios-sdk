@@ -1728,6 +1728,8 @@
         {
             _currentCallout = [SMCalloutView new];
 
+            _currentCallout.backgroundView = [SMCalloutBackgroundView systemBackgroundView];
+
             _currentCallout.title    = anAnnotation.title;
             _currentCallout.subtitle = anAnnotation.subtitle;
 

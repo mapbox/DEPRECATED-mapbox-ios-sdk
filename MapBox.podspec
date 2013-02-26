@@ -84,6 +84,6 @@ Pod::Spec.new do |m|
 
   m.dependency 'FMDB', '2.0'
   m.dependency 'GRMustache', '5.4.3'
-  m.dependency 'SMCalloutView', :git => 'git://github.com/nfarina/calloutview.git', :commit => 'c00a90c'
+  m.dependency 'SMCalloutView', :git => 'git://github.com/nfarina/calloutview.git', :commit => '625a685'
 
 end
