@@ -274,8 +274,7 @@
     }
     else
     {
-        _loadingTileView = [[RMLoadingTileView alloc] initWithFrame:self.bounds];
-        [self setBackgroundView:_loadingTileView];
+        [self setBackgroundView:nil];
     }
 
     if (initialTileSourceMinZoomLevel < newTilesource.minZoom) initialTileSourceMinZoomLevel = newTilesource.minZoom;
@@ -2128,19 +2127,25 @@
 
 - (void)setBackgroundView:(UIView *)aView
 {
-    if (_backgroundView == aView)
+    if ([_backgroundView isEqual:aView])
         return;
 
-    if (_backgroundView != nil)
-    {
+    if (_backgroundView)
         [_backgroundView removeFromSuperview];
+
+    if ( ! aView)
+    {
+        if ( ! _loadingTileView)
+            _loadingTileView = [[RMLoadingTileView alloc] initWithFrame:self.bounds];
+
+        aView = _loadingTileView;
     }
+    else
+        _loadingTileView = nil;
 
     _backgroundView = aView;
-    if (_backgroundView == nil)
-        return;
 
-    _backgroundView.frame = [self bounds];
+    _backgroundView.frame = self.bounds;
 
     [self insertSubview:_backgroundView atIndex:0];
 }
