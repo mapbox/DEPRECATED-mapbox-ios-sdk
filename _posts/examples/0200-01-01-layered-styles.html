@@ -1,0 +1,24 @@
+---
+category: examples
+layout: examples
+title: Layered styles
+description: Composite multiple styles client-side. 
+tags:
+  - custom
+  - style
+  - color
+  - tilemill
+  - composite
+---
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+
+    RMMapBoxSource *tileSource = [[RMMapBoxSource alloc] initWithMapID:@"examples.map-y7l23tes"];
+
+    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds andTilesource:tileSource];
+
+    [mapView addTileSource:[[RMMapBoxSource alloc] initWithMapID:@"examples.location-formatter"]];
+
+    [self.view addSubview:mapView];
+}

@@ -1,0 +1,46 @@
+---
+category: examples
+layout: examples
+title: Custom image and color on MapBox marker
+description: Creating a MapBox marker with a custom image and color. 
+tags:
+  - marker
+  - point
+  - pin
+  - callout
+  - popup
+  - maki
+  - icon
+  - color
+  - image
+---
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+
+    RMMapBoxSource *tileSource = [[RMMapBoxSource alloc] initWithMapID:@"examples.map-z2effxa8"];
+
+    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds andTilesource:tileSource];
+
+    mapView.delegate = self;
+
+    [self.view addSubview:mapView];
+
+    RMAnnotation *annotation = [[RMAnnotation alloc] initWithMapView:mapView 
+                                                          coordinate:mapView.centerCoordinate
+                                                            andTitle:@"Bus Stop"];
+
+    [mapView addAnnotation:annotation];
+}
+
+- (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
+{
+    if (annotation.isUserLocationAnnotation)
+        return nil;
+
+    RMMarker *marker = [[RMMarker alloc] initWithMapBoxMarkerImage:@"bus" tintColor:[UIColor blueColor]];
+
+    marker.canShowCallout = YES;
+
+    return marker;
+}
