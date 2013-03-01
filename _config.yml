@@ -5,3 +5,4 @@ baseurl: /mapbox-ios-sdk
 url: http://mapbox.com
 title: iOS SDK
 description: Open source alternative to MapKit
+pygments: true

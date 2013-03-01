@@ -72,6 +72,8 @@ pre a {
   }
 </style>
 
+<link rel="stylesheet" href="{{site.baseurl}}/assets/css/pygments.css">
+
 <div class='clearfix doc-header pad3 fillL'>
   <div class='cell6'>
     <h2>{{site.title}}</h2>
@@ -110,13 +112,13 @@ pre a {
     <a class='button big' href='#' id='copy'><span class='icon embed reverse'></span> Select all</a>
     </div>
     <div id='code' class='doc'>
-    <pre class='prettyprint code-header'>
+    {% highlight objective-c %}
 #import "MapBox.h"
-</pre>
-    <pre class='prettyprint code-body'>{{content | escape}}</pre>
-    <pre class='prettyprint code-footer'>
+
+{{content | escape}}
+
 @end
-    </pre>
+    {% endhighlight %}
     </div>
     <div class='doc-footer'>
       <div class='pad2'>
