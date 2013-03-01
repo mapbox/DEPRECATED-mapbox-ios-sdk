@@ -40,7 +40,7 @@ tags:
 
     for (NSUInteger i = 0; i < [self.points count]; i++)
         [self.points replaceObjectAtIndex:i
-                               withObject:[[CLLocation alloc] initWithLatitude:[[[selfpoints objectAtIndex:i] objectAtIndex:1] doubleValue]
+                               withObject:[[CLLocation alloc] initWithLatitude:[[[self.points objectAtIndex:i] objectAtIndex:1] doubleValue]
                                                                      longitude:[[[self.points objectAtIndex:i] objectAtIndex:0] doubleValue]]];
 
     RMAnnotation *annotation = [[RMAnnotation alloc] initWithMapView:mapView
