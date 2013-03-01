@@ -1,0 +1,73 @@
+---
+category: examples
+layout: examples
+title: Converting points
+description: Converting points between screen- and map-based coordinates. 
+tags:
+  - shape
+  - polyline
+  - polygon
+  - draw
+  - points
+  - convert
+  - projection
+  - CGPoint
+---
+@implementation MyViewController
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+
+    RMMapBoxSource *tileSource = [[RMMapBoxSource alloc] initWithMapID:@"examples.map-z2effxa8"];
+
+    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds andTilesource:tileSource];
+
+    mapView.delegate = self;
+
+    [self.view addSubview:mapView];
+
+    RMAnnotation *annotation1 = [[RMAnnotation alloc] initWithMapView:mapView
+                                                          coordinate:mapView.centerCoordinate
+                                                            andTitle:@"green"];
+
+    [mapView addAnnotation:annotation1];
+
+    RMAnnotation *annotation2 = [[RMAnnotation alloc] initWithMapView:mapView
+                                                          coordinate:mapView.centerCoordinate
+                                                            andTitle:@"red"];
+
+    [mapView addAnnotation:annotation2];
+}
+
+- (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
+{
+    if (annotation.isUserLocationAnnotation)
+        return nil;
+
+    RMShape *line = [[RMShape alloc] initWithView:mapView];
+
+    line.lineWidth = 5.0;
+
+    if ([annotation.title isEqualToString:@"red"])
+    {
+        line.lineColor = [UIColor redColor];
+
+        [line moveToCoordinate:[mapView pixelToCoordinate:mapView.bounds.origin]];
+        [line addLineToCoordinate:[mapView pixelToCoordinate:CGPointMake(mapView.bounds.size.width, mapView.bounds.size.height)]];
+    }
+    else if ([annotation.title isEqualToString:@"green"])
+    {
+        line.lineColor = [UIColor greenColor];
+
+        [line moveToCoordinate:[mapView pixelToCoordinate:CGPointMake(mapView.bounds.size.width, 0)]];
+        [line addLineToCoordinate:[mapView pixelToCoordinate:CGPointMake(0, mapView.bounds.size.height)]];
+    }
+
+    return line;
+}
+
+- (void)singleTapOnMap:(RMMapView *)map at:(CGPoint)point
+{
+    NSLog(@"You tapped at %f, %f", [map pixelToCoordinate:point].latitude, [map pixelToCoordinate:point].longitude);
+}
