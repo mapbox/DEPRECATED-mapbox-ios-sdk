@@ -130,5 +130,9 @@ pre a {
 {% include developers-footer.html %}
 
 <script>
+  $(document).ready(function () {
+    var example = new Docs();
+    example.bindSearch($('.doc-search input'), $('.doc-nav ul'), false);
+  });
   $(mapbox.docs);
 </script>
