@@ -2,9 +2,29 @@
 //  RMUserTrackingBarButtonItem.m
 //  MapView
 //
-//  Created by Justin Miller on 5/10/12.
-//  Copyright (c) 2012 MapBox / Development Seed. All rights reserved.
+// Copyright (c) 2008-2013, Route-Me Contributors
+// All rights reserved.
 //
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+// * Redistributions of source code must retain the above copyright notice, this
+//   list of conditions and the following disclaimer.
+// * Redistributions in binary form must reproduce the above copyright notice,
+//   this list of conditions and the following disclaimer in the documentation
+//   and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
 
 #import "RMUserTrackingBarButtonItem.h"
 
@@ -19,9 +39,9 @@ typedef enum {
 
 @interface RMUserTrackingBarButtonItem ()
 
-@property (nonatomic, retain) UISegmentedControl *segmentedControl;
-@property (nonatomic, retain) UIImageView *buttonImageView;
-@property (nonatomic, retain) UIActivityIndicatorView *activityView;
+@property (nonatomic, strong) UISegmentedControl *segmentedControl;
+@property (nonatomic, strong) UIImageView *buttonImageView;
+@property (nonatomic, strong) UIActivityIndicatorView *activityView;
 @property (nonatomic, assign) RMUserTrackingButtonState state;
 
 - (void)createBarButtonItem;
@@ -65,7 +85,7 @@ typedef enum {
 
 - (void)createBarButtonItem
 {
-    _segmentedControl = [[[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@""]] retain];
+    _segmentedControl = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@""]];
     _segmentedControl.segmentedControlStyle = UISegmentedControlStyleBar;
     [_segmentedControl setWidth:32.0 forSegmentAtIndex:0];
     _segmentedControl.userInteractionEnabled = NO;
@@ -74,7 +94,7 @@ typedef enum {
 
     [self.customView addSubview:_segmentedControl];
 
-    _buttonImageView = [[[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"TrackingLocation.png"]] retain];
+    _buttonImageView = [[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"TrackingLocation.png"]];
     _buttonImageView.contentMode = UIViewContentModeCenter;
     _buttonImageView.frame = CGRectMake(0, 0, 32, 32);
     _buttonImageView.center = self.customView.center;
@@ -82,7 +102,7 @@ typedef enum {
 
     [self.customView addSubview:_buttonImageView];
 
-    _activityView = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite] retain];
+    _activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     _activityView.hidesWhenStopped = YES;
     _activityView.center = self.customView.center;
     _activityView.userInteractionEnabled = NO;
@@ -96,14 +116,8 @@ typedef enum {
 
 - (void)dealloc
 {
-    [_segmentedControl release]; _segmentedControl = nil;
-    [_buttonImageView release]; _buttonImageView = nil;
-    [_activityView release]; _activityView = nil;
     [_mapView removeObserver:self forKeyPath:@"userTrackingMode"];
     [_mapView removeObserver:self forKeyPath:@"userLocation.location"];
-    [_mapView release]; _mapView = nil;
-    
-    [super dealloc];
 }
 
 #pragma mark -
@@ -114,9 +128,8 @@ typedef enum {
     {
         [_mapView removeObserver:self forKeyPath:@"userTrackingMode"];
         [_mapView removeObserver:self forKeyPath:@"userLocation.location"];
-        [_mapView release];
 
-        _mapView = [newMapView retain];
+        _mapView = newMapView;
         [_mapView addObserver:self forKeyPath:@"userTrackingMode"      options:NSKeyValueObservingOptionNew context:nil];
         [_mapView addObserver:self forKeyPath:@"userLocation.location" options:NSKeyValueObservingOptionNew context:nil];
 

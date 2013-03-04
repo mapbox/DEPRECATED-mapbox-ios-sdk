@@ -1,7 +1,7 @@
 //
 //  RMMapViewDelegate.h
 //
-// Copyright (c) 2008-2012, Route-Me Contributors
+// Copyright (c) 2008-2013, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -66,6 +66,20 @@ typedef enum : NSUInteger {
 *   @param annotation The annotation whose layer was hidden. */
 - (void)mapView:(RMMapView *)mapView didHideLayerForAnnotation:(RMAnnotation *)annotation;
 
+/** Tells the delegate that one of its annotations was selected.
+*
+*   You can use this method to track changes in the selection state of annotations.
+*   @param mapView The map view containing the annotation.
+*   @param annotation The annotation that was selected. */
+- (void)mapView:(RMMapView *)mapView didSelectAnnotation:(RMAnnotation *)annotation;
+
+/** Tells the delegate that one of its annotations was deselected.
+*
+*   You can use this method to track changes in the selection state of annotations.
+*   @param mapView The map view containing the annotation.
+*   @param annotation The annotation that was deselected. */
+- (void)mapView:(RMMapView *)mapView didDeselectAnnotation:(RMAnnotation *)annotation;
+
 /** @name Responding to Map Position Changes */
 
 /** Tells the delegate when a map is about to move. 
@@ -114,7 +128,7 @@ typedef enum : NSUInteger {
 /** Tells the delegate when the user long-presses a map view.
 *   @param map The map that was long-pressed.
 *   @param point The point at which the map was long-pressed. */
-- (void)longSingleTapOnMap:(RMMapView *)map at:(CGPoint)point;
+- (void)longPressOnMap:(RMMapView *)map at:(CGPoint)point;
 
 /** @name Responding to User Annotation Gestures */
 
@@ -128,6 +142,11 @@ typedef enum : NSUInteger {
 *   @param map The map view. */
 - (void)doubleTapOnAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map;
 
+/** Tells the delegate when the user long-presses the layer for an annotation. 
+*   @param annotation The annotation that was long-pressed. 
+*   @param map The map view. */
+- (void)longPressOnAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map;
+
 /** Tells the delegate when the user taps the label for an annotation.
 *   @param annotation The annotation whose label was was tapped.
 *   @param map The map view. */
@@ -138,7 +157,7 @@ typedef enum : NSUInteger {
 *   @param map The map view. */
 - (void)doubleTapOnLabelForAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map;
 
-/** Tells the delegate that the user tapped one of the annotation view’s accessory buttons.
+/** Tells the delegate that the user tapped one of the annotation layer's accessory buttons.
 *
 *   Accessory views contain custom content and are positioned on either side of the annotation title text. If a view you specify is a descendant of the UIControl class, the map view calls this method as a convenience whenever the user taps your view. You can use this method to respond to taps and perform any actions associated with that control. For example, if your control displayed additional information about the annotation, you could use this method to present a modal panel with that information.
 *

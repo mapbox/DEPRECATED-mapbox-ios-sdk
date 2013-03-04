@@ -39,6 +39,9 @@
 #define kMapBoxDefaultLatLonBoundingBox ((RMSphericalTrapezium){ .northEast = { .latitude =  90, .longitude =  180 }, \
                                                                  .southWest = { .latitude = -90, .longitude = -180 } })
 
+#define kMapBoxPlaceholderNormalMapID @"examples.map-z2effxa8"
+#define kMapBoxPlaceholderRetinaMapID @"examples.map-zswgei2n"
+
 // constants for the image quality API (see http://mapbox.com/developers/api/#image_quality)
 typedef enum : NSUInteger {
     RMMapBoxSourceQualityFull   = 0, // default
@@ -53,7 +56,7 @@ typedef enum : NSUInteger {
 
 @class RMMapView;
 
-/** An RMMapBoxSource is used to display map tiles from a network-based map hosted on [MapBox](http://mapbox.com/plans) or the open source [TileStream](https://github.com/mapbox/tilestream) software. Maps are reference by their [TileJSON endpoint or MapBox ID](http://mapbox.com/developers/tilejson/) or by a file containing TileJSON. */
+/** An RMMapBoxSource is used to display map tiles from a network-based map hosted on [MapBox](http://mapbox.com/plans) or the open source [TileStream](https://github.com/mapbox/tilestream) software. Maps are referenced by their MapBox map ID or by a file or URL containing [TileJSON](http://mapbox.com/developers/tilejson/). */
 @interface RMMapBoxSource : RMAbstractWebMapSource
 
 /** @name Creating Tile Sources */
@@ -102,11 +105,17 @@ typedef enum : NSUInteger {
 /** A suggested starting center zoom level for the map layer. */
 - (float)centerZoom;
 
-/** Returns YES if the tile source provides full-world coverage; otherwise, returns NO. */
+/** Returns `YES` if the tile source provides full-world coverage; otherwise, returns `NO`. */
 - (BOOL)coversFullWorld;
 
-/** Info about the TileJSON in a Cocoa-native format. */
-@property (nonatomic, readonly, retain) NSDictionary *infoDictionary;
+/** The TileJSON for the map layer. Useful for saving locally to use in instantiating a tile source while offline. */
+@property (nonatomic, readonly, strong) NSString *tileJSON;
+
+/** The TileJSON URL for the map layer. Useful for retrieving TileJSON to save locally to use in instantiating a tile source while offline. */
+@property (nonatomic, readonly, strong) NSURL *tileJSONURL;
+
+/** The TileJSON data in dictionary format. Useful for retrieving info about the layer without having to parse TileJSON. */
+@property (nonatomic, readonly, strong) NSDictionary *infoDictionary;
 
 /** Image quality that is retrieved from the network. Useful for lower-bandwidth environments. The default is to provide full-quality imagery. 
 *

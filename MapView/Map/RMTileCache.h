@@ -102,7 +102,13 @@ typedef enum : short {
 
 #pragma mark -
 
-/** An RMTileCache object manages memory-based and disk-based cache for map tiles that have been retrieved from the network. */
+/** An RMTileCache object manages memory-based and disk-based caches for map tiles that have been retrieved from the network. 
+*
+*   An RMMapView has one RMTileCache across all tile sources, which is further divided according to each tile source's uniqueTilecacheKey property in order to keep tiles separate in the cache.
+*
+*   An RMTileCache is a key component of offline map use. All tile requests pass through the tile cache and are served from cache if available, avoiding network operation. If tiles exist in cache already, a tile source that is instantiated when offline will still be able to serve tile imagery to the map renderer for areas that have been previously cached. This can occur either from normal map use, since all tiles are cached after being retrieved, or from proactive caching ahead of time using the beginBackgroundCacheForTileSource:southWest:northEast:minZoom:maxZoom: method. 
+*
+*   @see [RMDatabaseCache initUsingCacheDir:] */
 @interface RMTileCache : NSObject <RMTileCache>
 
 /** @name Initializing a Cache Manager */
@@ -132,14 +138,14 @@ typedef enum : short {
 - (void)insertCache:(id <RMTileCache>)cache atIndex:(NSUInteger)index;
 
 /** The list of caches managed by a cache manager. This could include memory-based, disk-based, or other types of caches. */
-@property (nonatomic, readonly, retain) NSArray *tileCaches;
+@property (nonatomic, readonly, strong) NSArray *tileCaches;
 
 - (void)didReceiveMemoryWarning;
 
 /** @name Background Downloading */
 
 /** A delegate to notify of background tile cache download operations. */
-@property (nonatomic, assign) id <RMTileCacheBackgroundDelegate>backgroundCacheDelegate;
+@property (nonatomic, weak) id <RMTileCacheBackgroundDelegate>backgroundCacheDelegate;
 
 /** Whether or not the tile cache is currently background caching. */
 @property (nonatomic, readonly, assign) BOOL isBackgroundCaching;

@@ -46,6 +46,11 @@
 
 @synthesize cacheable = _cacheable, opaque = _opaque;
 
+- (id)initWithTileSetResource:(NSString *)name ofType:(NSString *)extension
+{
+    return [self initWithTileSetURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:name ofType:extension]]];
+}
+
 - (id)initWithTileSetURL:(NSURL *)tileSetURL
 {
 	if ( ! (self = [super init]))
@@ -56,7 +61,7 @@
                                                                  maxZoom:kMBTilesDefaultMaxTileZoom 
                                                                  minZoom:kMBTilesDefaultMinTileZoom];
 
-    queue = [[FMDatabaseQueue databaseQueueWithPath:[tileSetURL path]] retain];
+    queue = [FMDatabaseQueue databaseQueueWithPath:[tileSetURL path]];
 
     if ( ! queue)
         return nil;
@@ -74,13 +79,6 @@
 - (void)cancelAllDownloads
 {
     // no-op
-}
-
-- (void)dealloc
-{
-	[tileProjection release]; tileProjection = nil;
-    [queue release]; queue = nil;
-	[super dealloc];
 }
 
 - (NSUInteger)tileSideLength
@@ -157,7 +155,7 @@
 
 - (RMFractalTileProjection *)mercatorToTileProjection
 {
-	return [[tileProjection retain] autorelease];
+	return tileProjection;
 }
 
 - (RMProjection *)projection

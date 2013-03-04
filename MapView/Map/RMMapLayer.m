@@ -1,7 +1,7 @@
 //
 //  RMMapLayer.m
 //
-// Copyright (c) 2008-2012, Route-Me Contributors
+// Copyright (c) 2008-2013, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -27,14 +27,15 @@
 
 #import "RMMapLayer.h"
 #import "RMPixel.h"
+#import "RMAnnotation.h"
 
 @implementation RMMapLayer
 
 @synthesize annotation;
 @synthesize projectedLocation;
-@synthesize enableDragging;
+@synthesize draggingEnabled;
 @synthesize userInfo;
-@synthesize canShowCallout;
+@synthesize canShowCallout=_canShowCallout;
 @synthesize calloutOffset;
 @synthesize leftCalloutAccessoryView;
 @synthesize rightCalloutAccessoryView;
@@ -45,7 +46,7 @@
 		return nil;
 
     self.annotation = nil;
-    self.enableDragging = NO;
+    self.draggingEnabled = NO;
     self.calloutOffset = CGPointZero;
 
 	return self;
@@ -63,11 +64,10 @@
     return self;
 }
 
-- (void)dealloc
+- (void)setCanShowCallout:(BOOL)canShowCallout
 {
-    self.annotation = nil;
-    self.userInfo = nil;
-    [super dealloc];
+    if ( ! self.annotation.isClusterAnnotation)
+        _canShowCallout = canShowCallout;
 }
 
 - (void)setPosition:(CGPoint)position animated:(BOOL)animated

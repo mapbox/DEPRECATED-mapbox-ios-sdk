@@ -1,7 +1,7 @@
 //
 // RMAbstractWebMapSource.m
 //
-// Copyright (c) 2008-2012, Route-Me Contributors
+// Copyright (c) 2008-2013, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,9 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import "RMAbstractWebMapSource.h"
+
 #import "RMTileCache.h"
+#import "RMConfiguration.h"
 
 #define HTTP_404_NOT_FOUND 404
 
@@ -81,8 +83,6 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:RMTileRequested object:[NSNumber numberWithUnsignedLongLong:RMTileKey(tile)]];
     });
 
-    [tileCache retain];
-
     NSArray *URLs = [self URLsForTile:tile];
 
     if ([URLs count] > 1)
@@ -108,7 +108,7 @@
                 {
                     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:currentURL];
                     [request setTimeoutInterval:(self.requestTimeoutSeconds / (CGFloat)self.retryCount)];
-                    tileData = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
+                    tileData = [NSURLConnection sendBrandedSynchronousRequest:request returningResponse:nil error:nil];
                 }
 
                 if (tileData)
@@ -157,7 +157,7 @@
             NSHTTPURLResponse *response = nil;
             NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[URLs objectAtIndex:0]];
             [request setTimeoutInterval:(self.requestTimeoutSeconds / (CGFloat)self.retryCount)];
-            image = [UIImage imageWithData:[NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil]];
+            image = [UIImage imageWithData:[NSURLConnection sendBrandedSynchronousRequest:request returningResponse:&response error:nil]];
 
             if (response.statusCode == HTTP_404_NOT_FOUND)
                 break;
@@ -166,8 +166,6 @@
 
     if (image && self.isCacheable)
         [tileCache addImage:image forTile:tile withCacheKey:[self uniqueTilecacheKey]];
-
-    [tileCache release];
 
     dispatch_async(dispatch_get_main_queue(), ^(void)
     {

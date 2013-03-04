@@ -45,6 +45,6 @@
 /** The array of polygons nested inside the receiver. (read-only)
 *
 *   When a polygon is rendered on screen, the area occupied by any interior polygons is masked out and not considered part of the polygon. */
-@property (nonatomic, readonly, retain) NSArray *interiorPolygons;
+@property (nonatomic, readonly, strong) NSArray *interiorPolygons;
 
 @end

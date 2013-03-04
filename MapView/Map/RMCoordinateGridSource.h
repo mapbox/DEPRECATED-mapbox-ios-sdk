@@ -2,7 +2,7 @@
 //  RMCoordinateGridSource.h
 //  MapView
 //
-// Copyright (c) 2008-2012, Route-Me Contributors
+// Copyright (c) 2008-2013, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -41,13 +41,13 @@ typedef enum : short {
 
 @property (nonatomic, assign) CoordinateGridMode gridMode;
 
-@property (nonatomic, retain) UIColor *gridColor;
+@property (nonatomic, strong) UIColor *gridColor;
 @property (nonatomic, assign) CGFloat  gridLineWidth;
 @property (nonatomic, assign) NSUInteger gridLabelInterval;
 
-@property (nonatomic, retain) UIColor *minorLabelColor;
-@property (nonatomic, retain) UIFont  *minorLabelFont;
-@property (nonatomic, retain) UIColor *majorLabelColor;
-@property (nonatomic, retain) UIFont  *majorLabelFont;
+@property (nonatomic, strong) UIColor *minorLabelColor;
+@property (nonatomic, strong) UIFont  *minorLabelFont;
+@property (nonatomic, strong) UIColor *majorLabelColor;
+@property (nonatomic, strong) UIFont  *majorLabelFont;
 
 @end

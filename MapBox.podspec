@@ -1,7 +1,7 @@
 Pod::Spec.new do |m|
 
   m.name    = 'MapBox'
-  m.version = '0.5.2'
+  m.version = '1.0.0'
 
   m.summary     = 'Open source alternative to MapKit.'
   m.description = 'Open source alternative to MapKit supporting custom tile sources, offline use, and complete cache control.'
@@ -14,6 +14,8 @@ Pod::Spec.new do |m|
   m.platform = :ios, '5.0'
 
   m.source_files = 'Proj4/*.h', 'MapView/Map/*.{h,c,m}'
+
+  m.requires_arc = true
 
   m.prefix_header_file = 'MapView/MapView_Prefix.pch'
 
@@ -84,6 +86,6 @@ Pod::Spec.new do |m|
 
   m.dependency 'FMDB', '2.0'
   m.dependency 'GRMustache', '5.4.3'
-  m.dependency 'SMCalloutView', '1.0.1'
+  m.dependency 'SMCalloutView', '1.1'
 
 end

@@ -2,7 +2,7 @@
 //  RMTileSourcesContainer.m
 //  MapView
 //
-// Copyright (c) 2008-2012, Route-Me Contributors
+// Copyright (c) 2008-2013, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -67,13 +67,33 @@
     return self;
 }
 
-- (void)dealloc
+#pragma mark -
+
+- (void)setBoundingBoxFromTilesources
 {
-    [_tileSources release]; _tileSources = nil;
-    [_tileSourcesLock release]; _tileSourcesLock = nil;
-    [_projection release]; _projection = nil;
-    [_mercatorToTileProjection release]; _mercatorToTileProjection = nil;
-    [super dealloc];
+    [_tileSourcesLock lock];
+
+    _latitudeLongitudeBoundingBox = ((RMSphericalTrapezium) {
+        .northEast = {.latitude = 90.0, .longitude = 180.0},
+        .southWest = {.latitude = -90.0, .longitude = -180.0}
+    });
+
+    for (id <RMTileSource>tileSource in _tileSources)
+    {
+        RMSphericalTrapezium newLatitudeLongitudeBoundingBox = [tileSource latitudeLongitudeBoundingBox];
+
+        _latitudeLongitudeBoundingBox = ((RMSphericalTrapezium) {
+            .northEast = {
+                .latitude = MIN(_latitudeLongitudeBoundingBox.northEast.latitude, newLatitudeLongitudeBoundingBox.northEast.latitude),
+                .longitude = MIN(_latitudeLongitudeBoundingBox.northEast.longitude, newLatitudeLongitudeBoundingBox.northEast.longitude)},
+            .southWest = {
+                .latitude = MAX(_latitudeLongitudeBoundingBox.southWest.latitude, newLatitudeLongitudeBoundingBox.southWest.latitude),
+                .longitude = MAX(_latitudeLongitudeBoundingBox.southWest.longitude, newLatitudeLongitudeBoundingBox.southWest.longitude)
+            }
+        });
+    }
+
+    [_tileSourcesLock unlock];
 }
 
 #pragma mark -
@@ -86,7 +106,7 @@
     tileSources = [_tileSources copy];
     [_tileSourcesLock unlock];
 
-    return [tileSources autorelease];
+    return tileSources;
 }
 
 - (id <RMTileSource>)tileSourceForUniqueTilecacheKey:(NSString *)uniqueTilecacheKey
@@ -111,14 +131,14 @@
         }
         else if ([[currentTileSource uniqueTilecacheKey] isEqualToString:uniqueTilecacheKey])
         {
-            result = [currentTileSource retain];
+            result = currentTileSource;
             break;
         }
     }
 
     [_tileSourcesLock unlock];
 
-    return [result autorelease];
+    return result;
 }
 
 - (BOOL)setTileSource:(id <RMTileSource>)tileSource
@@ -168,7 +188,7 @@
 
     if ( ! _projection)
     {
-        _projection = [newProjection retain];
+        _projection = newProjection;
     }
     else if (_projection != newProjection)
     {
@@ -178,7 +198,7 @@
     }
 
     if ( ! _mercatorToTileProjection)
-        _mercatorToTileProjection = [newFractalTileProjection retain];
+        _mercatorToTileProjection = newFractalTileProjection;
 
     // minZoom and maxZoom are the min and max values of all tile sources, so that individual tilesources
     // could have a smaller zoom level range
@@ -197,6 +217,26 @@
     }
 
     RMSphericalTrapezium newLatitudeLongitudeBoundingBox = [tileSource latitudeLongitudeBoundingBox];
+
+    double minX1 = _latitudeLongitudeBoundingBox.southWest.longitude;
+    double minX2 = newLatitudeLongitudeBoundingBox.southWest.longitude;
+    double maxX1 = _latitudeLongitudeBoundingBox.northEast.longitude;
+    double maxX2 = newLatitudeLongitudeBoundingBox.northEast.longitude;
+
+    double minY1 = _latitudeLongitudeBoundingBox.southWest.latitude;
+    double minY2 = newLatitudeLongitudeBoundingBox.southWest.latitude;
+    double maxY1 = _latitudeLongitudeBoundingBox.northEast.latitude;
+    double maxY2 = newLatitudeLongitudeBoundingBox.northEast.latitude;
+
+    BOOL intersects = (((minX1 <= minX2 && minX2 <= maxX1) || (minX2 <= minX1 && minX1 <= maxX2)) &&
+                       ((minY1 <= minY2 && minY2 <= maxY1) || (minY2 <= minY1 && minY1 <= maxY2)));
+
+    if ( ! intersects)
+    {
+        NSLog(@"The bounding box from tilesource '%@' doesn't intersect with the tilesource containers' bounding box", [tileSource shortName]);
+        [_tileSourcesLock unlock];
+        return NO;
+    }
 
     _latitudeLongitudeBoundingBox = ((RMSphericalTrapezium) {
         .northEast = {
@@ -226,14 +266,14 @@
 
     [_tileSourcesLock lock];
 
-    RMLog(@"Removed the tilesource '%@' from the container", [tileSource shortName]);
-
     [_tileSources removeObject:tileSource];
 
+    RMLog(@"Removed the tilesource '%@' from the container", [tileSource shortName]);
+
     if ([_tileSources count] == 0)
-    {
         [self removeAllTileSources]; // cleanup
-    }
+    else
+        [self setBoundingBoxFromTilesources];
 
     [_tileSourcesLock unlock];
 }
@@ -254,6 +294,11 @@
 
     RMLog(@"Removed the tilesource '%@' from the container", [tileSource shortName]);
 
+    if ([_tileSources count] == 0)
+        [self removeAllTileSources]; // cleanup
+    else
+        [self setBoundingBoxFromTilesources];
+
     [_tileSourcesLock unlock];
 }
 
@@ -270,15 +315,13 @@
         return;
     }
 
-    id tileSource = [[_tileSources objectAtIndex:fromIndex] retain];
+    id tileSource = [_tileSources objectAtIndex:fromIndex];
     [_tileSources removeObjectAtIndex:fromIndex];
 
     if (toIndex >= [_tileSources count])
         [_tileSources addObject:tileSource];
     else
         [_tileSources insertObject:tileSource atIndex:toIndex];
-
-    [tileSource autorelease];
 
     [_tileSourcesLock unlock];
 }
@@ -290,20 +333,17 @@
     [self cancelAllDownloads];
     [_tileSources removeAllObjects];
 
-    if ([_tileSources count] == 0)
-    {
-        [_projection release]; _projection = nil;
-        [_mercatorToTileProjection release]; _mercatorToTileProjection = nil;
+     _projection = nil;
+     _mercatorToTileProjection = nil;
 
-        _latitudeLongitudeBoundingBox = ((RMSphericalTrapezium) {
-            .northEast = {.latitude = 90.0, .longitude = 180.0},
-            .southWest = {.latitude = -90.0, .longitude = -180.0}
-        });
+    _latitudeLongitudeBoundingBox = ((RMSphericalTrapezium) {
+        .northEast = {.latitude = 90.0, .longitude = 180.0},
+        .southWest = {.latitude = -90.0, .longitude = -180.0}
+    });
 
-        _minZoom = kRMTileSourcesContainerMaxZoom;
-        _maxZoom = kRMTileSourcesContainerMinZoom;
-        _tileSideLength = 0;
-    }
+    _minZoom = kRMTileSourcesContainerMaxZoom;
+    _maxZoom = kRMTileSourcesContainerMinZoom;
+    _tileSideLength = 0;
 
     [_tileSourcesLock unlock];
 }

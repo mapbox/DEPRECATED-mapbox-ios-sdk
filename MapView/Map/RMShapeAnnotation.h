@@ -40,6 +40,6 @@
 - (id)initWithMapView:(RMMapView *)aMapView points:(NSArray *)points;
 
 /** The array of points associated with the shape. (read-only) */
-@property (nonatomic, readonly, retain) NSArray *points;
+@property (nonatomic, readonly, strong) NSArray *points;
 
 @end

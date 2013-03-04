@@ -3,13 +3,16 @@ MapBox iOS SDK
 
 Based on the Route-Me iOS map library (Alpstein fork) with [MapBox][mapbox] customizations. 
 
-Requires iOS 5 and Xcode 4.3 or greater. Does not yet support ARC. 
+Requires iOS 5, Xcode 4.3 or greater, and ARC. 
+
+![](https://raw.github.com/mapbox/mapbox-ios-sdk/packaging/screenshot.png)
 
 ![](https://raw.github.com/mapbox/mapbox-ios-sdk/packaging/screenshot.png)
 
 Major differences from [Alpstein fork of Route-Me](https://github.com/Alpstein/route-me): 
 
  * Requires iOS 5.0 and above. 
+ * Supports Automatic Reference Counting (ARC). 
  * [MapBox](http://mapbox.com) & [MBTiles](http://mbtiles.org) tile source integration code. 
  * [MapBox Markers](http://mapbox.com/blog/markers/) support. 
  * [UTFGrid interactivity](http://mapbox.com/mbtiles-spec/utfgrid/). 
@@ -60,7 +63,7 @@ Then, update the submodules:
 
       git submodule update --init
 
-Some example apps showing usage of the SDK:
+Some example apps showing usage of the SDK (with screenshots):
 
  * [MapBox iOS Example](https://github.com/mapbox/mapbox-ios-example) - online, offline, and interactive tile sources
  * [MapBox Me](https://github.com/mapbox/mapbox-me) - user location services and terrain toggling
@@ -72,7 +75,7 @@ More documentation is available:
 
 There are two subdirectories - MapView and Proj4. Proj4 is a support library used to do map projections. The MapView project contains only the Route-Me map library. 
 
-See License.txt for license details. In any app that uses this SDK, include the following text on your "preferences" or "about" screen: "Uses MapBox iOS SDK, (c) 2008-2012 MapBox and Route-Me Contributors". Your data provider will have additional attribution requirements.
+See License.txt for license details. In any app that uses this SDK, include the following text on your "preferences" or "about" screen: "Uses MapBox iOS SDK, (c) 2008-2013 MapBox and Route-Me Contributors". Your data provider will have additional attribution requirements.
 
 News, Support and Contributing
 ------------------------------

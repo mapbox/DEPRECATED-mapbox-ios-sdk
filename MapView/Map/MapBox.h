@@ -1,7 +1,7 @@
 //
 // MapBox.h
 // 
-// Copyright (c) 2008-2012, Route-Me Contributors
+// Copyright (c) 2008-2013, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,7 @@
 #import "RMCacheObject.h"
 #import "RMCircle.h"
 #import "RMCompositeSource.h"
+#import "RMConfiguration.h"
 #import "RMCoordinateGridSource.h"
 #import "RMDatabaseCache.h"
 #import "RMInteractiveSource.h"

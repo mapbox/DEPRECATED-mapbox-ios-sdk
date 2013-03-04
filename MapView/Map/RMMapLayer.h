@@ -1,7 +1,7 @@
 //
 //  RMMapLayer.h
 //
-// Copyright (c) 2008-2012, Route-Me Contributors
+// Copyright (c) 2008-2013, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -35,12 +35,12 @@
 /** RMMapLayer is a generic class for displaying scrollable vector layers on a map view. Generally, a more specialized subclass such as RMMarker will be used for a specific purpose, but RMMapLayer can also be used directly for special purposes. */
 @interface RMMapLayer : CAScrollLayer
 {
-    RMAnnotation *annotation;
+    __weak RMAnnotation *annotation;
 
     // expressed in projected meters. The anchorPoint of the image/path/etc. is plotted here.
     RMProjectedPoint projectedLocation;
 
-    BOOL enableDragging;
+    BOOL draggingEnabled;
 
     // provided for storage of arbitrary user data
     id userInfo;
@@ -49,22 +49,24 @@
 /** @name Configuring Map Layer Properties */
 
 /** The annotation associated with the layer. This can be useful to inspect the annotation's userInfo in order to customize the visual representation. */
-@property (nonatomic, assign) RMAnnotation *annotation;
+@property (nonatomic, weak) RMAnnotation *annotation;
 
 /** The current projected location of the layer on the map. */
 @property (nonatomic, assign) RMProjectedPoint projectedLocation;
 
 /** When set to YES, the layer can be dragged by the user. */
-@property (nonatomic, assign) BOOL enableDragging;
+@property (nonatomic, assign) BOOL draggingEnabled;
 
 /** Storage for arbitrary data. */
-@property (nonatomic, retain) id userInfo;
+@property (nonatomic, strong) id userInfo;
 
 /** A Boolean value indicating whether the annotation layer is able to display extra information in a callout bubble.
 *
 *   If the value of this property is `YES`, a standard callout bubble is shown when the user taps the layer. The callout uses the title text from the associated annotation object. If there is no title text, though, the annotation is treated as if its enabled property is set to `NO`. The callout also displays any custom callout views stored in the leftCalloutAccessoryView and rightCalloutAccessoryView properties.
 *
-*   If the value of this property is `NO`, the value of the title string is ignored and the annotation remains enabled by default. You can still disable the annotation explicitly using the enabled property. */
+*   If the value of this property is `NO`, the value of the title string is ignored and the annotation remains enabled by default. You can still disable the annotation explicitly using the enabled property. 
+*
+*   Note that callouts are not supported on cluster annotation layers. These annotations can be interacted with, but do not remain consistent visually during map pan and zoom events; thus, callout behavior would be inconsistent. */
 @property (nonatomic, assign) BOOL canShowCallout;
 
 /** The offset (in pixels) at which to place the callout bubble.
@@ -77,14 +79,14 @@
 *   The default value of this property is `nil`. The left callout view is typically used to display information about the annotation or to link to custom information provided by your application. The height of your view should be 32 pixels or less.
 *
 *   If the view you specify is also a descendant of the UIControl class, you can use the map view’s delegate to receive notifications when your control is tapped. If it does not descend from UIControl, your view is responsible for handling any touch events within its bounds. */
-@property (nonatomic, retain) UIView *leftCalloutAccessoryView;
+@property (nonatomic, strong) UIView *leftCalloutAccessoryView;
 
 /** The view to display on the right side of the standard callout bubble.
 *
 *   This property is set to `nil` by default. The right callout view is typically used to link to more detailed information about the annotation. The height of your view should be 32 pixels or less. A common view to specify for this property is UIButton object whose type is set to UIButtonTypeDetailDisclosure.
 *
 *   If the view you specify is also a descendant of the UIControl class, you can use the map view’s delegate to receive notifications when your control is tapped. If it does not descend from UIControl, your view is responsible for handling any touch events within its bounds. */
-@property (nonatomic, retain) UIView *rightCalloutAccessoryView;
+@property (nonatomic, strong) UIView *rightCalloutAccessoryView;
 
 /** Set the screen position of the layer.
 *   @param position The desired screen position.

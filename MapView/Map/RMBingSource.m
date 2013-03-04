@@ -1,7 +1,7 @@
 //
 //  RMBingSource.m
 //
-// Copyright (c) 2008-2012, Route-Me Contributors
+// Copyright (c) 2008-2013, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,8 @@
 
 #import "RMBingSource.h"
 
+#import "RMConfiguration.h"
+
 @implementation RMBingSource
 {
     NSString *_mapsKey;
@@ -43,7 +45,7 @@
 {
     if (self = [super init])
     {
-        _mapsKey = [mapsKey retain];
+        _mapsKey = mapsKey;
 
         _imagerySet = imagerySet;
 
@@ -54,13 +56,6 @@
     }
 
     return nil;
-}
-
-- (void)dealloc
-{
-    [_mapsKey release]; _mapsKey = nil;
-    [_imageURLString release]; _imageURLString = nil;
-    [super dealloc];
 }
 
 - (NSURL *)URLForTile:(RMTile)tile
@@ -78,7 +73,7 @@
 
         NSURL *metadataURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://dev.virtualearth.net/REST/v1/Imagery/Metadata/%@?key=%@", imagerySetString, _mapsKey]];
 
-        NSData *metadataData = [NSData dataWithContentsOfURL:metadataURL];
+        NSData *metadataData = [NSData brandedDataWithContentsOfURL:metadataURL];
 
         id metadata = [NSJSONSerialization JSONObjectWithData:metadataData options:0 error:nil];
 
@@ -140,12 +135,12 @@
 
 - (NSString *)shortAttribution
 {
-	return @"Copyright © 2012 Microsoft";
+	return @"Copyright © 2013 Microsoft";
 }
 
 - (NSString *)longAttribution
 {
-	return @"Copyright © 2012 Microsoft and its suppliers. All rights reserved. This API cannot be accessed and the content and any results may not be used, reproduced or transmitted in any manner without express written permission from Microsoft Corporation.";
+	return @"Copyright © 2013 Microsoft and its suppliers. All rights reserved. This API cannot be accessed and the content and any results may not be used, reproduced or transmitted in any manner without express written permission from Microsoft Corporation.";
 }
 
 @end

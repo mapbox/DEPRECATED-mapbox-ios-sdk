@@ -2,7 +2,7 @@
 //  RMTileSourcesContainer.h
 //  MapView
 //
-// Copyright (c) 2008-2012, Route-Me Contributors
+// Copyright (c) 2008-2013, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -40,14 +40,14 @@
 // These properties are (and have to be) equal across all tile sources
 @property (nonatomic, readonly) NSUInteger tileSideLength;
 
-@property (nonatomic, readonly) RMFractalTileProjection *mercatorToTileProjection;
-@property (nonatomic, readonly) RMProjection *projection;
+@property (nonatomic, weak, readonly) RMFractalTileProjection *mercatorToTileProjection;
+@property (nonatomic, weak, readonly) RMProjection *projection;
 
 @property (nonatomic, readonly) RMSphericalTrapezium latitudeLongitudeBoundingBox;
 
 #pragma mark -
 
-@property (nonatomic, readonly) NSArray *tileSources;
+@property (nonatomic, weak, readonly) NSArray *tileSources;
 
 - (id <RMTileSource>)tileSourceForUniqueTilecacheKey:(NSString *)uniqueTilecacheKey;
 

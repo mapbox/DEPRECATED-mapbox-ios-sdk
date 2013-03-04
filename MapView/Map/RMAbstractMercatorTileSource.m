@@ -1,7 +1,7 @@
 //
 //  RMAbstractMercatorTileSource.m
 //
-// Copyright (c) 2008-2012, Route-Me Contributors
+// Copyright (c) 2008-2013, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -54,12 +54,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-    [_tileProjection release]; _tileProjection = nil;
-    [super dealloc];
-}
-
 - (RMSphericalTrapezium)latitudeLongitudeBoundingBox
 {
     return kDefaultLatLonBoundingBox;
@@ -96,7 +90,7 @@
                                                                       minZoom:self.minZoom];
     }
 
-    return [[_tileProjection retain] autorelease];
+    return _tileProjection;
 }
 
 - (void)didReceiveMemoryWarning

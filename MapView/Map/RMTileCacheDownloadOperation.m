@@ -1,7 +1,7 @@
 //
 //  RMTileCacheDownloadOperation.m
 //
-// Copyright (c) 2008-2012, Route-Me Contributors
+// Copyright (c) 2008-2013, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -40,8 +40,8 @@
         return nil;
 
     _tile   = tile;
-    _source = [source retain];
-    _cache  = [cache retain];
+    _source = source;
+    _cache  = cache;
 
     return self;
 }
@@ -62,13 +62,6 @@
         if ( ! [_source imageForTile:_tile inCache:_cache])
             [self cancel];
     }
-}
-
-- (void)dealloc
-{
-    [_source release]; _source = nil;
-    [_cache release]; _cache = nil;
-    [super dealloc];
 }
 
 @end

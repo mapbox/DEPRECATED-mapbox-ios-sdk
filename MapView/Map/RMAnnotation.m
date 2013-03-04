@@ -2,7 +2,7 @@
 //  RMAnnotation.m
 //  MapView
 //
-// Copyright (c) 2008-2012, Route-Me Contributors
+// Copyright (c) 2008-2013, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -51,11 +51,13 @@
 @synthesize enabled, clusteringEnabled;
 @synthesize position;
 @synthesize quadTreeNode;
+@synthesize isClusterAnnotation=_isClusterAnnotation;
+@synthesize clusteredAnnotations;
 @synthesize isUserLocationAnnotation;
 
 + (id)annotationWithMapView:(RMMapView *)aMapView coordinate:(CLLocationCoordinate2D)aCoordinate andTitle:(NSString *)aTitle
 {
-    return [[[self alloc] initWithMapView:aMapView coordinate:aCoordinate andTitle:aTitle] autorelease];
+    return [[self alloc] initWithMapView:aMapView coordinate:aCoordinate andTitle:aTitle];
 }
 
 - (id)initWithMapView:(RMMapView *)aMapView coordinate:(CLLocationCoordinate2D)aCoordinate andTitle:(NSString *)aTitle
@@ -87,19 +89,7 @@
 
 - (void)dealloc
 {
-    self.title        = nil;
-    self.subtitle     = nil;
-    self.userInfo     = nil;
-    self.layer        = nil;
     [[self.mapView quadTree] removeAnnotation:self];
-    self.quadTreeNode = nil;
-    self.mapView      = nil;
-
-    self.annotationType = nil;
-    self.annotationIcon = nil;
-    self.badgeIcon      = nil;
-
-    [super dealloc];
 }
 
 - (void)setCoordinate:(CLLocationCoordinate2D)aCoordinate
@@ -116,8 +106,7 @@
 
 - (void)setMapView:(RMMapView *)aMapView
 {
-    [mapView autorelease];
-    mapView = [aMapView retain];
+    mapView = aMapView;
 
     if (!aMapView)
         self.layer = nil;
@@ -150,13 +139,12 @@
         if (layer.superlayer)
             [layer removeFromSuperlayer];
 
-        [layer release]; layer = nil;
+         layer = nil;
     }
 
     if (aLayer)
     {
         layer = aLayer;
-        [layer retain];
         layer.annotation = self;
         [superLayer addSublayer:layer];
         [layer setPosition:self.position animated:NO];
@@ -184,6 +172,16 @@
 - (BOOL)isAnnotationVisibleOnScreen
 {
     return (layer != nil && [self isAnnotationOnScreen]);
+}
+
+- (void)setIsClusterAnnotation:(BOOL)isClusterAnnotation
+{
+    _isClusterAnnotation = isClusterAnnotation;
+}
+
+- (NSArray *)clusteredAnnotations
+{
+    return (self.isClusterAnnotation ? ((RMQuadTreeNode *)self.userInfo).clusteredAnnotations : nil);
 }
 
 - (void)setIsUserLocationAnnotation:(BOOL)flag

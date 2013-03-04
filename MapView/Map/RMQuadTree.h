@@ -2,7 +2,7 @@
 //  RMQuadTree.h
 //  MapView
 //
-// Copyright (c) 2008-2012, Route-Me Contributors
+// Copyright (c) 2008-2013, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -35,13 +35,11 @@ typedef enum : short {
     nodeTypeNode
 } RMQuadTreeNodeType;
 
-#define kRMClusterAnnotationTypeName @"RMClusterAnnotation"
-
 #pragma mark - RMQuadTree nodes
 
 @interface RMQuadTreeNode : NSObject
 
-@property (nonatomic, readonly) NSArray *annotations;
+@property (nonatomic, weak, readonly) NSArray *annotations;
 @property (nonatomic, readonly) RMQuadTreeNodeType nodeType;
 
 @property (nonatomic, readonly) RMProjectedRect boundingBox;
@@ -56,12 +54,12 @@ typedef enum : short {
 @property (nonatomic, readonly) RMQuadTreeNode *southWest;
 @property (nonatomic, readonly) RMQuadTreeNode *southEast;
 
-@property (nonatomic, readonly) RMAnnotation *clusterAnnotation;
-@property (nonatomic, readonly) NSArray *clusteredAnnotations;
+@property (nonatomic, weak, readonly) RMAnnotation *clusterAnnotation;
+@property (nonatomic, weak, readonly) NSArray *clusteredAnnotations;
 
 // Operations on this node and all subnodes
-@property (nonatomic, readonly) NSArray *enclosedAnnotations;
-@property (nonatomic, readonly) NSArray *unclusteredAnnotations;
+@property (nonatomic, weak, readonly) NSArray *enclosedAnnotations;
+@property (nonatomic, weak, readonly) NSArray *unclusteredAnnotations;
 
 @end
 

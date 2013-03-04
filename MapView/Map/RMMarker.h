@@ -1,7 +1,7 @@
 //
 //  RMMarker.h
 //
-// Copyright (c) 2008-2012, Route-Me Contributors
+// Copyright (c) 2008-2013, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -49,13 +49,13 @@ typedef enum {
 /** @name Setting Label Properties */
 
 /** A custom label for the marker. The label is shown when first set. */
-@property (nonatomic, retain) UIView  *label;
+@property (nonatomic, strong) UIView  *label;
 
-/** The marker object's label text foreground color. */
-@property (nonatomic, retain) UIColor *textForegroundColor;
+/** The marker object's label text foreground color. Defaults to black. */
+@property (nonatomic, strong) UIColor *textForegroundColor;
 
-/** The marker object's label text background color. */
-@property (nonatomic, retain) UIColor *textBackgroundColor;
+/** The marker object's label text background color. Defaults to clear. */
+@property (nonatomic, strong) UIColor *textBackgroundColor;
 
 /** The font used for labels when another font is not explicitly requested. The default is the system font with size `15`. */
 + (UIFont *)defaultFont;
@@ -82,7 +82,7 @@ typedef enum {
 *   @return An initialized RMMarker layer. */
 - (id)initWithMapBoxMarkerImage:(NSString *)symbolName;
 
-/** Initializes and returns a newly allocated marker object using a medium-sized pin image, a given symbol name, e.g., `bus`, and a given color. 
+/** Initializes and returns a newly allocated marker object using a medium-sized pin image, a given symbol name, e.g., `bus`, and a given color.
 *   @param symbolName A symbol name from the [Maki](http://mapbox.com/maki/) icon set.
 *   @param color A color for the marker.
 *   @return An initialized RMMarker layer. */
@@ -106,7 +106,10 @@ typedef enum {
 *   @param colorHex A color for the marker specified as an HTML hex code.
 *   @param sizeString A size such as `small`, `medium`, or `large`.
 *   @return An initialized RMMarker layer. */
- - (id)initWithMapBoxMarkerImage:(NSString *)symbolName tintColorHex:(NSString *)colorHex sizeString:(NSString *)sizeString;
+- (id)initWithMapBoxMarkerImage:(NSString *)symbolName tintColorHex:(NSString *)colorHex sizeString:(NSString *)sizeString;
+
+/** Clears the local cache of Mapbox Marker images. Images are cached locally upon first use so that if the application goes offline, markers can still be used. */
++ (void)clearCachedMapBoxMarkers;
 
 /** @name Altering Labels */
 

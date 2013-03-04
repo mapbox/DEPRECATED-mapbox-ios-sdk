@@ -34,7 +34,9 @@
 
 - (void)setLayer:(RMMapLayer *)newLayer
 {
-    if (newLayer)
+    if ( ! newLayer)
+        [super setLayer:nil];
+    else
         RMLog(@"Setting a custom layer on an %@ is a no-op", [self class]);
 }
 
@@ -42,7 +44,7 @@
 {
     if ( ! [super layer])
     {
-        RMMarker *marker = [[[RMMarker alloc] initWithMapBoxMarkerImage] autorelease];
+        RMMarker *marker = [[RMMarker alloc] initWithMapBoxMarkerImage];
 
         marker.canShowCallout = YES;
 

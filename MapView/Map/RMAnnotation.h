@@ -2,7 +2,7 @@
 //  RMAnnotation.h
 //  MapView
 //
-// Copyright (c) 2008-2012, Route-Me Contributors
+// Copyright (c) 2008-2013, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -45,7 +45,7 @@
     BOOL enabled, clusteringEnabled;
 
     RMMapLayer *layer;
-    RMQuadTreeNode *quadTreeNode;
+    __weak RMQuadTreeNode *quadTreeNode;
 
     // provided for storage of arbitrary user data
     id userInfo;
@@ -60,20 +60,20 @@
 @property (nonatomic, assign) CLLocationCoordinate2D coordinate;
 
 /** The annotation's title. */
-@property (nonatomic, retain) NSString *title;
+@property (nonatomic, strong) NSString *title;
 
 /** The annotation's subtitle. */
-@property (nonatomic, retain) NSString *subtitle;
+@property (nonatomic, strong) NSString *subtitle;
 
 /** Storage for arbitrary data. */
-@property (nonatomic, retain) id userInfo;
+@property (nonatomic, strong) id userInfo;
 
 /** An arbitrary string representing the type of annotation. Useful for determining which layer to draw for the annotation when requested in the delegate. Cluster annotations, which are automatically created by a map view, will automatically have an annotationType of `RMClusterAnnotation`. */
-@property (nonatomic, retain) NSString *annotationType;
+@property (nonatomic, strong) NSString *annotationType;
 
 /** An arbitrary icon image for the annotation. Useful to pass an image at annotation creation time for use in the layer at a later time. */
-@property (nonatomic, retain) UIImage *annotationIcon;
-@property (nonatomic, retain) UIImage *badgeIcon;
+@property (nonatomic, strong) UIImage *annotationIcon;
+@property (nonatomic, strong) UIImage *badgeIcon;
 @property (nonatomic, assign) CGPoint anchorPoint;
 
 /** The annotation's current location on screen. Do not set this directly unless during temporary operations like annotation drags, but rather use the coordinate property to permanently change the annotation's location on the map. */
@@ -84,10 +84,7 @@
 @property (nonatomic, assign) BOOL hasBoundingBox;
 
 /** Whether touch events for the annotation's layer are recognized. Defaults to `YES`. */
-@property (nonatomic, assign) BOOL enabled;
-
-/** Whether the annotation should be clustered when map view clustering is enabled. Defaults to `YES`. */
-@property (nonatomic, assign) BOOL clusteringEnabled;
+@property (nonatomic, assign, getter=isEnabled) BOOL enabled;
 
 /** @name Representing an Annotation Visually */
 
@@ -95,10 +92,20 @@
 *   @see RMMarker
 *   @see RMShape
 *   @see RMCircle */
-@property (nonatomic, retain) RMMapLayer *layer;
+@property (nonatomic, strong) RMMapLayer *layer;
 
-// This is for the QuadTree. Don't mess this up.
-@property (nonatomic, assign) RMQuadTreeNode *quadTreeNode;
+/** @name Annotation Clustering */
+
+/** Whether the annotation should be clustered when map view clustering is enabled. Defaults to `YES`. */
+@property (nonatomic, assign) BOOL clusteringEnabled;
+
+/** Whether an annotation is an automatically-managed cluster annotation. */
+@property (nonatomic, readonly, assign) BOOL isClusterAnnotation;
+
+/** If the annotation is a cluster annotation, returns an array containing the annotations in the cluster. Returns `nil` if the annotation is not a cluster annotation. */
+@property (nonatomic, readonly, assign) NSArray *clusteredAnnotations;
+
+@property (nonatomic, weak) RMQuadTreeNode *quadTreeNode;
 
 /** @name Filtering Types of Annotations */
 
@@ -109,7 +116,7 @@
 
 /** @name Initializing Annotations */
 
-/** Create an initialize an annotation. 
+/** Create and initialize an annotation. 
 *   @param aMapView The map view on which to place the annotation. 
 *   @param aCoordinate The location for the annotation. 
 *   @param aTitle The annotation's title. 
@@ -147,6 +154,6 @@
 #pragma mark -
 
 // Used internally
-@property (nonatomic, retain) RMMapView *mapView;
+@property (nonatomic, strong) RMMapView *mapView;
 
 @end

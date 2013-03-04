@@ -1,7 +1,7 @@
 //
 //  RMConfiguration.m
 //
-// Copyright (c) 2008-2012, Route-Me Contributors
+// Copyright (c) 2008-2013, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,10 +29,68 @@
 
 static RMConfiguration *RMConfigurationSharedInstance = nil;
 
+@implementation NSURLConnection (RMUserAgent)
+
++ (NSData *)sendBrandedSynchronousRequest:(NSURLRequest *)request returningResponse:(NSURLResponse **)response error:(NSError **)error
+{
+    NSMutableURLRequest *newRequest = [NSMutableURLRequest requestWithURL:request.URL cachePolicy:request.cachePolicy timeoutInterval:request.timeoutInterval];
+
+    [newRequest setValue:[[RMConfiguration configuration] userAgent] forHTTPHeaderField:@"User-Agent"];
+
+    return [NSURLConnection sendSynchronousRequest:newRequest returningResponse:response error:error];
+}
+
+@end
+
+#pragma mark -
+
+@implementation NSData (RMUserAgent)
+
++ (NSData *)brandedDataWithContentsOfURL:(NSURL *)aURL
+{
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aURL];
+
+    [request setValue:[[RMConfiguration configuration] userAgent] forHTTPHeaderField:@"User-Agent"];
+
+    return [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
+}
+
+@end
+
+#pragma mark -
+
+@implementation NSString (RMUserAgent)
+
++ (id)brandedStringWithContentsOfURL:(NSURL *)url encoding:(NSStringEncoding)enc error:(NSError **)error
+{
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+
+    [request setValue:[[RMConfiguration configuration] userAgent] forHTTPHeaderField:@"User-Agent"];
+
+    NSError *internalError = nil;
+
+    NSData *returnData = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:&internalError];
+
+    if ( ! returnData)
+    {
+        *error = internalError;
+
+        return nil;
+    }
+
+    return [[[self class] alloc] initWithData:returnData encoding:enc];
+}
+
+@end
+
+#pragma mark -
+
 @implementation RMConfiguration
 {
     id _propertyList;
 }
+
+@synthesize userAgent=_userAgent;
 
 + (RMConfiguration *)configuration
 {
@@ -49,6 +107,8 @@ static RMConfiguration *RMConfigurationSharedInstance = nil;
     if (!(self = [super init]))
         return nil;
 
+    _userAgent = [NSString stringWithFormat:@"MapBox iOS SDK (%@/%@)", [[UIDevice currentDevice] model], [[UIDevice currentDevice] systemVersion]];
+
     if (path == nil)
     {
         _propertyList = nil;
@@ -60,24 +120,17 @@ static RMConfiguration *RMConfigurationSharedInstance = nil;
     NSString *error = nil;
     NSData *plistData = [NSData dataWithContentsOfFile:path];
 
-    _propertyList = [[NSPropertyListSerialization propertyListFromData:plistData
-                                                      mutabilityOption:NSPropertyListImmutable
-                                                                format:NULL
-                                                      errorDescription:&error] retain];
+    _propertyList = [NSPropertyListSerialization propertyListFromData:plistData
+                                                     mutabilityOption:NSPropertyListImmutable
+                                                               format:NULL
+                                                     errorDescription:&error];
 
     if ( ! _propertyList)
     {
         RMLog(@"problem reading route-me configuration from %@: %@", path, error);
-        [error release];
     }
 
     return self;
-}
-
-- (void)dealloc
-{
-    [_propertyList release]; _propertyList = nil;
-    [super dealloc];
 }
 
 - (NSDictionary *)cacheConfiguration
