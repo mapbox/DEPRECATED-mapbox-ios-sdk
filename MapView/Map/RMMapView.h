@@ -128,6 +128,9 @@ typedef enum : NSUInteger {
 /** A custom image to use behind the map tiles. The default behavior is to show the default `backgroundView` and not a static image. */
 - (void)setBackgroundImage:(UIImage *)backgroundImage;
 
+/** A custom image to use behind the map tiles. The default behavior is to show the default `backgroundView` and not a static image. */
+- (void)setBackgroundImage:(UIImage *)backgroundImage;
+
 /** A Boolean value indicating whether to draw tile borders and z/x/y numbers on tile images for debugging purposes. Defaults to `NO`. */
 @property (nonatomic, assign) BOOL debugTiles;
 

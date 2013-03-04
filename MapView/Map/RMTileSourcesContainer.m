@@ -98,6 +98,35 @@
 
 #pragma mark -
 
+- (void)setBoundingBoxFromTilesources
+{
+    [_tileSourcesLock lock];
+
+    _latitudeLongitudeBoundingBox = ((RMSphericalTrapezium) {
+        .northEast = {.latitude = 90.0, .longitude = 180.0},
+        .southWest = {.latitude = -90.0, .longitude = -180.0}
+    });
+
+    for (id <RMTileSource>tileSource in _tileSources)
+    {
+        RMSphericalTrapezium newLatitudeLongitudeBoundingBox = [tileSource latitudeLongitudeBoundingBox];
+
+        _latitudeLongitudeBoundingBox = ((RMSphericalTrapezium) {
+            .northEast = {
+                .latitude = MIN(_latitudeLongitudeBoundingBox.northEast.latitude, newLatitudeLongitudeBoundingBox.northEast.latitude),
+                .longitude = MIN(_latitudeLongitudeBoundingBox.northEast.longitude, newLatitudeLongitudeBoundingBox.northEast.longitude)},
+            .southWest = {
+                .latitude = MAX(_latitudeLongitudeBoundingBox.southWest.latitude, newLatitudeLongitudeBoundingBox.southWest.latitude),
+                .longitude = MAX(_latitudeLongitudeBoundingBox.southWest.longitude, newLatitudeLongitudeBoundingBox.southWest.longitude)
+            }
+        });
+    }
+
+    [_tileSourcesLock unlock];
+}
+
+#pragma mark -
+
 - (NSArray *)tileSources
 {
     NSArray *tileSources = nil;
