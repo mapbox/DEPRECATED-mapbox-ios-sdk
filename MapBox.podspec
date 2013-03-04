@@ -1,7 +1,7 @@
 Pod::Spec.new do |m|
 
   m.name    = 'MapBox'
-  m.version = '0.5.0'
+  m.version = '1.0.0'
 
   m.summary     = 'Open source alternative to MapKit.'
   m.description = 'Open source alternative to MapKit supporting custom tile sources, offline use, and complete cache control.'
