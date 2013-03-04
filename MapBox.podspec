@@ -9,7 +9,7 @@ Pod::Spec.new do |m|
   m.license     = 'BSD'
   m.author      = { 'MapBox' => 'ios@mapbox.com' }
 
-  m.source = { :git => 'https://github.com/mapbox/mapbox-ios-sdk.git', :branch => 'arc' }
+  m.source = { :git => 'https://github.com/mapbox/mapbox-ios-sdk.git', :branch => 'develop' }
 
   m.platform = :ios, '5.0'
 
