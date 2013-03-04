@@ -1,19 +1,19 @@
 <?xml version="1.0" standalone="no"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xmlns:docset="http://developer.apple.com/rss/docset_extensions" xml:lang="en">
-    <id>http://mapbox.com/mapbox-ios-sdk/Docs/publish/docset.atom/20121129154123</id>
-    <title type="text">MapBox 0.5.0 Documentation</title>
-    <rights>Copyright © 2012 MapBox. All rights reserved.</rights>
+    <id>http://mapbox.com/mapbox-ios-sdk/Docs/publish/docset.atom/20130304153833</id>
+    <title type="text">MapBox 1.0.0 Documentation</title>
+    <rights>Copyright © 2013 MapBox. All rights reserved.</rights>
     <link rel="self" href="http://mapbox.com/mapbox-ios-sdk/Docs/publish/docset.atom"></link>
     <docset:publisherName>MapBox</docset:publisherName>
     <docset:publisherID>com.mapbox.documentation</docset:publisherID>
-    <updated>2012-11-29T15:41:23-08:00</updated>
+    <updated>2013-03-04T15:38:33-08:00</updated>
     <entry>
-        <id>tag:mapbox.com,2012-11-29:com.mapbox.MapBox-0.5.0/1.0.0</id>
-        <title type="text">MapBox 0.5.0 Documentation</title>
-        <updated>2012-11-29T15:41:23-08:00</updated>
-        <content type="text">MapBox 0.5.0 Documentation (v1.0.0)</content>
-        <link rel="enclosure" type="application/octet-stream" href="https://github.com/downloads/mapbox/mapbox-ios-sdk/com.mapbox.MapBox-0.5.0-1.0.xar" length="199088"></link>
-        <docset:identifier>com.mapbox.MapBox-0.5.0</docset:identifier>
+        <id>tag:mapbox.com,2013-03-04:com.mapbox.MapBox-1.0.0/1.0.0</id>
+        <title type="text">MapBox 1.0.0 Documentation</title>
+        <updated>2013-03-04T15:38:33-08:00</updated>
+        <content type="text">MapBox 1.0.0 Documentation (v1.0.0)</content>
+        <link rel="enclosure" type="application/octet-stream" href="https://github.com/mapbox/mapbox-ios-sdk/raw/packaging/Downloads/com.mapbox.MapBox-1.0.0-1.0" length="210049"></link>
+        <docset:identifier>com.mapbox.MapBox-1.0.0</docset:identifier>
         <docset:version>1.0.0</docset:version>
         <docset:minimumXcodeVersion>3.0.0</docset:minimumXcodeVersion>
     </entry>
