@@ -585,7 +585,10 @@
 
 - (void)completeMoveEventAfterDelay:(NSTimeInterval)delay
 {
-    [_moveDelegateQueue performSelector:@selector(setSuspended:) withObject:[NSNumber numberWithBool:NO] afterDelay:delay];
+    if ( ! delay)
+        [_moveDelegateQueue setSuspended:NO];
+    else
+        [_moveDelegateQueue performSelector:@selector(setSuspended:) withObject:[NSNumber numberWithBool:NO] afterDelay:delay];
 }
 
 - (void)registerZoomEventByUser:(BOOL)wasUserEvent
@@ -621,7 +624,10 @@
 
 - (void)completeZoomEventAfterDelay:(NSTimeInterval)delay
 {
-    [_zoomDelegateQueue performSelector:@selector(setSuspended:) withObject:[NSNumber numberWithBool:NO] afterDelay:delay];
+    if ( ! delay)
+        [_zoomDelegateQueue setSuspended:NO];
+    else
+        [_zoomDelegateQueue performSelector:@selector(setSuspended:) withObject:[NSNumber numberWithBool:NO] afterDelay:delay];
 }
 
 #pragma mark -
