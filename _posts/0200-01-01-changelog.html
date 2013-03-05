@@ -6,6 +6,27 @@ title: Changelog
 permalink: /changelog
 releases:
 
+- version: 1.0.0
+  date: 2013-03-04
+
+  notes:
+  - Support for Automatic Reference Counting (ARC) for easier memory management. 
+  – Added delegate callbacks for annotation selection & deselection notification. 
+  – Improved documentation, especially for offline tile caching. 
+  – Added a new [code examples gallery](/mapbox-ios-sdk/examples). 
+  – Added a long press gesture recognizer for annotation layers. 
+  – Added an API for setting an SDK-wide custom user-agent string for network requests. 
+  – Added a convenience method for MBTiles tile sources to more easily find them in your app's bundle. 
+  – Allow selection of a `nil` annotation in order to deselect the current annotation. 
+  – Added an API for clearing MapBox marker local caching. 
+  – Map views now default to a watermarked MapBox Streets map instead of OpenStreetMap. 
+  – User location accuracy circle now bounces when first homing in on coordinate. 
+  – Compass heading path now adjusts width based on heading accuracy reading. 
+  – Annotation clustering API is now much simpler and easier to use. 
+  – Privatized some header files to reduce clutter during Xcode autocompletion. 
+  – Latest upstream improvements, including constraints, annotation z-ordering, and bounding box fixes. 
+  – Code cleanups, consistency tweaks, and bug fixes. 
+
 - version: 0.5.2
   date: 2013-01-03
 
