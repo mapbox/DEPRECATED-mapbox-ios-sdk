@@ -138,6 +138,9 @@ typedef enum : NSUInteger {
 
 /** @name Initializing a Map View */
 
+/** Initialize a map view with a given frame. A default watermarked MapBox map layer will be used, which will require an internet connection. If your application will be operating offline from the start, you should create an offline tile source and instead use the initWithFrame:andTilesource: initializer. */
+- (id)initWithFrame:(CGRect)frame;
+
 /** Initialize a map view with a given frame and tile source. 
 *   @param frame The frame with which to initialize the map view. 
 *   @param newTilesource The tile source to use for the map tiles. 
