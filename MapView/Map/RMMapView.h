@@ -167,6 +167,7 @@ typedef enum : NSUInteger {
 - (void)setFrame:(CGRect)frame;
 
 + (UIImage *)resourceImageNamed:(NSString *)imageName;
++ (NSString *)pathForBundleResourceNamed:(NSString *)name ofType:(NSString *)extension;
 
 #pragma mark - Movement
 
