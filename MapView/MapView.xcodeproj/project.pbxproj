@@ -87,6 +87,8 @@
 		DD1985C2165C5F6400DF667F /* RMTileMillSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD1985C0165C5F6400DF667F /* RMTileMillSource.m */; };
 		DD1E3C6E161F954F004FC649 /* SMCalloutView.h in Headers */ = {isa = PBXBuildFile; fileRef = DD1E3C6C161F954F004FC649 /* SMCalloutView.h */; };
 		DD1E3C6F161F954F004FC649 /* SMCalloutView.m in Sources */ = {isa = PBXBuildFile; fileRef = DD1E3C6D161F954F004FC649 /* SMCalloutView.m */; };
+		DD280D1416EFDDD30014B549 /* examples.map-z2effxa8.json in Resources */ = {isa = PBXBuildFile; fileRef = DD280D1216EFDDD30014B549 /* examples.map-z2effxa8.json */; };
+		DD280D1516EFDDD30014B549 /* examples.map-zswgei2n.json in Resources */ = {isa = PBXBuildFile; fileRef = DD280D1316EFDDD30014B549 /* examples.map-zswgei2n.json */; };
 		DD2B374514CF8041008DE8CB /* FMDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = DD2B373F14CF8041008DE8CB /* FMDatabase.h */; };
 		DD2B374614CF8041008DE8CB /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = DD2B374014CF8041008DE8CB /* FMDatabase.m */; };
 		DD2B374714CF8041008DE8CB /* FMDatabaseAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = DD2B374114CF8041008DE8CB /* FMDatabaseAdditions.h */; };
@@ -245,6 +247,8 @@
 		DD1985C0165C5F6400DF667F /* RMTileMillSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMTileMillSource.m; sourceTree = "<group>"; };
 		DD1E3C6C161F954F004FC649 /* SMCalloutView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMCalloutView.h; path = SMCalloutView/SMCalloutView.h; sourceTree = "<group>"; };
 		DD1E3C6D161F954F004FC649 /* SMCalloutView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SMCalloutView.m; path = SMCalloutView/SMCalloutView.m; sourceTree = "<group>"; };
+		DD280D1216EFDDD30014B549 /* examples.map-z2effxa8.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = "examples.map-z2effxa8.json"; path = "Map/Resources/examples.map-z2effxa8.json"; sourceTree = "<group>"; };
+		DD280D1316EFDDD30014B549 /* examples.map-zswgei2n.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = "examples.map-zswgei2n.json"; path = "Map/Resources/examples.map-zswgei2n.json"; sourceTree = "<group>"; };
 		DD2B373F14CF8041008DE8CB /* FMDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabase.h; sourceTree = "<group>"; };
 		DD2B374014CF8041008DE8CB /* FMDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMDatabase.m; sourceTree = "<group>"; };
 		DD2B374114CF8041008DE8CB /* FMDatabaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabaseAdditions.h; sourceTree = "<group>"; };
@@ -611,6 +615,8 @@
 				DD932BB0165C287000D69D49 /* TrackingHeading@2x.png */,
 				DD932BB1165C287000D69D49 /* TrackingLocation.png */,
 				DD932BB2165C287000D69D49 /* TrackingLocation@2x.png */,
+				DD280D1216EFDDD30014B549 /* examples.map-z2effxa8.json */,
+				DD280D1316EFDDD30014B549 /* examples.map-zswgei2n.json */,
 			);
 			name = Resources;
 			path = ..;
@@ -814,6 +820,8 @@
 				DD94D46B16C2E064003D5739 /* HeadingAngleLarge@2x.png in Resources */,
 				DD94D46C16C2E064003D5739 /* HeadingAngleMedium.png in Resources */,
 				DD94D46D16C2E064003D5739 /* HeadingAngleMedium@2x.png in Resources */,
+				DD280D1416EFDDD30014B549 /* examples.map-z2effxa8.json in Resources */,
+				DD280D1516EFDDD30014B549 /* examples.map-zswgei2n.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
