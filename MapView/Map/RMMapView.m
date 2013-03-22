@@ -2934,12 +2934,11 @@
     {
         [_annotations removeObject:annotation];
         [_visibleAnnotations removeObject:annotation];
+        [self.quadTree removeAnnotation:annotation];
+        annotation.layer = nil;
     }
 
-    [self.quadTree removeAnnotation:annotation];
-
-    // Remove the layer from the screen
-    annotation.layer = nil;
+    [self correctPositionOfAllAnnotations];
 }
 
 - (void)removeAnnotations:(NSArray *)annotationsToRemove
