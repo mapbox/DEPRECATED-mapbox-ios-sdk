@@ -123,7 +123,8 @@
 
     shapeLayer.lineWidth = scaledLineWidth;
 
-    shapeLayer.fillColor = [[UIColor colorWithPatternImage:self.fillPatternImage] CGColor];
+    if (self.fillPatternImage)
+        shapeLayer.fillColor = [[UIColor colorWithPatternImage:self.fillPatternImage] CGColor];
 
     if (lineDashLengths)
     {
