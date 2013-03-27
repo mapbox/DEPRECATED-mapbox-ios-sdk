@@ -10,7 +10,7 @@ permalink: /api
 categories: api
 navigation:"
 CONTENT="\
-<p>Welcome to the iOS SDK API documentation. Here you can find details on the classes, protocols, and other parts of the SDK. You might also be interested in the <a href='/mapbox-ios-sdk/Docs/publish/docset.atom'>Atom feed</a>, which allows direct embedding of the documentation into Xcode's documentation viewer.</p>
+<p>Welcome to the iOS SDK API documentation. Here you can find details on the classes, protocols, and other parts of the SDK. You might also be interested in the <a href='/mapbox-ios-sdk/Docs/publish/docset.atom'>Atom feed</a>, which allows direct embedding of the documentation into Xcode.</p>
 <p><img src='http://farm9.staticflickr.com/8532/8596722686_3edf70b878_z.jpg'/></p>
 "
 
