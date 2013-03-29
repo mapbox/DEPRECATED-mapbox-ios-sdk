@@ -66,6 +66,9 @@
 /** The fill color of the shape. Defaults to clear. */
 @property (nonatomic, strong) UIColor *fillColor;
 
+/** The fill pattern image of the shape. If set, the fillColor is set to `nil`. */
+@property (nonatomic, strong) UIImage *fillPatternImage;
+
 @property (nonatomic, weak) NSArray *lineDashLengths;
 @property (nonatomic, assign) CGFloat lineDashPhase;
 @property (nonatomic, assign) BOOL scaleLineDash;

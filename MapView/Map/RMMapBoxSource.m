@@ -52,7 +52,11 @@
 
 - (id)init
 {
-    return [self initWithMapID:([[UIScreen mainScreen] scale] > 1.0 ? kMapBoxPlaceholderRetinaMapID : kMapBoxPlaceholderNormalMapID)];
+    BOOL useRetina = ([[UIScreen mainScreen] scale] > 1.0);
+
+    NSString *localTileJSONPath = [RMMapView pathForBundleResourceNamed:(useRetina ? kMapBoxPlaceholderRetinaMapID : kMapBoxPlaceholderNormalMapID) ofType:@"json"];
+
+    return [self initWithReferenceURL:[NSURL fileURLWithPath:localTileJSONPath]];
 }
 
 - (id)initWithMapID:(NSString *)mapID
