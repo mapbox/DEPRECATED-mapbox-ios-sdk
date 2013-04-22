@@ -22,7 +22,7 @@ Pod::Spec.new do |m|
 
   m.post_install do |library|
     Dir.chdir File.join(library.sandbox_dir, 'MapBox') do
-      command = "xcodebuild -project MapView/MapView.xcodeproj -target Resources CONFIGURATION_BUILD_DIR=../../Resources"
+      command = "xcodebuild -project MapView/MapView.xcodeproj -target Resources CONFIGURATION_BUILD_DIR=../../Resources 2>&1 > /dev/null"
       unless system(command)
         raise ::Pod::Informative, "Failed to generate MapBox resources bundle"
       end
