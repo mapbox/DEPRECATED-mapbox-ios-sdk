@@ -178,6 +178,11 @@
     srand(time(NULL));
 }
 
+- (unsigned long long)fileSize
+{
+    return [[[NSFileManager defaultManager] attributesOfItemAtPath:self.databasePath error:nil] fileSize];
+}
+
 - (UIImage *)cachedImage:(RMTile)tile withCacheKey:(NSString *)aCacheKey
 {
 //	RMLog(@"DB cache check for tile %d %d %d", tile.x, tile.y, tile.zoom);

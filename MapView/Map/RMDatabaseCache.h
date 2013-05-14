@@ -73,4 +73,7 @@
 *   @param theExpiryPeriod The amount of time to elapse before a tile should be removed from the cache. If set to zero, tile count-based purging will be used instead of time-based. */
 - (void)setExpiryPeriod:(NSTimeInterval)theExpiryPeriod;
 
+/** The current file size of the database cache on disk. */
+- (unsigned long long)fileSize;
+
 @end
