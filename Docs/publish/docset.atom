@@ -1,7 +1,7 @@
 <?xml version="1.0" standalone="no"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xmlns:docset="http://developer.apple.com/rss/docset_extensions" xml:lang="en">
     <id>http://mapbox.com/mapbox-ios-sdk/Docs/publish/docset.atom/20130628101632</id>
-    <title type="text">MapBox 1.0.3 Documentation</title>
+    <title type="text">MapBox iOS SDK Documentation</title>
     <rights>Copyright © 2013 MapBox. All rights reserved.</rights>
     <link rel="self" href="http://mapbox.com/mapbox-ios-sdk/Docs/publish/docset.atom"></link>
     <docset:publisherName>MapBox</docset:publisherName>
