@@ -1,5 +1,5 @@
 ---
-title: iOS SDK 1.0.2
+title: iOS SDK 1.0.3
 layout: api
 permalink: /api
 categories: api
@@ -2498,7 +2498,7 @@ navigation:
 					<div class="section-overview">
 						<a title="Overview" name="overview"></a>
 						<h2 class="subtitle subtitle-overview">Overview</h2>
-						<p>An RMDatabaseCache object represents disk-based caching of map tile images. This cache is meant for longer-term storage than <a href="#RMMemoryCache-class">RMMemoryCache</a>, potentially for long periods of time, allowing completely offline use of map view.</p><div class="warning"><p><strong>Warning:</strong> The database cache is currently based on <a href="http://www.sqlite.org">SQLite</a>, a lightweight, cross-platform, file-based relational database system. The schema is indepenendent of and unrelated to the <a href="http://mbtiles.org">MBTiles</a> file format or the <a href="#RMMBTilesSource-class">RMMBTilesSource</a> tile source.</p></div>
+						<p>An RMDatabaseCache object represents disk-based caching of map tile images. This cache is meant for longer-term storage than <a href="#RMMemoryCache-class">RMMemoryCache</a>, potentially for long periods of time, allowing completely offline use of map view.</p><div class="warning"><p><strong>Warning:</strong> The database cache is currently based on <a href="http://www.sqlite.org">SQLite</a>, a lightweight, cross-platform, file-based relational database system. The schema is independent of and unrelated to the <a href="http://mbtiles.org">MBTiles</a> file format or the <a href="#RMMBTilesSource-class">RMMBTilesSource</a> tile source.</p></div>
 					</div>
 					
 					
@@ -2583,6 +2583,13 @@ navigation:
 	<span class="tooltip">
 		<code><a href="#//api/name/setExpiryPeriod:">&ndash;&nbsp;setExpiryPeriod:</a></code>
 		<span class="tooltip"><p>Set the expiry period for cache purging.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/fileSize">&ndash;&nbsp;fileSize</a></code>
+		<span class="tooltip"><p>The current file size of the database cache on disk.</p></span>
 	</span>
 	
 	
@@ -2686,6 +2693,45 @@ navigation:
 					<div class="section-methods">
 						<a title="Instance Methods" name="instance_methods"></a>
 						<h2 class="subtitle subtitle-methods">Instance Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/fileSize" title="fileSize"></a>
+	<h3 class="subsubtitle method-title">fileSize</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The current file size of the database cache on disk.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (unsigned long long)fileSize</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The current file size of the database cache on disk.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref"><a href="https://github.com/mapbox/mapbox-ios-sdk/blob/release/MapView/Map/RMDatabaseCache.h">RMDatabaseCache.h</a></code><br />
+	</div>				
+	
+	
+</div>
 						
 						<div class="section-method">
 	<a name="//api/name/initUsingCacheDir:" title="initUsingCacheDir:"></a>
@@ -3420,6 +3466,13 @@ navigation:
 	
 </li><li>
 	<span class="tooltip">
+		<code><a href="#//api/name/initWithMapID:enablingSSL:">&ndash;&nbsp;initWithMapID:enablingSSL:</a></code>
+		<span class="tooltip"><p>Initialize a tile source using the MapBox map ID, optionally enabling SSL.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
 		<code><a href="#//api/name/initWithReferenceURL:">&ndash;&nbsp;initWithReferenceURL:</a></code>
 		<span class="tooltip"><p>Initialize a tile source with either a remote or local TileJSON structure.</p></span>
 	</span>
@@ -3436,6 +3489,13 @@ navigation:
 	<span class="tooltip">
 		<code><a href="#//api/name/initWithMapID:enablingDataOnMapView:">&ndash;&nbsp;initWithMapID:enablingDataOnMapView:</a></code>
 		<span class="tooltip"><p>For TileJSON 2.1.0+ layers, initialize a tile source and automatically find and add annotations from <a href="http://mapbox.com/developers/simplestyle/">simplestyle</a> data.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/initWithMapID:enablingDataOnMapView:enablingSSL:">&ndash;&nbsp;initWithMapID:enablingDataOnMapView:enablingSSL:</a></code>
+		<span class="tooltip"><p>For TileJSON 2.1.0+ layers, initialize a tile source and automatically find and add annotations from <a href="http://mapbox.com/developers/simplestyle/">simplestyle</a> data, optionally enabling SSL.</p></span>
 	</span>
 	
 	
@@ -3510,7 +3570,15 @@ navigation:
 	</span>
 	<span class="task-item-suffix">property</span>
 	
-</li><li>
+</li>
+						</ul>
+						
+						
+						<a title="Configuring Map Options" name="task_Configuring Map Options"></a>
+						<h3 class="subsubtitle task-title">Configuring Map Options</h3>
+
+						<ul class="task-list">
+							<li>
 	<span class="tooltip">
 		<code><a href="#//api/name/imageQuality">&nbsp;&nbsp;imageQuality</a></code>
 		<span class="tooltip"><p>Image quality that is retrieved from the network. Useful for lower-bandwidth environments. The default is to provide full-quality imagery.</p></span>
@@ -3853,6 +3921,8 @@ navigation:
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Initialize a tile source using the MapBox map ID.</p>
+
+<p>This method requires a network connection in order to download the TileJSON used to define the tile source.</p>
 	</div>
 	
 	
@@ -3912,6 +3982,135 @@ navigation:
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>For TileJSON 2.1.0+ layers, initialize a tile source and automatically find and add annotations from <a href="http://mapbox.com/developers/simplestyle/">simplestyle</a> data.</p>
+
+<p>This method requires a network connection in order to download the TileJSON used to define the tile source.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref"><a href="https://github.com/mapbox/mapbox-ios-sdk/blob/release/MapView/Map/RMMapBoxSource.h">RMMapBoxSource.h</a></code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/initWithMapID:enablingDataOnMapView:enablingSSL:" title="initWithMapID:enablingDataOnMapView:enablingSSL:"></a>
+	<h3 class="subsubtitle method-title">initWithMapID:enablingDataOnMapView:enablingSSL:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>For TileJSON 2.1.0+ layers, initialize a tile source and automatically find and add annotations from <a href="http://mapbox.com/developers/simplestyle/">simplestyle</a> data, optionally enabling SSL.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (id)initWithMapID:(NSString *)<em>mapID</em> enablingDataOnMapView:(RMMapView *)<em>mapView</em> enablingSSL:(BOOL)<em>enableSSL</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>mapID</em></dt>
+			<dd><p>The MapBox map ID string, typically in the format <code>&lt;username&gt;.map-&lt;random characters&gt;</code>.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>mapView</em></dt>
+			<dd><p>A map view on which to display the annotations.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>enableSSL</em></dt>
+			<dd><p>Whether to use SSL-enabled HTTPS connections for map tiles and other related data. Defaults to <code>NO</code>. At some point in the future, this will default to <code>YES</code>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An initialized MapBox tile source.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>For TileJSON 2.1.0+ layers, initialize a tile source and automatically find and add annotations from <a href="http://mapbox.com/developers/simplestyle/">simplestyle</a> data, optionally enabling SSL.</p>
+
+<p>This method requires a network connection in order to download the TileJSON used to define the tile source.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref"><a href="https://github.com/mapbox/mapbox-ios-sdk/blob/release/MapView/Map/RMMapBoxSource.h">RMMapBoxSource.h</a></code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/initWithMapID:enablingSSL:" title="initWithMapID:enablingSSL:"></a>
+	<h3 class="subsubtitle method-title">initWithMapID:enablingSSL:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Initialize a tile source using the MapBox map ID, optionally enabling SSL.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (id)initWithMapID:(NSString *)<em>mapID</em> enablingSSL:(BOOL)<em>enableSSL</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>mapID</em></dt>
+			<dd><p>The MapBox map ID string, typically in the format <code>&lt;username&gt;.map-&lt;random characters&gt;</code>.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>enableSSL</em></dt>
+			<dd><p>Whether to use SSL-enabled HTTPS connections for map tiles and other related data. Defaults to <code>NO</code>. At some point in the future, this will default to <code>YES</code>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An initialized MapBox tile source.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Initialize a tile source using the MapBox map ID, optionally enabling SSL.</p>
+
+<p>This method requires a network connection in order to download the TileJSON used to define the tile source.</p>
 	</div>
 	
 	
@@ -3947,7 +4146,7 @@ navigation:
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>referenceURL</em></dt>
-			<dd><p>A remote or local URL pointing to a TileJSON structure.</p></dd>
+			<dd><p>A remote or file path URL pointing to a TileJSON structure.</p></dd>
 		</dl>
 		
 	</div>
@@ -3966,11 +4165,22 @@ navigation:
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Initialize a tile source with either a remote or local TileJSON structure.</p>
+
+<p>Passing a remote URL requires a network connection. If offline functionality is desired, you should cache the TileJSON locally at a prior date, then pass a file path URL to this method.</p>
 	</div>
 	
 	
 	
 	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p><a href="#//api/name/tileJSON">@property tileJSON</a></p></code></li>
+			
+		</ul>
+	</div>
 	
 	
 	
@@ -4001,7 +4211,7 @@ navigation:
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>referenceURL</em></dt>
-			<dd><p>A remote or local URL pointing to a TileJSON structure.</p></dd>
+			<dd><p>A remote or file path URL pointing to a TileJSON structure.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
@@ -4025,11 +4235,22 @@ navigation:
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>For TileJSON 2.1.0+ layers, initialize a tile source and automatically find and add annotations from <a href="http://mapbox.com/developers/simplestyle/">simplestyle</a> data.</p>
+
+<p>Passing a remote URL requires a network connection. If offline functionality is desired, you should cache the TileJSON locally at a prior date, then pass a file path URL to this method.</p>
 	</div>
 	
 	
 	
 	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p><a href="#//api/name/tileJSON">@property tileJSON</a></p></code></li>
+			
+		</ul>
+	</div>
 	
 	
 	
@@ -8493,6 +8714,8 @@ navigation:
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Set the mode used to track the user location.</p>
+
+<p>Setting the tracking mode to <code>RMUserTrackingModeFollow</code> or <code>RMUserTrackingModeFollowWithHeading</code> causes the map view to center the map on that location and begin tracking the user’s location. If the map is zoomed out, the map view automatically zooms in on the user’s location, effectively changing the current visible region.</p>
 	</div>
 	
 	
