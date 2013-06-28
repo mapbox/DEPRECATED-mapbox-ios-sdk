@@ -121,7 +121,7 @@
         CGFloat red, green, blue, alpha;
 
         if ([color getRed:&red green:&green blue:&blue alpha:&alpha])
-            colorHex = [NSString stringWithFormat:@"%02x%02x%02x", ((NSUInteger)red * 255), ((NSUInteger)green * 255), ((NSUInteger)blue * 255)];
+            colorHex = [NSString stringWithFormat:@"%02x%02x%02x", (NSUInteger)(red * 255), (NSUInteger)(green * 255), (NSUInteger)(blue * 255)];
     }
     
     return [self initWithMapBoxMarkerImage:symbolName tintColorHex:colorHex sizeString:sizeString];
@@ -136,7 +136,7 @@
 {
     BOOL useRetina = ([[UIScreen mainScreen] scale] > 1.0);
     
-    NSURL *imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://a.tiles.mapbox.com/v3/marker/pin-%@%@%@%@.png",
+    NSURL *imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://api.tiles.mapbox.com/v3/marker/pin-%@%@%@%@.png",
                                                (sizeString ? [sizeString substringToIndex:1] : @"m"), 
                                                (symbolName ? [@"-" stringByAppendingString:symbolName] : @"-star"),
                                                (colorHex   ? [@"+" stringByAppendingString:[colorHex stringByReplacingOccurrencesOfString:@"#" withString:@""]] : @"+ff0000"),

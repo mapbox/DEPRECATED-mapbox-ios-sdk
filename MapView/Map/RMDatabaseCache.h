@@ -30,7 +30,7 @@
 
 /** An RMDatabaseCache object represents disk-based caching of map tile images. This cache is meant for longer-term storage than RMMemoryCache, potentially for long periods of time, allowing completely offline use of map view.
 *
-*   @warning The database cache is currently based on [SQLite](http://www.sqlite.org), a lightweight, cross-platform, file-based relational database system. The schema is indepenendent of and unrelated to the [MBTiles](http://mbtiles.org) file format or the RMMBTilesSource tile source. */
+*   @warning The database cache is currently based on [SQLite](http://www.sqlite.org), a lightweight, cross-platform, file-based relational database system. The schema is independent of and unrelated to the [MBTiles](http://mbtiles.org) file format or the RMMBTilesSource tile source. */
 @interface RMDatabaseCache : NSObject <RMTileCache>
 
 /** @name Getting the Database Path */
@@ -72,5 +72,8 @@
 /** Set the expiry period for cache purging.
 *   @param theExpiryPeriod The amount of time to elapse before a tile should be removed from the cache. If set to zero, tile count-based purging will be used instead of time-based. */
 - (void)setExpiryPeriod:(NSTimeInterval)theExpiryPeriod;
+
+/** The current file size of the database cache on disk. */
+- (unsigned long long)fileSize;
 
 @end

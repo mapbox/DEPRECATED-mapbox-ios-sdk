@@ -1959,8 +1959,11 @@
 
 - (void)setTileSource:(id <RMTileSource>)tileSource
 {
-    [_tileSourcesContainer removeAllTileSources];
-    [self addTileSource:tileSource];
+    if (tileSource)
+    {
+        [_tileSourcesContainer removeAllTileSources];
+        [self addTileSource:tileSource];
+    }
 }
 
 - (void)setTileSources:(NSArray *)tileSources

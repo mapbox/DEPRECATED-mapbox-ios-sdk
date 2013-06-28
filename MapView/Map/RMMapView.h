@@ -502,6 +502,9 @@ typedef enum : NSUInteger {
 @property (nonatomic, assign)   BOOL displayHeadingCalibration;
 
 /** Set the mode used to track the user location. 
+*
+*   Setting the tracking mode to `RMUserTrackingModeFollow` or `RMUserTrackingModeFollowWithHeading` causes the map view to center the map on that location and begin tracking the user’s location. If the map is zoomed out, the map view automatically zooms in on the user’s location, effectively changing the current visible region.
+*
 *   @param mode The mode used to track the user location. 
 *   @param animated Whether changes to the map center or rotation should be animated when the mode is changed. */
 - (void)setUserTrackingMode:(RMUserTrackingMode)mode animated:(BOOL)animated;
