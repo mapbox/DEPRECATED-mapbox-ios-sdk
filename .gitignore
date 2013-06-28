@@ -27,7 +27,6 @@ Icon?
 
 # Project-specific ignores
 docset-installed.txt
-*.xar
 Docs/docset
 MapView
 Proj4
