@@ -241,7 +241,7 @@
     [aLabel setFont:font];
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [aLabel setTextAlignment:UITextAlignmentCenter];
+    [aLabel setTextAlignment:NSTextAlignmentCenter];
     #pragma clang diagnostic pop
     [aLabel setText:text];
 
