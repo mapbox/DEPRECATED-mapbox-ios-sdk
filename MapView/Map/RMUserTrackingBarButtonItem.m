@@ -32,9 +32,10 @@
 #import "RMUserLocation.h"
 
 typedef enum {
-    RMUserTrackingButtonStateActivity = 0,
-    RMUserTrackingButtonStateLocation = 1,
-    RMUserTrackingButtonStateHeading  = 2
+    RMUserTrackingButtonStateNone     = 0,
+    RMUserTrackingButtonStateActivity = 1,
+    RMUserTrackingButtonStateLocation = 2,
+    RMUserTrackingButtonStateHeading  = 3
 } RMUserTrackingButtonState;
 
 @interface RMUserTrackingBarButtonItem ()
@@ -45,7 +46,7 @@ typedef enum {
 @property (nonatomic, assign) RMUserTrackingButtonState state;
 
 - (void)createBarButtonItem;
-- (void)updateAppearance;
+- (void)updateState;
 - (void)changeMode:(id)sender;
 
 @end
@@ -85,20 +86,25 @@ typedef enum {
 
 - (void)createBarButtonItem
 {
-    _segmentedControl = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@""]];
-    _segmentedControl.segmentedControlStyle = UISegmentedControlStyleBar;
-    [_segmentedControl setWidth:32.0 forSegmentAtIndex:0];
-    _segmentedControl.userInteractionEnabled = NO;
-    _segmentedControl.tintColor = self.tintColor;
-    _segmentedControl.center = self.customView.center;
+    if (RMPreVersion7)
+    {
+        _segmentedControl = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@""]];
+        _segmentedControl.segmentedControlStyle = UISegmentedControlStyleBar;
+        [_segmentedControl setWidth:32.0 forSegmentAtIndex:0];
+        _segmentedControl.userInteractionEnabled = NO;
+        _segmentedControl.tintColor = self.tintColor;
+        _segmentedControl.center = self.customView.center;
 
-    [self.customView addSubview:_segmentedControl];
+        [self.customView addSubview:_segmentedControl];
+    }
 
-    _buttonImageView = [[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"TrackingLocation.png"]];
+    _buttonImageView = [[UIImageView alloc] initWithImage:nil];
     _buttonImageView.contentMode = UIViewContentModeCenter;
     _buttonImageView.frame = CGRectMake(0, 0, 32, 32);
     _buttonImageView.center = self.customView.center;
     _buttonImageView.userInteractionEnabled = NO;
+
+    [self updateImage];
 
     [self.customView addSubview:_buttonImageView];
 
@@ -111,7 +117,7 @@ typedef enum {
 
     [((UIControl *)self.customView) addTarget:self action:@selector(changeMode:) forControlEvents:UIControlEventTouchUpInside];
 
-    _state = RMUserTrackingButtonStateLocation;
+    _state = RMUserTrackingButtonStateNone;
 }
 
 - (void)dealloc
@@ -133,7 +139,7 @@ typedef enum {
         [_mapView addObserver:self forKeyPath:@"userTrackingMode"      options:NSKeyValueObservingOptionNew context:nil];
         [_mapView addObserver:self forKeyPath:@"userLocation.location" options:NSKeyValueObservingOptionNew context:nil];
 
-        [self updateAppearance];
+        [self updateState];
     }
 }
 
@@ -141,23 +147,81 @@ typedef enum {
 {
     [super setTintColor:newTintColor];
 
-    _segmentedControl.tintColor = newTintColor;
+    if (RMPreVersion7)
+        _segmentedControl.tintColor = newTintColor;
+    else
+        [self updateImage];
 }
 
 #pragma mark -
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    [self updateAppearance];
+    [self updateState];
 }
 
 #pragma mark -
 
-- (void)updateAppearance
+- (void)updateImage
+{
+    if (RMPreVersion7)
+    {
+        if (_mapView.userTrackingMode == RMUserTrackingModeFollowWithHeading)
+            _buttonImageView.image = [RMMapView resourceImageNamed:@"TrackingHeading.png"];
+        else
+            _buttonImageView.image = [RMMapView resourceImageNamed:@"TrackingLocation.png"];
+    }
+    else
+    {
+        CGRect rect = CGRectMake(0, 0, self.customView.bounds.size.width, self.customView.bounds.size.height);
+
+        UIGraphicsBeginImageContextWithOptions(rect.size, NO, [[UIScreen mainScreen] scale]);
+
+        CGContextRef context = UIGraphicsGetCurrentContext();
+
+        UIImage *image;
+
+        if (_mapView.userTrackingMode == RMUserTrackingModeNone || ! _mapView)
+            image = [RMMapView resourceImageNamed:@"TrackingLocationOffMask.png"];
+        else if (_mapView.userTrackingMode == RMUserTrackingModeFollow)
+            image = [RMMapView resourceImageNamed:@"TrackingLocationMask.png"];
+        else if (_mapView.userTrackingMode == RMUserTrackingModeFollowWithHeading)
+            image = [RMMapView resourceImageNamed:@"TrackingHeadingMask.png"];
+
+        UIGraphicsPushContext(context);
+
+        [image drawAtPoint:CGPointMake((rect.size.width  - image.size.width) / 2, (rect.size.height - image.size.height) / 2)];
+
+        UIGraphicsPopContext();
+
+        CGContextSetBlendMode(context, kCGBlendModeSourceIn);
+
+        CGContextSetFillColorWithColor(context, self.tintColor.CGColor);
+        CGContextFillRect(context, rect);
+
+        _buttonImageView.image = UIGraphicsGetImageFromCurrentImageContext();
+
+        UIGraphicsEndImageContext();
+
+        if (_mapView.userTrackingMode == RMUserTrackingModeFollow || _mapView.userTrackingMode == RMUserTrackingModeFollowWithHeading)
+        {
+            _buttonImageView.layer.backgroundColor = CGColorCreateCopyWithAlpha(self.tintColor.CGColor, 0.1);
+            _buttonImageView.layer.cornerRadius    = 4;
+        }
+        else
+        {
+            _buttonImageView.layer.backgroundColor = [[UIColor clearColor] CGColor];
+            _buttonImageView.layer.cornerRadius    = 0;
+        }
+    }
+}
+
+- (void)updateState
 {
     // "selection" state
     //
-    _segmentedControl.selectedSegmentIndex = (_mapView.userTrackingMode == RMUserTrackingModeNone ? UISegmentedControlNoSegment : 0);
+    if (RMPreVersion7)
+        _segmentedControl.selectedSegmentIndex = (_mapView.userTrackingMode == RMUserTrackingModeNone ? UISegmentedControlNoSegment : 0);
 
     // activity/image state
     //
@@ -190,7 +254,8 @@ typedef enum {
     }
     else
     {
-        if ((_mapView.userTrackingMode != RMUserTrackingModeFollowWithHeading && _state != RMUserTrackingButtonStateLocation) ||
+        if ((_mapView.userTrackingMode == RMUserTrackingModeNone              && _state != RMUserTrackingButtonStateNone)     ||
+            (_mapView.userTrackingMode == RMUserTrackingModeFollow            && _state != RMUserTrackingButtonStateLocation) ||
             (_mapView.userTrackingMode == RMUserTrackingModeFollowWithHeading && _state != RMUserTrackingButtonStateHeading))
         {
             // if image state doesn't match mode, update it
@@ -205,7 +270,8 @@ typedef enum {
                              }
                              completion:^(BOOL finished)
                              {
-                                 _buttonImageView.image  = [RMMapView resourceImageNamed:(_mapView.userTrackingMode == RMUserTrackingModeFollowWithHeading ? @"TrackingHeading.png" : @"TrackingLocation.png")];
+                                 [self updateImage];
+
                                  _buttonImageView.hidden = NO;
 
                                  [_activityView stopAnimating];
@@ -217,7 +283,12 @@ typedef enum {
                                  }];
                              }];
 
-            _state = (_mapView.userTrackingMode == RMUserTrackingModeFollowWithHeading ? RMUserTrackingButtonStateHeading : RMUserTrackingButtonStateLocation);
+            if (_mapView.userTrackingMode == RMUserTrackingModeNone)
+                _state = RMUserTrackingButtonStateNone;
+            else if (_mapView.userTrackingMode == RMUserTrackingModeFollow)
+                _state = RMUserTrackingButtonStateLocation;
+            else if (_mapView.userTrackingMode == RMUserTrackingModeFollowWithHeading)
+                _state = RMUserTrackingButtonStateHeading;
         }
     }
 }
@@ -253,7 +324,7 @@ typedef enum {
         }
     }
 
-    [self updateAppearance];
+    [self updateState];
 }
 
 @end

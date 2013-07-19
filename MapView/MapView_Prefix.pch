@@ -23,3 +23,6 @@
 #define WarnDeprecated() 
 #define NS_BLOCK_ASSERTIONS 1
 #endif
+
+#define RMPostVersion7 ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
+#define RMPreVersion7  ([[[UIDevice currentDevice] systemVersion] floatValue] <  7.0)

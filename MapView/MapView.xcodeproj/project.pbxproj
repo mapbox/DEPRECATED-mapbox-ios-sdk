@@ -139,6 +139,17 @@
 		DD97C11616489678007C4652 /* libProj4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD97C11516489678007C4652 /* libProj4.a */; };
 		DD98B6FA14D76B930092882F /* RMMapBoxSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DD98B6F814D76B930092882F /* RMMapBoxSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD98B6FB14D76B930092882F /* RMMapBoxSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD98B6F914D76B930092882F /* RMMapBoxSource.m */; };
+		DDA257011798A95600BBB325 /* TrackingLocationOffMaskLandscape@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DDA256F61798A95600BBB325 /* TrackingLocationOffMaskLandscape@2x.png */; };
+		DDA257021798A95600BBB325 /* TrackingLocationOffMask@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DDA256F71798A95600BBB325 /* TrackingLocationOffMask@2x.png */; };
+		DDA257031798A95600BBB325 /* TrackingLocationMaskLandscape@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DDA256F81798A95600BBB325 /* TrackingLocationMaskLandscape@2x.png */; };
+		DDA257041798A95600BBB325 /* TrackingLocationMask@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DDA256F91798A95600BBB325 /* TrackingLocationMask@2x.png */; };
+		DDA257051798A95600BBB325 /* TrackingHeadingMaskLandscape@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DDA256FA1798A95600BBB325 /* TrackingHeadingMaskLandscape@2x.png */; };
+		DDA257061798A95600BBB325 /* TrackingHeadingMask@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DDA256FB1798A95600BBB325 /* TrackingHeadingMask@2x.png */; };
+		DDA257071798A95600BBB325 /* Compass@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DDA256FC1798A95600BBB325 /* Compass@2x.png */; };
+		DDA257081798A95600BBB325 /* Compass.png in Resources */ = {isa = PBXBuildFile; fileRef = DDA256FD1798A95600BBB325 /* Compass.png */; };
+		DDA257091798A95600BBB325 /* TrackingHeadingMask.png in Resources */ = {isa = PBXBuildFile; fileRef = DDA256FE1798A95600BBB325 /* TrackingHeadingMask.png */; };
+		DDA2570A1798A95600BBB325 /* TrackingLocationOffMask.png in Resources */ = {isa = PBXBuildFile; fileRef = DDA256FF1798A95600BBB325 /* TrackingLocationOffMask.png */; };
+		DDA2570B1798A95600BBB325 /* TrackingLocationMask.png in Resources */ = {isa = PBXBuildFile; fileRef = DDA257001798A95600BBB325 /* TrackingLocationMask.png */; };
 		DDA6B8BD155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA6B8BB155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DDA6B8BE155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = DDA6B8BC155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.m */; };
 		DDC4BED5152E3BD700089409 /* RMInteractiveSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DDC4BED3152E3BD700089409 /* RMInteractiveSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -300,6 +311,17 @@
 		DD97C11516489678007C4652 /* libProj4.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libProj4.a; path = ../Proj4/libProj4.a; sourceTree = "<group>"; };
 		DD98B6F814D76B930092882F /* RMMapBoxSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMapBoxSource.h; sourceTree = "<group>"; };
 		DD98B6F914D76B930092882F /* RMMapBoxSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMapBoxSource.m; sourceTree = "<group>"; };
+		DDA256F61798A95600BBB325 /* TrackingLocationOffMaskLandscape@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "TrackingLocationOffMaskLandscape@2x.png"; path = "Map/Resources/TrackingLocationOffMaskLandscape@2x.png"; sourceTree = "<group>"; };
+		DDA256F71798A95600BBB325 /* TrackingLocationOffMask@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "TrackingLocationOffMask@2x.png"; path = "Map/Resources/TrackingLocationOffMask@2x.png"; sourceTree = "<group>"; };
+		DDA256F81798A95600BBB325 /* TrackingLocationMaskLandscape@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "TrackingLocationMaskLandscape@2x.png"; path = "Map/Resources/TrackingLocationMaskLandscape@2x.png"; sourceTree = "<group>"; };
+		DDA256F91798A95600BBB325 /* TrackingLocationMask@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "TrackingLocationMask@2x.png"; path = "Map/Resources/TrackingLocationMask@2x.png"; sourceTree = "<group>"; };
+		DDA256FA1798A95600BBB325 /* TrackingHeadingMaskLandscape@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "TrackingHeadingMaskLandscape@2x.png"; path = "Map/Resources/TrackingHeadingMaskLandscape@2x.png"; sourceTree = "<group>"; };
+		DDA256FB1798A95600BBB325 /* TrackingHeadingMask@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "TrackingHeadingMask@2x.png"; path = "Map/Resources/TrackingHeadingMask@2x.png"; sourceTree = "<group>"; };
+		DDA256FC1798A95600BBB325 /* Compass@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Compass@2x.png"; path = "Map/Resources/Compass@2x.png"; sourceTree = "<group>"; };
+		DDA256FD1798A95600BBB325 /* Compass.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Compass.png; path = Map/Resources/Compass.png; sourceTree = "<group>"; };
+		DDA256FE1798A95600BBB325 /* TrackingHeadingMask.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = TrackingHeadingMask.png; path = Map/Resources/TrackingHeadingMask.png; sourceTree = "<group>"; };
+		DDA256FF1798A95600BBB325 /* TrackingLocationOffMask.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = TrackingLocationOffMask.png; path = Map/Resources/TrackingLocationOffMask.png; sourceTree = "<group>"; };
+		DDA257001798A95600BBB325 /* TrackingLocationMask.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = TrackingLocationMask.png; path = Map/Resources/TrackingLocationMask.png; sourceTree = "<group>"; };
 		DDA6B8BB155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMUserTrackingBarButtonItem.h; sourceTree = "<group>"; };
 		DDA6B8BC155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMUserTrackingBarButtonItem.m; sourceTree = "<group>"; };
 		DDC4BED3152E3BD700089409 /* RMInteractiveSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMInteractiveSource.h; sourceTree = "<group>"; };
@@ -597,8 +619,12 @@
 		DD932BC1165C287600D69D49 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				DD280D1216EFDDD30014B549 /* examples.map-z2effxa8.json */,
+				DD280D1316EFDDD30014B549 /* examples.map-zswgei2n.json */,
 				DD932BA5165C287000D69D49 /* mapbox.png */,
 				DD932BA6165C287000D69D49 /* mapbox@2x.png */,
+				DDA256FD1798A95600BBB325 /* Compass.png */,
+				DDA256FC1798A95600BBB325 /* Compass@2x.png */,
 				DD932BA9165C287000D69D49 /* HeadingAngleSmall.png */,
 				DD932BAA165C287000D69D49 /* HeadingAngleSmall@2x.png */,
 				DD94D46816C2E064003D5739 /* HeadingAngleMedium.png */,
@@ -613,10 +639,17 @@
 				DD932BAE165C287000D69D49 /* TrackingDotHalo@2x.png */,
 				DD932BAF165C287000D69D49 /* TrackingHeading.png */,
 				DD932BB0165C287000D69D49 /* TrackingHeading@2x.png */,
+				DDA256FE1798A95600BBB325 /* TrackingHeadingMask.png */,
+				DDA256FB1798A95600BBB325 /* TrackingHeadingMask@2x.png */,
+				DDA256FA1798A95600BBB325 /* TrackingHeadingMaskLandscape@2x.png */,
 				DD932BB1165C287000D69D49 /* TrackingLocation.png */,
 				DD932BB2165C287000D69D49 /* TrackingLocation@2x.png */,
-				DD280D1216EFDDD30014B549 /* examples.map-z2effxa8.json */,
-				DD280D1316EFDDD30014B549 /* examples.map-zswgei2n.json */,
+				DDA257001798A95600BBB325 /* TrackingLocationMask.png */,
+				DDA256F91798A95600BBB325 /* TrackingLocationMask@2x.png */,
+				DDA256F81798A95600BBB325 /* TrackingLocationMaskLandscape@2x.png */,
+				DDA256FF1798A95600BBB325 /* TrackingLocationOffMask.png */,
+				DDA256F71798A95600BBB325 /* TrackingLocationOffMask@2x.png */,
+				DDA256F61798A95600BBB325 /* TrackingLocationOffMaskLandscape@2x.png */,
 			);
 			name = Resources;
 			path = ..;
@@ -805,6 +838,7 @@
 				DD932BB3165C287000D69D49 /* mapbox.png in Resources */,
 				DD932BB4165C287000D69D49 /* mapbox@2x.png in Resources */,
 				DD932BB7165C287000D69D49 /* HeadingAngleSmall.png in Resources */,
+				DDA257071798A95600BBB325 /* Compass@2x.png in Resources */,
 				DD932BB8165C287000D69D49 /* HeadingAngleSmall@2x.png in Resources */,
 				DD932BB9165C287000D69D49 /* LoadingTile.png in Resources */,
 				DD932BBA165C287000D69D49 /* LoadingTileZoom.png in Resources */,
@@ -812,15 +846,25 @@
 				DD932BB6165C287000D69D49 /* TrackingDot@2x.png in Resources */,
 				DD932BBB165C287000D69D49 /* TrackingDotHalo.png in Resources */,
 				DD932BBC165C287000D69D49 /* TrackingDotHalo@2x.png in Resources */,
+				DDA257031798A95600BBB325 /* TrackingLocationMaskLandscape@2x.png in Resources */,
+				DDA257051798A95600BBB325 /* TrackingHeadingMaskLandscape@2x.png in Resources */,
+				DDA257061798A95600BBB325 /* TrackingHeadingMask@2x.png in Resources */,
 				DD932BBD165C287000D69D49 /* TrackingHeading.png in Resources */,
+				DDA2570B1798A95600BBB325 /* TrackingLocationMask.png in Resources */,
 				DD932BBE165C287000D69D49 /* TrackingHeading@2x.png in Resources */,
+				DDA257091798A95600BBB325 /* TrackingHeadingMask.png in Resources */,
 				DD932BBF165C287000D69D49 /* TrackingLocation.png in Resources */,
 				DD932BC0165C287000D69D49 /* TrackingLocation@2x.png in Resources */,
+				DDA2570A1798A95600BBB325 /* TrackingLocationOffMask.png in Resources */,
+				DDA257011798A95600BBB325 /* TrackingLocationOffMaskLandscape@2x.png in Resources */,
+				DDA257041798A95600BBB325 /* TrackingLocationMask@2x.png in Resources */,
+				DDA257081798A95600BBB325 /* Compass.png in Resources */,
 				DD94D46A16C2E064003D5739 /* HeadingAngleLarge.png in Resources */,
 				DD94D46B16C2E064003D5739 /* HeadingAngleLarge@2x.png in Resources */,
 				DD94D46C16C2E064003D5739 /* HeadingAngleMedium.png in Resources */,
 				DD94D46D16C2E064003D5739 /* HeadingAngleMedium@2x.png in Resources */,
 				DD280D1416EFDDD30014B549 /* examples.map-z2effxa8.json in Resources */,
+				DDA257021798A95600BBB325 /* TrackingLocationOffMask@2x.png in Resources */,
 				DD280D1516EFDDD30014B549 /* examples.map-zswgei2n.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
