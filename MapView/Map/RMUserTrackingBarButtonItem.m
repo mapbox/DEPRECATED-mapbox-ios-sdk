@@ -189,13 +189,10 @@ typedef enum {
             image = [RMMapView resourceImageNamed:@"TrackingHeadingMask.png"];
 
         UIGraphicsPushContext(context);
-
         [image drawAtPoint:CGPointMake((rect.size.width  - image.size.width) / 2, (rect.size.height - image.size.height) / 2)];
-
         UIGraphicsPopContext();
 
         CGContextSetBlendMode(context, kCGBlendModeSourceIn);
-
         CGContextSetFillColorWithColor(context, self.tintColor.CGColor);
         CGContextFillRect(context, rect);
 
