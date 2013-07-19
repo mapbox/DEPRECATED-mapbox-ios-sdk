@@ -190,6 +190,8 @@
 
     UIImageView *_logoBug;
 
+    UIButton *_compassButton;
+
     RMAnnotation *_currentAnnotation;
     SMCalloutView *_currentCallout;
 
@@ -293,6 +295,18 @@
     [self setDecelerationMode:RMMapDecelerationFast];
 
     self.showLogoBug = YES;
+
+    if (RMPostVersion7)
+    {
+        _compassButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        UIImage *compassImage = [RMMapView resourceImageNamed:@"Compass.png"];
+        [_compassButton setImage:compassImage forState:UIControlStateNormal];
+        _compassButton.frame = CGRectMake(self.bounds.size.width - compassImage.size.width - 5, 70, compassImage.size.width, compassImage.size.height);
+        _compassButton.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin;
+        _compassButton.alpha = 0;
+        [_compassButton addTarget:self action:@selector(tappedHeadingCompass:) forControlEvents:UIControlEventTouchUpInside];
+        [self addSubview:_compassButton];
+    }
 
     self.displayHeadingCalibration = YES;
 
@@ -3075,7 +3089,10 @@
                                  _annotationTransform = CATransform3DIdentity;
 
                                  _mapScrollView.transform = _mapTransform;
+                                 _compassButton.transform = _mapTransform;
                                  _overlayView.transform   = _mapTransform;
+
+                                 _compassButton.alpha = 0;
 
                                  for (RMAnnotation *annotation in _annotations)
                                      if ([annotation.layer isKindOfClass:[RMMarker class]] && ! annotation.isUserLocationAnnotation)
@@ -3127,7 +3144,10 @@
                                  _annotationTransform = CATransform3DIdentity;
 
                                  _mapScrollView.transform = _mapTransform;
+                                 _compassButton.transform = _mapTransform;
                                  _overlayView.transform   = _mapTransform;
+
+                                 _compassButton.alpha = 0;
 
                                  for (RMAnnotation *annotation in _annotations)
                                      if ([annotation.layer isKindOfClass:[RMMarker class]] && ! annotation.isUserLocationAnnotation)
@@ -3430,7 +3450,10 @@
                              _annotationTransform = CATransform3DMakeAffineTransform(CGAffineTransformMakeRotation(-angle));
 
                              _mapScrollView.transform = _mapTransform;
+                             _compassButton.transform = _mapTransform;
                              _overlayView.transform   = _mapTransform;
+
+                             _compassButton.alpha = 1.0;
 
                              for (RMAnnotation *annotation in _annotations)
                                  if ([annotation.layer isKindOfClass:[RMMarker class]] && ! annotation.isUserLocationAnnotation)
@@ -3496,6 +3519,11 @@
             }
         }
     }
+}
+
+- (void)tappedHeadingCompass:(id)sender
+{
+    self.userTrackingMode = RMUserTrackingModeFollow;
 }
 
 #pragma mark -
