@@ -70,7 +70,12 @@
             self.hasCustomLayer = YES;
 
         if ( ! super.layer)
-            super.layer = [[RMMarker alloc] initWithUIImage:[RMMapView resourceImageNamed:@"TrackingDot.png"]];
+        {
+            if (RMPreVersion7)
+                super.layer = [[RMMarker alloc] initWithUIImage:[RMMapView resourceImageNamed:@"TrackingDot.png"]];
+            else
+                [self updateTintColor];
+        }
 
         super.layer.zPosition = -MAXFLOAT + 2;
     }
@@ -81,6 +86,32 @@
 - (BOOL)isUpdating
 {
     return (self.mapView.userTrackingMode != RMUserTrackingModeNone);
+}
+
+- (void)updateTintColor
+{
+    if ( ! self.hasCustomLayer)
+    {
+        CGRect rect = CGRectMake(0, 0, 24, 24);
+
+        UIGraphicsBeginImageContextWithOptions(rect.size, NO, [[UIScreen mainScreen] scale]);
+
+        CGContextRef context = UIGraphicsGetCurrentContext();
+
+        CGContextSetShadow(context, CGSizeMake(0, 0), 2);
+
+        CGContextSetFillColorWithColor(context, [[UIColor whiteColor] CGColor]);
+        CGContextFillEllipseInRect(context, rect);
+
+        CGContextSetShadowWithColor(context, CGSizeZero, 0, nil);
+
+        CGContextSetFillColorWithColor(context, [self.mapView.tintColor CGColor]);
+        CGContextFillEllipseInRect(context, CGRectMake(rect.size.width / 6, rect.size.height / 6, rect.size.width * 2/3, rect.size.height * 2/3));
+
+        super.layer = [[RMMarker alloc] initWithUIImage:UIGraphicsGetImageFromCurrentImageContext()];
+
+        UIGraphicsEndImageContext();
+    }
 }
 
 - (void)setLocation:(CLLocation *)newLocation

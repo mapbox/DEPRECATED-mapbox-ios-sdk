@@ -114,6 +114,7 @@
 		DD5FA1EC15E2B020004EB6C5 /* RMLoadingTileView.m in Sources */ = {isa = PBXBuildFile; fileRef = DD5FA1EA15E2B020004EB6C5 /* RMLoadingTileView.m */; };
 		DD7C7E38164C894F0021CCA5 /* RMStaticMapView.h in Headers */ = {isa = PBXBuildFile; fileRef = DD7C7E36164C894F0021CCA5 /* RMStaticMapView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD7C7E39164C894F0021CCA5 /* RMStaticMapView.m in Sources */ = {isa = PBXBuildFile; fileRef = DD7C7E37164C894F0021CCA5 /* RMStaticMapView.m */; };
+		DD7ED619179DC1780022E1E1 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD7ED618179DC1780022E1E1 /* CoreImage.framework */; };
 		DD8CDB4A14E0507100B73EB9 /* RMMapQuestOSMSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DD8CDB4814E0507100B73EB9 /* RMMapQuestOSMSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD8CDB4B14E0507100B73EB9 /* RMMapQuestOSMSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD8CDB4914E0507100B73EB9 /* RMMapQuestOSMSource.m */; };
 		DD8FD7541559E4A40044D96F /* RMUserLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = DD8FD7521559E4A40044D96F /* RMUserLocation.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -286,6 +287,7 @@
 		DD6A83751644A20C0097F31F /* MapBox.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MapBox.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD7C7E36164C894F0021CCA5 /* RMStaticMapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMStaticMapView.h; sourceTree = "<group>"; };
 		DD7C7E37164C894F0021CCA5 /* RMStaticMapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMStaticMapView.m; sourceTree = "<group>"; };
+		DD7ED618179DC1780022E1E1 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 		DD8CDB4814E0507100B73EB9 /* RMMapQuestOSMSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMapQuestOSMSource.h; sourceTree = "<group>"; };
 		DD8CDB4914E0507100B73EB9 /* RMMapQuestOSMSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMapQuestOSMSource.m; sourceTree = "<group>"; };
 		DD8FD7521559E4A40044D96F /* RMUserLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMUserLocation.h; sourceTree = "<group>"; };
@@ -343,6 +345,7 @@
 			files = (
 				B8C974500E8A19B2007D16AD /* CoreFoundation.framework in Frameworks */,
 				B8C974510E8A19B2007D16AD /* CoreGraphics.framework in Frameworks */,
+				DD7ED619179DC1780022E1E1 /* CoreImage.framework in Frameworks */,
 				B8C974520E8A19B2007D16AD /* CoreLocation.framework in Frameworks */,
 				B8C974530E8A19B2007D16AD /* UIKit.framework in Frameworks */,
 				B8C974540E8A19B2007D16AD /* QuartzCore.framework in Frameworks */,
@@ -424,6 +427,7 @@
 			children = (
 				B83E65590E80E7EB001663B6 /* CoreFoundation.framework */,
 				288765A40DF7441C002DB57D /* CoreGraphics.framework */,
+				DD7ED618179DC1780022E1E1 /* CoreImage.framework */,
 				B83E65630E80E81C001663B6 /* CoreLocation.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
 				B83E65680E80E830001663B6 /* QuartzCore.framework */,
