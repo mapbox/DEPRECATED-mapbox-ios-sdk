@@ -23,14 +23,14 @@ Pod::Spec.new do |m|
 
   m.pre_install do |pod, target_definition|
     Dir.chdir(pod.root) do
-      command = "xcodebuild -project MapView/MapView.xcodeproj -target Resources 2>&1 > /dev/null"
+      command = "xcodebuild -project MapView/MapView.xcodeproj -target Resources CONFIGURATION_BUILD_DIR=../Resources 2>&1 > /dev/null"
       unless system(command)
         raise ::Pod::Informative, "Failed to generate MapBox resources bundle"
       end
     end
   end
 
-  m.resource = 'MapBox.bundle'
+  m.resource = 'Resources/MapBox.bundle'
 
   m.documentation = {
     :html => 'http://mapbox.com/mapbox-ios-sdk/api/',
