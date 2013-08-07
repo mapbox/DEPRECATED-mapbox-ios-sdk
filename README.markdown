@@ -15,7 +15,10 @@ Private development work for iOS 7 beta compatibility. See [here](https://github
    - [ ] polish on dot shadow & halo drawing
    - [ ] pulsing dot
  * [ ] tint color response
-   - [x] done (markers?)
+   - [x] user & nav bar
+   - [ ] markers?
  * [ ] compass
    - [ ] nav bar spacing (`UIViewController.topLayoutGuide` ?)
  * [ ] distance scale
+ * [ ] get rid of attribution page curl
+ * [ ] default/offline marker w/ tint
