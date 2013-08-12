@@ -2484,14 +2484,13 @@
 
     // update user halo
     //
-    UIImage *haloImage = [self tintedTrackingDotHaloImage];
+    UIImage *haloImage = [self trackingDotHaloImage];
     _userHaloTrackingView.image = haloImage;
     [(RMMarker *)_trackingHaloAnnotation.layer replaceUIImage:haloImage];
 
     // update accuracy circle
     //
-    ((RMCircle *)_accuracyCircleAnnotation.layer).lineColor = self.tintColor;
-    ((RMCircle *)_accuracyCircleAnnotation.layer).fillColor = [self.tintColor colorWithAlphaComponent:0.15];
+    ((RMCircle *)_accuracyCircleAnnotation.layer).fillColor = [self.tintColor colorWithAlphaComponent:0.1];
 }
 
 #pragma mark -
@@ -3187,7 +3186,7 @@
 
             self.userLocation.layer.hidden = YES;
 
-            _userHaloTrackingView = [[UIImageView alloc] initWithImage:[self tintedTrackingDotHaloImage]];
+            _userHaloTrackingView = [[UIImageView alloc] initWithImage:[self trackingDotHaloImage]];
 
             _userHaloTrackingView.center = CGPointMake(round([self bounds].size.width  / 2),
                                                        round([self bounds].size.height / 2));
@@ -3318,8 +3317,8 @@
         _accuracyCircleAnnotation.layer.zPosition = -MAXFLOAT;
         _accuracyCircleAnnotation.isUserLocationAnnotation = YES;
 
-        ((RMCircle *)_accuracyCircleAnnotation.layer).lineColor = self.tintColor;
-        ((RMCircle *)_accuracyCircleAnnotation.layer).fillColor = [self.tintColor colorWithAlphaComponent:0.15];
+        ((RMCircle *)_accuracyCircleAnnotation.layer).lineColor = (RMPreVersion7 ? [UIColor colorWithRed:0.378 green:0.552 blue:0.827 alpha:0.7] : [UIColor clearColor]);
+        ((RMCircle *)_accuracyCircleAnnotation.layer).fillColor = (RMPreVersion7 ? [UIColor colorWithRed:0.378 green:0.552 blue:0.827 alpha:0.15] : [self.tintColor colorWithAlphaComponent:0.1]);
 
         ((RMCircle *)_accuracyCircleAnnotation.layer).lineWidthInPixels = 2.0;
 
@@ -3365,13 +3364,22 @@
 
         // create image marker
         //
-        _trackingHaloAnnotation.layer = [[RMMarker alloc] initWithUIImage:[self tintedTrackingDotHaloImage]];
+        _trackingHaloAnnotation.layer = [[RMMarker alloc] initWithUIImage:[self trackingDotHaloImage]];
         _trackingHaloAnnotation.layer.zPosition = -MAXFLOAT + 1;
         _trackingHaloAnnotation.isUserLocationAnnotation = YES;
 
         [CATransaction begin];
-        [CATransaction setAnimationDuration:2.5];
-        [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+
+        if (RMPreVersion7)
+        {
+            [CATransaction setAnimationDuration:2.5];
+            [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+        }
+        else
+        {
+            [CATransaction setAnimationDuration:3.5];
+            [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut]];
+        }
 
         // scale out radially
         //
@@ -3546,57 +3554,23 @@
     self.userTrackingMode = RMUserTrackingModeFollow;
 }
 
-- (UIImage *)tintedTrackingDotHaloImage
+- (UIImage *)trackingDotHaloImage
 {
-    UIImage *templateImage = [RMMapView resourceImageNamed:@"TrackingDotHalo.png"];
+    if (RMPreVersion7)
+    {
+        return [RMMapView resourceImageNamed:@"TrackingDotHalo.png"];
+    }
+    else
+    {
+        UIGraphicsBeginImageContextWithOptions(CGSizeMake(100, 100), NO, [[UIScreen mainScreen] scale]);
+        CGContextSetFillColorWithColor(UIGraphicsGetCurrentContext(), [[self.tintColor colorWithAlphaComponent:0.75] CGColor]);
+        CGContextFillEllipseInRect(UIGraphicsGetCurrentContext(), CGRectMake(0, 0, 100, 100));
+        UIImage *finalImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
 
-    CGRect rect = CGRectMake(0, 0, templateImage.size.width * templateImage.scale, templateImage.size.height * templateImage.scale);
-
-    CIContext *context = [CIContext contextWithOptions:nil];
-    CIImage   *image   = [CIImage imageWithCGImage:templateImage.CGImage];
-    CIImage   *result  = nil;
-
-    CIFilter *whitePointAdjust = [CIFilter filterWithName:@"CIWhitePointAdjust"];
-    CIFilter *maximumComponent = [CIFilter filterWithName:@"CIMaximumComponent"];
-    CIFilter *maskToAlpha      = [CIFilter filterWithName:@"CIMaskToAlpha"];
-
-    [maskToAlpha setValue:image forKey:kCIInputImageKey];
-    result = [maskToAlpha valueForKey:kCIOutputImageKey];
-
-    [whitePointAdjust setValue:result forKey:kCIInputImageKey];
-    [whitePointAdjust setValue:[CIColor colorWithCGColor:self.tintColor.CGColor] forKey:kCIInputColorKey];
-    result = [whitePointAdjust valueForKey:kCIOutputImageKey];
-
-    CGImageRef haloImage = [context createCGImage:result fromRect:result.extent];
-
-    [whitePointAdjust setValue:image forKey:kCIInputImageKey];
-    [whitePointAdjust setValue:[CIColor colorWithRed:1 green:0 blue:0] forKey:kCIInputColorKey];
-    result = [whitePointAdjust valueForKey:kCIOutputImageKey];
-
-    [maximumComponent setValue:result forKey:kCIInputImageKey];
-    result = [maximumComponent valueForKey:kCIOutputImageKey];
-
-    [maskToAlpha setValue:result forKey:kCIInputImageKey];
-    result = [maskToAlpha valueForKey:kCIOutputImageKey];
-
-    CGImageRef ringImage = [context createCGImage:result fromRect:result.extent];
-
-    rect = CGRectMake(0, 0, rect.size.width / templateImage.scale, rect.size.height / templateImage.scale);
-
-    UIGraphicsBeginImageContextWithOptions(rect.size, NO, [[UIScreen mainScreen] scale]);
-
-    CGContextRef c = UIGraphicsGetCurrentContext();
-
-    CGContextDrawImage(c, rect, haloImage);
-    CGContextDrawImage(c, rect, ringImage);
-
-    UIImage *finalImage = UIGraphicsGetImageFromCurrentImageContext();
-
-    UIGraphicsEndImageContext();
-
-    return finalImage;
+        return finalImage;
+    }
 }
-
 
 #pragma mark -
 #pragma mark Attribution
