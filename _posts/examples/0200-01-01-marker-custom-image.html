@@ -28,11 +28,21 @@ tags:
 
     [self.view addSubview:mapView];
 
-    RMAnnotation *annotation = [[RMAnnotation alloc] initWithMapView:mapView 
-                                                          coordinate:mapView.centerCoordinate 
-                                                            andTitle:@"Home"];
+    RMAnnotation *annotation1 = [[RMAnnotation alloc] initWithMapView:mapView
+                                                           coordinate:CLLocationCoordinate2DMake(38.913175, -77.032453)
+                                                             andTitle:@"Small Factory"];
 
-    [mapView addAnnotation:annotation];
+    annotation1.userInfo = @"small";
+
+    [mapView addAnnotation:annotation1];
+
+    RMAnnotation *annotation2 = [[RMAnnotation alloc] initWithMapView:mapView
+                                                           coordinate:CLLocationCoordinate2DMake(38.911031, -77.030098)
+                                                             andTitle:@"Big Factory"];
+
+    annotation2.userInfo = @"big";
+
+    [mapView addAnnotation:annotation2];
 }
 
 - (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
@@ -40,7 +50,16 @@ tags:
     if (annotation.isUserLocationAnnotation)
         return nil;
 
-    RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"home.png"]];
+    RMMarker *marker;
+
+    if ([annotation.userInfo isEqualToString:@"small"])
+    {
+        marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"factory_small.png"]];
+    }
+    else if ([annotation.userInfo isEqualToString:@"big"])
+    {
+        marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"factory_big.png"]];
+    }
 
     marker.canShowCallout = YES;
 
