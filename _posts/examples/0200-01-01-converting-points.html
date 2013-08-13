@@ -28,17 +28,11 @@ tags:
 
     [self.view addSubview:mapView];
 
-    RMAnnotation *annotation1 = [[RMAnnotation alloc] initWithMapView:mapView
+    RMAnnotation *annotation = [[RMAnnotation alloc] initWithMapView:mapView
                                                           coordinate:mapView.centerCoordinate
-                                                            andTitle:@"green"];
+                                                            andTitle:nil];
 
-    [mapView addAnnotation:annotation1];
-
-    RMAnnotation *annotation2 = [[RMAnnotation alloc] initWithMapView:mapView
-                                                          coordinate:mapView.centerCoordinate
-                                                            andTitle:@"red"];
-
-    [mapView addAnnotation:annotation2];
+    [mapView addAnnotation:annotation];
 }
 
 - (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
@@ -50,20 +44,13 @@ tags:
 
     line.lineWidth = 5.0;
 
-    if ([annotation.title isEqualToString:@"red"])
-    {
-        line.lineColor = [UIColor redColor];
+    line.lineColor = [UIColor greenColor];
 
-        [line moveToCoordinate:[mapView pixelToCoordinate:mapView.bounds.origin]];
-        [line addLineToCoordinate:[mapView pixelToCoordinate:CGPointMake(mapView.bounds.size.width, mapView.bounds.size.height)]];
-    }
-    else if ([annotation.title isEqualToString:@"green"])
-    {
-        line.lineColor = [UIColor greenColor];
+    [line moveToCoordinate:mapView.centerCoordinate];
 
-        [line moveToCoordinate:[mapView pixelToCoordinate:CGPointMake(mapView.bounds.size.width, 0)]];
-        [line addLineToCoordinate:[mapView pixelToCoordinate:CGPointMake(0, mapView.bounds.size.height)]];
-    }
+    CGPoint centerScreenPoint = [mapView coordinateToPixel:mapView.centerCoordinate];
+
+    [line addLineToCoordinate:[mapView pixelToCoordinate:CGPointMake(centerScreenPoint.x + 100, centerScreenPoint.y + 100)]];
 
     return line;
 }
