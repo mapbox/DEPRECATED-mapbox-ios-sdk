@@ -317,25 +317,6 @@
     RMLog(@"Map initialised. tileSource:%@, minZoom:%f, maxZoom:%f, zoom:%f at {%f,%f}", newTilesource, self.minZoom, self.maxZoom, self.zoom, initialCenterCoordinate.longitude, initialCenterCoordinate.latitude);
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-    if (!(self = [super initWithCoder:aDecoder]))
-        return nil;
-
-	CLLocationCoordinate2D coordinate;
-	coordinate.latitude = kDefaultInitialLatitude;
-	coordinate.longitude = kDefaultInitialLongitude;
-
-    [self performInitializationWithTilesource:[RMMapBoxSource new]
-                             centerCoordinate:coordinate
-                                    zoomLevel:kDefaultInitialZoomLevel
-                                 maxZoomLevel:kDefaultMaximumZoomLevel
-                                 minZoomLevel:kDefaultMinimumZoomLevel
-                              backgroundImage:nil];
-
-    return self;
-}
-
 - (id)initWithFrame:(CGRect)frame
 {
     return [self initWithFrame:frame andTilesource:[RMMapBoxSource new]];
@@ -343,13 +324,9 @@
 
 - (id)initWithFrame:(CGRect)frame andTilesource:(id <RMTileSource>)newTilesource
 {
-	CLLocationCoordinate2D coordinate;
-	coordinate.latitude = kDefaultInitialLatitude;
-	coordinate.longitude = kDefaultInitialLongitude;
-
 	return [self initWithFrame:frame
                  andTilesource:newTilesource
-              centerCoordinate:coordinate
+              centerCoordinate:CLLocationCoordinate2DMake(kDefaultInitialLatitude, kDefaultInitialLongitude)
                      zoomLevel:kDefaultInitialZoomLevel
                   maxZoomLevel:kDefaultMaximumZoomLevel
                   minZoomLevel:kDefaultMinimumZoomLevel
@@ -468,6 +445,21 @@
 
 - (void)layoutSubviews
 {
+    if ( ! _mapScrollView)
+    {
+        // This will happen after initWithCoder: This needs to happen here because during
+        // unarchiving, the view won't have a frame yet and performInitialization...
+        // needs a scroll view frame in order to calculate _metersPerPixel.
+        // See https://github.com/mapbox/mapbox-ios-sdk/issues/270
+        //
+        [self performInitializationWithTilesource:[RMMapBoxSource new]
+                                 centerCoordinate:CLLocationCoordinate2DMake(kDefaultInitialLatitude, kDefaultInitialLongitude)
+                                        zoomLevel:kDefaultInitialZoomLevel
+                                     maxZoomLevel:kDefaultMaximumZoomLevel
+                                     minZoomLevel:kDefaultMinimumZoomLevel
+                                  backgroundImage:nil];
+    }
+
     if ( ! self.viewControllerPresentingAttribution && ! _hideAttribution)
     {
         UIResponder *responder = self;
