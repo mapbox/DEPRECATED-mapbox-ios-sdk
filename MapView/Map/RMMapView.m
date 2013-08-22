@@ -303,9 +303,9 @@
         _compassButton = [UIButton buttonWithType:UIButtonTypeCustom];
         UIImage *compassImage = [RMMapView resourceImageNamed:@"Compass.png"];
         [_compassButton setImage:compassImage forState:UIControlStateNormal];
-        _compassButton.frame = CGRectMake(self.bounds.size.width - compassImage.size.width - 5, 70, compassImage.size.width, compassImage.size.height);
-        _compassButton.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin;
+        _compassButton.frame = CGRectMake(self.bounds.size.width - compassImage.size.width - 5, 5, compassImage.size.width, compassImage.size.height);
         _compassButton.alpha = 0;
+        _compassButton.translatesAutoresizingMaskIntoConstraints = NO;
         [_compassButton addTarget:self action:@selector(tappedHeadingCompass:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:_compassButton];
     }
@@ -459,6 +459,26 @@
     [self updateHeadingForDeviceOrientation];
 }
 
+- (void)setTopLayoutGuide:(id <UILayoutSupport>)topLayoutGuide
+{
+    if (RMPostVersion7 && ! [_topLayoutGuide isEqual:topLayoutGuide])
+    {
+        _topLayoutGuide = topLayoutGuide;
+
+        [self setNeedsLayout];
+    }
+}
+
+- (void)setBottomLayoutGuide:(id<UILayoutSupport>)bottomLayoutGuide
+{
+    if (RMPostVersion7 && ! [_bottomLayoutGuide isEqual:bottomLayoutGuide])
+    {
+        _bottomLayoutGuide = bottomLayoutGuide;
+
+        [self setNeedsLayout];
+    }
+}
+
 - (void)layoutSubviews
 {
     if ( ! _mapScrollView)
@@ -474,6 +494,33 @@
                                      maxZoomLevel:kDefaultMaximumZoomLevel
                                      minZoomLevel:kDefaultMinimumZoomLevel
                                   backgroundImage:nil];
+    }
+
+    if (RMPostVersion7)
+    {
+        // compass constraints
+        //
+        if ( ! [_compassButton.constraints count] || ! [[[_compassButton.constraints valueForKey:@"firstItem"] arrayByAddingObjectsFromArray:[_compassButton.constraints valueForKey:@"secondItem"]] containsObject:self.topLayoutGuide])
+        {
+            if (self.superview.constraints)
+                for (NSLayoutConstraint *constraint in self.superview.constraints)
+                    if ([constraint.firstItem isEqual:_compassButton] || [constraint.secondItem isEqual:_compassButton])
+                        [self.superview removeConstraint:constraint];
+
+            [self.superview addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[topLayoutGuide]-5-[compass]"
+                                                                                   options:0
+                                                                                   metrics:nil
+                                                                                     views:@{ @"topLayoutGuide" : self.topLayoutGuide,
+                                                                                              @"compass"        : _compassButton }]];
+
+            [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[compass]-5-|"
+                                                                         options:0
+                                                                         metrics:nil
+                                                                           views:@{ @"compass" : _compassButton }]];
+
+        }
+
+        // TODO: distance scale, logo bug, and attribution button constraints
     }
 
     if ( ! self.viewControllerPresentingAttribution && ! _hideAttribution)
