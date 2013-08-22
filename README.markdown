@@ -18,7 +18,8 @@ Private development work for iOS 7 beta compatibility. See [here](https://github
    - [x] user & nav bar
    - [ ] markers?
  * [ ] compass
-   - [ ] nav bar spacing (`UIViewController.topLayoutGuide` ?)
+   - [x] nav bar spacing (`UIViewController.topLayoutGuide`)
+   - [ ] tool bar spacing (`UIViewController.bottomLayoutGuide`)
  * [ ] distance scale
  * [ ] get rid of attribution page curl
  * [ ] default/offline marker w/ tint
