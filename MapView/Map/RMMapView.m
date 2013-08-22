@@ -331,6 +331,8 @@
                                                object:nil];
 
     RMLog(@"Map initialised. tileSource:%@, minZoom:%f, maxZoom:%f, zoom:%f at {%f,%f}", newTilesource, self.minZoom, self.maxZoom, self.zoom, initialCenterCoordinate.longitude, initialCenterCoordinate.latitude);
+
+    [self setNeedsUpdateConstraints];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -465,7 +467,7 @@
     {
         _topLayoutGuide = topLayoutGuide;
 
-        [self setNeedsLayout];
+        [self setNeedsUpdateConstraints];
     }
 }
 
@@ -475,8 +477,49 @@
     {
         _bottomLayoutGuide = bottomLayoutGuide;
 
-        [self setNeedsLayout];
+        [self setNeedsUpdateConstraints];
     }
+}
+
+- (void)updateConstraints
+{
+    if (RMPostVersion7)
+    {
+        // compass
+        //
+        if (_compassButton)
+        {
+            for (UIView *constraintView in @[ self, self.superview ])
+                for (NSLayoutConstraint *constraint in [constraintView.constraints copy])
+                    if ([constraint.firstItem isEqual:_compassButton] || [constraint.secondItem isEqual:_compassButton])
+                        [constraintView removeConstraint:constraint];
+
+            if (self.topLayoutGuide)
+            {
+                [self.superview addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[topLayoutGuide]-5-[compass]"
+                                                                                       options:0
+                                                                                       metrics:nil
+                                                                                         views:@{ @"topLayoutGuide" : self.topLayoutGuide,
+                                                                                                  @"compass"        : _compassButton }]];
+            }
+            else
+            {
+                [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-5-[compass]"
+                                                                             options:0
+                                                                             metrics:nil
+                                                                               views:@{ @"compass" : _compassButton }]];
+            }
+
+            [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[compass]-5-|"
+                                                                         options:0
+                                                                         metrics:nil
+                                                                           views:@{ @"compass" : _compassButton }]];
+        }
+    }
+
+    // TODO: distance scale, logo bug, and attribution button
+
+    [super updateConstraints];
 }
 
 - (void)layoutSubviews
@@ -494,33 +537,6 @@
                                      maxZoomLevel:kDefaultMaximumZoomLevel
                                      minZoomLevel:kDefaultMinimumZoomLevel
                                   backgroundImage:nil];
-    }
-
-    if (RMPostVersion7)
-    {
-        // compass constraints
-        //
-        if ( ! [_compassButton.constraints count] || ! [[[_compassButton.constraints valueForKey:@"firstItem"] arrayByAddingObjectsFromArray:[_compassButton.constraints valueForKey:@"secondItem"]] containsObject:self.topLayoutGuide])
-        {
-            if (self.superview.constraints)
-                for (NSLayoutConstraint *constraint in self.superview.constraints)
-                    if ([constraint.firstItem isEqual:_compassButton] || [constraint.secondItem isEqual:_compassButton])
-                        [self.superview removeConstraint:constraint];
-
-            [self.superview addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[topLayoutGuide]-5-[compass]"
-                                                                                   options:0
-                                                                                   metrics:nil
-                                                                                     views:@{ @"topLayoutGuide" : self.topLayoutGuide,
-                                                                                              @"compass"        : _compassButton }]];
-
-            [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[compass]-5-|"
-                                                                         options:0
-                                                                         metrics:nil
-                                                                           views:@{ @"compass" : _compassButton }]];
-
-        }
-
-        // TODO: distance scale, logo bug, and attribution button constraints
     }
 
     if ( ! self.viewControllerPresentingAttribution && ! _hideAttribution)
