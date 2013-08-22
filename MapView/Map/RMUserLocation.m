@@ -90,7 +90,7 @@
 
 - (void)updateTintColor
 {
-    if ( ! self.hasCustomLayer)
+    if ( ! self.hasCustomLayer && ! CGPointEqualToPoint(self.position, CGPointZero))
     {
         CGRect rect = CGRectMake(0, 0, 24, 24);
 
