@@ -1,3 +1,12 @@
+.section-tasks .tooltip .tooltip { display:none; }
+.section-method ul *,
+.section-method dl * { display:inline; }
+.doc-search .icon {
+  position:absolute;
+  top:30px;
+  right:30px;
+  }
+
 .highlight .hll { background-color: #ffffcc }
 .highlight .c { color: #606060; font-style: italic } /* Comment */
 .highlight .err { color: #F00000; background-color: #F0A0A0 } /* Error */
@@ -62,3 +71,4 @@
 .highlight .vg { color: #f08040 } /* Name.Variable.Global */
 .highlight .vi { color: #a0a0f0 } /* Name.Variable.Instance */
 .highlight .il { color: #6060f0;  } /* Literal.Number.Integer.Long */
+
