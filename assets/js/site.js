@@ -140,14 +140,14 @@
                     body = $(document.getElementById('content-' + id)).text();
 
                 if (!q || body.toLowerCase().indexOf(q) !== -1 || id.toLowerCase().indexOf(q) !== -1) {
-                    $this.parent().addClass('filtered');
+                    $this.addClass('filtered');
                     if ($this.parent().hasClass('heading')) {
                         $this.css('color', '');
                     } else {
                         $this.show();
                     }
                 } else {
-                    $this.parent().removeClass('filtered');
+                    $this.removeClass('filtered');
                     if ($this.parent().hasClass('heading')) {
                         $this.css('color', '#BDBDBD');
                     } else {
