@@ -13,7 +13,7 @@ section: developers
         <p>{{site.description}}</p>
       </div>
       <nav class='col6 pill clearfix'>
-        <a class='button col3' href='{{site.baseurl}}/' class='active'>Guide</a>
+        <a class='button col3 active' href='{{site.baseurl}}/'>Guide</a>
         <a class='button col3' href='{{site.baseurl}}/api/'>API</a>
         <a class='button col3' href='{{site.baseurl}}/examples/'>Examples</a>
         <a class='button col3' href='{{site.baseurl}}/changelog/'>Changelog</a>
@@ -22,7 +22,7 @@ section: developers
 
     <div class='doc-page pad4c fill-grey clearfix'>
       <div class='fill-white clearfix'>
-        <div class='col3'>
+        <div class='col3 pad2y'>
           <div class='doc-nav'>
             {% if page.navigation %}
             {% for section in page.navigation %}
@@ -41,11 +41,11 @@ section: developers
           </div>
         </div>
         <div class='col9 doc-content keyline-left prose'>
-          <div class='doc pad2'>
+          <div class='doc pad4'>
             <h1 id='{{page.title|downcase|replace:' ','_'}}'>{{page.title}}</h1>
             {{content}}
           </div>
-          <div class='keyline-top center'>
+          <div class='keyline-top small center'>
             <div class='pad2'>
               The code and documentation to <a href='http://github.com/mapbox/mapbox-ios-sdk'>mapbox-ios-sdk is hosted on GitHub</a> where you can contribute changes and improvements.
             </div>
