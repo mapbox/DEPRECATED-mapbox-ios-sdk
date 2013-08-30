@@ -54,7 +54,7 @@
 /** The circle's line color. Defaults to black. */
 @property (nonatomic, strong) UIColor *lineColor;
 
-/** The circle's fill color. Defaults to blue. */
+/** The circle's fill color. Defaults to blue with a 25% alpha value. */
 @property (nonatomic, strong) UIColor *fillColor;
 
 /** The fill pattern image of the circle. If set, the fillColor is set to `nil`. */

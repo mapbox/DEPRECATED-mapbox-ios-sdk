@@ -31,7 +31,7 @@
 
 #define kDefaultLineWidth 2.0
 #define kDefaultLineColor [UIColor blackColor]
-#define kDefaultFillColor [UIColor blueColor]
+#define kDefaultFillColor [UIColor colorWithRed:0 green:0 blue:1.0 alpha:0.25]
 
 @interface RMCircle ()
 
