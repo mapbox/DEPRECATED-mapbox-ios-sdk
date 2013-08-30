@@ -54,4 +54,14 @@
     return [super layer];
 }
 
+- (void)setImage:(UIImage *)image
+{
+    [(RMMarker *)[self layer] replaceUIImage:image];
+}
+
+- (UIImage *)image
+{
+    return [UIImage imageWithCGImage:(CGImageRef)[self layer].contents];
+}
+
 @end
