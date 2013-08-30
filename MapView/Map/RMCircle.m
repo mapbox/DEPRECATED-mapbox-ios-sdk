@@ -29,7 +29,7 @@
 #import "RMProjection.h"
 #import "RMMapView.h"
 
-#define kDefaultLineWidth 10.0
+#define kDefaultLineWidth 2.0
 #define kDefaultLineColor [UIColor blackColor]
 #define kDefaultFillColor [UIColor blueColor]
 

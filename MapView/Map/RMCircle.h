@@ -63,7 +63,7 @@
 /** The radius of the circle in projected meters. Regardless of map zoom, the circle will change visible size to continously represent this radius on the map. */
 @property (nonatomic, assign) CGFloat radiusInMeters;
 
-/** The circle's line width. Defaults to 10.0. */
+/** The circle's line width. Defaults to 2.0. */
 @property (nonatomic, assign) CGFloat lineWidthInPixels;
 
 /** @name Creating Circle Objects */
