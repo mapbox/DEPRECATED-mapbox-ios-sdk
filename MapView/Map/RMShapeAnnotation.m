@@ -71,4 +71,14 @@
     return ((RMShape *)[self layer]).lineWidth;
 }
 
+- (void)setFillColor:(UIColor *)lineColor
+{
+    [(RMShape *)[self layer] setFillColor:lineColor];
+}
+
+- (UIColor *)fillColor
+{
+    return ((RMShape *)[self layer]).fillColor;
+}
+
 @end
