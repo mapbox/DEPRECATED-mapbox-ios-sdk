@@ -1,6 +1,7 @@
 //
-// MapBox.h
-// 
+//  RMGreatCircleAnnotation.m
+//  MapView
+//
 // Copyright (c) 2008-2013, Route-Me Contributors
 // All rights reserved.
 //
@@ -25,31 +26,13 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-// The list of header files for more convenient Route-Me import to projects.
-// (in alphabetic order)
+#import "RMShapeAnnotation.h"
 
-#import "RMAnnotation.h"
-#import "RMCacheObject.h"
-#import "RMCircle.h"
-#import "RMCircleAnnotation.h"
-#import "RMCompositeSource.h"
-#import "RMConfiguration.h"
-#import "RMCoordinateGridSource.h"
-#import "RMDatabaseCache.h"
-#import "RMGreatCircleAnnotation.h"
-#import "RMInteractiveSource.h"
-#import "RMMBTilesSource.h"
-#import "RMMapBoxSource.h"
-#import "RMMapView.h"
-#import "RMMapViewDelegate.h"
-#import "RMMarker.h"
-#import "RMMemoryCache.h"
-#import "RMPointAnnotation.h"
-#import "RMPolygonAnnotation.h"
-#import "RMPolylineAnnotation.h"
-#import "RMShape.h"
-#import "RMStaticMapView.h"
-#import "RMTileCache.h"
-#import "RMTileMillSource.h"
-#import "RMUserLocation.h"
-#import "RMUserTrackingBarButtonItem.h"
+@interface RMGreatCircleAnnotation : RMShapeAnnotation
+
+- (id)initWithMapView:(RMMapView *)aMapView coordinate1:(CLLocationCoordinate2D)coordinate1 coordinate2:(CLLocationCoordinate2D)coordinate2;
+
+@property (nonatomic, readonly, assign) CLLocationCoordinate2D coordinate1;
+@property (nonatomic, readonly, assign) CLLocationCoordinate2D coordinate2;
+
+@end

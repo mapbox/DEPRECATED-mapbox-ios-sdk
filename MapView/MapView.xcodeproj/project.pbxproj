@@ -112,6 +112,8 @@
 		DD5A200B15CAD09400FE4157 /* GRMustache.h in Headers */ = {isa = PBXBuildFile; fileRef = DD5A200A15CAD09400FE4157 /* GRMustache.h */; };
 		DD5FA1EB15E2B020004EB6C5 /* RMLoadingTileView.h in Headers */ = {isa = PBXBuildFile; fileRef = DD5FA1E915E2B020004EB6C5 /* RMLoadingTileView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD5FA1EC15E2B020004EB6C5 /* RMLoadingTileView.m in Sources */ = {isa = PBXBuildFile; fileRef = DD5FA1EA15E2B020004EB6C5 /* RMLoadingTileView.m */; };
+		DD63175F17D1506D008CA79B /* RMGreatCircleAnnotation.h in Headers */ = {isa = PBXBuildFile; fileRef = DD63175D17D1506D008CA79B /* RMGreatCircleAnnotation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DD63176017D1506D008CA79B /* RMGreatCircleAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = DD63175E17D1506D008CA79B /* RMGreatCircleAnnotation.m */; };
 		DD63176317D15EB5008CA79B /* RMCircleAnnotation.h in Headers */ = {isa = PBXBuildFile; fileRef = DD63176117D15EB5008CA79B /* RMCircleAnnotation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD63176417D15EB5008CA79B /* RMCircleAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = DD63176217D15EB5008CA79B /* RMCircleAnnotation.m */; };
 		DD7C7E38164C894F0021CCA5 /* RMStaticMapView.h in Headers */ = {isa = PBXBuildFile; fileRef = DD7C7E36164C894F0021CCA5 /* RMStaticMapView.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -274,6 +276,8 @@
 		DD5A200A15CAD09400FE4157 /* GRMustache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GRMustache.h; path = GRMustache/include/GRMustache.h; sourceTree = "<group>"; };
 		DD5FA1E915E2B020004EB6C5 /* RMLoadingTileView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMLoadingTileView.h; sourceTree = "<group>"; };
 		DD5FA1EA15E2B020004EB6C5 /* RMLoadingTileView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMLoadingTileView.m; sourceTree = "<group>"; };
+		DD63175D17D1506D008CA79B /* RMGreatCircleAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMGreatCircleAnnotation.h; sourceTree = "<group>"; };
+		DD63175E17D1506D008CA79B /* RMGreatCircleAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMGreatCircleAnnotation.m; sourceTree = "<group>"; };
 		DD63176117D15EB5008CA79B /* RMCircleAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMCircleAnnotation.h; sourceTree = "<group>"; };
 		DD63176217D15EB5008CA79B /* RMCircleAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMCircleAnnotation.m; sourceTree = "<group>"; };
 		DD6A83751644A20C0097F31F /* MapBox.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MapBox.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -509,6 +513,8 @@
 				DDE357F716522CD8001DB842 /* RMPolygonAnnotation.m */,
 				DD63176117D15EB5008CA79B /* RMCircleAnnotation.h */,
 				DD63176217D15EB5008CA79B /* RMCircleAnnotation.m */,
+				DD63175D17D1506D008CA79B /* RMGreatCircleAnnotation.h */,
+				DD63175E17D1506D008CA79B /* RMGreatCircleAnnotation.m */,
 				16FAB66213E03D55002F4E1C /* RMQuadTree.h */,
 				16FAB66313E03D55002F4E1C /* RMQuadTree.m */,
 				B86F26AC0E87442C007A3773 /* RMMapLayer.h */,
@@ -704,6 +710,7 @@
 				DDE357F816522CD8001DB842 /* RMPolygonAnnotation.h in Headers */,
 				DD1985C1165C5F6400DF667F /* RMTileMillSource.h in Headers */,
 				DD63176317D15EB5008CA79B /* RMCircleAnnotation.h in Headers */,
+				DD63175F17D1506D008CA79B /* RMGreatCircleAnnotation.h in Headers */,
 				B8C974220E8A19B2007D16AD /* RMProjection.h in Headers */,
 				B8C974260E8A19B2007D16AD /* RMTile.h in Headers */,
 				B8C974270E8A19B2007D16AD /* RMPixel.h in Headers */,
@@ -867,6 +874,7 @@
 				16128CF6148D295300C23C0E /* RMOpenSeaMapSource.m in Sources */,
 				DD2B374614CF8041008DE8CB /* FMDatabase.m in Sources */,
 				DD2B374814CF8041008DE8CB /* FMDatabaseAdditions.m in Sources */,
+				DD63176017D1506D008CA79B /* RMGreatCircleAnnotation.m in Sources */,
 				DD2B374A14CF8041008DE8CB /* FMResultSet.m in Sources */,
 				DD2B375014CF814F008DE8CB /* FMDatabasePool.m in Sources */,
 				DD2B375214CF814F008DE8CB /* FMDatabaseQueue.m in Sources */,
