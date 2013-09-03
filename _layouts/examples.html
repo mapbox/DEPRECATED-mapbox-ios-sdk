@@ -43,13 +43,11 @@ section: developers
             <img src='{{site.baseurl}}/images{{page.url | replace:'examples/',''}}.png'/>
           </div>
           <div id='code' class='doc'>
-          {% highlight objective-c %}
-      #import "MapBox.h"
-
-      {{content}}
-
-      @end
-          {% endhighlight %}
+{% highlight objective-c %}
+#import "MapBox.h"
+{{content}}
+@end
+{% endhighlight %}
           </div>
           <div class='keyline-top center small'>
             <div class='pad2'>
