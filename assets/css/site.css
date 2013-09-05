@@ -1,11 +1,6 @@
 .section-tasks .tooltip .tooltip { display:none; }
 .section-method ul *,
 .section-method dl * { display:inline; }
-.doc-search .icon {
-  position:absolute;
-  top:30px;
-  right:30px;
-  }
 
 .objective-c .hll { background-color: #ffffcc }
 .objective-c .c { color: #606060; font-style: italic } /* Comment */
