@@ -517,7 +517,65 @@
         }
     }
 
-    // TODO: distance scale, logo bug, and attribution button
+    if (_logoBug)
+    {
+        for (UIView *constraintView in @[ self, self.superview ])
+            for (NSLayoutConstraint *constraint in [constraintView.constraints copy])
+                if ([constraint.firstItem isEqual:_logoBug] || [constraint.secondItem isEqual:_logoBug])
+                    [constraintView removeConstraint:constraint];
+
+        if (self.bottomLayoutGuide)
+        {
+            [self.superview addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[logoBug]-4-[bottomLayoutGuide]"
+                                                                                   options:0
+                                                                                   metrics:nil
+                                                                                     views:@{ @"logoBug"           : _logoBug,
+                                                                                              @"bottomLayoutGuide" : self.bottomLayoutGuide }]];
+        }
+        else
+        {
+            [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[logoBug]-4-|"
+                                                                         options:0
+                                                                         metrics:nil
+                                                                           views:@{ @"logoBug" : _logoBug }]];
+        }
+
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-8-[logoBug]"
+                                                                     options:0
+                                                                     metrics:nil
+                                                                       views:@{ @"logoBug" : _logoBug }]];
+    }
+
+    if (_attributionButton)
+    {
+        for (UIView *constraintView in @[ self, self.superview ])
+            for (NSLayoutConstraint *constraint in [constraintView.constraints copy])
+                if ([constraint.firstItem isEqual:_attributionButton] || [constraint.secondItem isEqual:_attributionButton])
+                    [constraintView removeConstraint:constraint];
+
+        if (self.bottomLayoutGuide)
+        {
+            [self.superview addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[attributionButton]-8-[bottomLayoutGuide]"
+                                                                                   options:0
+                                                                                   metrics:nil
+                                                                                     views:@{ @"attributionButton" : _attributionButton,
+                                                                                              @"bottomLayoutGuide" : self.bottomLayoutGuide }]];
+        }
+        else
+        {
+            [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[attributionButton]-8-|"
+                                                                         options:0
+                                                                         metrics:nil
+                                                                           views:@{ @"attributionButton" : _attributionButton }]];
+        }
+
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[attributionButton]-8-|"
+                                                                     options:0
+                                                                     metrics:nil
+                                                                       views:@{ @"attributionButton" : _attributionButton }]];
+    }
+
+    // TODO: distance scale
 
     [super updateConstraints];
 }
@@ -2517,10 +2575,9 @@
     if (showLogoBug && ! _logoBug)
     {
         _logoBug = [[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"mapbox.png"]];
-
         _logoBug.frame = CGRectMake(8, self.bounds.size.height - _logoBug.bounds.size.height - 4, _logoBug.bounds.size.width, _logoBug.bounds.size.height);
         _logoBug.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin;
-
+        _logoBug.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_logoBug];
     }
     else if ( ! showLogoBug && _logoBug)
@@ -3652,16 +3709,13 @@
     if (_viewControllerPresentingAttribution && ! _attributionButton)
     {
         _attributionButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
-        
         _attributionButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
-        
+        _attributionButton.translatesAutoresizingMaskIntoConstraints = NO;
         [_attributionButton addTarget:self action:@selector(showAttribution:) forControlEvents:UIControlEventTouchUpInside];
-        
         _attributionButton.frame = CGRectMake(self.bounds.size.width  - 30,
                                               self.bounds.size.height - 30,
                                               _attributionButton.bounds.size.width,
                                               _attributionButton.bounds.size.height);
-
         [self addSubview:_attributionButton];
     }
     else if ( ! _viewControllerPresentingAttribution && _attributionButton)
