@@ -19,10 +19,15 @@
 
 #pragma mark -
 
+@interface RMAttributionViewController () <UIWebViewDelegate>
+
+@property (nonatomic, weak) RMMapView *mapView;
+
+@end
+
+#pragma mark -
+
 @implementation RMAttributionViewController
-{
-    RMMapView *_mapView;
-}
 
 - (id)initWithMapView:(RMMapView *)mapView
 {
