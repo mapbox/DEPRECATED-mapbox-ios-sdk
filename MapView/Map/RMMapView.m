@@ -69,7 +69,14 @@
 
 #pragma mark --- end constants ----
 
-@interface RMMapView (PrivateMethods) <UIScrollViewDelegate, UIGestureRecognizerDelegate, RMMapScrollViewDelegate, CLLocationManagerDelegate, SMCalloutViewDelegate>
+@interface RMMapView (PrivateMethods) <UIScrollViewDelegate,
+                                       UIGestureRecognizerDelegate,
+                                       RMMapScrollViewDelegate,
+                                       CLLocationManagerDelegate,
+                                       SMCalloutViewDelegate,
+                                       UIPopoverControllerDelegate,
+                                       UIViewControllerTransitioningDelegate,
+                                       UIViewControllerAnimatedTransitioning>
 
 @property (nonatomic, assign) UIViewController *viewControllerPresentingAttribution;
 @property (nonatomic, retain) RMUserLocation *userLocation;
@@ -183,6 +190,7 @@
 
     UIViewController *_viewControllerPresentingAttribution;
     UIButton *_attributionButton;
+    UIPopoverController *_attributionPopover;
 
     CGAffineTransform _mapTransform;
     CATransform3D _annotationTransform;
@@ -3729,11 +3737,99 @@
     if (_viewControllerPresentingAttribution)
     {
         RMAttributionViewController *attributionViewController = [[RMAttributionViewController alloc] initWithMapView:self];
-        
-        attributionViewController.modalTransitionStyle = UIModalTransitionStylePartialCurl;
-        
-        [_viewControllerPresentingAttribution presentViewController:attributionViewController animated:YES completion:nil];
+
+        if (RMPostVersion7)
+        {
+            attributionViewController.view.tintColor = self.tintColor;
+            attributionViewController.edgesForExtendedLayout = UIRectEdgeNone;
+
+            if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
+            {
+                // show popover
+                //
+                _attributionPopover = [[UIPopoverController alloc] initWithContentViewController:attributionViewController];
+                _attributionPopover.backgroundColor = [UIColor whiteColor];
+                _attributionPopover.popoverContentSize = CGSizeMake(320, 320);
+                _attributionPopover.delegate = self;
+                [_attributionPopover presentPopoverFromRect:_attributionButton.frame
+                                                     inView:self
+                                   permittedArrowDirections:UIPopoverArrowDirectionDown
+                                                   animated:NO];
+            }
+            else
+            {
+                // slide up see-through modal
+                //
+                attributionViewController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                                                                            target:self
+                                                                                                                            action:@selector(dismissAttribution:)];
+
+                UINavigationController *wrapper = [[UINavigationController alloc] initWithRootViewController:attributionViewController];
+                wrapper.navigationBar.tintColor = self.tintColor;
+                wrapper.modalPresentationStyle = UIModalPresentationCustom;
+                wrapper.transitioningDelegate = self;
+                [_viewControllerPresentingAttribution presentViewController:wrapper animated:YES completion:nil];
+            }
+        }
+        else
+        {
+            // page curl reveal behind map
+            //
+            attributionViewController.modalTransitionStyle = UIModalTransitionStylePartialCurl;
+            [_viewControllerPresentingAttribution presentViewController:attributionViewController animated:YES completion:nil];
+        }
     }
+}
+
+- (void)dismissAttribution:(id)sender
+{
+    _viewControllerPresentingAttribution.modalViewController.modalPresentationStyle = UIModalTransitionStyleCoverVertical;
+    [_viewControllerPresentingAttribution dismissModalViewControllerAnimated:YES];
+}
+
+- (void)popoverController:(UIPopoverController *)popoverController willRepositionPopoverToRect:(inout CGRect *)rect inView:(inout UIView **)view
+{
+    *rect = _attributionButton.frame;
+}
+
+- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
+{
+    _attributionPopover = nil;
+}
+
+- (id<UIViewControllerAnimatedTransitioning>)animationControllerForPresentedController:(UIViewController *)presented presentingController:(UIViewController *)presenting sourceController:(UIViewController *)source
+{
+    return self;
+}
+
+- (NSTimeInterval)transitionDuration:(id <UIViewControllerContextTransitioning>)transitionContext
+{
+    return (1.0 / 3.0);
+}
+
+- (void)animateTransition:(id <UIViewControllerContextTransitioning>)transitionContext
+{
+    UIView *inView   = [transitionContext containerView];
+    UIView *fromView = [[transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey] view];
+    UIView *toView   = [[transitionContext viewControllerForKey:UITransitionContextToViewControllerKey] view];
+
+    [inView addSubview:toView];
+
+    toView.center = CGPointMake(fromView.center.x, fromView.center.y + toView.bounds.size.height);
+
+    [UIView animateWithDuration:[self transitionDuration:transitionContext]
+                          delay:0
+                        options:UIViewAnimationOptionCurveEaseInOut
+                     animations:^(void)
+                     {
+                         toView.center = fromView.center;
+                     }
+                     completion:^(BOOL finished)
+                     {
+                         [transitionContext completeTransition:YES];
+                     }];
+
+    // TODO: fix landscape orientation
 }
 
 @end
