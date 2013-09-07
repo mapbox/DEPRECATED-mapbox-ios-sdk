@@ -1884,7 +1884,8 @@
         {
             _currentCallout = [SMCalloutView new];
 
-            _currentCallout.backgroundView = [SMCalloutBackgroundView systemBackgroundView];
+            if (RMPreVersion7)
+                _currentCallout.backgroundView = [SMCalloutBackgroundView systemBackgroundView];
 
             _currentCallout.title    = anAnnotation.title;
             _currentCallout.subtitle = anAnnotation.subtitle;
@@ -1962,6 +1963,14 @@
 
     contentOffset.x -= offset.width;
     contentOffset.y -= offset.height;
+
+    if (RMPostVersion7)
+    {
+        if (self.topLayoutGuide && contentOffset.y > _mapScrollView.contentOffset.y)
+            contentOffset.y += offset.height;
+        else if (self.topLayoutGuide && contentOffset.y < _mapScrollView.contentOffset.y)
+            contentOffset.y -= self.topLayoutGuide.length;
+    }
 
     [_mapScrollView setContentOffset:contentOffset animated:YES];
 
