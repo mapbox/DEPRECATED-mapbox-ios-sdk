@@ -1,6 +1,6 @@
 permalink: /:categories/:title
 baseurl: /mapbox-ios-sdk
 url: http://mapbox.com
-title: iOS SDK
-description: Open source alternative to MapKit
+title: MapBox iOS SDK
+description: Open source alternative to MapKit on iOS
 pygments: true
