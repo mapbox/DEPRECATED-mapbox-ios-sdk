@@ -2629,19 +2629,22 @@
 
 - (void)tintColorDidChange
 {
-    // update user dot
-    //
-    [self.userLocation updateTintColor];
+    if (CLLocationCoordinate2DIsValid(self.userLocation.coordinate))
+    {
+        // update user dot
+        //
+        [self.userLocation updateTintColor];
 
-    // update user halo
-    //
-    UIImage *haloImage = [self trackingDotHaloImage];
-    _userHaloTrackingView.image = haloImage;
-    [(RMMarker *)_trackingHaloAnnotation.layer replaceUIImage:haloImage];
+        // update user halo
+        //
+        UIImage *haloImage = [self trackingDotHaloImage];
+        _userHaloTrackingView.image = haloImage;
+        [(RMMarker *)_trackingHaloAnnotation.layer replaceUIImage:haloImage];
 
-    // update accuracy circle
-    //
-    ((RMCircle *)_accuracyCircleAnnotation.layer).fillColor = [self.tintColor colorWithAlphaComponent:0.1];
+        // update accuracy circle
+        //
+        ((RMCircle *)_accuracyCircleAnnotation.layer).fillColor = [self.tintColor colorWithAlphaComponent:0.1];
+    }
 }
 
 #pragma mark -
