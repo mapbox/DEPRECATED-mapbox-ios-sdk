@@ -30,7 +30,7 @@
 
 @class RMMapView, RMMapLayer, RMQuadTreeNode;
 
-/** An RMAnnotation defines a container for annotation data to be placed on a map. At a future point in time, depending on map use, a visible layer may be requested and displayed for the annotation. The layer can be set ahead of time using the annotation's layer property, or, in the recommended approach, can be provided by an RMMapView's delegate when first needed for display. 
+/** An RMAnnotation defines a container for annotation data to be placed on a map. At a future point in time, depending on map use, a visible layer may be requested and displayed for the annotation. The layer is provided by an RMMapView's delegate when first needed for display. 
 *
 *   Subclasses of RMAnnotation such as RMPointAnnotation, RMPolylineAnnotation, and RMPolygonAnnotation are useful for simple needs such as easily putting points and shapes onto a map view. They manage their own layer and don't require configuration in the map view delegate in order to be displayed. */
 @interface RMAnnotation : NSObject
