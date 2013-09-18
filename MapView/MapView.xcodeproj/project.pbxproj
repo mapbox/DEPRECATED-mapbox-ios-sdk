@@ -628,7 +628,6 @@
 			isa = PBXGroup;
 			children = (
 				DD280D1216EFDDD30014B549 /* examples.map-z2effxa8.json */,
-				DD280D1316EFDDD30014B549 /* examples.map-zswgei2n.json */,
 				DD932BA5165C287000D69D49 /* mapbox.png */,
 				DD932BA6165C287000D69D49 /* mapbox@2x.png */,
 				DDE68E5917D94C0500F1E869 /* mapbox-logo.png */,
