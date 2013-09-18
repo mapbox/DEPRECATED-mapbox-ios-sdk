@@ -127,7 +127,6 @@
 		DD932BB7165C287000D69D49 /* HeadingAngleSmall.png in Resources */ = {isa = PBXBuildFile; fileRef = DD932BA9165C287000D69D49 /* HeadingAngleSmall.png */; };
 		DD932BB8165C287000D69D49 /* HeadingAngleSmall@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DD932BAA165C287000D69D49 /* HeadingAngleSmall@2x.png */; };
 		DD932BB9165C287000D69D49 /* LoadingTile.png in Resources */ = {isa = PBXBuildFile; fileRef = DD932BAB165C287000D69D49 /* LoadingTile.png */; };
-		DD932BBA165C287000D69D49 /* LoadingTileZoom.png in Resources */ = {isa = PBXBuildFile; fileRef = DD932BAC165C287000D69D49 /* LoadingTileZoom.png */; };
 		DD932BBB165C287000D69D49 /* TrackingDotHalo.png in Resources */ = {isa = PBXBuildFile; fileRef = DD932BAD165C287000D69D49 /* TrackingDotHalo.png */; };
 		DD932BBC165C287000D69D49 /* TrackingDotHalo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DD932BAE165C287000D69D49 /* TrackingDotHalo@2x.png */; };
 		DD932BBD165C287000D69D49 /* TrackingHeading.png in Resources */ = {isa = PBXBuildFile; fileRef = DD932BAF165C287000D69D49 /* TrackingHeading.png */; };
@@ -156,6 +155,7 @@
 		DDA6B8BE155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = DDA6B8BC155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.m */; };
 		DDC4BED5152E3BD700089409 /* RMInteractiveSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DDC4BED3152E3BD700089409 /* RMInteractiveSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DDC4BEF2152E3FAE00089409 /* RMInteractiveSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DDC4BED4152E3BD700089409 /* RMInteractiveSource.m */; };
+		DDC8D28717E92ED100A4FB32 /* LoadingTile6.png in Resources */ = {isa = PBXBuildFile; fileRef = DDC8D28517E92ED100A4FB32 /* LoadingTile6.png */; };
 		DDE357E71651F570001DB842 /* RMPointAnnotation.h in Headers */ = {isa = PBXBuildFile; fileRef = DDE357E51651F570001DB842 /* RMPointAnnotation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DDE357E81651F570001DB842 /* RMPointAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = DDE357E61651F570001DB842 /* RMPointAnnotation.m */; };
 		DDE357F0165223A3001DB842 /* RMShapeAnnotation.h in Headers */ = {isa = PBXBuildFile; fileRef = DDE357EE165223A3001DB842 /* RMShapeAnnotation.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -302,7 +302,6 @@
 		DD932BA9165C287000D69D49 /* HeadingAngleSmall.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = HeadingAngleSmall.png; path = Map/Resources/HeadingAngleSmall.png; sourceTree = "<group>"; };
 		DD932BAA165C287000D69D49 /* HeadingAngleSmall@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "HeadingAngleSmall@2x.png"; path = "Map/Resources/HeadingAngleSmall@2x.png"; sourceTree = "<group>"; };
 		DD932BAB165C287000D69D49 /* LoadingTile.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = LoadingTile.png; path = Map/Resources/LoadingTile.png; sourceTree = "<group>"; };
-		DD932BAC165C287000D69D49 /* LoadingTileZoom.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = LoadingTileZoom.png; path = Map/Resources/LoadingTileZoom.png; sourceTree = "<group>"; };
 		DD932BAD165C287000D69D49 /* TrackingDotHalo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = TrackingDotHalo.png; path = Map/Resources/TrackingDotHalo.png; sourceTree = "<group>"; };
 		DD932BAE165C287000D69D49 /* TrackingDotHalo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "TrackingDotHalo@2x.png"; path = "Map/Resources/TrackingDotHalo@2x.png"; sourceTree = "<group>"; };
 		DD932BAF165C287000D69D49 /* TrackingHeading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = TrackingHeading.png; path = Map/Resources/TrackingHeading.png; sourceTree = "<group>"; };
@@ -331,6 +330,7 @@
 		DDA6B8BC155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMUserTrackingBarButtonItem.m; sourceTree = "<group>"; };
 		DDC4BED3152E3BD700089409 /* RMInteractiveSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMInteractiveSource.h; sourceTree = "<group>"; };
 		DDC4BED4152E3BD700089409 /* RMInteractiveSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMInteractiveSource.m; sourceTree = "<group>"; };
+		DDC8D28517E92ED100A4FB32 /* LoadingTile6.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = LoadingTile6.png; path = Map/Resources/LoadingTile6.png; sourceTree = "<group>"; };
 		DDE357E51651F570001DB842 /* RMPointAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMPointAnnotation.h; sourceTree = "<group>"; };
 		DDE357E61651F570001DB842 /* RMPointAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMPointAnnotation.m; sourceTree = "<group>"; };
 		DDE357EE165223A3001DB842 /* RMShapeAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMShapeAnnotation.h; sourceTree = "<group>"; };
@@ -641,7 +641,7 @@
 				DD94D46616C2E064003D5739 /* HeadingAngleLarge.png */,
 				DD94D46716C2E064003D5739 /* HeadingAngleLarge@2x.png */,
 				DD932BAB165C287000D69D49 /* LoadingTile.png */,
-				DD932BAC165C287000D69D49 /* LoadingTileZoom.png */,
+				DDC8D28517E92ED100A4FB32 /* LoadingTile6.png */,
 				DD932BA7165C287000D69D49 /* TrackingDot.png */,
 				DD932BA8165C287000D69D49 /* TrackingDot@2x.png */,
 				DD932BAD165C287000D69D49 /* TrackingDotHalo.png */,
@@ -851,7 +851,6 @@
 				DDA257071798A95600BBB325 /* Compass@2x.png in Resources */,
 				DD932BB8165C287000D69D49 /* HeadingAngleSmall@2x.png in Resources */,
 				DD932BB9165C287000D69D49 /* LoadingTile.png in Resources */,
-				DD932BBA165C287000D69D49 /* LoadingTileZoom.png in Resources */,
 				DDE68E5A17D94C0500F1E869 /* mapbox-logo.png in Resources */,
 				DD932BB5165C287000D69D49 /* TrackingDot.png in Resources */,
 				DD932BB6165C287000D69D49 /* TrackingDot@2x.png in Resources */,
@@ -862,6 +861,7 @@
 				DDA257061798A95600BBB325 /* TrackingHeadingMask@2x.png in Resources */,
 				DD932BBD165C287000D69D49 /* TrackingHeading.png in Resources */,
 				DDA2570B1798A95600BBB325 /* TrackingLocationMask.png in Resources */,
+				DDC8D28717E92ED100A4FB32 /* LoadingTile6.png in Resources */,
 				DD932BBE165C287000D69D49 /* TrackingHeading@2x.png in Resources */,
 				DDA257091798A95600BBB325 /* TrackingHeadingMask.png in Resources */,
 				DD932BBF165C287000D69D49 /* TrackingLocation.png in Resources */,

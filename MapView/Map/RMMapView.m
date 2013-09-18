@@ -246,7 +246,7 @@
     _lastDraggingTranslation = CGPointZero;
     _draggedAnnotation = nil;
 
-    self.backgroundColor = [UIColor grayColor];
+    self.backgroundColor = (RMPostVersion6 ? [UIColor colorWithRed:0.970 green:0.952 blue:0.912 alpha:1.000] : [UIColor grayColor]);
 
     self.clipsToBounds = YES;
 
