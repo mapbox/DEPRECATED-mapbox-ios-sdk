@@ -48,6 +48,7 @@
 #import "RMLoadingTileView.h"
 
 #import "RMUserLocation.h"
+#import "RMUserTrackingBarButtonItem.h"
 
 #import "RMAttributionViewController.h"
 
@@ -114,6 +115,14 @@
 @interface RMAnnotation (PrivateMethods)
 
 @property (nonatomic, assign) BOOL isUserLocationAnnotation;
+
+@end
+
+#pragma mark -
+
+@interface RMUserTrackingBarButtonItem (PrivateMethods)
+
+@property (nonatomic, assign) UIViewTintAdjustmentMode tintAdjustmentMode;
 
 @end
 
@@ -187,6 +196,8 @@
     UIImageView *_userLocationTrackingView;
     UIImageView *_userHeadingTrackingView;
     UIImageView *_userHaloTrackingView;
+
+    RMUserTrackingBarButtonItem *_userTrackingBarButtonItem;
 
     UIViewController *_viewControllerPresentingAttribution;
     UIButton *_attributionButton;
@@ -2645,6 +2656,15 @@
         //
         ((RMCircle *)_accuracyCircleAnnotation.layer).fillColor = [self.tintColor colorWithAlphaComponent:0.1];
     }
+
+    if (_userTrackingBarButtonItem)
+    {
+        if (self.tintAdjustmentMode == UIViewTintAdjustmentModeDimmed || _userTrackingBarButtonItem.tintAdjustmentMode == UIViewTintAdjustmentModeDimmed)
+        {
+            _userTrackingBarButtonItem.tintAdjustmentMode = self.tintAdjustmentMode;
+            _userTrackingBarButtonItem.tintColor = self.tintColor;
+        }
+    }
 }
 
 #pragma mark -
@@ -3724,6 +3744,11 @@
 
         return finalImage;
     }
+}
+
+- (void)setUserTrackingBarButtonItem:(RMUserTrackingBarButtonItem *)userTrackingBarButtonItem
+{
+    _userTrackingBarButtonItem = userTrackingBarButtonItem;
 }
 
 #pragma mark -

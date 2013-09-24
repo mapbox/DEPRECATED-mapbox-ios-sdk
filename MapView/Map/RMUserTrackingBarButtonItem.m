@@ -38,12 +38,21 @@ typedef enum {
     RMUserTrackingButtonStateHeading  = 3
 } RMUserTrackingButtonState;
 
+@interface RMMapView (PrivateMethods)
+
+@property (nonatomic, weak) RMUserTrackingBarButtonItem *userTrackingBarButtonItem;
+
+@end
+
+#pragma mark -
+
 @interface RMUserTrackingBarButtonItem ()
 
 @property (nonatomic, strong) UISegmentedControl *segmentedControl;
 @property (nonatomic, strong) UIImageView *buttonImageView;
 @property (nonatomic, strong) UIActivityIndicatorView *activityView;
 @property (nonatomic, assign) RMUserTrackingButtonState state;
+@property (nonatomic, assign) UIViewTintAdjustmentMode tintAdjustmentMode;
 
 - (void)createBarButtonItem;
 - (void)updateState;
@@ -138,6 +147,8 @@ typedef enum {
         _mapView = newMapView;
         [_mapView addObserver:self forKeyPath:@"userTrackingMode"      options:NSKeyValueObservingOptionNew context:nil];
         [_mapView addObserver:self forKeyPath:@"userLocation.location" options:NSKeyValueObservingOptionNew context:nil];
+
+        _mapView.userTrackingBarButtonItem = self;
 
         [self updateState];
     }
