@@ -2644,6 +2644,8 @@
 
 - (void)tintColorDidChange
 {
+    // update user location annotations
+    //
     if (CLLocationCoordinate2DIsValid(self.userLocation.coordinate))
     {
         // update user dot
@@ -2661,6 +2663,8 @@
         ((RMCircle *)_accuracyCircleAnnotation.layer).fillColor = [self.tintColor colorWithAlphaComponent:0.1];
     }
 
+    // update tracking button
+    //
     if (_userTrackingBarButtonItem)
     {
         if (self.tintAdjustmentMode == UIViewTintAdjustmentModeDimmed || _userTrackingBarButtonItem.tintAdjustmentMode == UIViewTintAdjustmentModeDimmed)
@@ -2670,6 +2674,8 @@
         }
     }
 
+    // update point annotations with managed layers
+    //
     for (RMAnnotation *annotation in self.annotations)
     {
         if ([annotation isKindOfClass:[RMPointAnnotation class]] && annotation.isAnnotationVisibleOnScreen)
@@ -2682,6 +2688,8 @@
 
     [self correctPositionOfAllAnnotations];
 
+    // update callout view hierarchy
+    //
     if (_currentCallout)
         _currentCallout.tintColor = self.tintColor;
 }
