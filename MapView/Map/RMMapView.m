@@ -36,6 +36,7 @@
 #import "RMShape.h"
 #import "RMAnnotation.h"
 #import "RMQuadTree.h"
+#import "RMPointAnnotation.h"
 
 #import "RMFractalTileProjection.h"
 
@@ -2668,6 +2669,18 @@
             _userTrackingBarButtonItem.tintColor = self.tintColor;
         }
     }
+
+    for (RMAnnotation *annotation in self.annotations)
+    {
+        if ([annotation isKindOfClass:[RMPointAnnotation class]] && annotation.isAnnotationVisibleOnScreen)
+        {
+            [annotation.layer removeFromSuperlayer];
+            annotation.layer = nil;
+            [_overlayView addSublayer:annotation.layer];
+        }
+    }
+
+    [self correctPositionOfAllAnnotations];
 
     if (_currentCallout)
         _currentCallout.tintColor = self.tintColor;
