@@ -2676,6 +2676,8 @@
 
     // update point annotations with managed layers
     //
+    BOOL updatePoints;
+
     for (RMAnnotation *annotation in self.annotations)
     {
         if ([annotation isKindOfClass:[RMPointAnnotation class]] && annotation.isAnnotationVisibleOnScreen)
@@ -2683,10 +2685,12 @@
             [annotation.layer removeFromSuperlayer];
             annotation.layer = nil;
             [_overlayView addSublayer:annotation.layer];
+            updatePoints = YES;
         }
     }
 
-    [self correctPositionOfAllAnnotations];
+    if (updatePoints)
+        [self correctPositionOfAllAnnotations];
 
     // update callout view hierarchy
     //
