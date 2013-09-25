@@ -127,12 +127,18 @@ typedef enum {
     [((UIControl *)self.customView) addTarget:self action:@selector(changeMode:) forControlEvents:UIControlEventTouchUpInside];
 
     _state = RMUserTrackingButtonStateNone;
+
+    [self updateSize:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateSize:) name:UIApplicationWillChangeStatusBarOrientationNotification object:nil];
 }
 
 - (void)dealloc
 {
     [_mapView removeObserver:self forKeyPath:@"userTrackingMode"];
     [_mapView removeObserver:self forKeyPath:@"userLocation.location"];
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillChangeStatusBarOrientationNotification object:nil];
 }
 
 #pragma mark -
@@ -172,6 +178,21 @@ typedef enum {
 }
 
 #pragma mark -
+
+- (void)updateSize:(NSNotification *)notification
+{
+    NSInteger orientation = (notification ? [[notification.userInfo objectForKey:UIApplicationStatusBarOrientationUserInfoKey] integerValue] : [[UIApplication sharedApplication] statusBarOrientation]);
+
+    CGFloat dimension = (UIInterfaceOrientationIsPortrait(orientation) ? (RMPostVersion7 ? 36 : 32) : 24);
+
+    self.customView.bounds = _buttonImageView.bounds = _segmentedControl.bounds = CGRectMake(0, 0, dimension, dimension);
+    [_segmentedControl setWidth:dimension forSegmentAtIndex:0];
+    self.width = dimension;
+
+    _segmentedControl.center = _buttonImageView.center = _activityView.center = CGPointMake(dimension / 2, dimension / 2 - (RMPostVersion7 ? 1 : 0));
+
+    [self updateImage];
+}
 
 - (void)updateImage
 {
