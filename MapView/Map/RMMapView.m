@@ -1898,6 +1898,9 @@
             if (RMPreVersion7)
                 _currentCallout.backgroundView = [SMCalloutBackgroundView systemBackgroundView];
 
+            if (RMPostVersion7)
+                _currentCallout.tintColor = self.tintColor;
+
             _currentCallout.title    = anAnnotation.title;
             _currentCallout.subtitle = anAnnotation.subtitle;
 
@@ -2665,6 +2668,9 @@
             _userTrackingBarButtonItem.tintColor = self.tintColor;
         }
     }
+
+    if (_currentCallout)
+        _currentCallout.tintColor = self.tintColor;
 }
 
 #pragma mark -
