@@ -2661,6 +2661,17 @@
         // update accuracy circle
         //
         ((RMCircle *)_accuracyCircleAnnotation.layer).fillColor = [self.tintColor colorWithAlphaComponent:0.1];
+
+        // update heading tracking views
+        //
+        if (self.userTrackingMode == RMUserTrackingModeFollowWithHeading)
+        {
+            _userHeadingTrackingView.image  = [self headingAngleImageForAccuracy:_locationManager.heading.headingAccuracy];
+            _userHaloTrackingView.image     = [self trackingDotHaloImage];
+            _userLocationTrackingView.image = [UIImage imageWithCGImage:(CGImageRef)self.userLocation.layer.contents
+                                                                  scale:self.userLocation.layer.contentsScale
+                                                            orientation:UIImageOrientationUp];
+        }
     }
 
     // update tracking button
