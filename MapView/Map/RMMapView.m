@@ -194,9 +194,7 @@
     RMAnnotation *_accuracyCircleAnnotation;
     RMAnnotation *_trackingHaloAnnotation;
 
-    UIImageView *_userLocationTrackingView;
     UIImageView *_userHeadingTrackingView;
-    UIImageView *_userHaloTrackingView;
 
     RMUserTrackingBarButtonItem *_userTrackingBarButtonItem;
 
@@ -2654,9 +2652,7 @@
 
         // update user halo
         //
-        UIImage *haloImage = [self trackingDotHaloImage];
-        _userHaloTrackingView.image = haloImage;
-        [(RMMarker *)_trackingHaloAnnotation.layer replaceUIImage:haloImage];
+        [(RMMarker *)_trackingHaloAnnotation.layer replaceUIImage:[self trackingDotHaloImage]];
 
         // update accuracy circle
         //
@@ -2665,13 +2661,7 @@
         // update heading tracking views
         //
         if (self.userTrackingMode == RMUserTrackingModeFollowWithHeading)
-        {
             _userHeadingTrackingView.image  = [self headingAngleImageForAccuracy:_locationManager.heading.headingAccuracy];
-            _userHaloTrackingView.image     = [self trackingDotHaloImage];
-            _userLocationTrackingView.image = [UIImage imageWithCGImage:(CGImageRef)self.userLocation.layer.contents
-                                                                  scale:self.userLocation.layer.contentsScale
-                                                            orientation:UIImageOrientationUp];
-        }
     }
 
     // update tracking button
@@ -2965,7 +2955,7 @@
             if (annotation.layer == nil)
                 continue;
 
-            if ([annotation.layer isKindOfClass:[RMMarker class]] && ! annotation.isUserLocationAnnotation)
+            if ([annotation.layer isKindOfClass:[RMMarker class]])
                 annotation.layer.transform = _annotationTransform;
 
             // Use the zPosition property to order the layer hierarchy
@@ -3020,7 +3010,7 @@
                         if (annotation.layer == nil)
                             continue;
 
-                        if ([annotation.layer isKindOfClass:[RMMarker class]] && ! annotation.isUserLocationAnnotation)
+                        if ([annotation.layer isKindOfClass:[RMMarker class]])
                             annotation.layer.transform = _annotationTransform;
 
                         if (![_visibleAnnotations containsObject:annotation])
@@ -3330,21 +3320,15 @@
                                  _compassButton.alpha = 0;
 
                                  for (RMAnnotation *annotation in _annotations)
-                                     if ([annotation.layer isKindOfClass:[RMMarker class]] && ! annotation.isUserLocationAnnotation)
+                                     if ([annotation.layer isKindOfClass:[RMMarker class]])
                                          annotation.layer.transform = _annotationTransform;
                              }
                              completion:nil];
 
             [CATransaction commit];
 
-            if (_userLocationTrackingView || _userHeadingTrackingView || _userHaloTrackingView)
-            {
-                [_userLocationTrackingView removeFromSuperview]; _userLocationTrackingView = nil;
+            if (_userHeadingTrackingView)
                 [_userHeadingTrackingView removeFromSuperview]; _userHeadingTrackingView = nil;
-                [_userHaloTrackingView removeFromSuperview]; _userHaloTrackingView = nil;
-            }
-
-            self.userLocation.layer.hidden = NO;
 
             break;
         }
@@ -3360,12 +3344,8 @@
                 [self locationManager:_locationManager didUpdateToLocation:self.userLocation.location fromLocation:self.userLocation.location];
                 #pragma clang diagnostic pop
 
-            if (_userLocationTrackingView || _userHeadingTrackingView || _userHaloTrackingView)
-            {
-                [_userLocationTrackingView removeFromSuperview]; _userLocationTrackingView = nil;
+            if (_userHeadingTrackingView)
                 [_userHeadingTrackingView removeFromSuperview]; _userHeadingTrackingView = nil;
-                [_userHaloTrackingView removeFromSuperview]; _userHaloTrackingView = nil;
-            }
 
             [CATransaction setAnimationDuration:0.5];
             [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
@@ -3385,34 +3365,18 @@
                                  _compassButton.alpha = 0;
 
                                  for (RMAnnotation *annotation in _annotations)
-                                     if ([annotation.layer isKindOfClass:[RMMarker class]] && ! annotation.isUserLocationAnnotation)
+                                     if ([annotation.layer isKindOfClass:[RMMarker class]])
                                          annotation.layer.transform = _annotationTransform;
                              }
                              completion:nil];
 
             [CATransaction commit];
 
-            self.userLocation.layer.hidden = NO;
-
             break;
         }
         case RMUserTrackingModeFollowWithHeading:
         {
             self.showsUserLocation = YES;
-
-            self.userLocation.layer.hidden = YES;
-
-            _userHaloTrackingView = [[UIImageView alloc] initWithImage:[self trackingDotHaloImage]];
-
-            _userHaloTrackingView.center = CGPointMake(round([self bounds].size.width  / 2),
-                                                       round([self bounds].size.height / 2));
-
-            _userHaloTrackingView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin  |
-                                                     UIViewAutoresizingFlexibleRightMargin |
-                                                     UIViewAutoresizingFlexibleTopMargin   |
-                                                     UIViewAutoresizingFlexibleBottomMargin;
-
-            [self insertSubview:_userHaloTrackingView belowSubview:_overlayView];
 
             _userHeadingTrackingView = [[UIImageView alloc] initWithImage:[self headingAngleImageForAccuracy:MAXFLOAT]];
 
@@ -3431,20 +3395,6 @@
             _userHeadingTrackingView.alpha = 0.0;
 
             [self insertSubview:_userHeadingTrackingView belowSubview:_overlayView];
-
-            _userLocationTrackingView = [[UIImageView alloc] initWithImage:[UIImage imageWithCGImage:(CGImageRef)self.userLocation.layer.contents
-                                                                                               scale:self.userLocation.layer.contentsScale
-                                                                                         orientation:UIImageOrientationUp]];
-
-            _userLocationTrackingView.center = CGPointMake(round([self bounds].size.width  / 2), 
-                                                           round([self bounds].size.height / 2));
-
-            _userLocationTrackingView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin  |
-                                                         UIViewAutoresizingFlexibleRightMargin |
-                                                         UIViewAutoresizingFlexibleTopMargin   |
-                                                         UIViewAutoresizingFlexibleBottomMargin;
-            
-            [self insertSubview:_userLocationTrackingView aboveSubview:_userHeadingTrackingView];
 
             if (self.zoom < 3)
                 [self zoomByFactor:exp2f(3 - [self zoom]) near:self.center animated:YES];
@@ -3625,25 +3575,11 @@
     if ([newLocation distanceFromLocation:oldLocation])
         _trackingHaloAnnotation.coordinate = newLocation.coordinate;
 
-    self.userLocation.layer.hidden = ( ! CLLocationCoordinate2DIsValid(self.userLocation.coordinate) || self.userTrackingMode == RMUserTrackingModeFollowWithHeading);
-
-    if (_userLocationTrackingView)
-        _userLocationTrackingView.hidden = ! CLLocationCoordinate2DIsValid(self.userLocation.coordinate);
+    self.userLocation.layer.hidden = ( ! CLLocationCoordinate2DIsValid(self.userLocation.coordinate));
 
     _accuracyCircleAnnotation.layer.hidden = newLocation.horizontalAccuracy <= 10 || self.userLocation.hasCustomLayer;
 
     _trackingHaloAnnotation.layer.hidden = ( ! CLLocationCoordinate2DIsValid(self.userLocation.coordinate) || newLocation.horizontalAccuracy > 10 || self.userTrackingMode == RMUserTrackingModeFollowWithHeading || self.userLocation.hasCustomLayer);
-
-    if (_userHaloTrackingView)
-    {
-        _userHaloTrackingView.hidden = ( ! CLLocationCoordinate2DIsValid(self.userLocation.coordinate) || newLocation.horizontalAccuracy > 10 || self.userLocation.hasCustomLayer);
-
-        // ensure animations are copied from layer
-        //
-        if ( ! [_userHaloTrackingView.layer.animationKeys count])
-            for (NSString *animationKey in _trackingHaloAnnotation.layer.animationKeys)
-                [_userHaloTrackingView.layer addAnimation:[[_trackingHaloAnnotation.layer animationForKey:animationKey] copy] forKey:animationKey];
-    }
 
     if ( ! [_annotations containsObject:self.userLocation])
         [self addAnnotation:self.userLocation];
@@ -3695,7 +3631,7 @@
                              _compassButton.alpha = 1.0;
 
                              for (RMAnnotation *annotation in _annotations)
-                                 if ([annotation.layer isKindOfClass:[RMMarker class]] && ! annotation.isUserLocationAnnotation)
+                                 if ([annotation.layer isKindOfClass:[RMMarker class]])
                                      annotation.layer.transform = _annotationTransform;
 
                              [self correctPositionOfAllAnnotations];
