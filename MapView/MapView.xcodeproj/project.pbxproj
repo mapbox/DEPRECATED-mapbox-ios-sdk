@@ -83,6 +83,12 @@
 		B8F3FC650EA2E792004D8F85 /* RMMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = B8F3FC630EA2E792004D8F85 /* RMMarker.m */; };
 		D1437B36122869E400888DAE /* RMDBMapSource.m in Sources */ = {isa = PBXBuildFile; fileRef = D1437B32122869E400888DAE /* RMDBMapSource.m */; };
 		D1437B37122869E400888DAE /* RMDBMapSource.h in Headers */ = {isa = PBXBuildFile; fileRef = D1437B33122869E400888DAE /* RMDBMapSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DD07A23817F3AF9800E420B2 /* HeadingAngleMaskSmall.png in Resources */ = {isa = PBXBuildFile; fileRef = DD07A23217F3AF9800E420B2 /* HeadingAngleMaskSmall.png */; };
+		DD07A23917F3AF9800E420B2 /* HeadingAngleMaskMedium.png in Resources */ = {isa = PBXBuildFile; fileRef = DD07A23317F3AF9800E420B2 /* HeadingAngleMaskMedium.png */; };
+		DD07A23A17F3AF9800E420B2 /* HeadingAngleMaskLarge.png in Resources */ = {isa = PBXBuildFile; fileRef = DD07A23417F3AF9800E420B2 /* HeadingAngleMaskLarge.png */; };
+		DD07A23B17F3AF9800E420B2 /* HeadingAngleMaskSmall@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DD07A23517F3AF9800E420B2 /* HeadingAngleMaskSmall@2x.png */; };
+		DD07A23C17F3AF9800E420B2 /* HeadingAngleMaskMedium@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DD07A23617F3AF9800E420B2 /* HeadingAngleMaskMedium@2x.png */; };
+		DD07A23D17F3AF9800E420B2 /* HeadingAngleMaskLarge@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DD07A23717F3AF9800E420B2 /* HeadingAngleMaskLarge@2x.png */; };
 		DD1985C1165C5F6400DF667F /* RMTileMillSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DD1985BF165C5F6400DF667F /* RMTileMillSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD1985C2165C5F6400DF667F /* RMTileMillSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD1985C0165C5F6400DF667F /* RMTileMillSource.m */; };
 		DD1E3C6E161F954F004FC649 /* SMCalloutView.h in Headers */ = {isa = PBXBuildFile; fileRef = DD1E3C6C161F954F004FC649 /* SMCalloutView.h */; };
@@ -257,6 +263,12 @@
 		B8F3FC630EA2E792004D8F85 /* RMMarker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMarker.m; sourceTree = "<group>"; };
 		D1437B32122869E400888DAE /* RMDBMapSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMDBMapSource.m; sourceTree = "<group>"; };
 		D1437B33122869E400888DAE /* RMDBMapSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMDBMapSource.h; sourceTree = "<group>"; };
+		DD07A23217F3AF9800E420B2 /* HeadingAngleMaskSmall.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = HeadingAngleMaskSmall.png; path = Map/Resources/HeadingAngleMaskSmall.png; sourceTree = "<group>"; };
+		DD07A23317F3AF9800E420B2 /* HeadingAngleMaskMedium.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = HeadingAngleMaskMedium.png; path = Map/Resources/HeadingAngleMaskMedium.png; sourceTree = "<group>"; };
+		DD07A23417F3AF9800E420B2 /* HeadingAngleMaskLarge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = HeadingAngleMaskLarge.png; path = Map/Resources/HeadingAngleMaskLarge.png; sourceTree = "<group>"; };
+		DD07A23517F3AF9800E420B2 /* HeadingAngleMaskSmall@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "HeadingAngleMaskSmall@2x.png"; path = "Map/Resources/HeadingAngleMaskSmall@2x.png"; sourceTree = "<group>"; };
+		DD07A23617F3AF9800E420B2 /* HeadingAngleMaskMedium@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "HeadingAngleMaskMedium@2x.png"; path = "Map/Resources/HeadingAngleMaskMedium@2x.png"; sourceTree = "<group>"; };
+		DD07A23717F3AF9800E420B2 /* HeadingAngleMaskLarge@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "HeadingAngleMaskLarge@2x.png"; path = "Map/Resources/HeadingAngleMaskLarge@2x.png"; sourceTree = "<group>"; };
 		DD1985BF165C5F6400DF667F /* RMTileMillSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMTileMillSource.h; sourceTree = "<group>"; };
 		DD1985C0165C5F6400DF667F /* RMTileMillSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMTileMillSource.m; sourceTree = "<group>"; };
 		DD1E3C6C161F954F004FC649 /* SMCalloutView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMCalloutView.h; path = SMCalloutView/SMCalloutView.h; sourceTree = "<group>"; };
@@ -640,6 +652,12 @@
 				DD94D46916C2E064003D5739 /* HeadingAngleMedium@2x.png */,
 				DD94D46616C2E064003D5739 /* HeadingAngleLarge.png */,
 				DD94D46716C2E064003D5739 /* HeadingAngleLarge@2x.png */,
+				DD07A23217F3AF9800E420B2 /* HeadingAngleMaskSmall.png */,
+				DD07A23517F3AF9800E420B2 /* HeadingAngleMaskSmall@2x.png */,
+				DD07A23317F3AF9800E420B2 /* HeadingAngleMaskMedium.png */,
+				DD07A23617F3AF9800E420B2 /* HeadingAngleMaskMedium@2x.png */,
+				DD07A23417F3AF9800E420B2 /* HeadingAngleMaskLarge.png */,
+				DD07A23717F3AF9800E420B2 /* HeadingAngleMaskLarge@2x.png */,
 				DD932BAB165C287000D69D49 /* LoadingTile.png */,
 				DDC8D28517E92ED100A4FB32 /* LoadingTile6.png */,
 				DD932BA7165C287000D69D49 /* TrackingDot.png */,
@@ -848,6 +866,9 @@
 				DD932BB3165C287000D69D49 /* mapbox.png in Resources */,
 				DD932BB4165C287000D69D49 /* mapbox@2x.png in Resources */,
 				DD932BB7165C287000D69D49 /* HeadingAngleSmall.png in Resources */,
+				DD07A23A17F3AF9800E420B2 /* HeadingAngleMaskLarge.png in Resources */,
+				DD07A23C17F3AF9800E420B2 /* HeadingAngleMaskMedium@2x.png in Resources */,
+				DD07A23917F3AF9800E420B2 /* HeadingAngleMaskMedium.png in Resources */,
 				DDA257071798A95600BBB325 /* Compass@2x.png in Resources */,
 				DD932BB8165C287000D69D49 /* HeadingAngleSmall@2x.png in Resources */,
 				DD932BB9165C287000D69D49 /* LoadingTile.png in Resources */,
@@ -870,11 +891,14 @@
 				DDA257011798A95600BBB325 /* TrackingLocationOffMaskLandscape@2x.png in Resources */,
 				DDA257041798A95600BBB325 /* TrackingLocationMask@2x.png in Resources */,
 				DDA257081798A95600BBB325 /* Compass.png in Resources */,
+				DD07A23817F3AF9800E420B2 /* HeadingAngleMaskSmall.png in Resources */,
 				DD94D46A16C2E064003D5739 /* HeadingAngleLarge.png in Resources */,
 				DD94D46B16C2E064003D5739 /* HeadingAngleLarge@2x.png in Resources */,
+				DD07A23D17F3AF9800E420B2 /* HeadingAngleMaskLarge@2x.png in Resources */,
 				DD94D46C16C2E064003D5739 /* HeadingAngleMedium.png in Resources */,
 				DD94D46D16C2E064003D5739 /* HeadingAngleMedium@2x.png in Resources */,
 				DD280D1416EFDDD30014B549 /* examples.map-z2effxa8.json in Resources */,
+				DD07A23B17F3AF9800E420B2 /* HeadingAngleMaskSmall@2x.png in Resources */,
 				DD36766B17D94F980001F27B /* mapbox-logo@2x.png in Resources */,
 				DDA257021798A95600BBB325 /* TrackingLocationOffMask@2x.png in Resources */,
 			);

@@ -3403,7 +3403,7 @@
 
             [self insertSubview:_userHaloTrackingView belowSubview:_overlayView];
 
-            _userHeadingTrackingView = [[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"HeadingAngleLarge.png"]];
+            _userHeadingTrackingView = [[UIImageView alloc] initWithImage:[self headingAngleImageForAccuracy:MAXFLOAT]];
 
             _userHeadingTrackingView.frame = CGRectMake((self.bounds.size.width  / 2) - (_userHeadingTrackingView.bounds.size.width / 2),
                                                         (self.bounds.size.height / 2) - _userHeadingTrackingView.bounds.size.height,
@@ -3651,12 +3651,7 @@
     if ( ! _showsUserLocation || _mapScrollView.isDragging || newHeading.headingAccuracy < 0)
         return;
 
-    if (newHeading.headingAccuracy > 40)
-        _userHeadingTrackingView.image = [RMMapView resourceImageNamed:@"HeadingAngleLarge.png"];
-    else if (newHeading.headingAccuracy >= 25 && newHeading.headingAccuracy <= 40)
-        _userHeadingTrackingView.image = [RMMapView resourceImageNamed:@"HeadingAngleMedium.png"];
-    else
-        _userHeadingTrackingView.image = [RMMapView resourceImageNamed:@"HeadingAngleSmall.png"];
+    _userHeadingTrackingView.image = [self headingAngleImageForAccuracy:newHeading.headingAccuracy];
 
     self.userLocation.heading = newHeading;
 
@@ -3775,6 +3770,33 @@
 
         return finalImage;
     }
+}
+
+- (UIImage *)headingAngleImageForAccuracy:(CLLocationDirection)accuracy
+{
+    NSString *sizeString;
+
+    if (accuracy > 40)
+        sizeString = @"Large";
+    else if (accuracy >= 25 && accuracy <= 40)
+        sizeString = @"Medium";
+    else
+        sizeString = @"Small";
+
+    UIImage *headingAngleImage = [RMMapView resourceImageNamed:[NSString stringWithFormat:@"HeadingAngle%@%@.png", (RMPostVersion7 ? @"Mask" : @""), sizeString]];
+
+    if (RMPostVersion7)
+    {
+        UIGraphicsBeginImageContextWithOptions(headingAngleImage.size, NO, [[UIScreen mainScreen] scale]);
+        [headingAngleImage drawAtPoint:CGPointMake(0, 0)];
+        CGContextSetBlendMode(UIGraphicsGetCurrentContext(), kCGBlendModeSourceIn);
+        CGContextSetFillColorWithColor(UIGraphicsGetCurrentContext(), [self.tintColor CGColor]);
+        CGContextFillRect(UIGraphicsGetCurrentContext(), CGRectMake(0, 0, headingAngleImage.size.width, headingAngleImage.size.height));
+        headingAngleImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+    }
+
+    return headingAngleImage;
 }
 
 - (void)setUserTrackingBarButtonItem:(RMUserTrackingBarButtonItem *)userTrackingBarButtonItem
