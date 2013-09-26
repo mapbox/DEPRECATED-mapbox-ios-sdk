@@ -232,16 +232,42 @@ typedef enum {
 
         UIGraphicsEndImageContext();
 
-        if (_mapView.userTrackingMode == RMUserTrackingModeFollow || _mapView.userTrackingMode == RMUserTrackingModeFollowWithHeading)
+        CABasicAnimation *backgroundColorAnimation = [CABasicAnimation animationWithKeyPath:@"backgroundColor"];
+        CABasicAnimation *cornerRadiusAnimation    = [CABasicAnimation animationWithKeyPath:@"cornerRadius"];
+
+        backgroundColorAnimation.duration = cornerRadiusAnimation.duration = 0.25;
+
+        CGColorRef filledColor = [[self.tintColor colorWithAlphaComponent:0.1] CGColor];
+        CGColorRef clearColor  = [[UIColor clearColor] CGColor];
+
+        CGFloat onRadius  = 4.0;
+        CGFloat offRadius = 0;
+
+        if (_mapView.userTrackingMode != RMUserTrackingModeNone && self.customView.layer.cornerRadius != onRadius)
         {
-            _buttonImageView.layer.backgroundColor = CGColorCreateCopyWithAlpha(self.tintColor.CGColor, 0.1);
-            _buttonImageView.layer.cornerRadius    = 4;
+            backgroundColorAnimation.fromValue = (__bridge id)clearColor;
+            backgroundColorAnimation.toValue   = (__bridge id)filledColor;
+
+            cornerRadiusAnimation.fromValue = @(offRadius);
+            cornerRadiusAnimation.toValue   = @(onRadius);
+
+            self.customView.layer.backgroundColor = filledColor;
+            self.customView.layer.cornerRadius    = onRadius;
         }
-        else
+        else if (_mapView.userTrackingMode == RMUserTrackingModeNone && self.customView.layer.cornerRadius != offRadius)
         {
-            _buttonImageView.layer.backgroundColor = [[UIColor clearColor] CGColor];
-            _buttonImageView.layer.cornerRadius    = 0;
+            backgroundColorAnimation.fromValue = (__bridge id)filledColor;
+            backgroundColorAnimation.toValue   = (__bridge id)clearColor;
+
+            cornerRadiusAnimation.fromValue = @(onRadius);
+            cornerRadiusAnimation.toValue   = @(offRadius);
+
+            self.customView.layer.backgroundColor = clearColor;
+            self.customView.layer.cornerRadius    = offRadius;
         }
+
+        [self.customView.layer addAnimation:backgroundColorAnimation forKey:@"animateBackgroundColor"];
+        [self.customView.layer addAnimation:cornerRadiusAnimation    forKey:@"animateCornerRadius"];
     }
 }
 
@@ -287,15 +313,35 @@ typedef enum {
             (_mapView.userTrackingMode == RMUserTrackingModeFollow            && _state != RMUserTrackingButtonStateLocation) ||
             (_mapView.userTrackingMode == RMUserTrackingModeFollowWithHeading && _state != RMUserTrackingButtonStateHeading))
         {
-            // if image state doesn't match mode, update it
+            // we'll always animate if leaving activity state
             //
+            __block BOOL animate = (_state == RMUserTrackingButtonStateActivity);
+
             [UIView animateWithDuration:0.25
                                   delay:0.0
                                 options:UIViewAnimationOptionBeginFromCurrentState
                              animations:^(void)
                              {
-                                 _buttonImageView.transform = CGAffineTransformMakeScale(0.01, 0.01);
-                                 _activityView.transform    = CGAffineTransformMakeScale(0.01, 0.01);
+                                 if (_state == RMUserTrackingButtonStateHeading &&
+                                     _mapView.userTrackingMode != RMUserTrackingModeFollowWithHeading)
+                                 {
+                                     // coming out of heading mode
+                                     //
+                                     animate = YES;
+                                 }
+                                 else if ((_state != RMUserTrackingButtonStateHeading) &&
+                                          _mapView.userTrackingMode == RMUserTrackingModeFollowWithHeading)
+                                 {
+                                     // going into heading mode
+                                     //
+                                     animate = YES;
+                                 }
+
+                                 if (animate)
+                                     _buttonImageView.transform = CGAffineTransformMakeScale(0.01, 0.01);
+
+                                 if (_state == RMUserTrackingButtonStateActivity)
+                                     _activityView.transform = CGAffineTransformMakeScale(0.01, 0.01);
                              }
                              completion:^(BOOL finished)
                              {
@@ -303,12 +349,16 @@ typedef enum {
 
                                  _buttonImageView.hidden = NO;
 
-                                 [_activityView stopAnimating];
+                                 if (_state == RMUserTrackingButtonStateActivity)
+                                     [_activityView stopAnimating];
 
                                  [UIView animateWithDuration:0.25 animations:^(void)
                                  {
-                                     _buttonImageView.transform = CGAffineTransformIdentity;
-                                     _activityView.transform    = CGAffineTransformIdentity;
+                                     if (animate)
+                                         _buttonImageView.transform = CGAffineTransformIdentity;
+
+                                     if (_state == RMUserTrackingButtonStateActivity)
+                                         _activityView.transform = CGAffineTransformIdentity;
                                  }];
                              }];
 
