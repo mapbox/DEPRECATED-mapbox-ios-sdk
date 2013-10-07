@@ -2,12 +2,12 @@
 layout: default
 section: developers
 ---
-<div class='clearfix doc-header fill-light'>
+<div class='clearfix doc-header'>
   <div class='col12 pad4x contain'>
     <a class='tag pad1y2x fill-darken0' href='{{site.url}}/{{page.section|downcase}}'>{{page.section}}</a>
   </div>
 
-  <div class='pad4 clearfix'>
+  <div class='pad4 clearfix keyline-bottom'>
       <div class='col6'>
         <h2>{{site.title}}</h2>
         <p>{{site.description}}</p>
@@ -20,9 +20,9 @@ section: developers
       </nav>
     </div>
 
-    <div class='doc-page pad4c fill-grey clearfix'>
+    <div class='doc-page clearfix'>
       <div class='fill-white clearfix'>
-        <div class='col3 pad2y'>
+        <div class='col3'>
           <div class='doc-nav'>
             {% if page.navigation %}
             {% for section in page.navigation %}
