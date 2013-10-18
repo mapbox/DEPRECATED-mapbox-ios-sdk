@@ -1,8 +1,8 @@
 //
-//  RMPointAnnotation.m
+//  RMCircleAnnotation.m
 //  MapView
 //
-// Copyright (c) 2008-2012, Route-Me Contributors
+// Copyright (c) 2008-2013, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -26,11 +26,23 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import "RMPointAnnotation.h"
+#import "RMCircleAnnotation.h"
 
-#import "RMMarker.h"
+#import "RMCircle.h"
 
-@implementation RMPointAnnotation
+@implementation RMCircleAnnotation
+
+@synthesize radiusInMeters=_radiusInMeters;
+
+- (id)initWithMapView:(RMMapView *)aMapView centerCoordinate:(CLLocationCoordinate2D)centerCoordinate radiusInMeters:(CGFloat)radiusInMeters
+{
+    if (!(self = [super initWithMapView:aMapView points:[NSArray arrayWithObject:[[CLLocation alloc] initWithLatitude:centerCoordinate.latitude longitude:centerCoordinate.longitude]]]))
+        return nil;
+
+    _radiusInMeters = radiusInMeters;
+
+    return self;
+}
 
 - (void)setLayer:(RMMapLayer *)newLayer
 {
@@ -43,25 +55,44 @@
 - (RMMapLayer *)layer
 {
     if ( ! [super layer])
-    {
-        RMMarker *marker = [[RMMarker alloc] initWithMapBoxMarkerImage];
-
-        marker.canShowCallout = YES;
-
-        super.layer = marker;
-    }
-
+        super.layer = [[RMCircle alloc] initWithView:self.mapView radiusInMeters:_radiusInMeters];
+    
     return [super layer];
 }
 
-- (void)setImage:(UIImage *)image
+- (CLLocationCoordinate2D)centerCoordinate
 {
-    [(RMMarker *)[self layer] replaceUIImage:image];
+    return self.coordinate;
 }
 
-- (UIImage *)image
+- (void)setLineWidthInPixels:(CGFloat)lineWidthInPixels
 {
-    return [UIImage imageWithCGImage:(CGImageRef)[self layer].contents];
+    [(RMCircle *)[self layer] setLineWidthInPixels:lineWidthInPixels];
+}
+
+- (CGFloat)lineWidthInPixels
+{
+    return ((RMCircle *)[self layer]).lineWidthInPixels;
+}
+
+- (void)setLineWidth:(CGFloat)lineWidth
+{
+    [self setLineWidthInPixels:lineWidth];
+}
+
+- (CGFloat)lineWidth
+{
+    return [self lineWidthInPixels];
+}
+
+- (void)setRadiusInMeters:(CGFloat)radiusInMeters
+{
+    [(RMCircle *)[self layer] setRadiusInMeters:radiusInMeters];
+}
+
+- (CGFloat)radiusInMeters
+{
+    return [((RMCircle *)[self layer]) radiusInMeters];
 }
 
 @end

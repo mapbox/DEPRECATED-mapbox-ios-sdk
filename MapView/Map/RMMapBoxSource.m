@@ -52,11 +52,7 @@
 
 - (id)init
 {
-    BOOL useRetina = ([[UIScreen mainScreen] scale] > 1.0);
-
-    NSString *localTileJSONPath = [RMMapView pathForBundleResourceNamed:(useRetina ? kMapBoxPlaceholderRetinaMapID : kMapBoxPlaceholderNormalMapID) ofType:@"json"];
-
-    return [self initWithReferenceURL:[NSURL fileURLWithPath:localTileJSONPath]];
+    return [self initWithReferenceURL:[NSURL fileURLWithPath:[RMMapView pathForBundleResourceNamed:kMapBoxPlaceholderMapID ofType:@"json"]]];
 }
 
 - (id)initWithMapID:(NSString *)mapID
@@ -210,6 +206,9 @@
     tileURLString = [tileURLString stringByReplacingOccurrencesOfString:@"{z}" withString:[[NSNumber numberWithInteger:zoom] stringValue]];
     tileURLString = [tileURLString stringByReplacingOccurrencesOfString:@"{x}" withString:[[NSNumber numberWithInteger:x]    stringValue]];
     tileURLString = [tileURLString stringByReplacingOccurrencesOfString:@"{y}" withString:[[NSNumber numberWithInteger:y]    stringValue]];
+
+    if ([[UIScreen mainScreen] scale] > 1.0)
+        tileURLString = [tileURLString stringByReplacingOccurrencesOfString:@".png" withString:@"@2x.png"];
 
     if (_imageQuality != RMMapBoxSourceQualityFull)
     {

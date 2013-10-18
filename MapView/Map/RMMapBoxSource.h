@@ -39,8 +39,7 @@
 #define kMapBoxDefaultLatLonBoundingBox ((RMSphericalTrapezium){ .northEast = { .latitude =  90, .longitude =  180 }, \
                                                                  .southWest = { .latitude = -90, .longitude = -180 } })
 
-#define kMapBoxPlaceholderNormalMapID @"examples.map-z2effxa8"
-#define kMapBoxPlaceholderRetinaMapID @"examples.map-zswgei2n"
+#define kMapBoxPlaceholderMapID @"examples.map-z2effxa8"
 
 // constants for the image quality API (see http://mapbox.com/developers/api/#image_quality)
 typedef enum : NSUInteger {
@@ -131,7 +130,7 @@ typedef enum : NSUInteger {
 
 /** @name Querying Tile Source Information */
 
-/** Any available HTML-formatted map legend data for the tile source, suitable for display in a UIWebView. */
+/** Any available HTML-formatted map legend data for the tile source, suitable for display in a `UIWebView`. */
 - (NSString *)legend;
 
 /** A suggested starting center coordinate for the map layer. */

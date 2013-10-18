@@ -2111,13 +2111,13 @@
     NSArray *tileSources = [self tileSources];
 
     [tileSources enumerateObjectsUsingBlock:^(id <RMTileSource> currentTileSource, NSUInteger index, BOOL *stop)
-     {
+    {
         if (tileSource == currentTileSource)
         {
             [self setHidden:isHidden forTileSourceAtIndex:index];
             *stop = YES;
         }
-     }];
+    }];
 }
 
 - (void)setHidden:(BOOL)isHidden forTileSourceAtIndex:(NSUInteger)index
@@ -2126,6 +2126,28 @@
         return;
 
     ((RMMapTiledLayerView *)[_tiledLayersSuperview.subviews objectAtIndex:index]).hidden = isHidden;
+}
+
+- (void)setAlpha:(CGFloat)alpha forTileSource:(id <RMTileSource>)tileSource
+{
+    NSArray *tileSources = [self tileSources];
+
+    [tileSources enumerateObjectsUsingBlock:^(id <RMTileSource> currentTileSource, NSUInteger index, BOOL *stop)
+    {
+        if (tileSource == currentTileSource)
+        {
+            [self setAlpha:alpha forTileSourceAtIndex:index];
+            *stop = YES;
+        }
+    }];
+}
+
+- (void)setAlpha:(CGFloat)alpha forTileSourceAtIndex:(NSUInteger)index
+{
+    if (index >= [_tiledLayersSuperview.subviews count])
+        return;
+
+    ((RMMapTiledLayerView *)[_tiledLayersSuperview.subviews objectAtIndex:index]).alpha = alpha;
 }
 
 - (void)reloadTileSource:(id <RMTileSource>)tileSource
