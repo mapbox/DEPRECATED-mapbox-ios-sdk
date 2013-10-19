@@ -79,6 +79,8 @@
         _infoDictionary = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:[tileJSON dataUsingEncoding:NSUTF8StringEncoding]
                                                                           options:0
                                                                             error:nil];
+        if ( ! _infoDictionary)
+            return nil;
 
         _tileJSON = tileJSON;
 
@@ -174,7 +176,8 @@
 
 - (void)dealloc
 {
-    dispatch_release(_dataQueue);
+    if (_dataQueue)
+        dispatch_release(_dataQueue);
 }
 
 #pragma mark 
