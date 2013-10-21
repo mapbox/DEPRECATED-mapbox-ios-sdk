@@ -593,8 +593,6 @@
                                                                        views:@{ @"attributionButton" : _attributionButton }]];
     }
 
-    // TODO: distance scale
-
     [super updateConstraints];
 }
 
