@@ -320,12 +320,14 @@
     {
         _compassButton = [UIButton buttonWithType:UIButtonTypeCustom];
         UIImage *compassImage = [RMMapView resourceImageNamed:@"Compass.png"];
+        _compassButton.frame = CGRectMake(0, 0, compassImage.size.width, compassImage.size.height);
         [_compassButton setImage:compassImage forState:UIControlStateNormal];
-        _compassButton.frame = CGRectMake(self.bounds.size.width - compassImage.size.width - 5, 5, compassImage.size.width, compassImage.size.height);
         _compassButton.alpha = 0;
-        _compassButton.translatesAutoresizingMaskIntoConstraints = NO;
         [_compassButton addTarget:self action:@selector(tappedHeadingCompass:) forControlEvents:UIControlEventTouchUpInside];
-        [self addSubview:_compassButton];
+        UIView *container = [[UIView alloc] initWithFrame:CGRectMake(self.bounds.size.width - compassImage.size.width - 5, 5, compassImage.size.width, compassImage.size.height)];
+        container.translatesAutoresizingMaskIntoConstraints = NO;
+        [container addSubview:_compassButton];
+        [self addSubview:container];
     }
 
     self.displayHeadingCalibration = YES;
@@ -479,118 +481,103 @@
     [self updateHeadingForDeviceOrientation];
 }
 
-- (void)setTopLayoutGuide:(id <UILayoutSupport>)topLayoutGuide
+- (UIViewController *)viewController
 {
-    if (RMPostVersion7 && ! [_topLayoutGuide isEqual:topLayoutGuide])
-    {
-        _topLayoutGuide = topLayoutGuide;
+    UIResponder *responder = self;
 
-        [self setNeedsUpdateConstraints];
-    }
-}
+    while ((responder = [responder nextResponder]))
+        if ([responder isKindOfClass:[UIViewController class]])
+            return (UIViewController *)responder;
 
-- (void)setBottomLayoutGuide:(id<UILayoutSupport>)bottomLayoutGuide
-{
-    if (RMPostVersion7 && ! [_bottomLayoutGuide isEqual:bottomLayoutGuide])
-    {
-        _bottomLayoutGuide = bottomLayoutGuide;
-
-        [self setNeedsUpdateConstraints];
-    }
+    return nil;
 }
 
 - (void)updateConstraints
 {
-    if (RMPostVersion7)
+    // Determine our view controller & its top and bottom layout
+    // guides since these will be used frequently.
+    //
+    UIViewController *viewController = [self viewController];
+    id <UILayoutSupport>topLayoutGuide = viewController.topLayoutGuide;
+    id <UILayoutSupport>bottomLayoutGuide = viewController.bottomLayoutGuide;
+
+    // If we somehow didn't get a view controller, return early and
+    // just stick with the initial frames.
+    //
+    if ( ! viewController)
+        return;
+
+    // compass
+    //
+    if (RMPostVersion7 && _compassButton)
     {
-        // compass
+        // The compass view has an intermediary container superview due to
+        // jitter caused by constraint math updates during its rotation
+        // transforms. Constraints are against this container instead so
+        // that the compass can rotate smootly within.
         //
-        if (_compassButton)
+        UIView *container = _compassButton.superview;
+
+        if ( ! [[viewController.view valueForKeyPath:@"constraints.firstItem"]  containsObject:container] &&
+             ! [[viewController.view valueForKeyPath:@"constraints.secondItem"] containsObject:container])
         {
-            for (UIView *constraintView in @[ self, self.superview ])
-                for (NSLayoutConstraint *constraint in [constraintView.constraints copy])
-                    if ([constraint.firstItem isEqual:_compassButton] || [constraint.secondItem isEqual:_compassButton])
-                        [constraintView removeConstraint:constraint];
+            CGFloat topSpacing   = container.frame.origin.y;
+            CGFloat rightSpacing = container.superview.bounds.size.width - container.frame.origin.x;
 
-            if (self.topLayoutGuide)
-            {
-                [self.superview addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[topLayoutGuide]-5-[compass]"
-                                                                                       options:0
-                                                                                       metrics:nil
-                                                                                         views:@{ @"topLayoutGuide" : self.topLayoutGuide,
-                                                                                                  @"compass"        : _compassButton }]];
-            }
-            else
-            {
-                [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-5-[compass]"
-                                                                             options:0
-                                                                             metrics:nil
-                                                                               views:@{ @"compass" : _compassButton }]];
-            }
+            [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[topLayoutGuide]-topSpacing-[container]"
+                                                                                        options:0
+                                                                                        metrics:@{ @"topSpacing" : @(topSpacing) }
+                                                                                          views:@{ @"topLayoutGuide" : topLayoutGuide,
+                                                                                                   @"container"      : container }]];
 
-            [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[compass]-5-|"
-                                                                         options:0
-                                                                         metrics:nil
-                                                                           views:@{ @"compass" : _compassButton }]];
+
+            [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[container]-rightSpacing-|"
+                                                                                        options:0
+                                                                                        metrics:@{ @"rightSpacing" : @(rightSpacing) }
+                                                                                          views:@{ @"container" : container }]];
         }
     }
 
     if (_logoBug)
     {
-        for (UIView *constraintView in @[ self, self.superview ])
-            for (NSLayoutConstraint *constraint in [constraintView.constraints copy])
-                if ([constraint.firstItem isEqual:_logoBug] || [constraint.secondItem isEqual:_logoBug])
-                    [constraintView removeConstraint:constraint];
-
-        if (self.bottomLayoutGuide)
+        if ( ! [[viewController.view valueForKeyPath:@"constraints.firstItem"]  containsObject:_logoBug] &&
+             ! [[viewController.view valueForKeyPath:@"constraints.secondItem"] containsObject:_logoBug])
         {
-            [self.superview addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[logoBug]-4-[bottomLayoutGuide]"
-                                                                                   options:0
-                                                                                   metrics:nil
-                                                                                     views:@{ @"logoBug"           : _logoBug,
-                                                                                              @"bottomLayoutGuide" : self.bottomLayoutGuide }]];
-        }
-        else
-        {
-            [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[logoBug]-4-|"
-                                                                         options:0
-                                                                         metrics:nil
-                                                                           views:@{ @"logoBug" : _logoBug }]];
-        }
+            CGFloat leftSpacing   = _logoBug.frame.origin.x;
+            CGFloat bottomSpacing = _logoBug.superview.bounds.size.height - _logoBug.frame.origin.y - _logoBug.bounds.size.height;
 
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-8-[logoBug]"
-                                                                     options:0
-                                                                     metrics:nil
-                                                                       views:@{ @"logoBug" : _logoBug }]];
+            [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[logoBug]-bottomSpacing-[bottomLayoutGuide]"
+                                                                                        options:0
+                                                                                        metrics:@{ @"bottomSpacing" : @(bottomSpacing) }
+                                                                                          views:@{ @"logoBug"           : _logoBug,
+                                                                                                   @"bottomLayoutGuide" : bottomLayoutGuide }]];
+
+            [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-leftSpacing-[logoBug]"
+                                                                                        options:0
+                                                                                        metrics:@{ @"leftSpacing" : @(leftSpacing) }
+                                                                                          views:@{ @"logoBug" : _logoBug }]];
+        }
     }
 
     if (_attributionButton)
     {
-        for (UIView *constraintView in @[ self, self.superview ])
-            for (NSLayoutConstraint *constraint in [constraintView.constraints copy])
-                if ([constraint.firstItem isEqual:_attributionButton] || [constraint.secondItem isEqual:_attributionButton])
-                    [constraintView removeConstraint:constraint];
-
-        if (self.bottomLayoutGuide)
+        if ( ! [[viewController.view valueForKeyPath:@"constraints.firstItem"]  containsObject:_attributionButton] &&
+             ! [[viewController.view valueForKeyPath:@"constraints.secondItem"] containsObject:_attributionButton])
         {
-            [self.superview addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[attributionButton]-8-[bottomLayoutGuide]"
-                                                                                   options:0
-                                                                                   metrics:nil
-                                                                                     views:@{ @"attributionButton" : _attributionButton,
-                                                                                              @"bottomLayoutGuide" : self.bottomLayoutGuide }]];
-        }
-        else
-        {
-            [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[attributionButton]-8-|"
-                                                                         options:0
-                                                                         metrics:nil
-                                                                           views:@{ @"attributionButton" : _attributionButton }]];
-        }
+            CGFloat rightSpacing  = _attributionButton.superview.bounds.size.width - _attributionButton.frame.origin.x - _attributionButton.bounds.size.width;
+            CGFloat bottomSpacing = _attributionButton.superview.bounds.size.height - _attributionButton.frame.origin.y - _attributionButton.bounds.size.height;
 
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[attributionButton]-8-|"
-                                                                     options:0
-                                                                     metrics:nil
-                                                                       views:@{ @"attributionButton" : _attributionButton }]];
+            [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[attributionButton]-bottomSpacing-[bottomLayoutGuide]"
+                                                                                        options:0
+                                                                                        metrics:@{ @"bottomSpacing" : @(bottomSpacing) }
+                                                                                          views:@{ @"attributionButton" : _attributionButton,
+                                                                                                   @"bottomLayoutGuide" : bottomLayoutGuide }]];
+
+            [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[attributionButton]-rightSpacing-|"
+                                                                                        options:0
+                                                                                        metrics:@{ @"rightSpacing" : @(rightSpacing) }
+                                                                                          views:@{ @"attributionButton" : _attributionButton }]];
+        }
     }
 
     [super updateConstraints];
@@ -615,16 +602,7 @@
 
     if ( ! self.viewControllerPresentingAttribution && ! _hideAttribution)
     {
-        UIResponder *responder = self;
-
-        while ((responder = [responder nextResponder]))
-        {
-            if ([responder isKindOfClass:[UIViewController class]])
-            {
-                self.viewControllerPresentingAttribution = (UIViewController *)responder;
-                break;
-            }
-        }
+        self.viewControllerPresentingAttribution = [self viewController];
     }
     else if (self.viewControllerPresentingAttribution && _hideAttribution)
     {
@@ -1976,12 +1954,7 @@
     contentOffset.y -= offset.height;
 
     if (RMPostVersion7)
-    {
-        if (self.topLayoutGuide && contentOffset.y > _mapScrollView.contentOffset.y)
-            contentOffset.y += offset.height;
-        else if (self.topLayoutGuide && contentOffset.y < _mapScrollView.contentOffset.y)
-            contentOffset.y -= self.topLayoutGuide.length;
-    }
+        contentOffset.y -= [[[self viewController] topLayoutGuide] length];
 
     [_mapScrollView setContentOffset:contentOffset animated:YES];
 

@@ -134,12 +134,6 @@ typedef enum : NSUInteger {
 /** A Boolean value indicating whether to show a small logo in the corner of the map view. Defaults to `YES`. */
 @property (nonatomic, assign) BOOL showLogoBug;
 
-/** The `topLayoutGuide` of a view controller containing the map view. Used on iOS 7 and above to prevent certain subviews of the map view from appearing under a navigation bar. */
-@property (nonatomic, assign) id <UILayoutSupport>topLayoutGuide;
-
-/** The `bottomLayoutGuide` of a view controller containing the map view. Used on iOS 7 and above to prevent certain subviews of the map view from appearing under a tab bar. */
-@property (nonatomic, assign) id <UILayoutSupport>bottomLayoutGuide;
-
 #pragma mark - Initializers
 
 /** @name Initializing a Map View */
