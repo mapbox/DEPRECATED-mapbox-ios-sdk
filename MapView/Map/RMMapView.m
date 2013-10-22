@@ -494,12 +494,9 @@
 
 - (void)updateConstraints
 {
-    // Determine our view controller & its top and bottom layout
-    // guides since these will be used frequently.
+    // Determine our view controller since it will be used frequently.
     //
     UIViewController *viewController = [self viewController];
-    id <UILayoutSupport>topLayoutGuide = viewController.topLayoutGuide;
-    id <UILayoutSupport>bottomLayoutGuide = viewController.bottomLayoutGuide;
 
     // If we somehow didn't get a view controller, return early and
     // just stick with the initial frames.
@@ -527,7 +524,7 @@
             [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[topLayoutGuide]-topSpacing-[container]"
                                                                                         options:0
                                                                                         metrics:@{ @"topSpacing" : @(topSpacing) }
-                                                                                          views:@{ @"topLayoutGuide" : topLayoutGuide,
+                                                                                          views:@{ @"topLayoutGuide" : viewController.topLayoutGuide,
                                                                                                    @"container"      : container }]];
 
 
@@ -546,16 +543,30 @@
             CGFloat leftSpacing   = _logoBug.frame.origin.x;
             CGFloat bottomSpacing = _logoBug.superview.bounds.size.height - _logoBug.frame.origin.y - _logoBug.bounds.size.height;
 
-            [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[logoBug]-bottomSpacing-[bottomLayoutGuide]"
+            NSString *formatString;
+            NSDictionary *views;
+
+            if (RMPostVersion7)
+            {
+                formatString = @"V:[logoBug]-bottomSpacing-[bottomLayoutGuide]";
+                views = @{ @"logoBug" : _logoBug,
+                           @"bottomLayoutGuide" : viewController.bottomLayoutGuide };
+            }
+            else
+            {
+                formatString = @"V:[logoBug]-bottomSpacing-|";
+                views = @{ @"logoBug" : _logoBug };
+            }
+
+            [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:formatString
                                                                                         options:0
                                                                                         metrics:@{ @"bottomSpacing" : @(bottomSpacing) }
-                                                                                          views:@{ @"logoBug"           : _logoBug,
-                                                                                                   @"bottomLayoutGuide" : bottomLayoutGuide }]];
+                                                                                          views:views]];
 
             [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-leftSpacing-[logoBug]"
                                                                                         options:0
                                                                                         metrics:@{ @"leftSpacing" : @(leftSpacing) }
-                                                                                          views:@{ @"logoBug" : _logoBug }]];
+                                                                                          views:views]];
         }
     }
 
@@ -567,16 +578,30 @@
             CGFloat rightSpacing  = _attributionButton.superview.bounds.size.width - _attributionButton.frame.origin.x - _attributionButton.bounds.size.width;
             CGFloat bottomSpacing = _attributionButton.superview.bounds.size.height - _attributionButton.frame.origin.y - _attributionButton.bounds.size.height;
 
-            [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[attributionButton]-bottomSpacing-[bottomLayoutGuide]"
+            NSString *formatString;
+            NSDictionary *views;
+
+            if (RMPostVersion7)
+            {
+                formatString = @"V:[attributionButton]-bottomSpacing-[bottomLayoutGuide]";
+                views = @{ @"attributionButton" : _attributionButton,
+                           @"bottomLayoutGuide" : viewController.bottomLayoutGuide };
+            }
+            else
+            {
+                formatString = @"V:[attributionButton]-bottomSpacing-|";
+                views = @{ @"attributionButton" : _attributionButton };
+            }
+
+            [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:formatString
                                                                                         options:0
                                                                                         metrics:@{ @"bottomSpacing" : @(bottomSpacing) }
-                                                                                          views:@{ @"attributionButton" : _attributionButton,
-                                                                                                   @"bottomLayoutGuide" : bottomLayoutGuide }]];
+                                                                                          views:views]];
 
             [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[attributionButton]-rightSpacing-|"
                                                                                         options:0
                                                                                         metrics:@{ @"rightSpacing" : @(rightSpacing) }
-                                                                                          views:@{ @"attributionButton" : _attributionButton }]];
+                                                                                          views:views]];
         }
     }
 
