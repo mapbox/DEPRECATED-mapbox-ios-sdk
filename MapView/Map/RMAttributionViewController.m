@@ -98,45 +98,50 @@
 
     [contentString appendString:@"<style type='text/css'>"];
 
-    NSString *linkColor, *textColor, *fontSize, *margin;
+    NSString *linkColor, *textColor, *fontFamily, *fontSize, *margin;
 
     if (RMPostVersion7)
     {
         CGFloat r,g,b;
         [self.view.tintColor getRed:&r green:&g blue:&b alpha:nil];
-        linkColor = [NSString stringWithFormat:@"rgb(%i,%i,%i)", (NSUInteger)(r * 255.0), (NSUInteger)(g * 255.0), (NSUInteger)(b * 255.0)];
-        textColor = @"black";
-        fontSize  = [NSString stringWithFormat:@"font-size: %i; ", (NSUInteger)[[UIFont preferredFontForTextStyle:UIFontTextStyleBody] pointSize]];
-        margin    = @"margin: 20px; ";
+        linkColor  = [NSString stringWithFormat:@"rgb(%i,%i,%i)", (NSUInteger)(r * 255.0), (NSUInteger)(g * 255.0), (NSUInteger)(b * 255.0)];
+        textColor  = @"black";
+        fontFamily = @"Helvetica Neue";
+        fontSize   = [NSString stringWithFormat:@"font-size: %i; ", (NSUInteger)[[UIFont preferredFontForTextStyle:UIFontTextStyleBody] pointSize]];
+        margin     = @"margin: 20px; ";
     }
     else
     {
-        linkColor = @"white";
-        textColor = @"lightgray";
-        fontSize  = @"";
-        margin    = @"";
+        linkColor  = @"white";
+        textColor  = @"lightgray";
+        fontFamily = @"Helvetica";
+        fontSize   = @"";
+        margin     = @"";
     }
 
     [contentString appendString:[NSString stringWithFormat:@"a:link { color: %@; text-decoration: none; }", linkColor]];
-    [contentString appendString:[NSString stringWithFormat:@"body { color: %@; font-family: Helvetica Neue; %@text-align: center; %@}", textColor, fontSize, margin]];
+    [contentString appendString:[NSString stringWithFormat:@"body { color: %@; font-family: %@; %@text-align: center; %@}", textColor, fontFamily, fontSize, margin]];
     [contentString appendString:@"</style>"];
 
-    // add SDK info
-    //
-    [attribution insertString:[NSString stringWithFormat:@"%@ uses the MapBox iOS SDK © 2013 MapBox, Inc.<br/><a href='http://mapbox.com/mapbox-ios-sdk'>More</a><br/><br/>", [[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleDisplayName"]]  atIndex:0];
+    if (RMPostVersion7)
+    {
+        // add SDK info
+        //
+        [attribution insertString:[NSString stringWithFormat:@"%@ uses the MapBox iOS SDK © 2013 MapBox, Inc.<br/><a href='http://mapbox.com/mapbox-ios-sdk'>More</a><br/><br/>", [[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleDisplayName"]]  atIndex:0];
 
-    // add tinted logo
-    //
-    UIImage *logoImage = [RMMapView resourceImageNamed:@"mapbox-logo.png"];
-    UIGraphicsBeginImageContextWithOptions(logoImage.size, NO, [[UIScreen mainScreen] scale]);
-    [logoImage drawAtPoint:CGPointMake(0, 0)];
-    CGContextSetBlendMode(UIGraphicsGetCurrentContext(), kCGBlendModeSourceIn);
-    CGContextSetFillColorWithColor(UIGraphicsGetCurrentContext(), [self.view.tintColor CGColor]);
-    CGContextFillRect(UIGraphicsGetCurrentContext(), CGRectMake(0, 0, logoImage.size.width, logoImage.size.height));
-    NSString *tempFile = [[NSTemporaryDirectory() stringByAppendingString:@"/"] stringByAppendingString:[NSString stringWithFormat:@"%f", [NSDate timeIntervalSinceReferenceDate]]];
-    [UIImagePNGRepresentation(UIGraphicsGetImageFromCurrentImageContext()) writeToFile:tempFile atomically:YES];
-    UIGraphicsEndImageContext();
-    [attribution insertString:[NSString stringWithFormat:@"<img src='file://%@' width='100' height='100'/><br/><br/>", tempFile] atIndex:0];
+        // add tinted logo
+        //
+        UIImage *logoImage = [RMMapView resourceImageNamed:@"mapbox-logo.png"];
+        UIGraphicsBeginImageContextWithOptions(logoImage.size, NO, [[UIScreen mainScreen] scale]);
+        [logoImage drawAtPoint:CGPointMake(0, 0)];
+        CGContextSetBlendMode(UIGraphicsGetCurrentContext(), kCGBlendModeSourceIn);
+        CGContextSetFillColorWithColor(UIGraphicsGetCurrentContext(), [self.view.tintColor CGColor]);
+        CGContextFillRect(UIGraphicsGetCurrentContext(), CGRectMake(0, 0, logoImage.size.width, logoImage.size.height));
+        NSString *tempFile = [[NSTemporaryDirectory() stringByAppendingString:@"/"] stringByAppendingString:[NSString stringWithFormat:@"%f", [NSDate timeIntervalSinceReferenceDate]]];
+        [UIImagePNGRepresentation(UIGraphicsGetImageFromCurrentImageContext()) writeToFile:tempFile atomically:YES];
+        UIGraphicsEndImageContext();
+        [attribution insertString:[NSString stringWithFormat:@"<img src='file://%@' width='100' height='100'/><br/><br/>", tempFile] atIndex:0];
+    }
 
     // add attribution
     //
