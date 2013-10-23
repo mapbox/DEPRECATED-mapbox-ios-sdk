@@ -3838,7 +3838,9 @@
 
 - (void)dismissAttribution:(id)sender
 {
-    _viewControllerPresentingAttribution.modalViewController.modalPresentationStyle = UIModalTransitionStyleCoverVertical;
+    if (RMPostVersion7)
+        _viewControllerPresentingAttribution.modalViewController.modalPresentationStyle = UIModalTransitionStyleCoverVertical;
+
     [_viewControllerPresentingAttribution dismissModalViewControllerAnimated:YES];
 }
 
