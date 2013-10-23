@@ -53,7 +53,8 @@
 
     UIWebView *webView = [[UIWebView alloc] initWithFrame:frame];
     webView.delegate = self;
-    webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
+    webView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | (RMPostVersion7 ? UIViewAutoresizingFlexibleHeight : UIViewAutoresizingFlexibleTopMargin);
+    webView.scrollView.showsVerticalScrollIndicator = NO;
     webView.backgroundColor = [UIColor clearColor];
     webView.opaque = NO;
 

@@ -3839,7 +3839,11 @@
 - (void)dismissAttribution:(id)sender
 {
     if (RMPostVersion7)
+    {
         _viewControllerPresentingAttribution.modalViewController.modalPresentationStyle = UIModalTransitionStyleCoverVertical;
+        _viewControllerPresentingAttribution.view.tintAdjustmentMode = UIViewTintAdjustmentModeAutomatic;
+        _viewControllerPresentingAttribution.view.userInteractionEnabled = YES;
+    }
 
     [_viewControllerPresentingAttribution dismissModalViewControllerAnimated:YES];
 }
@@ -3872,21 +3876,32 @@
 
     [inView addSubview:toView];
 
-    toView.center = CGPointMake(fromView.center.x, fromView.center.y + toView.bounds.size.height);
+    if (UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation]))
+    {
+        CGFloat factor = ([[UIApplication sharedApplication] statusBarOrientation] == UIInterfaceOrientationLandscapeLeft ? 1.0 : -1.0);
+
+        toView.center = CGPointMake(fromView.bounds.size.height * factor, fromView.bounds.size.width / 2);
+        toView.bounds = fromView.bounds;
+    }
+    else
+    {
+        toView.center = CGPointMake(fromView.center.x, fromView.center.y + toView.bounds.size.height);
+        toView.bounds = fromView.bounds;
+    }
 
     [UIView animateWithDuration:[self transitionDuration:transitionContext]
                           delay:0
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^(void)
                      {
+                         fromView.userInteractionEnabled = NO;
                          toView.center = fromView.center;
                      }
                      completion:^(BOOL finished)
                      {
+                         fromView.tintAdjustmentMode = UIViewTintAdjustmentModeDimmed;
                          [transitionContext completeTransition:YES];
                      }];
-
-    // TODO: fix landscape orientation - https://devforums.apple.com/message/873505
 }
 
 @end
