@@ -49,7 +49,9 @@
 
     [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismiss:)]];
 
-    UIWebView *webView = [[UIWebView alloc] initWithFrame:self.view.bounds];
+    CGRect frame = (RMPostVersion7 ? self.view.bounds : CGRectMake(0, self.view.bounds.size.height - 70, self.view.bounds.size.width, 60));
+
+    UIWebView *webView = [[UIWebView alloc] initWithFrame:frame];
     webView.delegate = self;
     webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
     webView.backgroundColor = [UIColor clearColor];
