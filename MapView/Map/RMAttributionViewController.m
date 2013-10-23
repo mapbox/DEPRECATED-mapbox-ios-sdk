@@ -175,6 +175,16 @@
     return [_mapView.viewControllerPresentingAttribution supportedInterfaceOrientations];
 }
 
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    UIWebView *webView = (UIWebView *)self.view.subviews[0];
+
+    if (UIInterfaceOrientationIsLandscape(fromInterfaceOrientation))
+        webView.frame = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
+
+    [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
+}
+
 #pragma mark -
 
 - (void)dismiss:(id)sender
