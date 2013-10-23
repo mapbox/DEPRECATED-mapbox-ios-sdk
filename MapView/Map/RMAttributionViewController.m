@@ -125,7 +125,7 @@
         margin     = @"";
     }
 
-    [contentString appendString:[NSString stringWithFormat:@"a:link { color: %@; text-decoration: none; }", linkColor]];
+    [contentString appendString:[NSString stringWithFormat:@"a { color: %@; text-decoration: none; }", linkColor]];
     [contentString appendString:[NSString stringWithFormat:@"body { color: %@; font-family: %@; %@text-align: center; %@}", textColor, fontFamily, fontSize, margin]];
     [contentString appendString:@"</style>"];
 
