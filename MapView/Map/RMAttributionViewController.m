@@ -15,6 +15,8 @@
 
 @property (nonatomic, assign) UIViewController *viewControllerPresentingAttribution;
 
+- (void)dismissAttribution:(id)sender;
+
 @end
 
 #pragma mark -
@@ -47,7 +49,8 @@
 
     self.view.backgroundColor = (RMPostVersion7 ? [UIColor colorWithWhite:1 alpha:0.9] : [UIColor darkGrayColor]);
 
-    [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismiss:)]];
+    if (RMPreVersion7)
+        [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismiss:)]];
 
     CGRect frame = (RMPostVersion7 ? self.view.bounds : CGRectMake(0, self.view.bounds.size.height - 70, self.view.bounds.size.width, 60));
 
@@ -176,8 +179,7 @@
 
 - (void)dismiss:(id)sender
 {
-    self.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    [self.presentingViewController dismissModalViewControllerAnimated:YES];
+    [self.mapView dismissAttribution:self];
 }
 
 #pragma mark -
