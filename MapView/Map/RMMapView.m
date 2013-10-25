@@ -3838,14 +3838,7 @@
 
 - (void)dismissAttribution:(id)sender
 {
-    if (RMPostVersion7)
-    {
-        _viewControllerPresentingAttribution.modalViewController.modalPresentationStyle = UIModalTransitionStyleCoverVertical;
-        _viewControllerPresentingAttribution.view.tintAdjustmentMode = UIViewTintAdjustmentModeAutomatic;
-        _viewControllerPresentingAttribution.view.userInteractionEnabled = YES;
-    }
-
-    [_viewControllerPresentingAttribution dismissModalViewControllerAnimated:YES];
+    [_viewControllerPresentingAttribution dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)popoverController:(UIPopoverController *)popoverController willRepositionPopoverToRect:(inout CGRect *)rect inView:(inout UIView **)view
@@ -3863,6 +3856,11 @@
     return self;
 }
 
+- (id <UIViewControllerAnimatedTransitioning>)animationControllerForDismissedController:(UIViewController *)dismissed
+{
+    return self;
+}
+
 - (NSTimeInterval)transitionDuration:(id <UIViewControllerContextTransitioning>)transitionContext
 {
     return (1.0 / 3.0);
@@ -3874,19 +3872,39 @@
     UIView *fromView = [[transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey] view];
     UIView *toView   = [[transitionContext viewControllerForKey:UITransitionContextToViewControllerKey] view];
 
-    [inView addSubview:toView];
+    CGPoint onScreenCenter = fromView.center;
+
+    CGPoint offScreenCenter;
 
     if (UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation]))
     {
         CGFloat factor = ([[UIApplication sharedApplication] statusBarOrientation] == UIInterfaceOrientationLandscapeLeft ? 1.0 : -1.0);
 
-        toView.center = CGPointMake(fromView.bounds.size.height * factor, fromView.bounds.size.width / 2);
-        toView.bounds = fromView.bounds;
+        offScreenCenter = CGPointMake(fromView.bounds.size.height * factor, fromView.bounds.size.width / 2);
     }
     else
     {
-        toView.center = CGPointMake(fromView.center.x, fromView.center.y + toView.bounds.size.height);
+        offScreenCenter = CGPointMake(fromView.center.x, fromView.center.y + toView.bounds.size.height);
+    }
+
+    BOOL isPresentation;
+
+    if ([[transitionContext viewControllerForKey:UITransitionContextToViewControllerKey] isKindOfClass:[UINavigationController class]] &&
+        [[(UINavigationController *)[transitionContext viewControllerForKey:UITransitionContextToViewControllerKey] topViewController] isKindOfClass:[RMAttributionViewController class]])
+    {
+        isPresentation = YES;
+
+        [inView addSubview:toView];
+
         toView.bounds = fromView.bounds;
+
+        toView.center = offScreenCenter;
+    }
+    else
+    {
+        isPresentation = NO;
+
+        fromView.center = onScreenCenter;
     }
 
     [UIView animateWithDuration:[self transitionDuration:transitionContext]
@@ -3895,11 +3913,31 @@
                      animations:^(void)
                      {
                          fromView.userInteractionEnabled = NO;
-                         toView.center = fromView.center;
+
+                         if (isPresentation)
+                         {
+                             toView.center = onScreenCenter;
+                         }
+                         else
+                         {
+                             fromView.center = offScreenCenter;
+
+                             toView.tintAdjustmentMode = UIViewTintAdjustmentModeAutomatic;
+                         }
                      }
                      completion:^(BOOL finished)
                      {
-                         fromView.tintAdjustmentMode = UIViewTintAdjustmentModeDimmed;
+                         if (isPresentation)
+                         {
+                             fromView.tintAdjustmentMode = UIViewTintAdjustmentModeDimmed;
+                         }
+                         else
+                         {
+                             toView.userInteractionEnabled = YES;
+
+                             [fromView removeFromSuperview];
+                         }
+
                          [transitionContext completeTransition:YES];
                      }];
 }
