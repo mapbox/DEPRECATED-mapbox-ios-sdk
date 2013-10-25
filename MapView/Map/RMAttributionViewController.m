@@ -208,6 +208,8 @@
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
+    [webView stringByEvaluatingJavaScriptFromString:@"document.body.style.webkitTouchCallout='none';"];
+
     [[self.view viewWithTag:1] removeFromSuperview];
 }
 
