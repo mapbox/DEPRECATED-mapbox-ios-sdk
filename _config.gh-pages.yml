@@ -1,6 +1,7 @@
+api: https://www.mapbox.com
+url: https://www.mapbox.com
 permalink: /:categories/:title
 baseurl: /mapbox-ios-sdk
-url: https://122e4e-mapbox.global.ssl.fastly.net
 title: iOS SDK
 description: Open source alternative to MapKit
 pygments: true
