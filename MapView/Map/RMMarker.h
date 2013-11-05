@@ -31,7 +31,7 @@
 
 @class RMMarkerStyle;
 
-typedef enum {
+typedef enum : NSUInteger {
     RMMarkerMapBoxImageSizeSmall,
     RMMarkerMapBoxImageSizeMedium,
     RMMarkerMapBoxImageSizeLarge

@@ -31,7 +31,7 @@
 #import "RMMapView.h"
 #import "RMUserLocation.h"
 
-typedef enum {
+typedef enum : NSUInteger {
     RMUserTrackingButtonStateNone     = 0,
     RMUserTrackingButtonStateActivity = 1,
     RMUserTrackingButtonStateLocation = 2,

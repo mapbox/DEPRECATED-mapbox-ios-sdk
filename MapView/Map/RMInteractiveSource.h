@@ -37,7 +37,7 @@
 #import "RMMBTilesSource.h"
 #import "RMMapBoxSource.h"
 
-typedef enum {
+typedef enum : NSUInteger {
     RMInteractiveSourceOutputTypeTeaser = 0,
     RMInteractiveSourceOutputTypeFull   = 1,
 } RMInteractiveSourceOutputType;
