@@ -29,8 +29,6 @@
 #import "RMMapLayer.h"
 #import "RMFoundation.h"
 
-@class RMMarkerStyle;
-
 typedef enum : NSUInteger {
     RMMarkerMapBoxImageSizeSmall,
     RMMarkerMapBoxImageSizeMedium,
