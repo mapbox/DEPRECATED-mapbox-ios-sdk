@@ -76,7 +76,7 @@
 @property (nonatomic, strong) UIImage *badgeIcon;
 @property (nonatomic, assign) CGPoint anchorPoint;
 
-/** The annotation's current location on screen. Do not set this directly unless during temporary operations like annotation drags, but rather use the coordinate property to permanently change the annotation's location on the map. */
+/** The annotation's current location on screen. Do not set this directly unless during temporary operations such as animations, but rather use the coordinate property to permanently change the annotation's location on the map. */
 @property (nonatomic, assign) CGPoint position;
 
 @property (nonatomic, assign) RMProjectedPoint projectedLocation; // in projected meters

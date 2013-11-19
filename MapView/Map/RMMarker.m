@@ -282,4 +282,38 @@
     }
 }
 
+- (void)setDragState:(RMMapLayerDragState)dragState animated:(BOOL)animated
+{
+    if (dragState == RMMapLayerDragStateStarting)
+    {
+        [CATransaction begin];
+        [CATransaction setAnimationDuration:(animated ? 0.3 : 0)];
+
+        self.opacity -= 0.1;
+        self.transform = CATransform3DScale(self.transform, 1.3, 1.3, 1.0);
+
+        [CATransaction setCompletionBlock:^(void)
+        {
+            [super setDragState:RMMapLayerDragStateDragging animated:animated];
+        }];
+
+        [CATransaction commit];
+    }
+    else if (dragState == RMMapLayerDragStateCanceling || dragState == RMMapLayerDragStateEnding)
+    {
+        [CATransaction begin];
+        [CATransaction setAnimationDuration:(animated ? 0.3 : 0)];
+
+        self.opacity += 0.1;
+        self.transform = CATransform3DScale(self.transform, 1.0/1.3, 1.0/1.3, 1.0);
+
+        [CATransaction setCompletionBlock:^(void)
+        {
+             [super setDragState:RMMapLayerDragStateNone animated:animated];
+        }];
+
+        [CATransaction commit];
+    }
+}
+
 @end

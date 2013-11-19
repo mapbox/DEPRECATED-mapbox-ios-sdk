@@ -148,9 +148,8 @@
     BOOL _delegateHasTapOnCalloutAccessoryControlForAnnotation;
     BOOL _delegateHasTapOnLabelForAnnotation;
     BOOL _delegateHasDoubleTapOnLabelForAnnotation;
-    BOOL _delegateHasShouldDragMarker;
-    BOOL _delegateHasDidDragMarker;
-    BOOL _delegateHasDidEndDragMarker;
+    BOOL _delegateHasShouldDragAnnotation;
+    BOOL _delegateHasDidChangeDragState;
     BOOL _delegateHasLayerForAnnotation;
     BOOL _delegateHasWillHideLayerForAnnotation;
     BOOL _delegateHasDidHideLayerForAnnotation;
@@ -186,7 +185,6 @@
 
     BOOL _draggingEnabled, _bouncingEnabled;
 
-    CGPoint _lastDraggingTranslation;
     RMAnnotation *_draggedAnnotation;
 
     CLLocationManager *_locationManager;
@@ -253,7 +251,6 @@
     _constrainMovement = _constrainMovementByUser = _bouncingEnabled = _zoomingInPivotsAroundCenter = NO;
     _draggingEnabled = YES;
 
-    _lastDraggingTranslation = CGPointZero;
     _draggedAnnotation = nil;
 
     self.backgroundColor = (RMPostVersion6 ? [UIColor colorWithRed:0.970 green:0.952 blue:0.912 alpha:1.000] : [UIColor grayColor]);
@@ -686,9 +683,8 @@
     _delegateHasTapOnLabelForAnnotation = [_delegate respondsToSelector:@selector(tapOnLabelForAnnotation:onMap:)];
     _delegateHasDoubleTapOnLabelForAnnotation = [_delegate respondsToSelector:@selector(doubleTapOnLabelForAnnotation:onMap:)];
 
-    _delegateHasShouldDragMarker = [_delegate respondsToSelector:@selector(mapView:shouldDragAnnotation:)];
-    _delegateHasDidDragMarker = [_delegate respondsToSelector:@selector(mapView:didDragAnnotation:withDelta:)];
-    _delegateHasDidEndDragMarker = [_delegate respondsToSelector:@selector(mapView:didEndDragAnnotation:)];
+    _delegateHasShouldDragAnnotation = [_delegate respondsToSelector:@selector(mapView:shouldDragAnnotation:)];
+    _delegateHasDidChangeDragState = [_delegate respondsToSelector:@selector(mapView:annotation:didChangeDragState:fromOldState:)];
 
     _delegateHasLayerForAnnotation = [_delegate respondsToSelector:@selector(mapView:layerForAnnotation:)];
     _delegateHasWillHideLayerForAnnotation = [_delegate respondsToSelector:@selector(mapView:willHideLayerForAnnotation:)];
@@ -1358,6 +1354,8 @@
     singleTapRecognizer.delegate = self;
 
     UILongPressGestureRecognizer *longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+    longPressRecognizer.minimumPressDuration = 0.25;
+    longPressRecognizer.allowableMovement = MAXFLOAT;
     longPressRecognizer.delegate = self;
 
     [self addGestureRecognizer:singleTapRecognizer];
@@ -1370,19 +1368,6 @@
     twoFingerSingleTapRecognizer.delegate = self;
 
     [self addGestureRecognizer:twoFingerSingleTapRecognizer];
-
-    // pan
-    UIPanGestureRecognizer *panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
-    panGestureRecognizer.minimumNumberOfTouches = 1;
-    panGestureRecognizer.maximumNumberOfTouches = 1;
-
-    // the delegate is used to decide whether a pan should be handled by this
-    // recognizer or by the pan gesture recognizer of the scrollview
-    panGestureRecognizer.delegate = self;
-
-    // the pan recognizer is added to the scrollview as it competes with the
-    // pan recognizer of the scrollview
-    [_mapScrollView addGestureRecognizer:panGestureRecognizer];
 
     [_visibleAnnotations removeAllObjects];
     [self correctPositionOfAllAnnotations];
@@ -1767,43 +1752,83 @@
 
 - (void)handleLongPress:(UILongPressGestureRecognizer *)recognizer
 {
-    if (recognizer.state != UIGestureRecognizerStateBegan)
+    if ( ! _delegateHasLongPressOnMap && ! _delegateHasLongPressOnAnnotation && ! _delegateHasShouldDragAnnotation)
         return;
 
-    if ( ! _delegateHasLongPressOnMap && ! _delegateHasLongPressOnAnnotation)
-        return;
+    CALayer *hit = _draggedAnnotation.layer;
 
-    CALayer *hit = [_overlayView overlayHitTest:[recognizer locationInView:self]];
-
-    if (_currentAnnotation && [hit isEqual:_currentAnnotation.layer])
-        [self deselectAnnotation:_currentAnnotation animated:NO];
-
-    if ([hit isKindOfClass:[RMMapLayer class]] && _delegateHasLongPressOnAnnotation)
-        [_delegate longPressOnAnnotation:[((RMMapLayer *)hit) annotation] onMap:self];
-
-    else if (_delegateHasLongPressOnMap)
-        [_delegate longPressOnMap:self at:[recognizer locationInView:self]];
-}
-
-// defines when the additional pan gesture recognizer on the scroll should handle the gesture
-- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)recognizer
-{
-    if ([recognizer isKindOfClass:[UIPanGestureRecognizer class]])
+    if ( ! _draggedAnnotation)
     {
-        // check whether our custom pan gesture recognizer should start recognizing the gesture
-        CALayer *hit = [_overlayView overlayHitTest:[recognizer locationInView:_overlayView]];
+        hit = [_overlayView overlayHitTest:[recognizer locationInView:self]];
 
-        if ([hit isEqual:_overlayView.layer])
-            return NO;
-        
-        if (!hit || ([hit respondsToSelector:@selector(draggingEnabled)] && ![(RMMarker *)hit draggingEnabled]))
-            return NO;
-
-        if ( ! [self shouldDragAnnotation:[self findAnnotationInLayer:hit]])
-            return NO;
+        // deselect any annotation that we're about to drag
+        //
+        if (_currentAnnotation && [hit isEqual:_currentAnnotation.layer])
+            [self deselectAnnotation:_currentAnnotation animated:NO];
     }
 
-    return YES;
+    if ([hit isKindOfClass:[RMMapLayer class]] && [self shouldDragAnnotation:[((RMMapLayer *)hit) annotation]])
+    {
+        // handle annotation drags
+        //
+        if ( ! _draggedAnnotation && recognizer.state == UIGestureRecognizerStateBegan)
+        {
+            // note the annotation
+            //
+            _draggedAnnotation = [((RMMapLayer *)hit) annotation];
+
+            // inform the layer
+            //
+            [_draggedAnnotation.layer setDragState:RMMapLayerDragStateStarting animated:YES];
+        }
+        else if (_draggedAnnotation && recognizer.state == UIGestureRecognizerStateChanged && _draggedAnnotation.layer.dragState == RMMapLayerDragStateDragging)
+        {
+            // perform the drag (unanimated for fluidity)
+            //
+            [CATransaction begin];
+            [CATransaction setDisableActions:YES];
+
+            _draggedAnnotation.position = [recognizer locationInView:_overlayView];
+
+            [CATransaction commit];
+        }
+        else if (_draggedAnnotation && recognizer.state == UIGestureRecognizerStateCancelled)
+        {
+            // cancel & go back to start point
+            //
+            [_draggedAnnotation.layer setDragState:RMMapLayerDragStateCanceling animated:YES];
+
+            _draggedAnnotation.position = [self coordinateToPixel:_draggedAnnotation.coordinate];
+
+            [self correctOrderingOfAllAnnotations];
+
+            _draggedAnnotation = nil;
+        }
+        else if (_draggedAnnotation && recognizer.state == UIGestureRecognizerStateEnded)
+        {
+            // complete drag & update coordinate
+            //
+            [_draggedAnnotation.layer setDragState:RMMapLayerDragStateEnding animated:YES];
+
+            _draggedAnnotation.coordinate = [self pixelToCoordinate:_draggedAnnotation.position];
+
+            [self correctOrderingOfAllAnnotations];
+
+            _draggedAnnotation = nil;
+        }
+    }
+    else if ([hit isKindOfClass:[RMMapLayer class]] && _delegateHasLongPressOnAnnotation)
+    {
+        // pass annotation long-press to delegate
+        //
+        [_delegate longPressOnAnnotation:[((RMMapLayer *)hit) annotation] onMap:self];
+    }
+    else if (_delegateHasLongPressOnMap)
+    {
+        // pass map long-press to delegate
+        //
+        [_delegate longPressOnMap:self at:[recognizer locationInView:self]];
+    }
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
@@ -1812,40 +1837,6 @@
         return NO;
 
     return YES;
-}
-
-- (void)handlePanGesture:(UIPanGestureRecognizer *)recognizer
-{
-    if (recognizer.state == UIGestureRecognizerStateBegan)
-    {
-        CALayer *hit = [_overlayView.layer hitTest:[recognizer locationInView:self]];
-
-        if ( ! hit)
-            return;
-
-        if ([hit respondsToSelector:@selector(draggingEnabled)] && ![(RMMarker *)hit draggingEnabled])
-            return;
-
-        _lastDraggingTranslation = CGPointZero;
-        _draggedAnnotation = [self findAnnotationInLayer:hit];
-    }
-
-    if (recognizer.state == UIGestureRecognizerStateChanged)
-    {
-        CGPoint translation = [recognizer translationInView:_overlayView];
-        CGPoint delta = CGPointMake(_lastDraggingTranslation.x - translation.x, _lastDraggingTranslation.y - translation.y);
-        _lastDraggingTranslation = translation;
-
-        [CATransaction begin];
-        [CATransaction setAnimationDuration:0];
-        [self didDragAnnotation:_draggedAnnotation withDelta:delta];
-        [CATransaction commit];
-    }
-    else if (recognizer.state == UIGestureRecognizerStateEnded)
-    {
-        [self didEndDragAnnotation:_draggedAnnotation];
-         _draggedAnnotation = nil;
-    }
 }
 
 // Overlay
@@ -2041,22 +2032,16 @@
 
 - (BOOL)shouldDragAnnotation:(RMAnnotation *)anAnnotation
 {
-    if (_delegateHasShouldDragMarker)
+    if ( ! anAnnotation.isUserLocationAnnotation && ! anAnnotation.isClusterAnnotation && _delegateHasShouldDragAnnotation)
         return [_delegate mapView:self shouldDragAnnotation:anAnnotation];
     else
         return NO;
 }
 
-- (void)didDragAnnotation:(RMAnnotation *)anAnnotation withDelta:(CGPoint)delta
+- (void)annotation:(RMAnnotation *)annotation didChangeDragState:(RMMapLayerDragState)newState fromOldState:(RMMapLayerDragState)oldState
 {
-    if (_delegateHasDidDragMarker)
-        [_delegate mapView:self didDragAnnotation:anAnnotation withDelta:delta];
-}
-
-- (void)didEndDragAnnotation:(RMAnnotation *)anAnnotation
-{
-    if (_delegateHasDidEndDragMarker)
-        [_delegate mapView:self didEndDragAnnotation:anAnnotation];
+    if (_delegateHasDidChangeDragState)
+        [_delegate mapView:self annotation:annotation didChangeDragState:newState fromOldState:oldState];
 }
 
 #pragma mark -
