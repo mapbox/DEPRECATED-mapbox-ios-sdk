@@ -46,6 +46,11 @@
 
 @synthesize cacheable = _cacheable, opaque = _opaque;
 
+- (id)initWithTileSetResource:(NSString *)name
+{
+    return [self initWithTileSetResource:name ofType:([[[name pathExtension] lowercaseString] isEqualToString:@"mbtiles"] ? @"" : @"mbtiles")];
+}
+
 - (id)initWithTileSetResource:(NSString *)name ofType:(NSString *)extension
 {
     return [self initWithTileSetURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:name ofType:extension]]];
