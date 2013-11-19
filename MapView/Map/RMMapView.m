@@ -186,6 +186,7 @@
     BOOL _draggingEnabled, _bouncingEnabled;
 
     RMAnnotation *_draggedAnnotation;
+    CGPoint _dragOffset;
 
     CLLocationManager *_locationManager;
 
@@ -1777,6 +1778,10 @@
             //
             _draggedAnnotation = [((RMMapLayer *)hit) annotation];
 
+            // remember where in the layer the gesture occurred
+            //
+            _dragOffset = [_draggedAnnotation.layer convertPoint:[recognizer locationInView:self] fromLayer:self.layer];
+
             // inform the layer
             //
             [_draggedAnnotation.layer setDragState:RMMapLayerDragStateStarting animated:YES];
@@ -1788,7 +1793,11 @@
             [CATransaction begin];
             [CATransaction setDisableActions:YES];
 
-            _draggedAnnotation.position = [recognizer locationInView:self];
+            CGSize layerSize = _draggedAnnotation.layer.bounds.size;
+            CGPoint gesturePoint = [recognizer locationInView:self];
+            CGPoint newPosition = CGPointMake(gesturePoint.x + ((layerSize.width / 2) - _dragOffset.x), gesturePoint.y + ((layerSize.height / 2) - _dragOffset.y));
+
+            _draggedAnnotation.position = newPosition;
 
             [CATransaction commit];
         }
