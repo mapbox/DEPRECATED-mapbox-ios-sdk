@@ -314,6 +314,10 @@
 
         [CATransaction commit];
     }
+    else
+    {
+        [super setDragState:dragState animated:animated];
+    }
 }
 
 @end
