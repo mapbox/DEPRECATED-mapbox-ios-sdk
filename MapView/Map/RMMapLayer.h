@@ -101,7 +101,7 @@
 
 /** Set the screen position of the layer.
 *   @param position The desired screen position.
-*   @param animated If set to YES, any position change is animated. */
+*   @param animated If set to `YES`, any position change is animated. */
 - (void)setPosition:(CGPoint)position animated:(BOOL)animated;
 
 - (void)setDragState:(RMMapLayerDragState)dragState animated:(BOOL)animated;
