@@ -1788,7 +1788,7 @@
             [CATransaction begin];
             [CATransaction setDisableActions:YES];
 
-            _draggedAnnotation.position = [recognizer locationInView:_overlayView];
+            _draggedAnnotation.position = [recognizer locationInView:self];
 
             [CATransaction commit];
         }
