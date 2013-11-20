@@ -1785,6 +1785,10 @@
             // inform the layer
             //
             [_draggedAnnotation.layer setDragState:RMMapLayerDragStateStarting animated:YES];
+
+            // bring to top
+            //
+            _draggedAnnotation.layer.zPosition = MAXFLOAT;
         }
         else if (_draggedAnnotation && recognizer.state == UIGestureRecognizerStateChanged && _draggedAnnotation.layer.dragState == RMMapLayerDragStateDragging)
         {
