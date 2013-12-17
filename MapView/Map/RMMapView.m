@@ -42,7 +42,7 @@
 
 #import "RMTileCache.h"
 #import "RMTileSource.h"
-#import "RMMapBoxSource.h"
+#import "RMMapboxSource.h"
 
 #import "RMMapTiledLayerView.h"
 #import "RMMapOverlayView.h"
@@ -355,7 +355,7 @@
 
 - (id)initWithFrame:(CGRect)frame
 {
-    return [self initWithFrame:frame andTilesource:[RMMapBoxSource new]];
+    return [self initWithFrame:frame andTilesource:[RMMapboxSource new]];
 }
 
 - (id)initWithFrame:(CGRect)frame andTilesource:(id <RMTileSource>)newTilesource
@@ -426,9 +426,9 @@
 
 + (NSString *)pathForBundleResourceNamed:(NSString *)name ofType:(NSString *)extension
 {
-    NSAssert([[NSBundle mainBundle] pathForResource:@"MapBox" ofType:@"bundle"], @"Resource bundle not found in application.");
+    NSAssert([[NSBundle mainBundle] pathForResource:@"Mapbox" ofType:@"bundle"], @"Resource bundle not found in application.");
 
-    NSString *bundlePath      = [[NSBundle mainBundle] pathForResource:@"MapBox" ofType:@"bundle"];
+    NSString *bundlePath      = [[NSBundle mainBundle] pathForResource:@"Mapbox" ofType:@"bundle"];
     NSBundle *resourcesBundle = [NSBundle bundleWithPath:bundlePath];
 
     return [resourcesBundle pathForResource:name ofType:extension];
@@ -615,7 +615,7 @@
         // needs a scroll view frame in order to calculate _metersPerPixel.
         // See https://github.com/mapbox/mapbox-ios-sdk/issues/270
         //
-        [self performInitializationWithTilesource:[RMMapBoxSource new]
+        [self performInitializationWithTilesource:[RMMapboxSource new]
                                  centerCoordinate:CLLocationCoordinate2DMake(kDefaultInitialLatitude, kDefaultInitialLongitude)
                                         zoomLevel:kDefaultInitialZoomLevel
                                      maxZoomLevel:kDefaultMaximumZoomLevel

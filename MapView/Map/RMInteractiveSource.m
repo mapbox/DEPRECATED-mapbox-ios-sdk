@@ -2,7 +2,7 @@
 //  RMInteractiveSource.m
 //
 //  Created by Justin R. Miller on 6/22/11.
-//  Copyright 2012 MapBox.
+//  Copyright 2012-2013 Mapbox.
 //  All rights reserved.
 //  
 //  Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
 //        notice, this list of conditions and the following disclaimer in the
 //        documentation and/or other materials provided with the distribution.
 //  
-//      * Neither the name of MapBox, nor the names of its contributors may be
+//      * Neither the name of Mapbox, nor the names of its contributors may be
 //        used to endorse or promote products derived from this software
 //        without specific prior written permission.
 //  
@@ -77,7 +77,7 @@
     //
     for (id <RMTileSource>source in [[self.tileSources reverseObjectEnumerator] allObjects])
     {
-        if (([source isKindOfClass:[RMMBTilesSource class]] || [source isKindOfClass:[RMMapBoxSource class]]) &&
+        if (([source isKindOfClass:[RMMBTilesSource class]] || [source isKindOfClass:[RMMapboxSource class]]) &&
             [source conformsToProtocol:@protocol(RMInteractiveSource)]                                        &&
             [(id <RMInteractiveSource>)source supportsInteractivity])
         {
@@ -160,7 +160,7 @@ RMTilePoint RMInteractiveSourceNormalizedTilePointForMapView(CGPoint point, RMMa
     //
     id <RMTileSource>interactiveSource = [mapView interactiveTileSource];
     
-    if (([interactiveSource isKindOfClass:[RMMapBoxSource class]] && [((RMMapBoxSource *)interactiveSource).infoDictionary objectForKey:@"scheme"] && [[((RMMapBoxSource *)interactiveSource).infoDictionary objectForKey:@"scheme"] isEqual:@"tms"]) || [interactiveSource isKindOfClass:[RMMBTilesSource class]])
+    if (([interactiveSource isKindOfClass:[RMMapboxSource class]] && [((RMMapboxSource *)interactiveSource).infoDictionary objectForKey:@"scheme"] && [[((RMMapboxSource *)interactiveSource).infoDictionary objectForKey:@"scheme"] isEqual:@"tms"]) || [interactiveSource isKindOfClass:[RMMBTilesSource class]])
     {
         tileY = pow(2.0, tileZoom) - tileY - 1.0;
     }
@@ -487,16 +487,16 @@ RMTilePoint RMInteractiveSourceNormalizedTilePointForMapView(CGPoint point, RMMa
 
 @end
 
-#pragma mark - MapBox
+#pragma mark - Mapbox
 
-@interface RMMapBoxSource (RMInteractiveSourcePrivate) <RMInteractiveSourcePrivate>
+@interface RMMapboxSource (RMInteractiveSourcePrivate) <RMInteractiveSourcePrivate>
 
 - (NSDictionary *)interactivityDictionaryForPoint:(CGPoint)point inMapView:(RMMapView *)mapView;
 - (NSString *)interactivityFormatterTemplate;
 
 @end
 
-@implementation RMMapBoxSource (RMInteractiveSource)
+@implementation RMMapboxSource (RMInteractiveSource)
 
 - (NSString *)description
 {

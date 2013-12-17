@@ -138,7 +138,7 @@ typedef enum : NSUInteger {
 
 /** @name Initializing a Map View */
 
-/** Initialize a map view with a given frame. A default watermarked MapBox map tile source will be used. */
+/** Initialize a map view with a given frame. A default watermarked Mapbox map tile source will be used. */
 - (id)initWithFrame:(CGRect)frame;
 
 /** Initialize a map view with a given frame and tile source. 

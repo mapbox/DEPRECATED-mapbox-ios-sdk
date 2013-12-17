@@ -1,8 +1,8 @@
 //
-//  RMMapBoxSource.m
+//  RMMapboxSource.m
 //
 //  Created by Justin R. Miller on 5/17/11.
-//  Copyright 2012 MapBox.
+//  Copyright 2012-2013 Mapbox.
 //  All rights reserved.
 //  
 //  Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
 //        notice, this list of conditions and the following disclaimer in the
 //        documentation and/or other materials provided with the distribution.
 //  
-//      * Neither the name of MapBox, nor the names of its contributors may be
+//      * Neither the name of Mapbox, nor the names of its contributors may be
 //        used to endorse or promote products derived from this software
 //        without specific prior written permission.
 //  
@@ -31,13 +31,13 @@
 //  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import "RMMapBoxSource.h"
+#import "RMMapboxSource.h"
 
 #import "RMMapView.h"
 #import "RMPointAnnotation.h"
 #import "RMConfiguration.h"
 
-@interface RMMapBoxSource ()
+@interface RMMapboxSource ()
 
 @property (nonatomic, strong) NSDictionary *infoDictionary;
 @property (nonatomic, strong) NSString *tileJSON;
@@ -46,13 +46,13 @@
 
 #pragma mark -
 
-@implementation RMMapBoxSource
+@implementation RMMapboxSource
 
 @synthesize infoDictionary=_infoDictionary, tileJSON=_tileJSON, imageQuality=_imageQuality, dataQueue=_dataQueue;
 
 - (id)init
 {
-    return [self initWithReferenceURL:[NSURL fileURLWithPath:[RMMapView pathForBundleResourceNamed:kMapBoxPlaceholderMapID ofType:@"json"]]];
+    return [self initWithReferenceURL:[NSURL fileURLWithPath:[RMMapView pathForBundleResourceNamed:kMapboxPlaceholderMapID ofType:@"json"]]];
 }
 
 - (id)initWithMapID:(NSString *)mapID
@@ -213,48 +213,48 @@
     if ([[UIScreen mainScreen] scale] > 1.0)
         tileURLString = [tileURLString stringByReplacingOccurrencesOfString:@".png" withString:@"@2x.png"];
 
-    if (_imageQuality != RMMapBoxSourceQualityFull)
+    if (_imageQuality != RMMapboxSourceQualityFull)
     {
         NSString *qualityExtension = nil;
 
         switch (_imageQuality)
         {
-            case RMMapBoxSourceQualityPNG32:
+            case RMMapboxSourceQualityPNG32:
             {
                 qualityExtension = @".png32";
                 break;
             }
-            case RMMapBoxSourceQualityPNG64:
+            case RMMapboxSourceQualityPNG64:
             {
                 qualityExtension = @".png64";
                 break;
             }
-            case RMMapBoxSourceQualityPNG128:
+            case RMMapboxSourceQualityPNG128:
             {
                 qualityExtension = @".png128";
                 break;
             }
-            case RMMapBoxSourceQualityPNG256:
+            case RMMapboxSourceQualityPNG256:
             {
                 qualityExtension = @".png256";
                 break;
             }
-            case RMMapBoxSourceQualityJPEG70:
+            case RMMapboxSourceQualityJPEG70:
             {
                 qualityExtension = @".jpg70";
                 break;
             }
-            case RMMapBoxSourceQualityJPEG80:
+            case RMMapboxSourceQualityJPEG80:
             {
                 qualityExtension = @".jpg80";
                 break;
             }
-            case RMMapBoxSourceQualityJPEG90:
+            case RMMapboxSourceQualityJPEG90:
             {
                 qualityExtension = @".jpg90";
                 break;
             }
-            case RMMapBoxSourceQualityFull:
+            case RMMapboxSourceQualityFull:
             default:
             {
                 qualityExtension = @".png";
@@ -309,13 +309,13 @@
         return bounds;
     }
 
-    return kMapBoxDefaultLatLonBoundingBox;
+    return kMapboxDefaultLatLonBoundingBox;
 }
 
 - (BOOL)coversFullWorld
 {
     RMSphericalTrapezium ownBounds     = [self latitudeLongitudeBoundingBox];
-    RMSphericalTrapezium defaultBounds = kMapBoxDefaultLatLonBoundingBox;
+    RMSphericalTrapezium defaultBounds = kMapboxDefaultLatLonBoundingBox;
 
     if (ownBounds.southWest.longitude <= defaultBounds.southWest.longitude + 10 && 
         ownBounds.northEast.longitude >= defaultBounds.northEast.longitude - 10)
@@ -352,7 +352,7 @@
 
 - (NSString *)uniqueTilecacheKey
 {
-    return [NSString stringWithFormat:@"MapBox-%@-%@", [self.infoDictionary objectForKey:@"id"], [self.infoDictionary objectForKey:@"version"]];
+    return [NSString stringWithFormat:@"Mapbox-%@-%@", [self.infoDictionary objectForKey:@"id"], [self.infoDictionary objectForKey:@"version"]];
 }
 
 - (NSString *)shortName

@@ -3,7 +3,7 @@
 //  MapView
 //
 //  Created by Justin Miller on 6/19/12.
-//  Copyright (c) 2012 MapBox / Development Seed. All rights reserved.
+//  Copyright (c) 2012-2013 Mapbox. All rights reserved.
 //
 
 #import "RMAttributionViewController.h"
@@ -133,7 +133,7 @@
     {
         // add SDK info
         //
-        [attribution insertString:[NSString stringWithFormat:@"%@ uses the MapBox iOS SDK © 2013 MapBox, Inc.<br/><a href='http://mapbox.com/mapbox-ios-sdk'>More</a><br/><br/>", [[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleDisplayName"]]  atIndex:0];
+        [attribution insertString:[NSString stringWithFormat:@"%@ uses the Mapbox iOS SDK © 2013 Mapbox, Inc.<br/><a href='http://mapbox.com/mapbox-ios-sdk'>More</a><br/><br/>", [[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleDisplayName"]]  atIndex:0];
 
         // add tinted logo
         //

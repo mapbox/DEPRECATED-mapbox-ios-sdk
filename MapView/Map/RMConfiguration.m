@@ -101,7 +101,7 @@ static RMConfiguration *RMConfigurationSharedInstance = nil;
     if (!(self = [super init]))
         return nil;
 
-    _userAgent = [NSString stringWithFormat:@"MapBox iOS SDK (%@/%@)", [[UIDevice currentDevice] model], [[UIDevice currentDevice] systemVersion]];
+    _userAgent = [NSString stringWithFormat:@"Mapbox iOS SDK (%@/%@)", [[UIDevice currentDevice] model], [[UIDevice currentDevice] systemVersion]];
 
     if (path == nil)
     {
