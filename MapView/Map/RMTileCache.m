@@ -288,7 +288,8 @@
         totalTiles += (xMax + 1 - xMin) * (yMax + 1 - yMin);
     }
 
-    [_backgroundCacheDelegate tileCache:self didBeginBackgroundCacheWithCount:totalTiles forTileSource:_activeTileSource];
+    if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCache:didBeginBackgroundCacheWithCount:forTileSource:)])
+        [_backgroundCacheDelegate tileCache:self didBeginBackgroundCacheWithCount:totalTiles forTileSource:_activeTileSource];
 
     __block int progTile = 0;
 
@@ -318,7 +319,8 @@
                         {
                             progTile++;
 
-                            [_backgroundCacheDelegate tileCache:self didBackgroundCacheTile:RMTileMake(x, y, zoom) withIndex:progTile ofTotalTileCount:totalTiles];
+                            if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCache:didBackgroundCacheTile:withIndex:ofTotalTileCount:)])
+                                [_backgroundCacheDelegate tileCache:self didBackgroundCacheTile:RMTileMake(x, y, zoom) withIndex:progTile ofTotalTileCount:totalTiles];
 
                             if (progTile == totalTiles)
                             {
@@ -326,7 +328,8 @@
 
                                  _activeTileSource = nil;
 
-                                [_backgroundCacheDelegate tileCacheDidFinishBackgroundCache:self];
+                                if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCacheDidFinishBackgroundCache:)])
+                                    [_backgroundCacheDelegate tileCacheDidFinishBackgroundCache:self];
                             }
                         }
 
@@ -364,7 +367,8 @@
             {
                 dispatch_sync(dispatch_get_main_queue(), ^(void)
                 {
-                    [_backgroundCacheDelegate tileCacheDidCancelBackgroundCache:self];
+                    if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCacheDidCancelBackgroundCache:)])
+                        [_backgroundCacheDelegate tileCacheDidCancelBackgroundCache:self];
                 });
             }
         }
