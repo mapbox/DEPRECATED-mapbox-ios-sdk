@@ -97,9 +97,9 @@
 			  @"%@ tried to retrieve tile with zoomLevel %d, outside source's defined range %f to %f", 
 			  self, tile.zoom, self.minZoom, self.maxZoom);
 
-    NSInteger zoom = tile.zoom;
-    NSInteger x    = tile.x;
-    NSInteger y    = pow(2, zoom) - tile.y - 1;
+    NSUInteger zoom = tile.zoom;
+    NSUInteger x    = tile.x;
+    NSUInteger y    = pow(2, zoom) - tile.y - 1;
 
     dispatch_async(dispatch_get_main_queue(), ^(void)
     {
@@ -111,9 +111,9 @@
     [queue inDatabase:^(FMDatabase *db)
     {
         FMResultSet *results = [db executeQuery:@"select tile_data from tiles where zoom_level = ? and tile_column = ? and tile_row = ?", 
-                                   [NSNumber numberWithShort:zoom], 
-                                   [NSNumber numberWithUnsignedInt:x], 
-                                   [NSNumber numberWithUnsignedInt:y]];
+                                   [NSNumber numberWithUnsignedLongLong:zoom],
+                                   [NSNumber numberWithUnsignedLongLong:x],
+                                   [NSNumber numberWithUnsignedLongLong:y]];
 
         if ([db hadError])
             image = [RMTileImage errorTile];

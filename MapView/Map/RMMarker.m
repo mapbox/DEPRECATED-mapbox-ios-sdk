@@ -122,11 +122,11 @@
 
         if ([color getRed:&red green:&green blue:&blue alpha:&alpha])
         {
-            colorHex = [NSString stringWithFormat:@"%02x%02x%02x", (NSUInteger)(red * 255), (NSUInteger)(green * 255), (NSUInteger)(blue * 255)];
+            colorHex = [NSString stringWithFormat:@"%02lx%02lx%02lx", (unsigned long)(red * 255), (unsigned long)(green * 255), (unsigned long)(blue * 255)];
         }
         else if ([color getWhite:&white alpha:&alpha])
         {
-            colorHex = [NSString stringWithFormat:@"%02x%02x%02x", (NSUInteger)(white * 255), (NSUInteger)(white * 255), (NSUInteger)(white * 255)];
+            colorHex = [NSString stringWithFormat:@"%02lx%02lx%02lx", (unsigned long)(white * 255), (unsigned long)(white * 255), (unsigned long)(white * 255)];
         }
     }
     

@@ -449,7 +449,7 @@ static NSMutableDictionary *predicateValues = nil;
         }
     }
 
-    RMLog(@"Memory cache configuration: {capacity : %d}", capacity);
+    RMLog(@"Memory cache configuration: {capacity : %lu}", (unsigned long)capacity);
 
 	return [[RMMemoryCache alloc] initWithCapacity:capacity];
 }
@@ -519,7 +519,7 @@ static NSMutableDictionary *predicateValues = nil;
         }
         else
         {
-            RMLog(@"illegal value for capacity: %d", value);
+            RMLog(@"illegal value for capacity: %ld", (long)value);
         }
     }
 
@@ -549,7 +549,7 @@ static NSMutableDictionary *predicateValues = nil;
     if (expiryPeriodNumber != nil)
         _expiryPeriod = [expiryPeriodNumber doubleValue];
 
-    RMLog(@"Database cache configuration: {capacity : %d, strategy : %@, minimalPurge : %d, expiryPeriod: %.0f, useCacheDir : %@}", capacity, strategyStr, minimalPurge, _expiryPeriod, useCacheDir ? @"YES" : @"NO");
+    RMLog(@"Database cache configuration: {capacity : %lu, strategy : %@, minimalPurge : %lu, expiryPeriod: %.0f, useCacheDir : %@}", (unsigned long)capacity, strategyStr, (unsigned long)minimalPurge, _expiryPeriod, useCacheDir ? @"YES" : @"NO");
 
     RMDatabaseCache *dbCache = [[RMDatabaseCache alloc] initUsingCacheDir:useCacheDir];
     [dbCache setCapacity:capacity];

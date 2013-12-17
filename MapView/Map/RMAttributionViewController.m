@@ -110,10 +110,10 @@
     {
         CGFloat r,g,b;
         [self.view.tintColor getRed:&r green:&g blue:&b alpha:nil];
-        linkColor  = [NSString stringWithFormat:@"rgb(%i,%i,%i)", (NSUInteger)(r * 255.0), (NSUInteger)(g * 255.0), (NSUInteger)(b * 255.0)];
+        linkColor  = [NSString stringWithFormat:@"rgb(%lu,%lu,%lu)", (unsigned long)(r * 255.0), (unsigned long)(g * 255.0), (unsigned long)(b * 255.0)];
         textColor  = @"black";
         fontFamily = @"Helvetica Neue";
-        fontSize   = [NSString stringWithFormat:@"font-size: %i; ", (NSUInteger)[[UIFont preferredFontForTextStyle:UIFontTextStyleBody] pointSize]];
+        fontSize   = [NSString stringWithFormat:@"font-size: %lu; ", (unsigned long)[[UIFont preferredFontForTextStyle:UIFontTextStyleBody] pointSize]];
         margin     = @"margin: 20px; ";
     }
     else

@@ -123,7 +123,7 @@
 
 - (NSString *)uniqueTilecacheKey
 {
-	return [NSString stringWithFormat:@"Bing%i", _imagerySet];
+	return [NSString stringWithFormat:@"Bing%lu", _imagerySet];
 }
 
 - (NSString *)shortName
