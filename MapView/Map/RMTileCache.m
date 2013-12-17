@@ -269,8 +269,9 @@
     float minCacheLon  = southWest.longitude;
     float maxCacheLon  = northEast.longitude;
 
-    if (maxCacheZoom < minCacheZoom || maxCacheLat <= minCacheLat || maxCacheLon <= minCacheLon)
-        return;
+    NSAssert(minCacheZoom <= maxCacheZoom, @"Minimum zoom should be less than or equal to maximum zoom");
+    NSAssert(maxCacheLat  >  minCacheLat,  @"Northernmost bounds should exceed southernmost bounds");
+    NSAssert(maxCacheLon  >  minCacheLon,  @"Easternmost bounds should exceed westernmost bounds");
 
     int n, xMin, yMax, xMax, yMin;
 
