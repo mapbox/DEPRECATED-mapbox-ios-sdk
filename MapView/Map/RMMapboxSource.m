@@ -352,7 +352,7 @@
 
 - (NSString *)uniqueTilecacheKey
 {
-    return [NSString stringWithFormat:@"Mapbox-%@-%@", [self.infoDictionary objectForKey:@"id"], [self.infoDictionary objectForKey:@"version"]];
+    return [NSString stringWithFormat:@"Mapbox-%@%@", [self.infoDictionary objectForKey:@"id"], ([self.infoDictionary objectForKey:@"version"] ? [@"-" stringByAppendingString:[self.infoDictionary objectForKey:@"version"]] : @"")];
 }
 
 - (NSString *)shortName
