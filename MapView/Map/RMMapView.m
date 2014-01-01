@@ -2671,7 +2671,7 @@
 
     // update point annotations with managed layers
     //
-    BOOL updatePoints;
+    BOOL updatePoints = NO;
 
     for (RMAnnotation *annotation in self.annotations)
     {
