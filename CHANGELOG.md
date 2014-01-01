@@ -1,6 +1,36 @@
 Changelog
 ---------
 
+### 1.1.0-dev
+#### xxx, 2014
+
+  - Updated for iOS 7, including visual appearance, tint color behavior, modal presentation paradigms, deprecations, and addition of a compass button when in tracking mode. 
+  - 64-bit compliance. 
+  - Requires Xcode 5.0+. 
+  - Revamped annotation drag & drop system to work more like MapKit's. 
+  - Improved autolayout support, including iOS 7 `UIViewController` layout guides. 
+  - Support for [auto-retina mode](/developers/api/#Image.quality.&.scale) for Mapbox OpenStreetMap-based maps. 
+  - Added `-[RMMapView setAlpha:forTileSource:]` and `-[RMMapView setAlpha:forTileSourceAtIndex:]`. 
+  - Added `RMCircleAnnotation`. 
+  - Added `-[RMMBTilesSource initWithTileSetResource:]` convenience method. 
+  - Added `-[RMPointAnnotation image]`. 
+  - Changed default `RMMarker` image from a pin with a star to a blank pin. 
+  - Updated `RMCircle` default alpha from `1.0` to `0.25` and line width from `10.0` to `2.0`. 
+  - Enhanced customizability for point, polyline, and polygon annotations. 
+  - Improvements to `RMUserTrackingBarButtonItem` state animations. 
+  - More accurate tile background loading grid for iOS 6+. 
+  - Renamed instances of *MapBox* to *Mapbox* to better reflect branding. 
+  - Fixed several crashes related to XIB unarchiving, invalid `frame` passing, and offline use. 
+  - More efficient `RMPointAnnotation` redraws. 
+  - Raise an exception when bad parameters are passed to background caching instead of failing silently. 
+  - Background cache delegate methods are now truly optional as specified in the `RMTileCacheBackgroundDelegate` protocol. 
+  - Updated [GRMustache](https://github.com/groue/GRMustache) from `v5.4.3` to `v6.8.3`. 
+  - Updated usage of `instancetype` and `typedef enum`. 
+  - Clarified documentation. 
+  - Improved and updated CocoaPods specification. 
+  - Fixed some build warnings. 
+  - Minor bug fixes. 
+
 ### 1.0.3
 #### June 28, 2013
 
