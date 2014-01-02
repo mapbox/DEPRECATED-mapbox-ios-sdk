@@ -42,6 +42,7 @@
 @implementation RMMBTilesSource
 {
     RMFractalTileProjection *tileProjection;
+    NSString *_uniqueTilecacheKey;
 }
 
 @synthesize cacheable = _cacheable, opaque = _opaque;
@@ -70,6 +71,8 @@
 
     if ( ! queue)
         return nil;
+
+    _uniqueTilecacheKey = [NSString stringWithFormat:@"MBTiles%@", [queue.path lastPathComponent]];
 
     [queue inDatabase:^(FMDatabase *db) {
         [db setShouldCacheStatements:YES];
@@ -330,7 +333,7 @@
 
 - (NSString *)uniqueTilecacheKey
 {
-    return [NSString stringWithFormat:@"MBTiles%@", [queue.path lastPathComponent]];
+    return _uniqueTilecacheKey;
 }
 
 - (NSString *)shortName

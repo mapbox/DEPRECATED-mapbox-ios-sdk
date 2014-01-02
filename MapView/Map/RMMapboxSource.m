@@ -41,7 +41,7 @@
 
 @property (nonatomic, strong) NSDictionary *infoDictionary;
 @property (nonatomic, strong) NSString *tileJSON;
-@property (nonatomic, strong) NSString *cacheKey;
+@property (nonatomic, strong) NSString *uniqueTilecacheKey;
 
 @end
 
@@ -49,7 +49,7 @@
 
 @implementation RMMapboxSource
 
-@synthesize infoDictionary=_infoDictionary, tileJSON=_tileJSON, imageQuality=_imageQuality, dataQueue=_dataQueue;
+@synthesize infoDictionary=_infoDictionary, tileJSON=_tileJSON, imageQuality=_imageQuality, dataQueue=_dataQueue, uniqueTilecacheKey=_uniqueTilecacheKey;
 
 - (id)init
 {
@@ -85,7 +85,7 @@
 
         _tileJSON = tileJSON;
 
-        _cacheKey = [NSString stringWithFormat:@"Mapbox-%@%@", [_infoDictionary objectForKey:@"id"], ([_infoDictionary objectForKey:@"version"] ? [@"-" stringByAppendingString:[_infoDictionary objectForKey:@"version"]] : @"")];
+        _uniqueTilecacheKey = [NSString stringWithFormat:@"Mapbox-%@%@", [_infoDictionary objectForKey:@"id"], ([_infoDictionary objectForKey:@"version"] ? [@"-" stringByAppendingString:[_infoDictionary objectForKey:@"version"]] : @"")];
 
         id dataObject = nil;
         
@@ -355,7 +355,7 @@
 
 - (NSString *)uniqueTilecacheKey
 {
-    return self.cacheKey;
+    return self.uniqueTilecacheKey;
 }
 
 - (NSString *)shortName

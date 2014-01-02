@@ -33,6 +33,7 @@
 {
     NSString *_mapsKey;
     NSString *_imageURLString;
+    NSString *_uniqueTilecacheKey;
     RMBingImagerySet _imagerySet;
 }
 
@@ -48,6 +49,8 @@
         _mapsKey = mapsKey;
 
         _imagerySet = imagerySet;
+
+        _uniqueTilecacheKey = [NSString stringWithFormat:@"Bing%lu", (unsigned long)_imagerySet];
 
         self.minZoom = 1;
         self.maxZoom = 21;
@@ -123,7 +126,7 @@
 
 - (NSString *)uniqueTilecacheKey
 {
-	return [NSString stringWithFormat:@"Bing%lu", (unsigned long)_imagerySet];
+	return _uniqueTilecacheKey;
 }
 
 - (NSString *)shortName
