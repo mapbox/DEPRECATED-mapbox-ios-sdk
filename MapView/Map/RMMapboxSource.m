@@ -355,7 +355,7 @@
 
 - (NSString *)uniqueTilecacheKey
 {
-    return self.uniqueTilecacheKey;
+    return _uniqueTilecacheKey;
 }
 
 - (NSString *)shortName
