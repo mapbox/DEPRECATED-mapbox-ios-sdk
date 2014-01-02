@@ -1,8 +1,8 @@
 Changelog
 ---------
 
-### 1.1.0-dev
-#### xxx, 2014
+### 1.1.0
+#### January 2, 2014
 
   - Updated for iOS 7, including visual appearance, tint color behavior, modal presentation paradigms, deprecations, and addition of a compass button when in tracking mode. 
   - 64-bit compliance. 
