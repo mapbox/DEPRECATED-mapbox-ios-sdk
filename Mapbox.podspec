@@ -1,7 +1,7 @@
 Pod::Spec.new do |m|
 
   m.name    = 'Mapbox'
-  m.version = '1.0.0'
+  m.version = '1.1.0'
 
   m.summary     = 'Open source alternative to MapKit.'
   m.description = 'Open source alternative to MapKit supporting custom tile sources, offline use, and complete cache control.'
@@ -10,7 +10,7 @@ Pod::Spec.new do |m|
   m.author      = { 'Mapbox' => 'ios@mapbox.com' }
   m.screenshot  = 'https://raw.github.com/mapbox/mapbox-ios-sdk/packaging/screenshot.png'
 
-  m.source = { :git => 'https://github.com/mapbox/mapbox-ios-sdk.git', :branch => 'develop' }
+  m.source = { :git => 'https://github.com/mapbox/mapbox-ios-sdk.git', :tag => m.version.to_s }
 
   m.platform              = :ios
   m.ios.deployment_target = '5.0'
