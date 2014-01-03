@@ -4,7 +4,7 @@ PATH="/bin:/usr/bin:/usr/libexec"
 VERSION=`git tag | sort -r | sed -n '1p'`
 SDK="6.1"
 TARGET="MapView"
-FW_NAME="MapBox"
+FW_NAME="Mapbox"
 FW_FOLDER="build/$FW_NAME.framework"
 
 #

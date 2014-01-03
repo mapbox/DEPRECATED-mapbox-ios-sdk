@@ -4,8 +4,8 @@ VERSION=$( git tag | sort -r | sed -n '1p' )
 
 appledoc \
     --output Docs \
-    --project-name "MapBox $VERSION" \
-    --project-company MapBox \
+    --project-name "Mapbox $VERSION" \
+    --project-company Mapbox \
     --create-html \
     --create-docset \
     --company-id com.mapbox \
