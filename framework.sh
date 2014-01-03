@@ -38,8 +38,8 @@ PlistBuddy $FW_FOLDER/Versions/A/Resources/Info.plist -c "Set :CFBundleVersion $
 #
 # build static lib variants
 #
-xcodebuild -project MapView/MapView.xcodeproj -target $TARGET -configuration Debug   -sdk iphonesimulator${SDK}
-xcodebuild -project MapView/MapView.xcodeproj -target $TARGET -configuration Debug   -sdk iphoneos${SDK}
+xcodebuild -project MapView/MapView.xcodeproj -target $TARGET -configuration Debug   -sdk iphonesimulator${SDK} ONLY_ACTIVE_ARCH=NO
+xcodebuild -project MapView/MapView.xcodeproj -target $TARGET -configuration Debug   -sdk iphoneos${SDK}        ONLY_ACTIVE_ARCH=NO
 xcodebuild -project MapView/MapView.xcodeproj -target $TARGET -configuration Release -sdk iphonesimulator${SDK}
 xcodebuild -project MapView/MapView.xcodeproj -target $TARGET -configuration Release -sdk iphoneos${SDK}
 
