@@ -176,7 +176,7 @@ typedef enum : NSUInteger {
 - (void)tapOnCalloutAccessoryControl:(UIControl *)control forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map;
 
 /** Asks the delegate whether the user should be allowed to drag the layer for an annotation. 
-*   @param map The map view.
+*   @param mapView The map view.
 *   @param annotation The annotation the user is attempting to drag. 
 *   @return A Boolean value indicating whether the user should be allowed to drag the annotation's layer. */
 - (BOOL)mapView:(RMMapView *)mapView shouldDragAnnotation:(RMAnnotation *)annotation;
@@ -185,7 +185,7 @@ typedef enum : NSUInteger {
 *
 *   The drag state typically changes in response to user interactions with the annotation layer. However, the annotation layer itself is responsible for changing that state as well.
 *   @param mapView The map view containing the annotation layer.
-*   @param annotationLayer The annotation layer whose drag state changed.
+*   @param annotation The annotation whose drag state changed.
 *   @param newState The new drag state of the annotation layer. 
 *   @param oldState The previous drag state of the annotation layer. */
 - (void)mapView:(RMMapView *)mapView annotation:(RMAnnotation *)annotation didChangeDragState:(RMMapLayerDragState)newState fromOldState:(RMMapLayerDragState)oldState;

@@ -125,7 +125,9 @@ typedef enum : NSUInteger {
 /** A custom, static view to use behind the map tiles. The default behavior is to use grid imagery that moves with map panning like MapKit. */
 @property (nonatomic, strong) UIView *backgroundView;
 
-/** A custom image to use behind the map tiles. The default behavior is to show the default `backgroundView` and not a static image. */
+/** A custom image to use behind the map tiles. The default behavior is to show the default `backgroundView` and not a static image. 
+*
+*   @param backgroundImage The image to use. */
 - (void)setBackgroundImage:(UIImage *)backgroundImage;
 
 /** A Boolean value indicating whether to draw tile borders and z/x/y numbers on tile images for debugging purposes. Defaults to `NO`. */
@@ -138,7 +140,10 @@ typedef enum : NSUInteger {
 
 /** @name Initializing a Map View */
 
-/** Initialize a map view with a given frame. A default watermarked Mapbox map tile source will be used. */
+/** Initialize a map view with a given frame. A default watermarked Mapbox map tile source will be used. 
+*
+*   @param frame The frame with which to initialize the map view. 
+*   @return An initialized map view, or `nil` if the map view was unable to be initialized. */
 - (id)initWithFrame:(CGRect)frame;
 
 /** Initialize a map view with a given frame and tile source. 
