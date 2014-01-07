@@ -500,7 +500,10 @@
     // just stick with the initial frames.
     //
     if ( ! viewController)
+    {
+        [super updateConstraints];
         return;
+    }
 
     // compass
     //
