@@ -89,7 +89,7 @@
 
 - (void)performInitializationWithMapID:(NSString *)mapID centerCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(CGFloat)zoomLevel completionHandler:(void (^)(UIImage *))handler
 {
-    RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:kMapboxPlaceholderMapID enablingDataOnMapView:self];
+    RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:(mapID ? mapID : kMapboxPlaceholderMapID) enablingDataOnMapView:self];
 
     self.tileSource = tileSource;
 
