@@ -3763,7 +3763,6 @@
     _hideAttribution = flag;
 
     [self layoutSubviews];
-    [self updateConstraints];
 }
 
 - (UIViewController *)viewControllerPresentingAttribution
@@ -3786,10 +3785,12 @@
                                               _attributionButton.bounds.size.width,
                                               _attributionButton.bounds.size.height);
         [self addSubview:_attributionButton];
+        [self updateConstraints];
     }
     else if ( ! _viewControllerPresentingAttribution && _attributionButton)
     {
         [_attributionButton removeFromSuperview];
+        _attributionButton = nil;
     }
 }
 
