@@ -3,7 +3,7 @@ Mapbox iOS SDK
 
 Based on the Route-Me iOS map library (Alpstein fork) with [Mapbox][mapbox] customizations. 
 
-Requires iOS 5, Xcode 5.0 or greater, and ARC.
+Requires iOS 5 or greater (includes iOS 7 support at runtime), Xcode 5.0 or greater, and ARC.
 
 [![](https://raw.github.com/mapbox/mapbox-ios-sdk/packaging/screenshot.png)]()
 
@@ -73,7 +73,7 @@ More documentation is available:
 
 There are two subdirectories - MapView and Proj4. Proj4 is a support library used to do map projections. The MapView project contains only the Route-Me map library. 
 
-See License.txt for license details. In any app that uses this SDK, include the following text on your "preferences" or "about" screen: "Uses Mapbox iOS SDK, (c) 2008-2013 Mapbox and Route-Me Contributors". Your data provider will have additional attribution requirements.
+See License.txt for license details. In any app that uses this SDK, include the following text on your "preferences" or "about" screen: "Uses Mapbox iOS SDK, (c) 2008-2014 Mapbox and Route-Me Contributors". Your data provider will have additional attribution requirements.
 
 News, Support and Contributing
 ------------------------------
