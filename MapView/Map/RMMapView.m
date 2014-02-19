@@ -3130,6 +3130,9 @@
 
 - (void)addAnnotation:(RMAnnotation *)annotation
 {
+    if ( ! annotation)
+        return;
+
     @synchronized (_annotations)
     {
         if ([_annotations containsObject:annotation])
@@ -3162,6 +3165,9 @@
 
 - (void)addAnnotations:(NSArray *)newAnnotations
 {
+    if ( ! newAnnotations || ! [newAnnotations count])
+        return;
+
     @synchronized (_annotations)
     {
         [_annotations addObjectsFromArray:newAnnotations];
