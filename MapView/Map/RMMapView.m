@@ -1891,6 +1891,8 @@
     }
     else if (anAnnotation.isEnabled && ! [anAnnotation isEqual:_currentAnnotation])
     {
+        self.userTrackingMode = RMUserTrackingModeNone;
+
         [self deselectAnnotation:_currentAnnotation animated:NO];
 
         _currentAnnotation = anAnnotation;
