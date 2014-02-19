@@ -227,10 +227,11 @@
              {
                  BOOL result = [db executeUpdate:@"DELETE FROM ZCACHE WHERE last_used < ?", [NSDate dateWithTimeIntervalSinceNow:-_expiryPeriod]];
 
-                 if (result == NO)
-                     RMLog(@"Error expiring cache");
+                 if (result)
+                     result = [db executeUpdate:@"VACUUM"];
 
-                 [[db executeQuery:@"VACUUM"] close];
+                 if ( ! result)
+                     RMLog(@"Error expiring cache");
              }];
 
             [_writeQueueLock unlock];
@@ -333,10 +334,11 @@
      {
          BOOL result = [db executeUpdate:@"DELETE FROM ZCACHE WHERE tile_hash IN (SELECT tile_hash FROM ZCACHE ORDER BY last_used LIMIT ?)", [NSNumber numberWithUnsignedLongLong:count]];
 
-         if (result == NO)
-             RMLog(@"Error purging cache");
+         if (result)
+             result = [db executeUpdate:@"VACUUM"];
 
-         [[db executeQuery:@"VACUUM"] close];
+         if ( ! result)
+             RMLog(@"Error purging cache");
      }];
 
     [_writeQueueLock unlock];
@@ -355,10 +357,11 @@
          {
              BOOL result = [db executeUpdate:@"DELETE FROM ZCACHE"];
 
-             if (result == NO)
-                 RMLog(@"Error purging cache");
+             if (result)
+                 result = [db executeUpdate:@"VACUUM"];
 
-             [[db executeQuery:@"VACUUM"] close];
+             if ( ! result)
+                 RMLog(@"Error purging cache");
          }];
 
         [_writeQueueLock unlock];
@@ -378,7 +381,10 @@
          {
              BOOL result = [db executeUpdate:@"DELETE FROM ZCACHE WHERE cache_key = ?", cacheKey];
 
-             if (result == NO)
+             if (result)
+                 result = [db executeUpdate:@"VACUUM"];
+
+             if ( ! result)
                  RMLog(@"Error purging cache");
          }];
 
