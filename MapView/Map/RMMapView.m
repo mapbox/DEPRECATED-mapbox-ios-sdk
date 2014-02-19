@@ -2630,6 +2630,7 @@
         _logoBug.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin;
         _logoBug.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_logoBug];
+        [self updateConstraints];
     }
     else if ( ! showLogoBug && _logoBug)
     {
@@ -3762,6 +3763,7 @@
     _hideAttribution = flag;
 
     [self layoutSubviews];
+    [self updateConstraints];
 }
 
 - (UIViewController *)viewControllerPresentingAttribution
