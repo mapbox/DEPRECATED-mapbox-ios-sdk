@@ -7,7 +7,7 @@ Pod::Spec.new do |m|
   m.description = 'Open source alternative to MapKit supporting custom tile sources, offline use, and complete cache control.'
   m.homepage    = 'http://mapbox.com/mobile'
   m.license     = 'BSD'
-  m.author      = { 'Mapbox' => 'ios@mapbox.com' }
+  m.author      = { 'Mapbox' => 'mobile@mapbox.com' }
   m.screenshot  = 'https://raw.github.com/mapbox/mapbox-ios-sdk/packaging/screenshot.png'
 
   m.source = { :git => 'https://github.com/mapbox/mapbox-ios-sdk.git', :branch => 'develop' }
