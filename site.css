@@ -1,3 +1,18 @@
+.wireframe {
+  border:3px solid rgba(0,0,0,0.5);
+  border-radius:20px;
+  }
+  .wireframe * { border-color:rgba(0,0,0,0.5); }
+  .wireframe .dot {
+    display:inline-block;
+    width:10px;
+    height:10px;
+    }
+    .wireframe .dot.menu {
+      width:60px;
+      height:60px;
+      }
+
 .section-tasks .tooltip .tooltip { display:none; }
 .section-method ul *,
 .section-method dl * { display:inline; }

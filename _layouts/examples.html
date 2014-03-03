@@ -9,9 +9,25 @@ section: mapboxios-examples
   <p>{{page.description}}</p>
 </div>
 
-<div id='screenshot' class='doc pad2'>
-  <img src='{{site.baseurl}}/images{{page.url | replace:'examples/',''}}.png'/>
+<div class='pad4 clearfix'>
+  <div class='wireframe clip mobile col11 margin0 row8 cleafix'>
+    <div class='center col2 keyline-right row8 hide-mobile pad4y'>
+      <div class='pad4y'>
+        <div class='pad2y'>
+          <span class='dot space-top1 fill-darken1'></span>
+        </div>
+      </div>
+    </div>
+    <div class='body col8 row8' style='background:url("{{site.baseurl}}/images{{page.url | replace:'examples/',''}}.png") no-repeat center center; background-size:cover;'>
+    </div>
+    <div class='center col2 keyline-left row8 hide-mobile pad4y'>
+      <div class='pad4y'>
+        <span class='dot menu space-top1 fill-darken0'></span>
+      </div>
+    </div>
+  </div>
 </div>
+
 <div id='code' class='doc'>
 {% highlight objective-c %}
 #import "Mapbox.h"
