@@ -13,6 +13,7 @@
       height:60px;
       }
 
+.fill-white pre { background-color:transparent; }
 .section-tasks .tooltip .tooltip { display:none; }
 .section-method ul *,
 .section-method dl * { display:inline; }
