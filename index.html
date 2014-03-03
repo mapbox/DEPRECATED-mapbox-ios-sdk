@@ -1,0 +1,191 @@
+---
+layout: pages
+section: mapboxios-guide
+title: Mapbox iOS SDK
+navigation:
+- title: Installation
+  items:
+  - CocoaPods
+  - Binary
+  - Source
+- title: API overview
+  items:
+  - text: Map view
+    hash: map_view__class
+  - text: Map view delegate
+    hash: map_view_delegate__protocol
+  - text: Tile sources
+    hash: tile_sources__protocol
+  - text: Markers &amp; shapes
+    hash: markers__shapes__and_subclasses
+  - text: Embedded interactivity
+    hash: embedded_interactivity__protocol
+  - text: Tile caching
+    hash: tile_caching__class
+  - text: Attribution
+    hash: attribution
+  - text: Retina support
+    hash: retina_support
+---
+
+<div class='row6 contain fill-white round clip space-bottom2 contain'>
+  <div class='pad2 center'>
+    <h2>Build native applications on iOS</h2>
+  </div>
+
+  <div class='wireframe clip mobile-splash col4 margin4'>
+    <div class='row2 keyline-bottom center pad2y'>
+      <span class='dot fill-darken1'></span>
+    </div>
+    <div class='body fill-darken0 col12 row4'>
+    </div>
+  </div>
+</div>
+
+<div id='guide' class='prose pad2 doc round fill-white keyline-all'>
+  <h1 id='{{page.title|downcase|replace:' ', '_'}}'>{{page.title}}</h1>
+
+  <p>The Mapbox iOS SDK is a toolset for building mapping applications for iPhone and iPad devices. It is quite similar in behavior to Apple’s <a href='https://developer.apple.com/library/ios/#documentation/MapKit/Reference/MapKit_Framework_Reference'>MapKit</a> framework, but with much greater flexibility for visual styling, offline use, and general customizability – plus it’s open source.</p>
+  <h2 id='installation'>Installation</h2>
+  <p>The Mapbox iOS SDK supports iOS versions 5.0 and higher.</p>
+  <h3 id='cocoapods'>CocoaPods</h3>
+  <p>Follow these steps in order to use the Mapbox iOS SDK within your own Xcode project using <a href='http://cocoapods.org'>CocoaPods</a>. This is the easiest installation method if you are familiar with CocoaPods.</p>
+  <ol>
+    <li>Obtain the map ID for your hosted map by clicking <strong>Publish</strong> and copying the <strong>Map ID</strong>.</li>
+    <li>Ensure that your <code>Podfile</code> is targeting <code>:ios</code> and <code>"5.0"</code>.</li>
+    <li>Add a line containing <code>pod "Mapbox"</code> to your <code>Podfile</code>.</li>
+    <li>Run <code>pod install</code> in the Terminal.</li>
+    <li>At a minimum, <code>#import &lt;Mapbox/Mapbox.h&gt;</code> and instantiate an <code>RMMapView</code> in your code along with an <code>RMMapboxSource</code> using <code>-initWithMapID:</code> and an <code>NSString</code> made from your <strong>Map ID</strong> obtained above.</li>
+  </ol>
+  <h3 id='binary'>Binary</h3>
+  <p>Follow these steps in order to use the Mapbox iOS SDK within your own Xcode project as a statically linked framework. This is the installation method that is the most similar to using Apple-provided frameworks.</p>
+  <ol>
+    <li>Obtain the map ID for your hosted map by clicking <strong>Publish</strong> and copying the <strong>Map ID</strong>.</li>
+    <li>Download the latest SDK binary release from the <a href='http://mapbox-ios-sdk.s3.amazonaws.com/index.html'>downloads</a> and drag <code>Mapbox.framework</code> into your project’s <code>Frameworks</code> section, making sure to link it in your target.</li>
+    <li>Add <code>-ObjC</code> to your app target’s <code>Other Linker Flags</code> build setting in order to ensure that the SDK’s static library has all symbols loaded, even for categories.</li>
+    <li>
+      Add the following libraries to your app target’s <code>Link Binary With Libraries</code> build phase:
+      <ul>
+        <li><code>CoreLocation.framework</code> (required for location services)</li>
+        <li><code>QuartzCore.framework</code> (required because of advanced layer manipulation)</li>
+        <li><code>libsqlite3.dylib</code> (required for MBTiles and caching support)</li>
+        <li><code>libz.dylib</code> (required for UTFGrid interactivity)</li>
+      </ul>
+    </li>
+    <li>Add <code>Mapbox.framework/Resources/Mapbox.bundle</code> to your project’s file sources, either by dragging it into your project from Finder or via <code>File &gt; Add Files...</code>. Be sure that <code>Copy items into destination group"s folder (if needed)</code> is unchecked and that <code>Add to targets</code> includes your app target. This way, the bundle will be copied at build time out of the framework folder and included as a resource in your app product.</li>
+    <li>At a minimum, <code>#import &lt;Mapbox/Mapbox.h&gt;</code> and instantiate an <code>RMMapView</code> in your code along with an <code>RMMapboxSource</code> using <code>-initWithMapID:</code> and an <code>NSString</code> made from your <strong>Map ID</strong> obtained above.</li>
+  </ol>
+  <h3 id='source'>Source</h3>
+  <p>Follow these steps in order to use the Mapbox iOS SDK within your own Xcode project while retaining the ability to edit the SDK source as you go. This is the most flexible installation method if you want to be able to modify the source code of the SDK.</p>
+  <ol>
+    <li>Obtain the map ID for your hosted map by clicking <strong>Publish</strong> and copying the <strong>Map ID</strong>.</li>
+    <li>Download the SDK source code from the <a href='https://github.com/mapbox/mapbox-ios-sdk'>repository</a> using the cloning instructions in the <code>README.markdown</code> and put it someplace in your project’s folder. We assume below that this is a top-level folder called <code>Mapbox-iOS-SDK</code>.</li>
+    <li>Add <code>MapView.xcodeproj</code> to your project’s file sources, either by dragging it into your project from Finder or via <code>File &gt; Add Files...</code>, in order to make the library available to your project.</li>
+    <li>Add <code>-ObjC</code> to your app target’s <code>Other Linker Flags</code> build setting in order to ensure that the SDK’s static library has all symbols loaded, even for categories.</li>
+    <li>Add <code>&quot;$(SRCROOT)/Mapbox-iOS-SDK&quot;</code> (including the quotes and per your folder naming scheme) to the <code>Header Search Paths</code> build setting for your app target in order to gain access to the headers. Be sure to check the <code>Recursive</code> option.</li>
+    <li>Add the <code>MapView</code> target to your app target’s <code>Target Dependencies</code> build phase in order to build the library when you build your project.</li>
+    <li>
+      Add the following libraries to your app target’s <code>Link Binary With Libraries</code> build phase:
+      <ul>
+        <li><code>CoreLocation.framework</code> (required for location services)</li>
+        <li><code>QuartzCore.framework</code> (required because of advanced layer manipulation)</li>
+        <li><code>libMapbox.a</code> (required to include the SDK)</li>
+        <li><code>libsqlite3.dylib</code> (required for MBTiles and caching support)</li>
+        <li><code>libz.dylib</code> (required for UTFGrid interactivity)</li>
+      </ul>
+    </li>
+    <li>Add the <code>Mapbox.bundle</code> product from the SDK to the <code>Copy Bundle Resources</code> build phase of your app target. This way, the bundle will be copied at build time out of the SDK build products folder and included as a resource in your app product.</li>
+    <li>At a minimum, <code>#import &quot;Mapbox.h&quot;</code> and instantiate an <code>RMMapView</code> in your code along with an <code>RMMapboxSource</code> using <code>-initWithMapID:</code> and an <code>NSString</code> made from your <strong>Map ID</strong> obtained above.</li>
+  </ol>
+  <h2 id='api_overview'>API overview</h2>
+  <p>Below we’ll talk about the major components used when building a map-based iOS app with our SDK. We’re assuming you have a general familiarity with Apple’s developer tools, the Cocoa framework, and the Objective-C language and conventions. <a href='/mapbox-ios-sdk/api'>Full API documentation</a> is available as well, including as an embedded Xcode <a href='/mapbox-ios-sdk/Docs/publish/docset.atom'>Atom feed</a>.</p>
+  <h3 id='map_view__class'>Map view (<a href='/mapbox-ios-sdk/api/#RMMapView-class'><code>RMMapView</code></a> class)</h3>
+  <p>The map view is the basic view that you’ll work with to display a map that pans and zooms in response to gestures. You can instantiate a map view in code or you can embed one in an Interface Builder (<code>.xib</code>) file, just like any other <code>UIView</code> subclass. By default, if not configured with a tile source (see <strong>Installation</strong> above), the map view will display a watermarked example Mapbox map, automatically detecting whether a retina or normal version should be used. There are options to control the map style (with tile sources), markers and shapes on the map, offline caching policy, zooming limits, retina display behavior, starting coordinate, and map view dragging deceleration, among other parameters.</p>
+  <h3 id='map_view_delegate__protocol'>Map view delegate (<a href='/mapbox-ios-sdk/api/#RMMapViewDelegate-protocol'><code>RMMapViewDelegate</code></a> protocol)</h3>
+  <p>Following Objective-C’s customary <a href='https://developer.apple.com/library/ios/#documentation/General/Conceptual/DevPedia-CocoaCore/Delegation.html'>delegation design pattern</a>, a map view can have an optional delegate object in order to help make interaction decisions. Some of these decisions include:</p>
+  <ul>
+    <li>Setup and display of markers and other annotations on the map view (see <strong>Markers &amp; shapes</strong> below)</li>
+    <li>Pre- and post-move and zoom response handlers in order to, for example, update another interface element in response to a map drag</li>
+    <li>Gesture handlers for taps, double-taps, and long-presses on the map</li>
+    <li>Interaction handlers for markers and other annotations</li>
+  </ul>
+  <h3 id='tile_sources__protocol'>Tile sources (<a href='/mapbox-ios-sdk/api/#RMTileSource-protocol'><code>RMTileSource</code></a> protocol)</h3>
+  <p>Tile sources are a concept similar to changing between standard, satellite, and hybrid styles in MapKit, but with much more customizability. With tile sources, the map style can be changed by providing one or more online or offline tile-based layers to display on the map from a variety of providers. In addition, the Mapbox iOS SDK supports client-side compositing of tile layers for increased performance and responsiveness.</p>
+  <p>The tile sources that support Mapbox’s core technology include <a href='/mapbox-ios-sdk/api/#RMMapboxSource'><code>RMMapboxSource</code></a> for online layers from <a href='http://mapbox.com/plans/'>Mapbox Hosting</a> or a <a href='https://github.com/mapbox/tilestream'>TileStream</a> server, and the <a href='/mapbox-ios-sdk/api/#RMMBTilesSource'><code>RMMBTilesSource</code></a> for use of offline-capable <a href='http://mapbox.com/mbtiles-spec/'>MBTiles</a> layers.</p>
+  <h3 id='markers__shapes__and_subclasses'>Markers &amp; shapes (<a href='/mapbox-ios-sdk/api/#RMMapLayer-class'><code>RMMapLayer</code></a> and subclasses)</h3>
+  <p>Markers and other visual additions above the map tile layers are managed with <code>RMMapLayer</code> and its subclasses:</p>
+  <ul>
+    <li><a href='/mapbox-ios-sdk/api/#RMMarker-class'><code>RMMarker</code></a> - points and images</li>
+    <li><a href='/mapbox-ios-sdk/api/#RMShape-class'><code>RMShape</code></a> - vector lines and other custom shapes</li>
+    <li><a href='/mapbox-ios-sdk/api/#RMCircle-class'><code>RMCircle</code></a> - perfect vector circles</li>
+  </ul>
+  <p>In addition, any <code>RMMapLayer</code>, as a <code>CALayer</code> subclass, can have its <code>contents</code> property set to a <code>CGImage</code> and the layer will be panned with the map automatically. You may wish to use the map view’s delegate callbacks to respond to map zooms, however, in order to redraw the image according to zoom level in order to preserve the best visual appearance.</p>
+  <p>Markers and shapes are added in a manner similar to MapKit, where annotation data objects (<code>RMAnnotation</code>) are added to the map view, then the map view delegate answers requests for the actual layers to be displayed when they are first needed, providing better performance.</p>
+  <p>There is also an easier, automatic way to add markers in iOS to maps that you have made for the web in our hosted tools using <a href='http://www.mapbox.com/developers/simplestyle/'>simplestyle</a>. This may be ideal for certain situations, such as easy parity between web and native versions of a project’s map. You can read more in the <a href='/blog/markers'>announcement blog post</a> or in the <a href='https://github.com/mapbox/weekend-picks-template-ios'>sample iOS project</a>.</p>
+  <h3 id='embedded_interactivity__protocol'>Embedded interactivity (<a href='/mapbox-ios-sdk/api/#RMInteractiveSource-protocol'><code>RMInteractiveSource</code></a> protocol)</h3>
+  <p>Embedded interactivity (based on the <a href='http://mapbox.com/mbtiles-spec/utfgrid/'>UTFGrid specification</a>) is a way to embed arbitrary point and region data with a tile map layer for fast and convenient recall when needed. See <a href='http://a.tiles.mapbox.com/v3/newamerica.motw_poverty/page.html#6/40.413/-79.058'>this map</a> for an example. The primary advantage to this technology is fast interactivity in web browsers, but the Mapbox iOS SDK also features easy support for it for cross-platform use of the same maps.</p>
+  <p>In order to make use of UTFGrid interactivity on iOS, any <code>RMMapboxSource</code> (online) or <code>RMMBTilesSource</code> (offline) tile sources will have category methods added to them allowing querying of interactivity for a given map view and <code>CGPoint</code>, suitable for use when the map is tapped or other gestures are applied. For example, tapping a given map point within a country’s borders might return the HTML-formatted content necessary to display the country’s name and flag image in a popup.</p>
+  <h3 id='tile_caching__class'>Tile caching (<a href='/mapbox-ios-sdk/api/#RMTileCache-class'><code>RMTileCache</code></a> class)</h3>
+  <p>Mapbox offers unrestricted control for caching our maps such as <a href='/maps'>Mapbox Streets</a> on mobile devices with the Mapbox iOS SDK, supporting both app developers who want fine-grained control of app storage size and performance, as well as for users who want the optimum use of bandwidth and the best performance for the maps in an app.</p>
+  <ul>
+    <li><strong>You may</strong> cache maps as much as you’d like.</li>
+    <li><strong>You may</strong> cache maps for as long as you’d like.</li>
+    <li><strong>You may not</strong> run a proxy or intermediate cache between Mapbox and devices.</li>
+    <li><strong>You may not</strong> further redistribute maps from a device cache.</li>
+  </ul>
+  <p>For the full details see our <a href='http://mapbox.com/tos'>Terms of Service</a>.</p>
+  <p>In addition, background download of tiles directly into cache, without requiring a visible map view, can be performed in order to prepare for offline use. See the <code>RMTileCache</code> class and the <code>RMTileCacheBackgroundDelegate</code> protocol in the <a href='/mapbox-ios-sdk/api'>API reference</a> for more information, including device- and processor architecture-based options for configuration.</p>
+  <p><strong>How tiles are loaded</strong></p>
+  <p>When a map view is shown and the user starts panning and zooming around to explore an area, the SDK requests the necessary tiles. The <code>RMMapboxSource</code> tile source checks its local cache of tiles before ever trying to request data over the network, so if a tile has been downloaded recently, it is instantly recalled and used to load the map.</p>
+  <p><strong>How the tile cache works</strong></p>
+  <p>By default, the Route-Me rendering engine (upon which the SDK is based) stores the 1,000 most recently downloaded tile images. Once more room is needed, the oldest tiles are deleted from cache. You can also remove all tiles whenever desired with the <code>removeAllCachedImages</code> method on <code>RMMapView</code>.</p>
+  <p>You can also manage cache deletion based on the age of tiles in the cache. For example, creating the <code>RMTileCache</code> with an <code>expiryPeriod</code> of <code>604,800</code> (60 seconds <code>x</code> 60 minutes <code>x</code> 24 hours <code>x</code> 7 days) will cause tiles to stay in the cache no longer than a week, without regard to the number of tiles, before the SDK will automatically delete the older tiles to keep things tidy. Setting an <code>expiryPeriod</code> overrides any capacity-based configuration for the tile cache.</p>
+  <p><strong>File-based cache configuration</strong></p>
+  <p>Carried over from the Route-Me engine is the ability to configure cache behavior with a property list file included as a resource in your project. Below is a sample <code>routeme.plist</code> file structure with inline comments. See the source to <code>RMTileCache.m</code> for more information.</p>
+  {% highlight xml %}
+  <?xml version='1.0' encoding='UTF-8'?>
+  <!DOCTYPE plist PUBLIC '-//Apple//DTD PLIST 1.0//EN' 'http://www.apple.com/DTDs/PropertyList-1.0.dtd'>
+  <plist version='1.0'>
+    <dict>
+      <key>caches</key>
+      <array>
+        <dict>
+          <key>type</key>
+          <string>db-cache</string>
+          <!--(indicate that we"re configuring the database cache)-->
+          <key>capacity</key>
+          <integer>10000</integer>
+          <!--(maximum tiles to store; defaults to 1,000)-->
+          <key>expiryPeriod</key>
+          <integer>86400</integer>
+          <!--(maximum seconds to store tiles; overrides capacity; 0 = unlimited; defaults to unset)-->
+          <key>minimalPurge</key>
+          <integer>10</integer>
+          <!--(minimum number to purge at a time when clearing; defaults to 10% of capacity)-->
+          <key>strategy</key>
+          <string>FIFO</string>
+          <!--(FIFO = first in, first out; LRU = least recently used; defaults to FIFO)-->
+          <key>useCachesDirectory</key>
+          <true/>
+          <!--(use the app Caches folder instead of Documents; defaults to false)-->
+        </dict>
+        <dict>
+          <key>type</key>
+          <string>memory-cache</string>
+          <!--(indicate that we"re configuring the memory cache)-->
+          <key>capacity</key>
+          <integer>32</integer>
+          <!--(maximum number of tiles to store in memory; defaults to 32)-->
+        </dict>
+      </array>
+    </dict>
+  </plist>
+  {% endhighlight %}
+  <h3 id='attribution'>Attribution</h3>
+  <p>You must comply with the licensing terms of any map data in your application, including <a href='/help/#provide_proper_attribution_when_required'>Mapbox Streets</a> or other Mapbox maps if used. A small attribution control will be displayed on the map view automatically if attribution info is available from the tile source.</p>
+  <h3 id='retina_support'>Retina support</h3>
+  <p><a href='/maps'>Mapbox Streets</a> has retina tile support that can be utilized by the Mapbox iOS SDK. This brings high-DPI display support for devices such as the iPhone 4 and newer and the retina iPads.</p>
+  <p>Retina tiles use an enhanced look including wider streets and enlarged labels. The resulting image on retina-capable devices is incredibly sharp. Here’s a side-by-side comparison up close:</p>
+  <p><img src="https://farm9.staticflickr.com/8142/7210334896_64ac0b3788.jpg" /></p>
+  <p>You don’t need to do anything special to support retina devices. MapBox automatically adds the <code>@2x</code> suffix to map tile requests and the platform automatically adjusts the tile content as necessary.</p>
+</div>
