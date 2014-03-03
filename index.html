@@ -175,6 +175,8 @@ navigation:
   <p>You can also manage cache deletion based on the age of tiles in the cache. For example, creating the <code>RMTileCache</code> with an <code>expiryPeriod</code> of <code>604,800</code> (60 seconds <code>x</code> 60 minutes <code>x</code> 24 hours <code>x</code> 7 days) will cause tiles to stay in the cache no longer than a week, without regard to the number of tiles, before the SDK will automatically delete the older tiles to keep things tidy. Setting an <code>expiryPeriod</code> overrides any capacity-based configuration for the tile cache.</p>
   <p><strong>File-based cache configuration</strong></p>
   <p>Carried over from the Route-Me engine is the ability to configure cache behavior with a property list file included as a resource in your project. Below is a sample <code>routeme.plist</code> file structure with inline comments. See the source to <code>RMTileCache.m</code> for more information.</p>
+
+<div class='fill-light round quiet-scroll'>
 {% highlight xml %}
 <?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE plist PUBLIC '-//Apple//DTD PLIST 1.0//EN' 'http://www.apple.com/DTDs/PropertyList-1.0.dtd'>
@@ -214,6 +216,8 @@ navigation:
   </dict>
 </plist>
 {% endhighlight %}
+</div>
+
   <h3 id='attribution'>Attribution</h3>
   <p>You must comply with the licensing terms of any map data in your application, including <a href='/help/#provide_proper_attribution_when_required'>Mapbox Streets</a> or other Mapbox maps if used. A small attribution control will be displayed on the map view automatically if attribution info is available from the tile source.</p>
   <h3 id='retina_support'>Retina support</h3>
