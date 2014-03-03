@@ -28,9 +28,9 @@ navigation:
     hash: retina_support
 ---
 
-<div class='row6 contain fill-white round clip space-bottom2 contain'>
+<div class='row6 contain fill-white round-top clip contain keyline-bottom'>
   <div class='pad4y center'>
-    <h2>Build native applications on iOS</h2>
+    <h2>Build native applications on iOS devices</h2>
   </div>
 
   <div class='wireframe clip mobile-splash col4 margin4'>
@@ -41,62 +41,86 @@ navigation:
     </div>
   </div>
 </div>
+<div class='space-bottom2 pad2 quiet fill-white prose round-bottom center clearfix'>
+  <div class='col10 margin1'>
+    <p>An open source toolset for building mapping applications for iPhone and iPad devices with great flexibility for visual styling, offline use, and customizability.</p>
+  </div>
+</div>
+
+<div class='keyline-all fill-darken0 space-bottom round'>
+  <div class='pad1y pad2x keyline-bottom strong small clearfix'>
+    <span class='fill-darken1 pad1x round dark inline fr'>Mapbox iOS SDK {{site.version}}</span>
+    Installation <em class='quiet'>Supports iOS versions 5.0 +</em>
+  </div>
+  <nav class='fill-white round-bottom'>
+    <div id='cocoapods' class='install pad1y pad2x keyline-bottom contain'>
+      <a href='#cocoapods' class='block small strong'>CocoaPods</a>
+      <div class='pad1y prose'>
+        <p>Follow these steps in order to use the Mapbox iOS SDK within your own Xcode project using <a href='http://cocoapods.org'>CocoaPods</a>. This is the easiest installation method if you are familiar with CocoaPods.</p>
+        <ol>
+          <li>Obtain the map ID for your hosted map by clicking <strong>Publish</strong> and copying the <strong>Map ID</strong>.</li>
+          <li>Ensure that your <code>Podfile</code> is targeting <code>:ios</code> and <code>"5.0"</code>.</li>
+          <li>Add a line containing <code>pod "Mapbox"</code> to your <code>Podfile</code>.</li>
+          <li>Run <code>pod install</code> in the Terminal.</li>
+          <li>At a minimum, <code>#import &lt;Mapbox/Mapbox.h&gt;</code> and instantiate an <code>RMMapView</code> in your code along with an <code>RMMapboxSource</code> using <code>-initWithMapID:</code> and an <code>NSString</code> made from your <strong>Map ID</strong> obtained above.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div id='binary' class='install pad1y pad2x keyline-bottom contain'>
+      <a href='#binary' class='strong block small'>Binary</a>
+      <div class='pad1y prose'>
+        <p>Follow these steps in order to use the Mapbox iOS SDK within your own Xcode project as a statically linked framework. This is the installation method that is the most similar to using Apple-provided frameworks.</p>
+        <ol>
+          <li>Obtain the map ID for your hosted map by clicking <strong>Publish</strong> and copying the <strong>Map ID</strong>.</li>
+          <li>Download the latest SDK binary release from the <a href='http://mapbox-ios-sdk.s3.amazonaws.com/index.html'>downloads</a> and drag <code>Mapbox.framework</code> into your project’s <code>Frameworks</code> section, making sure to link it in your target.</li>
+          <li>Add <code>-ObjC</code> to your app target’s <code>Other Linker Flags</code> build setting in order to ensure that the SDK’s static library has all symbols loaded, even for categories.</li>
+          <li>
+            Add the following libraries to your app target’s <code>Link Binary With Libraries</code> build phase:
+            <ul>
+              <li><code>CoreLocation.framework</code> (required for location services)</li>
+              <li><code>QuartzCore.framework</code> (required because of advanced layer manipulation)</li>
+              <li><code>libsqlite3.dylib</code> (required for MBTiles and caching support)</li>
+              <li><code>libz.dylib</code> (required for UTFGrid interactivity)</li>
+            </ul>
+          </li>
+          <li>Add <code>Mapbox.framework/Resources/Mapbox.bundle</code> to your project’s file sources, either by dragging it into your project from Finder or via <code>File &gt; Add Files...</code>. Be sure that <code>Copy items into destination group"s folder (if needed)</code> is unchecked and that <code>Add to targets</code> includes your app target. This way, the bundle will be copied at build time out of the framework folder and included as a resource in your app product.</li>
+          <li>At a minimum, <code>#import &lt;Mapbox/Mapbox.h&gt;</code> and instantiate an <code>RMMapView</code> in your code along with an <code>RMMapboxSource</code> using <code>-initWithMapID:</code> and an <code>NSString</code> made from your <strong>Map ID</strong> obtained above.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div id='source' class='install pad1y pad2x keyline-bottom contain'>
+      <a href='#source' class='strong block small'>Source</a>
+      <div class='pad1y prose'>
+        <p>Follow these steps in order to use the Mapbox iOS SDK within your own Xcode project while retaining the ability to edit the SDK source as you go. This is the most flexible installation method if you want to be able to modify the source code of the SDK.</p>
+        <ol>
+          <li>Obtain the map ID for your hosted map by clicking <strong>Publish</strong> and copying the <strong>Map ID</strong>.</li>
+          <li>Download the SDK source code from the <a href='https://github.com/mapbox/mapbox-ios-sdk'>repository</a> using the cloning instructions in the <code>README.markdown</code> and put it someplace in your project’s folder. We assume below that this is a top-level folder called <code>Mapbox-iOS-SDK</code>.</li>
+          <li>Add <code>MapView.xcodeproj</code> to your project’s file sources, either by dragging it into your project from Finder or via <code>File &gt; Add Files...</code>, in order to make the library available to your project.</li>
+          <li>Add <code>-ObjC</code> to your app target’s <code>Other Linker Flags</code> build setting in order to ensure that the SDK’s static library has all symbols loaded, even for categories.</li>
+          <li>Add <code>&quot;$(SRCROOT)/Mapbox-iOS-SDK&quot;</code> (including the quotes and per your folder naming scheme) to the <code>Header Search Paths</code> build setting for your app target in order to gain access to the headers. Be sure to check the <code>Recursive</code> option.</li>
+          <li>Add the <code>MapView</code> target to your app target’s <code>Target Dependencies</code> build phase in order to build the library when you build your project.</li>
+          <li>
+            Add the following libraries to your app target’s <code>Link Binary With Libraries</code> build phase:
+            <ul>
+              <li><code>CoreLocation.framework</code> (required for location services)</li>
+              <li><code>QuartzCore.framework</code> (required because of advanced layer manipulation)</li>
+              <li><code>libMapbox.a</code> (required to include the SDK)</li>
+              <li><code>libsqlite3.dylib</code> (required for MBTiles and caching support)</li>
+              <li><code>libz.dylib</code> (required for UTFGrid interactivity)</li>
+            </ul>
+          </li>
+          <li>Add the <code>Mapbox.bundle</code> product from the SDK to the <code>Copy Bundle Resources</code> build phase of your app target. This way, the bundle will be copied at build time out of the SDK build products folder and included as a resource in your app product.</li>
+          <li>At a minimum, <code>#import &quot;Mapbox.h&quot;</code> and instantiate an <code>RMMapView</code> in your code along with an <code>RMMapboxSource</code> using <code>-initWithMapID:</code> and an <code>NSString</code> made from your <strong>Map ID</strong> obtained above.</li>
+        </ol>
+      </div>
+    </div>
+  </nav>
+</div>
 
 <div id='guide' class='prose pad2 doc round fill-white keyline-all'>
-  <h1 id='{{page.title|downcase|replace:' ', '_'}}'>{{page.title}}</h1>
 
-  <p>The Mapbox iOS SDK is a toolset for building mapping applications for iPhone and iPad devices. It is quite similar in behavior to Apple’s <a href='https://developer.apple.com/library/ios/#documentation/MapKit/Reference/MapKit_Framework_Reference'>MapKit</a> framework, but with much greater flexibility for visual styling, offline use, and general customizability – plus it’s open source.</p>
-  <h2 id='installation'>Installation</h2>
-  <p>The Mapbox iOS SDK supports iOS versions 5.0 and higher.</p>
-  <h3 id='cocoapods'>CocoaPods</h3>
-  <p>Follow these steps in order to use the Mapbox iOS SDK within your own Xcode project using <a href='http://cocoapods.org'>CocoaPods</a>. This is the easiest installation method if you are familiar with CocoaPods.</p>
-  <ol>
-    <li>Obtain the map ID for your hosted map by clicking <strong>Publish</strong> and copying the <strong>Map ID</strong>.</li>
-    <li>Ensure that your <code>Podfile</code> is targeting <code>:ios</code> and <code>"5.0"</code>.</li>
-    <li>Add a line containing <code>pod "Mapbox"</code> to your <code>Podfile</code>.</li>
-    <li>Run <code>pod install</code> in the Terminal.</li>
-    <li>At a minimum, <code>#import &lt;Mapbox/Mapbox.h&gt;</code> and instantiate an <code>RMMapView</code> in your code along with an <code>RMMapboxSource</code> using <code>-initWithMapID:</code> and an <code>NSString</code> made from your <strong>Map ID</strong> obtained above.</li>
-  </ol>
-  <h3 id='binary'>Binary</h3>
-  <p>Follow these steps in order to use the Mapbox iOS SDK within your own Xcode project as a statically linked framework. This is the installation method that is the most similar to using Apple-provided frameworks.</p>
-  <ol>
-    <li>Obtain the map ID for your hosted map by clicking <strong>Publish</strong> and copying the <strong>Map ID</strong>.</li>
-    <li>Download the latest SDK binary release from the <a href='http://mapbox-ios-sdk.s3.amazonaws.com/index.html'>downloads</a> and drag <code>Mapbox.framework</code> into your project’s <code>Frameworks</code> section, making sure to link it in your target.</li>
-    <li>Add <code>-ObjC</code> to your app target’s <code>Other Linker Flags</code> build setting in order to ensure that the SDK’s static library has all symbols loaded, even for categories.</li>
-    <li>
-      Add the following libraries to your app target’s <code>Link Binary With Libraries</code> build phase:
-      <ul>
-        <li><code>CoreLocation.framework</code> (required for location services)</li>
-        <li><code>QuartzCore.framework</code> (required because of advanced layer manipulation)</li>
-        <li><code>libsqlite3.dylib</code> (required for MBTiles and caching support)</li>
-        <li><code>libz.dylib</code> (required for UTFGrid interactivity)</li>
-      </ul>
-    </li>
-    <li>Add <code>Mapbox.framework/Resources/Mapbox.bundle</code> to your project’s file sources, either by dragging it into your project from Finder or via <code>File &gt; Add Files...</code>. Be sure that <code>Copy items into destination group"s folder (if needed)</code> is unchecked and that <code>Add to targets</code> includes your app target. This way, the bundle will be copied at build time out of the framework folder and included as a resource in your app product.</li>
-    <li>At a minimum, <code>#import &lt;Mapbox/Mapbox.h&gt;</code> and instantiate an <code>RMMapView</code> in your code along with an <code>RMMapboxSource</code> using <code>-initWithMapID:</code> and an <code>NSString</code> made from your <strong>Map ID</strong> obtained above.</li>
-  </ol>
-  <h3 id='source'>Source</h3>
-  <p>Follow these steps in order to use the Mapbox iOS SDK within your own Xcode project while retaining the ability to edit the SDK source as you go. This is the most flexible installation method if you want to be able to modify the source code of the SDK.</p>
-  <ol>
-    <li>Obtain the map ID for your hosted map by clicking <strong>Publish</strong> and copying the <strong>Map ID</strong>.</li>
-    <li>Download the SDK source code from the <a href='https://github.com/mapbox/mapbox-ios-sdk'>repository</a> using the cloning instructions in the <code>README.markdown</code> and put it someplace in your project’s folder. We assume below that this is a top-level folder called <code>Mapbox-iOS-SDK</code>.</li>
-    <li>Add <code>MapView.xcodeproj</code> to your project’s file sources, either by dragging it into your project from Finder or via <code>File &gt; Add Files...</code>, in order to make the library available to your project.</li>
-    <li>Add <code>-ObjC</code> to your app target’s <code>Other Linker Flags</code> build setting in order to ensure that the SDK’s static library has all symbols loaded, even for categories.</li>
-    <li>Add <code>&quot;$(SRCROOT)/Mapbox-iOS-SDK&quot;</code> (including the quotes and per your folder naming scheme) to the <code>Header Search Paths</code> build setting for your app target in order to gain access to the headers. Be sure to check the <code>Recursive</code> option.</li>
-    <li>Add the <code>MapView</code> target to your app target’s <code>Target Dependencies</code> build phase in order to build the library when you build your project.</li>
-    <li>
-      Add the following libraries to your app target’s <code>Link Binary With Libraries</code> build phase:
-      <ul>
-        <li><code>CoreLocation.framework</code> (required for location services)</li>
-        <li><code>QuartzCore.framework</code> (required because of advanced layer manipulation)</li>
-        <li><code>libMapbox.a</code> (required to include the SDK)</li>
-        <li><code>libsqlite3.dylib</code> (required for MBTiles and caching support)</li>
-        <li><code>libz.dylib</code> (required for UTFGrid interactivity)</li>
-      </ul>
-    </li>
-    <li>Add the <code>Mapbox.bundle</code> product from the SDK to the <code>Copy Bundle Resources</code> build phase of your app target. This way, the bundle will be copied at build time out of the SDK build products folder and included as a resource in your app product.</li>
-    <li>At a minimum, <code>#import &quot;Mapbox.h&quot;</code> and instantiate an <code>RMMapView</code> in your code along with an <code>RMMapboxSource</code> using <code>-initWithMapID:</code> and an <code>NSString</code> made from your <strong>Map ID</strong> obtained above.</li>
-  </ol>
   <h2 id='api_overview'>API overview</h2>
   <p>Below we’ll talk about the major components used when building a map-based iOS app with our SDK. We’re assuming you have a general familiarity with Apple’s developer tools, the Cocoa framework, and the Objective-C language and conventions. <a href='/mapbox-ios-sdk/api'>Full API documentation</a> is available as well, including as an embedded Xcode <a href='/mapbox-ios-sdk/Docs/publish/docset.atom'>Atom feed</a>.</p>
   <h3 id='map_view__class'>Map view (<a href='/mapbox-ios-sdk/api/#RMMapView-class'><code>RMMapView</code></a> class)</h3>

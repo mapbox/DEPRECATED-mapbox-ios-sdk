@@ -13,6 +13,9 @@
       height:60px;
       }
 
+.install > div        { display:none; }
+.install:target > div { display:block; }
+
 .fill-white pre { background-color:transparent; }
 .section-tasks .tooltip .tooltip { display:none; }
 .section-method ul *,
