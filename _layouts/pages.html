@@ -22,21 +22,9 @@ fullwidth: true
           <a class='small block truncate {% if item.url == page.url %} active{% endif %}' href='{{site.baseurl}}{{item.url}}'>{{item.title}}</a>
           {% endfor %}
         </div>
-      {% elsif page.section == 'mapboxios-api' %}
-        <div class='space-bottom'>
-          <a class='block quiet strong small truncate active' href='{{site.baseurl}}/api/'>API {{site.version}}</a>
-        </div>
-        {% for heading in page.navigation %}
-          <div class='space-bottom1'>
-            <a class='block quiet small' href='#{{heading[0]|replace:' ','_'}}'><strong>{{heading[0]}}</strong></a>
-          {% for item in heading[1] %}
-            <a class='block small truncate' href='#{{item|replace:' ','_'}}'>{{item | replace:'-class','' | replace:'-protocol',''}}</a>
-          {% endfor %}
-          </div>
-        {% endfor %}
       {% elsif page.section == 'mapboxios-guide' %}
         <div class='space-bottom'>
-          <a class='block quiet strong small truncate active' href='{{site.baseurl}}/guide/'>Guide</a>
+          <a class='block quiet strong small truncate active' href='{{site.baseurl}}/guide/'>Overview</a>
         </div>
         {% for section in page.navigation %}
         <div class='space-bottom1'>
