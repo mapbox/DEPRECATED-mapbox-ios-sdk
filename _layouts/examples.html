@@ -1,34 +1,18 @@
 ---
-layout: default
-section: developers
+layout: pages
+section: mapboxios-examples
 ---
 
-{% include header.html %}
+<div class='col12 round keyline-all clearfix contain fill-white'>
+<div class='pad2 keyline-bottom' data-swiftype-index=true>
+  <h3>{{page.title}}</h3>
+  <p>{{page.description}}</p>
+</div>
 
-<div class='keyline-all clearfix'>
-  <div class='col3'>
-    <div class='pad2 keyline-bottom'>
-      <fieldset class='search with-icon'>
-        <span class='icon search'></span>
-        <input class='stretch' type='text' placeholder='Filter examples'>
-      </fieldset>
-    </div>
-    <nav class='doc-nav anchors'>
-      {% for item in site.categories.examples reversed %}
-      <a class='pad1y pad2x col12 keyline-bottom truncate {% if item.url == page.url %} active{% endif %}' href='{{site.baseurl}}{{item.url}}'>{{item.title}}</a>
-      {% endfor %}
-    </nav>
-  </div>
-  <div class='col9 keyline-left'>
-    <div class='pad2 doc example-header keyline-bottom'>
-      <h3>{{page.title}}</h3>
-      <span class='description'>{{page.description}}</span>
-    </div>
-
-    <div id='screenshot' class='doc pad2'>
-      <img src='{{site.baseurl}}/images{{page.url | replace:'examples/',''}}.png'/>
-    </div>
-    <div id='code' class='doc'>
+<div id='screenshot' class='doc pad2'>
+  <img src='{{site.baseurl}}/images{{page.url | replace:'examples/',''}}.png'/>
+</div>
+<div id='code' class='doc'>
 {% highlight objective-c %}
 #import "Mapbox.h"
 
@@ -36,18 +20,5 @@ section: developers
 
 @end
 {% endhighlight %}
-    </div>
-    <div class='keyline-top pad2 center small'>
-      The code and documentation to <a href='http://github.com/mapbox/mapbox-ios-sdk'>mapbox-ios-sdk is hosted on GitHub</a> where you can contribute changes and improvements.
-    </div>
-  </div>
 </div>
-
-{% include developers-footer.html %}
-
-<script>
-$(function () {
-  var example = new Docs();
-  example.bindSearch($('.search input'), $('.doc-nav'), false);
-});
-</script>
+</div>

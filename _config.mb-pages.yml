@@ -2,6 +2,5 @@ api: https://www.mapbox.com
 url: https://www.mapbox.com
 permalink: /:categories/:title
 baseurl: /mapbox-ios-sdk
-title: iOS SDK
-description: Open source alternative to MapKit
+version: v1.1.0
 pygments: true
