@@ -17,12 +17,6 @@
 .install:target > div { display:block; }
 
 .fill-white pre { background-color:transparent; }
-.section-tasks .tooltip .tooltip { display:none; }
-.section-method ul *,
-.section-method dl * { display:inline; }
-
-/* Mirror what <em class='small quiet'> gives */
-.task-item-suffix { font-style:italic; font-size:12px; color:#96A4AB; }
 
 .highlight .hll { background-color: #ffffcc }
 .highlight .c { color: #606060; font-style: italic } /* Comment */
