@@ -133,7 +133,11 @@ navigation:
 
 <div class='prose pad2 doc round fill-white keyline-all'>
   <h2 id='api_overview'>API overview</h2>
-  <p>Below we’ll talk about the major components used when building a map-based iOS app with our SDK. We’re assuming you have a general familiarity with Apple’s developer tools, the Cocoa framework, and the Objective-C language and conventions. For Full API documentation check out the embedded Xcode <a href='/mapbox-ios-sdk/Docs/publish/docset.atom'>Atom feed</a>.</p>
+  <p>Below we’ll talk about the major components used when building a map-based iOS app with our SDK. We’re assuming you have a general familiarity with Apple’s developer tools, the Cocoa framework, and the Objective-C language and conventions.</p>
+
+  <p>Full API documentation is available right in Xcode, either inline or Xcode's documentation viewer.</p>
+  <p><img src='{{site.baseurl}}/images/xcode.png' /></p>
+
   <h3 id='map_view__class'>Map view (<code>RMMapView</code> class)</h3>
   <p>The map view is the basic view that you’ll work with to display a map that pans and zooms in response to gestures. You can instantiate a map view in code or you can embed one in an Interface Builder (<code>.xib</code>) file, just like any other <code>UIView</code> subclass. By default, if not configured with a tile source (see <strong>Installation</strong> above), the map view will display a watermarked example Mapbox map, automatically detecting whether a retina or normal version should be used. There are options to control the map style (with tile sources), markers and shapes on the map, offline caching policy, zooming limits, retina display behavior, starting coordinate, and map view dragging deceleration, among other parameters.</p>
   <h3 id='map_view_delegate__protocol'>Map view delegate (<code>RMMapViewDelegate</code> protocol)</h3>
