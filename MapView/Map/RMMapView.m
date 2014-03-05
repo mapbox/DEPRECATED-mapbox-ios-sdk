@@ -1601,10 +1601,11 @@
             //
             _currentCallout.delegate = nil;
 
+            _currentCallout.permittedArrowDirection = SMCalloutArrowDirectionDown;
+
             [_currentCallout presentCalloutFromRect:_currentAnnotation.layer.bounds
                                             inLayer:_currentAnnotation.layer
                                  constrainedToLayer:self.layer
-                           permittedArrowDirections:SMCalloutArrowDirectionDown
                                            animated:NO];
 
             _currentCallout.delegate = self;
@@ -1902,10 +1903,7 @@
 
         if (anAnnotation.layer.canShowCallout && anAnnotation.title)
         {
-            _currentCallout = [SMCalloutView new];
-
-            if (RMPreVersion7)
-                _currentCallout.backgroundView = [SMCalloutBackgroundView systemBackgroundView];
+            _currentCallout = [SMCalloutView platformCalloutView];
 
             if (RMPostVersion7)
                 _currentCallout.tintColor = self.tintColor;
@@ -1933,10 +1931,11 @@
 
             _currentCallout.delegate = self;
 
+            _currentCallout.permittedArrowDirection = SMCalloutArrowDirectionDown;
+
             [_currentCallout presentCalloutFromRect:anAnnotation.layer.bounds
                                             inLayer:anAnnotation.layer
                                  constrainedToLayer:self.layer
-                           permittedArrowDirections:SMCalloutArrowDirectionDown
                                            animated:animated];
         }
 

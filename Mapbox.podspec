@@ -46,6 +46,6 @@ Pod::Spec.new do |m|
 
   m.dependency 'FMDB', '2.0'
   m.dependency 'GRMustache', '6.8.3'
-  m.dependency 'SMCalloutView', '1.1'
+  m.dependency 'SMCalloutView', '2.0'
 
 end
