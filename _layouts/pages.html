@@ -2,6 +2,7 @@
 layout: default
 class: fill-light
 fullwidth: true
+section: mapbox-ios-sdk
 ---
 
 <link href='{{site.url}}/css/docs.css' rel='stylesheet' />
@@ -13,7 +14,7 @@ fullwidth: true
   <div class='limiter'><div class='col3 contain'>
     <nav class='scroll-styled quiet-scroll'>
 
-      {% if page.section == 'mapboxios-examples' %}
+      {% if page.category == 'examples' %}
         <div class='space-bottom'>
           <a class='block quiet strong small truncate active' href='{{site.baseurl}}/examples/'>Examples</a>
         </div>
@@ -22,7 +23,7 @@ fullwidth: true
           <a class='small block truncate {% if item.url == page.url %} active{% endif %}' href='{{site.baseurl}}{{item.url}}'>{{item.title}}</a>
           {% endfor %}
         </div>
-      {% elsif page.section == 'mapboxios-guide' %}
+      {% elsif page.category == 'overview' %}
         <div class='space-bottom'>
           <a class='block quiet strong small truncate active' href='{{site.baseurl}}/guide/'>Overview</a>
         </div>
@@ -69,10 +70,10 @@ fullwidth: true
 <script>
 $('#docs-search input').swiftype({
     autocompleteContainingElement: $('#docs-search'),
-    //filters: {
-      //page: {
-        //type: ['mapbox-api', 'mapbox-docs']
-      //}
-    //}
+    filters: {
+      page: {
+        type: ['mapbox-ios-sdk']
+      }
+    }
 });
 </script>
