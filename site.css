@@ -1,15 +1,30 @@
-/* Base Candidate */
-.doc-nav a:hover,
-.doc-nav .active {
-  background-color:#f8f8f8;
+.splash {
+  background:url(images/splash.png) no-repeat center center;
+  background-size:800px 240px;
   }
+.wireframe {
+  border:3px solid rgba(0,0,0,0.5);
+  border-radius:20px;
+  }
+  .wireframe * { border-color:rgba(0,0,0,0.5); }
+  .wireframe .dot {
+    display:inline-block;
+    width:10px;
+    height:10px;
+    }
+    .wireframe .dot.menu {
+      width:60px;
+      height:60px;
+      }
 
-.section-tasks .tooltip .tooltip { display:none; }
-.section-method ul *,
-.section-method dl * { display:inline; }
+.wireframe.example .dot      { margin-top:90px; }
+.wireframe.example .dot.menu { margin-top:65px; }
+.dark .wireframe { border-color:rgba(255,255,255,1); }
 
-/* Mirror what <em class='small quiet'> gives */
-.task-item-suffix { font-style:italic; font-size:12px; color:#96A4AB; }
+.install > div        { display:none; }
+.install:target > div { display:block; }
+
+.fill-white pre { background-color:transparent; }
 
 .highlight .hll { background-color: #ffffcc }
 .highlight .c { color: #606060; font-style: italic } /* Comment */
