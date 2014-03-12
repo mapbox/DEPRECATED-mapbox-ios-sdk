@@ -92,7 +92,7 @@ typedef enum : NSUInteger {
 *   @return An initialized Mapbox tile source. */
 - (id)initWithTileJSON:(NSString *)tileJSON;
 
-/** For TileJSON 2.1.0+ layers, initialize a tile source and automatically find and add annotations from [simplestyle](http://mapbox.com/developers/simplestyle/) data.
+/** For TileJSON 2.1.0+ layers, initialize a tile source and automatically find and add point annotations from [simplestyle](http://mapbox.com/developers/simplestyle/) data.
 *
 *   This method requires a network connection in order to download the TileJSON used to define the tile source.
 *
@@ -101,7 +101,7 @@ typedef enum : NSUInteger {
 *   @return An initialized Mapbox tile source. */
 - (id)initWithMapID:(NSString *)mapID enablingDataOnMapView:(RMMapView *)mapView;
 
-/** For TileJSON 2.1.0+ layers, initialize a tile source and automatically find and add annotations from [simplestyle](http://mapbox.com/developers/simplestyle/) data, optionally enabling SSL.
+/** For TileJSON 2.1.0+ layers, initialize a tile source and automatically find and add point annotations from [simplestyle](http://mapbox.com/developers/simplestyle/) data, optionally enabling SSL.
 *
 *   This method requires a network connection in order to download the TileJSON used to define the tile source.
 *
@@ -111,13 +111,13 @@ typedef enum : NSUInteger {
 *   @return An initialized Mapbox tile source. */
 - (id)initWithMapID:(NSString *)mapID enablingDataOnMapView:(RMMapView *)mapView enablingSSL:(BOOL)enableSSL;
 
-/** For TileJSON 2.1.0+ layers, initialize a tile source and automatically find and add annotations from [simplestyle](http://mapbox.com/developers/simplestyle/) data.
+/** For TileJSON 2.1.0+ layers, initialize a tile source and automatically find and add point annotations from [simplestyle](http://mapbox.com/developers/simplestyle/) data.
 *   @param tileJSON A string containing TileJSON.
 *   @param mapView A map view on which to display the annotations. 
 *   @return An initialized Mapbox tile source. */
 - (id)initWithTileJSON:(NSString *)tileJSON enablingDataOnMapView:(RMMapView *)mapView;
 
-/** For TileJSON 2.1.0+ layers, initialize a tile source and automatically find and add annotations from [simplestyle](http://mapbox.com/developers/simplestyle/) data.
+/** For TileJSON 2.1.0+ layers, initialize a tile source and automatically find and add point annotations from [simplestyle](http://mapbox.com/developers/simplestyle/) data.
 *
 *   Passing a remote URL requires a network connection. If offline functionality is desired, you should cache the TileJSON locally at a prior date, then pass a file path URL to this method.
 *

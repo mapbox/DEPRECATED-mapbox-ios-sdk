@@ -116,26 +116,29 @@
                         {
                             for (NSDictionary *feature in jsonObject[@"features"])
                             {
-                                NSDictionary *properties = feature[@"properties"];
-                                
-                                CLLocationCoordinate2D coordinate = {
-                                    .longitude = [feature[@"geometry"][@"coordinates"][0] floatValue],
-                                    .latitude  = [feature[@"geometry"][@"coordinates"][1] floatValue]
-                                };
-
-                                RMAnnotation *annotation = nil;
-
-                                if ([mapView.delegate respondsToSelector:@selector(mapView:layerForAnnotation:)])
-                                    annotation = [RMAnnotation annotationWithMapView:mapView coordinate:coordinate andTitle:properties[@"title"]];
-                                else
-                                    annotation = [RMPointAnnotation annotationWithMapView:mapView coordinate:coordinate andTitle:properties[@"title"]];
-                                
-                                annotation.userInfo = properties;
-                                
-                                dispatch_async(dispatch_get_main_queue(), ^(void)
+                                if ([feature[@"geometry"][@"type"] isEqualToString:@"Point"])
                                 {
-                                    [mapView addAnnotation:annotation];
-                                });
+                                    NSDictionary *properties = feature[@"properties"];
+
+                                    CLLocationCoordinate2D coordinate = {
+                                        .longitude = [feature[@"geometry"][@"coordinates"][0] floatValue],
+                                        .latitude  = [feature[@"geometry"][@"coordinates"][1] floatValue]
+                                    };
+
+                                    RMAnnotation *annotation = nil;
+
+                                    if ([mapView.delegate respondsToSelector:@selector(mapView:layerForAnnotation:)])
+                                        annotation = [RMAnnotation annotationWithMapView:mapView coordinate:coordinate andTitle:properties[@"title"]];
+                                    else
+                                        annotation = [RMPointAnnotation annotationWithMapView:mapView coordinate:coordinate andTitle:properties[@"title"]];
+
+                                    annotation.userInfo = properties;
+
+                                    dispatch_async(dispatch_get_main_queue(), ^(void)
+                                    {
+                                        [mapView addAnnotation:annotation];
+                                    });
+                                }
                             }
                         }
                     }
