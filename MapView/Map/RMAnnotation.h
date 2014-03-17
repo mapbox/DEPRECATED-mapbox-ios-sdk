@@ -157,6 +157,6 @@
 #pragma mark -
 
 // Used internally
-@property (nonatomic, strong) RMMapView *mapView;
+@property (nonatomic, weak) RMMapView *mapView;
 
 @end

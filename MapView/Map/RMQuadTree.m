@@ -70,7 +70,7 @@
     NSMutableArray *_annotations;
     RMQuadTreeNode *_parentNode, *_northWest, *_northEast, *_southWest, *_southEast;
     RMQuadTreeNodeType _nodeType;
-    RMMapView *_mapView;
+    __weak RMMapView *_mapView;
 
     RMAnnotation *_cachedClusterAnnotation;
     NSArray *_cachedClusterEnclosedAnnotations;
@@ -596,7 +596,7 @@
 @implementation RMQuadTree
 {
     RMQuadTreeNode *_rootNode;
-    RMMapView *_mapView;
+    __weak RMMapView *_mapView;
 }
 
 - (id)initWithMapView:(RMMapView *)aMapView

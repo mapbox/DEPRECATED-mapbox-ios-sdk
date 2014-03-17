@@ -131,8 +131,6 @@
 
 @implementation RMMapView
 {
-    id <RMMapViewDelegate> _delegate;
-
     BOOL _delegateHasBeforeMapMove;
     BOOL _delegateHasAfterMapMove;
     BOOL _delegateHasBeforeMapZoom;
@@ -197,7 +195,7 @@
 
     RMUserTrackingBarButtonItem *_userTrackingBarButtonItem;
 
-    UIViewController *_viewControllerPresentingAttribution;
+    __weak UIViewController *_viewControllerPresentingAttribution;
     UIButton *_attributionButton;
     UIPopoverController *_attributionPopover;
 
@@ -654,11 +652,6 @@
 
 #pragma mark -
 #pragma mark Delegate
-
-- (id <RMMapViewDelegate>)delegate
-{
-	return _delegate;
-}
 
 - (void)setDelegate:(id <RMMapViewDelegate>)aDelegate
 {
