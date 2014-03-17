@@ -1834,13 +1834,13 @@
             _draggedAnnotation = nil;
         }
     }
-    else if ([hit isKindOfClass:[RMMapLayer class]] && _delegateHasLongPressOnAnnotation)
+    else if (recognizer.state == UIGestureRecognizerStateBegan && [hit isKindOfClass:[RMMapLayer class]] && _delegateHasLongPressOnAnnotation)
     {
         // pass annotation long-press to delegate
         //
         [_delegate longPressOnAnnotation:[((RMMapLayer *)hit) annotation] onMap:self];
     }
-    else if (_delegateHasLongPressOnMap)
+    else if (recognizer.state == UIGestureRecognizerStateBegan && _delegateHasLongPressOnMap)
     {
         // pass map long-press to delegate
         //
