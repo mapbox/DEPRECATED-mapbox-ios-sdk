@@ -76,7 +76,7 @@
 @property (nonatomic, strong) UIImage *badgeIcon;
 @property (nonatomic, assign) CGPoint anchorPoint;
 
-/** The annotation's current location on screen. Do not set this directly unless during temporary operations like annotation drags, but rather use the coordinate property to permanently change the annotation's location on the map. */
+/** The annotation's current location on screen. Do not set this directly unless during temporary operations such as animations, but rather use the coordinate property to permanently change the annotation's location on the map. */
 @property (nonatomic, assign) CGPoint position;
 
 @property (nonatomic, assign) RMProjectedPoint projectedLocation; // in projected meters
@@ -110,7 +110,9 @@
 
 /** @name Filtering Types of Annotations */
 
-/** Whether the annotation is related to display of the user's location. Useful for filtering purposes when providing annotation layers in the delegate. */
+/** Whether the annotation is related to display of the user's location. Useful for filtering purposes when providing annotation layers in the delegate. 
+*
+*   There are three possible user location annotations, depending on current conditions: the user dot, the pulsing halo, and the accuracy circle. All may have custom layers provided, but if you only want to customize the user dot, you should check that the annotation is a member of the RMUserLocation class in order to ensure that you are altering only the correct annotation layer. */
 @property (nonatomic, readonly) BOOL isUserLocationAnnotation;
 
 #pragma mark -
@@ -155,6 +157,6 @@
 #pragma mark -
 
 // Used internally
-@property (nonatomic, strong) RMMapView *mapView;
+@property (nonatomic, weak) RMMapView *mapView;
 
 @end

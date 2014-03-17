@@ -46,7 +46,7 @@
 
 /** Access and change the global user agent for HTTP requests using the library.
 *
-*   If unset, defaults to `MapBox iOS SDK` followed by generic hardware model and software version information.
+*   If unset, defaults to `Mapbox iOS SDK` followed by generic hardware model and software version information.
 *
 *   Example: `MyMapApp/1.2` */
 @property (nonatomic, retain) NSString *userAgent;
