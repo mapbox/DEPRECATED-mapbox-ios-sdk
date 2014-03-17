@@ -163,4 +163,7 @@ typedef enum : short {
 *   This method returns immediately so as to not block the calling thread. If you wish to be notified of the actual cancellation completion, implement the tileCacheDidCancelBackgroundCache: delegate method. */
 - (void)cancelBackgroundCache;
 
+/** A count of the number of tiles that would be downloaded in a background tile cache download operation. */
+- (NSUInteger)tileCountForSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast minZoom:(NSUInteger)minZoom maxZoom:(NSUInteger)maxZoom;
+
 @end

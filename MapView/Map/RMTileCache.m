@@ -252,16 +252,8 @@
     return (_activeTileSource || _backgroundFetchQueue);
 }
 
-- (void)beginBackgroundCacheForTileSource:(id <RMTileSource>)tileSource southWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast minZoom:(NSUInteger)minZoom maxZoom:(NSUInteger)maxZoom
+- (NSUInteger)tileCountForSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast minZoom:(NSUInteger)minZoom maxZoom:(NSUInteger)maxZoom
 {
-    if (self.isBackgroundCaching)
-        return;
-
-    _activeTileSource = tileSource;
-    
-    _backgroundFetchQueue = [[NSOperationQueue alloc] init];
-    [_backgroundFetchQueue setMaxConcurrentOperationCount:6];
-    
     NSUInteger minCacheZoom = minZoom;
     NSUInteger maxCacheZoom = maxZoom;
 
@@ -289,8 +281,33 @@
         totalTiles += (xMax + 1 - xMin) * (yMax + 1 - yMin);
     }
 
+    return totalTiles;
+}
+
+- (void)beginBackgroundCacheForTileSource:(id <RMTileSource>)tileSource southWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast minZoom:(NSUInteger)minZoom maxZoom:(NSUInteger)maxZoom
+{
+    if (self.isBackgroundCaching)
+        return;
+
+    _activeTileSource = tileSource;
+
+    _backgroundFetchQueue = [[NSOperationQueue alloc] init];
+    [_backgroundFetchQueue setMaxConcurrentOperationCount:6];
+
+    NSUInteger totalTiles = [self tileCountForSouthWest:southWest northEast:northEast minZoom:minZoom maxZoom:maxZoom];
+
+    NSUInteger minCacheZoom = minZoom;
+    NSUInteger maxCacheZoom = maxZoom;
+
+    CLLocationDegrees minCacheLat = southWest.latitude;
+    CLLocationDegrees maxCacheLat = northEast.latitude;
+    CLLocationDegrees minCacheLon = southWest.longitude;
+    CLLocationDegrees maxCacheLon = northEast.longitude;
+
     if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCache:didBeginBackgroundCacheWithCount:forTileSource:)])
         [_backgroundCacheDelegate tileCache:self didBeginBackgroundCacheWithCount:totalTiles forTileSource:_activeTileSource];
+
+    NSUInteger n, xMin, yMax, xMax, yMin;
 
     __block NSUInteger progTile = 0;
 
