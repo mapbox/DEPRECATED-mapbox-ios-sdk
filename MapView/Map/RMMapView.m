@@ -1606,7 +1606,7 @@
     {
         [self correctPositionOfAllAnnotationsIncludingInvisibles:NO animated:(_mapScrollViewIsZooming && !_mapScrollView.zooming)];
 
-        if (_currentAnnotation && ! [_currentAnnotation isKindOfClass:[RMMarker class]])
+        if (_currentAnnotation && ! [_currentAnnotation.layer isKindOfClass:[RMMarker class]])
         {
             // adjust shape annotation callouts for frame changes during zoom
             //
