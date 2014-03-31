@@ -32,7 +32,7 @@ Pod::Spec.new do |m|
 
   m.resource = 'Resources/Mapbox.bundle'
 
-  m.documentation_url = 'https://www.mapbox.com/mapbox-ios-sdk/api/'
+  m.documentation_url = 'https://www.mapbox.com/mapbox-ios-sdk'
 
   m.frameworks = 'CoreGraphics', 'CoreLocation', 'Foundation', 'QuartzCore', 'UIKit'
 
