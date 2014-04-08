@@ -28,10 +28,23 @@
 
 #import "RMAbstractMercatorTileSource.h"
 
+/** RMCompositeSource combines two or more other tile sources, compositing them into a single image per tile and caching that composited result to the tile cache.
+*
+*   RMCompositeSource can have better performance for instances of fully opaque tiles that are layered above other tiles in the tile source stacking order. It will determine if a tile is opaque and stop iteration of tile sources below it early as a result, since they would be obscured anyway. */
 @interface RMCompositeSource : RMAbstractMercatorTileSource
 
+/** @name Creating Tile Sources */
+
+/** Initialize a compositing tile source.
+*
+*   @param tileSources An array of tile sources to be composited.
+*   @param tileCacheKey A tile cache key for storage of composited result tiles. 
+*   @return An initialized compositing tile source. */
 - (id)initWithTileSources:(NSArray *)tileSources tileCacheKey:(NSString *)tileCacheKey;
 
+/** @name Querying Tile Source Information */
+
+/** An array of tile sources being composited. */
 @property (nonatomic, weak, readonly) NSArray *tileSources;
 
 @end
