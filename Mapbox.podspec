@@ -21,7 +21,7 @@ Pod::Spec.new do |m|
 
   m.prefix_header_file = 'MapView/MapView_Prefix.pch'
 
-  m.resource_bundle = 'MapView/Map/Resources/*'
+  m.resource_bundle = { 'Mapbox' => 'MapView/Map/Resources/*' }
 
   m.documentation_url = 'https://www.mapbox.com/mapbox-ios-sdk'
 
