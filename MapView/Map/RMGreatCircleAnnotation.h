@@ -1,5 +1,5 @@
 //
-//  RMCompositeSource.h
+//  RMGreatCircleAnnotation.m
 //  MapView
 //
 // Copyright (c) 2008-2013, Route-Me Contributors
@@ -26,25 +26,13 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import "RMAbstractMercatorTileSource.h"
+#import "RMShapeAnnotation.h"
 
-/** RMCompositeSource combines two or more other tile sources, compositing them into a single image per tile and caching that composited result to the tile cache.
-*
-*   RMCompositeSource can have better performance for instances of fully opaque tiles that are layered above other tiles in the tile source stacking order. It will determine if a tile is opaque and stop iteration of tile sources below it early as a result, since they would be obscured anyway. */
-@interface RMCompositeSource : RMAbstractMercatorTileSource
+@interface RMGreatCircleAnnotation : RMShapeAnnotation
 
-/** @name Creating Tile Sources */
+- (id)initWithMapView:(RMMapView *)aMapView coordinate1:(CLLocationCoordinate2D)coordinate1 coordinate2:(CLLocationCoordinate2D)coordinate2;
 
-/** Initialize a compositing tile source.
-*
-*   @param tileSources An array of tile sources to be composited.
-*   @param tileCacheKey A tile cache key for storage of composited result tiles. 
-*   @return An initialized compositing tile source. */
-- (id)initWithTileSources:(NSArray *)tileSources tileCacheKey:(NSString *)tileCacheKey;
-
-/** @name Querying Tile Source Information */
-
-/** An array of tile sources being composited. */
-@property (nonatomic, weak, readonly) NSArray *tileSources;
+@property (nonatomic, readonly, assign) CLLocationCoordinate2D coordinate1;
+@property (nonatomic, readonly, assign) CLLocationCoordinate2D coordinate2;
 
 @end

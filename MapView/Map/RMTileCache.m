@@ -252,32 +252,25 @@
     return (_activeTileSource || _backgroundFetchQueue);
 }
 
-- (void)beginBackgroundCacheForTileSource:(id <RMTileSource>)tileSource southWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast minZoom:(float)minZoom maxZoom:(float)maxZoom
+- (NSUInteger)tileCountForSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast minZoom:(NSUInteger)minZoom maxZoom:(NSUInteger)maxZoom
 {
-    if (self.isBackgroundCaching)
-        return;
+    NSUInteger minCacheZoom = minZoom;
+    NSUInteger maxCacheZoom = maxZoom;
 
-    _activeTileSource = tileSource;
-    
-    _backgroundFetchQueue = [[NSOperationQueue alloc] init];
-    [_backgroundFetchQueue setMaxConcurrentOperationCount:6];
-    
-    int   minCacheZoom = (int)minZoom;
-    int   maxCacheZoom = (int)maxZoom;
-    float minCacheLat  = southWest.latitude;
-    float maxCacheLat  = northEast.latitude;
-    float minCacheLon  = southWest.longitude;
-    float maxCacheLon  = northEast.longitude;
+    CLLocationDegrees minCacheLat = southWest.latitude;
+    CLLocationDegrees maxCacheLat = northEast.latitude;
+    CLLocationDegrees minCacheLon = southWest.longitude;
+    CLLocationDegrees maxCacheLon = northEast.longitude;
 
     NSAssert(minCacheZoom <= maxCacheZoom, @"Minimum zoom should be less than or equal to maximum zoom");
     NSAssert(maxCacheLat  >  minCacheLat,  @"Northernmost bounds should exceed southernmost bounds");
     NSAssert(maxCacheLon  >  minCacheLon,  @"Easternmost bounds should exceed westernmost bounds");
 
-    int n, xMin, yMax, xMax, yMin;
+    NSUInteger n, xMin, yMax, xMax, yMin;
 
-    int totalTiles = 0;
+    NSUInteger totalTiles = 0;
 
-    for (int zoom = minCacheZoom; zoom <= maxCacheZoom; zoom++)
+    for (NSUInteger zoom = minCacheZoom; zoom <= maxCacheZoom; zoom++)
     {
         n = pow(2.0, zoom);
         xMin = floor(((minCacheLon + 180.0) / 360.0) * n);
@@ -288,12 +281,37 @@
         totalTiles += (xMax + 1 - xMin) * (yMax + 1 - yMin);
     }
 
+    return totalTiles;
+}
+
+- (void)beginBackgroundCacheForTileSource:(id <RMTileSource>)tileSource southWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast minZoom:(NSUInteger)minZoom maxZoom:(NSUInteger)maxZoom
+{
+    if (self.isBackgroundCaching)
+        return;
+
+    _activeTileSource = tileSource;
+
+    _backgroundFetchQueue = [[NSOperationQueue alloc] init];
+    [_backgroundFetchQueue setMaxConcurrentOperationCount:6];
+
+    NSUInteger totalTiles = [self tileCountForSouthWest:southWest northEast:northEast minZoom:minZoom maxZoom:maxZoom];
+
+    NSUInteger minCacheZoom = minZoom;
+    NSUInteger maxCacheZoom = maxZoom;
+
+    CLLocationDegrees minCacheLat = southWest.latitude;
+    CLLocationDegrees maxCacheLat = northEast.latitude;
+    CLLocationDegrees minCacheLon = southWest.longitude;
+    CLLocationDegrees maxCacheLon = northEast.longitude;
+
     if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCache:didBeginBackgroundCacheWithCount:forTileSource:)])
         [_backgroundCacheDelegate tileCache:self didBeginBackgroundCacheWithCount:totalTiles forTileSource:_activeTileSource];
 
-    __block int progTile = 0;
+    NSUInteger n, xMin, yMax, xMax, yMin;
 
-    for (int zoom = minCacheZoom; zoom <= maxCacheZoom; zoom++)
+    __block NSUInteger progTile = 0;
+
+    for (NSUInteger zoom = minCacheZoom; zoom <= maxCacheZoom; zoom++)
     {
         n = pow(2.0, zoom);
         xMin = floor(((minCacheLon + 180.0) / 360.0) * n);
@@ -301,9 +319,9 @@
         xMax = floor(((maxCacheLon + 180.0) / 360.0) * n);
         yMin = floor((1.0 - (logf(tanf(maxCacheLat * M_PI / 180.0) + 1.0 / cosf(maxCacheLat * M_PI / 180.0)) / M_PI)) / 2.0 * n);
 
-        for (int x = xMin; x <= xMax; x++)
+        for (NSUInteger x = xMin; x <= xMax; x++)
         {
-            for (int y = yMin; y <= yMax; y++)
+            for (NSUInteger y = yMin; y <= yMax; y++)
             {
                 RMTileCacheDownloadOperation *operation = [[RMTileCacheDownloadOperation alloc] initWithTile:RMTileMake(x, y, zoom)
                                                                                                 forTileSource:_activeTileSource

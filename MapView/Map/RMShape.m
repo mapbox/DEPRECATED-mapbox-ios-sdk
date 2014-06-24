@@ -435,10 +435,24 @@
     {
         // if shape is not filled with a color, do a simple "point on path" test
         //
-        UIGraphicsBeginImageContext(self.bounds.size);
-        CGContextAddPath(UIGraphicsGetCurrentContext(), shapeLayer.path);
-        containsPoint = CGContextPathContainsPoint(UIGraphicsGetCurrentContext(), thePoint, kCGPathStroke);
-        UIGraphicsEndImageContext();
+        if (self.additionalTouchPadding)
+        {
+            CGPathRef tapTargetPath = CGPathCreateCopyByStrokingPath(shapeLayer.path, nil, fmaxf(self.additionalTouchPadding, shapeLayer.lineWidth), 0, 0, 0);
+
+            if (tapTargetPath)
+            {
+                containsPoint = [[UIBezierPath bezierPathWithCGPath:tapTargetPath] containsPoint:thePoint];
+
+                CGPathRelease(tapTargetPath);
+            }
+        }
+        else
+        {
+            UIGraphicsBeginImageContext(self.bounds.size);
+            CGContextAddPath(UIGraphicsGetCurrentContext(), shapeLayer.path);
+            containsPoint = CGContextPathContainsPoint(UIGraphicsGetCurrentContext(), thePoint, kCGPathStroke);
+            UIGraphicsEndImageContext();
+        }
     }
     else
     {

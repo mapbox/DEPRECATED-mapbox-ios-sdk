@@ -81,14 +81,14 @@ typedef enum : short {
 *   @param tileCache The tile cache. 
 *   @param tileCount The total number of tiles required for coverage of the desired geographic area. 
 *   @param tileSource The tile source providing the tiles. */
-- (void)tileCache:(RMTileCache *)tileCache didBeginBackgroundCacheWithCount:(int)tileCount forTileSource:(id <RMTileSource>)tileSource;
+- (void)tileCache:(RMTileCache *)tileCache didBeginBackgroundCacheWithCount:(NSUInteger)tileCount forTileSource:(id <RMTileSource>)tileSource;
 
 /** Sent upon caching of each tile in a background cache operation.
 *   @param tileCache The tile cache. 
 *   @param tile A structure representing the tile in question. 
 *   @param tileIndex The index of the tile in question, beginning with `1` and ending with totalTileCount. 
 *   @param totalTileCount The total number of of tiles required for coverage of the desired geographic area. */
-- (void)tileCache:(RMTileCache *)tileCache didBackgroundCacheTile:(RMTile)tile withIndex:(int)tileIndex ofTotalTileCount:(int)totalTileCount;
+- (void)tileCache:(RMTileCache *)tileCache didBackgroundCacheTile:(RMTile)tile withIndex:(NSUInteger)tileIndex ofTotalTileCount:(NSUInteger)totalTileCount;
 
 /** Sent when all tiles have completed downloading and caching. 
 *   @param tileCache The tile cache. */
@@ -156,11 +156,19 @@ typedef enum : short {
 *   @param northEast The northeast corner of the geographic area to cache. 
 *   @param minZoom The minimum zoom level to cache. 
 *   @param maxZoom The maximum zoom level to cache. */
-- (void)beginBackgroundCacheForTileSource:(id <RMTileSource>)tileSource southWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast minZoom:(float)minZoom maxZoom:(float)maxZoom;
+- (void)beginBackgroundCacheForTileSource:(id <RMTileSource>)tileSource southWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast minZoom:(NSUInteger)minZoom maxZoom:(NSUInteger)maxZoom;
 
 /** Cancel any background caching. 
 *
 *   This method returns immediately so as to not block the calling thread. If you wish to be notified of the actual cancellation completion, implement the tileCacheDidCancelBackgroundCache: delegate method. */
 - (void)cancelBackgroundCache;
+
+/** A count of the number of tiles that would be downloaded in a background tile cache download operation.
+*   @param southWest The southwest corner of the geographic area to cache.
+*   @param northEast The northeast corner of the geographic area to cache.
+*   @param minZoom The minimum zoom level to cache.
+*   @param maxZoom The maximum zoom level to cache.
+*   @return The number of tiles representing the coverage area. */
+- (NSUInteger)tileCountForSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast minZoom:(NSUInteger)minZoom maxZoom:(NSUInteger)maxZoom;
 
 @end

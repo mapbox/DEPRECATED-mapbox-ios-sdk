@@ -41,7 +41,7 @@
 
 @implementation RMMapTiledLayerView
 {
-    RMMapView *_mapView;
+    __weak RMMapView *_mapView;
     id <RMTileSource> _tileSource;
 }
 
@@ -176,7 +176,7 @@
                     {
                         // ensure only one request for a URL at a time
                         //
-                        @synchronized ([(RMAbstractWebMapSource *)_tileSource URLForTile:RMTileMake(x, y, zoom)])
+                        @synchronized ([(RMAbstractWebMapSource *)_tileSource URLsForTile:RMTileMake(x, y, zoom)])
                         {
                             // this will return quicker if cached since above attempt, else block on fetch
                             //

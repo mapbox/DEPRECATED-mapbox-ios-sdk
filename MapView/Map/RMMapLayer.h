@@ -77,7 +77,7 @@
 *
 *   If the value of this property is `NO`, the value of the title string is ignored and the annotation remains enabled by default. You can still disable the annotation explicitly using the enabled property. 
 *
-*   Note that callouts are not supported on cluster annotation layers. These annotations can be interacted with, but do not remain consistent visually during map pan and zoom events; thus, callout behavior would be inconsistent. */
+*   Note that callouts are not supported on non-marker or cluster annotation layers. These annotations can be interacted with, but do not remain consistent visually during map pan and zoom events; thus, callout behavior would be inconsistent. */
 @property (nonatomic, assign) BOOL canShowCallout;
 
 /** The offset (in pixels) at which to place the callout bubble.
