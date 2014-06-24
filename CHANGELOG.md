@@ -1,6 +1,28 @@
 Changelog
 ---------
 
+### 1.2.0
+#### June 23, 2014
+
+  - Added an `RMGreatCircleAnnotation` class for geodesic polylines. 
+  - Allow for additional touch gesture padding around thin `RMShape` layers. 
+  - Added an `RMTileCache` method for retrieving anticipated raster tile background download counts for a given coverage area. 
+  - Added some documentation to the now-supported `RMCompositeSource` for client-side raster tile compositing.
+  - Upgraded SMCalloutView with updated iOS 7+ support. 
+  - No longer allow callouts on non-marker annotation layers.
+  - Minor fix to center coordinate/zoom level animation method. 
+  - Use magnetic heading if true heading isn't accurate. 
+  - Added a debug log when using the default watermarked map style. 
+  - Updated some syntax to the newer boxed literals. 
+  - Removed some compiler flags that would over-optimize and make debugging difficult. 
+  - Made some improvements to the map view long-press gesture. 
+  - Fixed an issue with certain tile sources having wrong tile image request methods called. 
+  - Fixed some issues with the SQLite-backed tile cache not reclaiming freed disk space. 
+  - Fixed some retain cycle memory use bugs.
+  - Fixed a bug when toggling the logo bug and attribution button. 
+  - Fixed a crash when trying to add invalid annotations. 
+  - Fixed a bug with `RMStaticMapView` always using the default map style. 
+
 ### 1.1.0
 #### January 2, 2014
 
