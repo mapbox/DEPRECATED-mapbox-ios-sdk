@@ -6,7 +6,7 @@ Changelog
 
   - Added an `RMGreatCircleAnnotation` class for geodesic polylines. 
   - Allow for additional touch gesture padding around thin `RMShape` layers. 
-  - Added an `RMTileCacheBackgroundDelegate` method for retrieving antipated raster tile download counts. 
+  - Added an `RMTileCache` method for retrieving anticipated raster tile background download counts for a given coverage area. 
   - Added some documentation to the now-supported `RMCompositeSource` for client-side raster tile compositing.
   - Upgraded SMCalloutView with updated iOS 7+ support. 
   - No longer allow callouts on non-marker annotation layers.
