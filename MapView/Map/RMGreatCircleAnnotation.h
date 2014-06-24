@@ -1,5 +1,5 @@
 //
-//  RMGreatCircleAnnotation.m
+//  RMGreatCircleAnnotation.h
 //  MapView
 //
 // Copyright (c) 2008-2013, Route-Me Contributors
@@ -28,11 +28,20 @@
 
 #import "RMShapeAnnotation.h"
 
+/** An RMGreatCircleAnnotation class represents a line shape that traces the shortest path along the surface of the Earth. You specify a great circle (also known as a geodesic polyline) using a pair of points. When displayed on a two-dimensional map view, the line segment between the two points may appear curved. */
 @interface RMGreatCircleAnnotation : RMShapeAnnotation
 
+/** Initialize a great circle annotation using the specified coordinates.
+*   @param aMapView The map view on which to place the annotation.
+*   @param coordinate1 The starting coordinate.
+*   @param coordinate2 The ending coordinate. 
+*   @return An initialized great circle annotation object, or `nil` if an annotation was unable to be initialized. */
 - (id)initWithMapView:(RMMapView *)aMapView coordinate1:(CLLocationCoordinate2D)coordinate1 coordinate2:(CLLocationCoordinate2D)coordinate2;
 
+/** The starting coordinate of the annotation. */
 @property (nonatomic, readonly, assign) CLLocationCoordinate2D coordinate1;
+
+/** The ending coordinate of the annotation. */
 @property (nonatomic, readonly, assign) CLLocationCoordinate2D coordinate2;
 
 @end
