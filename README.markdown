@@ -30,6 +30,8 @@ Major differences from [Alpstein fork of Route-Me](https://github.com/Alpstein/r
 
 [mapbox]: http://mapbox.com
 
+Keep your eye also on [Mapbox GL](https://www.mapbox.com/blog/mapbox-gl/), the future of our rendering technology. We are aiming to have a clear upgrade path between existing toolsets and GL as it matures. Read more in the [Mapbox GL Cocoa FAQ](https://github.com/mapbox/mapbox-gl-cocoa/blob/master/FAQ.md). 
+
 Route-Me
 --------
 
