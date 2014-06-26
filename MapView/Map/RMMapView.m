@@ -517,20 +517,17 @@
         if ( ! [[viewController.view valueForKeyPath:@"constraints.firstItem"]  containsObject:container] &&
              ! [[viewController.view valueForKeyPath:@"constraints.secondItem"] containsObject:container])
         {
-            CGFloat topSpacing   = container.frame.origin.y;
-            CGFloat rightSpacing = container.superview.bounds.size.width - container.frame.origin.x;
-
             [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[topLayoutGuide]-topSpacing-[container]"
                                                                                         options:0
-                                                                                        metrics:@{ @"topSpacing" : @(topSpacing) }
+                                                                                        metrics:@{ @"topSpacing"     : @(5) }
                                                                                           views:@{ @"topLayoutGuide" : viewController.topLayoutGuide,
                                                                                                    @"container"      : container }]];
 
 
             [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[container]-rightSpacing-|"
                                                                                         options:0
-                                                                                        metrics:@{ @"rightSpacing" : @(rightSpacing) }
-                                                                                          views:@{ @"container" : container }]];
+                                                                                        metrics:@{ @"rightSpacing" : @(5) }
+                                                                                          views:@{ @"container"    : container }]];
         }
     }
 
@@ -539,9 +536,6 @@
         if ( ! [[viewController.view valueForKeyPath:@"constraints.firstItem"]  containsObject:_logoBug] &&
              ! [[viewController.view valueForKeyPath:@"constraints.secondItem"] containsObject:_logoBug])
         {
-            CGFloat leftSpacing   = _logoBug.frame.origin.x;
-            CGFloat bottomSpacing = _logoBug.superview.bounds.size.height - _logoBug.frame.origin.y - _logoBug.bounds.size.height;
-
             NSString *formatString;
             NSDictionary *views;
 
@@ -559,12 +553,12 @@
 
             [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:formatString
                                                                                         options:0
-                                                                                        metrics:@{ @"bottomSpacing" : @(bottomSpacing) }
+                                                                                        metrics:@{ @"bottomSpacing" : @(4) }
                                                                                           views:views]];
 
             [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-leftSpacing-[logoBug]"
                                                                                         options:0
-                                                                                        metrics:@{ @"leftSpacing" : @(leftSpacing) }
+                                                                                        metrics:@{ @"leftSpacing" : @(8) }
                                                                                           views:views]];
         }
     }
@@ -574,9 +568,6 @@
         if ( ! [[viewController.view valueForKeyPath:@"constraints.firstItem"]  containsObject:_attributionButton] &&
              ! [[viewController.view valueForKeyPath:@"constraints.secondItem"] containsObject:_attributionButton])
         {
-            CGFloat rightSpacing  = _attributionButton.superview.bounds.size.width - _attributionButton.frame.origin.x - _attributionButton.bounds.size.width;
-            CGFloat bottomSpacing = _attributionButton.superview.bounds.size.height - _attributionButton.frame.origin.y - _attributionButton.bounds.size.height;
-
             NSString *formatString;
             NSDictionary *views;
 
@@ -594,12 +585,12 @@
 
             [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:formatString
                                                                                         options:0
-                                                                                        metrics:@{ @"bottomSpacing" : @(bottomSpacing) }
+                                                                                        metrics:@{ @"bottomSpacing" : @(8) }
                                                                                           views:views]];
 
             [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[attributionButton]-rightSpacing-|"
                                                                                         options:0
-                                                                                        metrics:@{ @"rightSpacing" : @(rightSpacing) }
+                                                                                        metrics:@{ @"rightSpacing" : @(8) }
                                                                                           views:views]];
         }
     }
@@ -3782,8 +3773,8 @@
         _attributionButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
         _attributionButton.translatesAutoresizingMaskIntoConstraints = NO;
         [_attributionButton addTarget:self action:@selector(showAttribution:) forControlEvents:UIControlEventTouchUpInside];
-        _attributionButton.frame = CGRectMake(self.bounds.size.width  - 30,
-                                              self.bounds.size.height - 30,
+        _attributionButton.frame = CGRectMake(self.bounds.size.width - _attributionButton.bounds.size.width - 8,
+                                              self.bounds.size.height - _attributionButton.bounds.size.height - 8,
                                               _attributionButton.bounds.size.width,
                                               _attributionButton.bounds.size.height);
         [self addSubview:_attributionButton];
