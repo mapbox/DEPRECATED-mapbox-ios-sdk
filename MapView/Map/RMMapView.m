@@ -3419,7 +3419,12 @@
         self.userLocation.location = newLocation;
 
         if (_delegateHasDidUpdateUserLocation)
+        {
             [_delegate mapView:self didUpdateUserLocation:self.userLocation];
+
+            if ( ! _showsUserLocation)
+                return;
+        }
     }
 
     if (self.userTrackingMode != RMUserTrackingModeNone)
@@ -3595,7 +3600,12 @@
     self.userLocation.heading = newHeading;
 
     if (_delegateHasDidUpdateUserLocation)
+    {
         [_delegate mapView:self didUpdateUserLocation:self.userLocation];
+
+        if ( ! _showsUserLocation)
+            return;
+    }
 
     CLLocationDirection headingDirection = (newHeading.trueHeading > 0 ? newHeading.trueHeading : newHeading.magneticHeading);
 
