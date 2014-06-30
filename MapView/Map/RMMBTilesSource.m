@@ -36,8 +36,7 @@
 #import "RMProjection.h"
 #import "RMFractalTileProjection.h"
 
-#import "FMDatabase.h"
-#import "FMDatabaseQueue.h"
+#import "FMDB.h"
 
 @implementation RMMBTilesSource
 {

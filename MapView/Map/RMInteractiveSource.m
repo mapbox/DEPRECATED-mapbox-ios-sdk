@@ -35,8 +35,7 @@
 
 #import "RMConfiguration.h"
 
-#import "FMDatabase.h"
-#import "FMDatabaseQueue.h"
+#import "FMDB.h"
 
 #import "GRMustache.h"
 
