@@ -185,8 +185,10 @@
 
 - (void)dealloc
 {
+#if ! OS_OBJECT_USE_OBJC
     if (_dataQueue)
         dispatch_release(_dataQueue);
+#endif
 }
 
 #pragma mark 
