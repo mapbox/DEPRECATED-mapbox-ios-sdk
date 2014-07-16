@@ -51,6 +51,8 @@
 *   Example: `MyMapApp/1.2` */
 @property (nonatomic, retain) NSString *userAgent;
 
+@property (nonatomic, retain) NSString *accessToken;
+
 @end
 
 #pragma mark -

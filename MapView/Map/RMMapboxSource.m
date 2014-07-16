@@ -168,9 +168,7 @@
 
 - (id)initWithMapID:(NSString *)mapID enablingDataOnMapView:(RMMapView *)mapView
 {
-    NSString *referenceURLString = [NSString stringWithFormat:@"https://api.tiles.mapbox.com/v3/%@.json", mapID];
-
-    return [self initWithReferenceURL:[NSURL URLWithString:referenceURLString] enablingDataOnMapView:mapView];
+    return [self initWithReferenceURL:[self canonicalURLForMapID:mapID] enablingDataOnMapView:mapView];
 }
 
 - (void)dealloc
@@ -183,9 +181,17 @@
 
 #pragma mark 
 
+- (NSURL *)canonicalURLForMapID:(NSString *)mapID
+{
+    NSString *version     = ([[RMConfiguration configuration] accessToken] ? @"v4" : @"v3");
+    NSString *accessToken = ([[RMConfiguration configuration] accessToken] ? [@"&access_token=" stringByAppendingString:[[RMConfiguration configuration] accessToken]] : @"");
+
+    return [NSURL URLWithString:[NSString stringWithFormat:@"https://api.tiles.mapbox.com/%@/%@.json?secure%@", version, mapID, accessToken]];
+}
+
 - (NSURL *)tileJSONURL
 {
-    return [NSURL URLWithString:[NSString stringWithFormat:@"https://api.tiles.mapbox.com/v3/%@.json", self.infoDictionary[@"id"]]];
+    return [self canonicalURLForMapID:self.infoDictionary[@"id"]];
 }
 
 - (NSURL *)URLForTile:(RMTile)tile
