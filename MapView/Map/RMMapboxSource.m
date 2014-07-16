@@ -58,12 +58,7 @@
 
 - (id)initWithMapID:(NSString *)mapID
 {
-    return [self initWithMapID:mapID enablingSSL:NO];
-}
-
-- (id)initWithMapID:(NSString *)mapID enablingSSL:(BOOL)enableSSL
-{
-    return [self initWithMapID:mapID enablingDataOnMapView:nil enablingSSL:enableSSL];
+    return [self initWithMapID:mapID enablingDataOnMapView:nil];
 }
 
 - (id)initWithTileJSON:(NSString *)tileJSON
@@ -86,7 +81,7 @@
         _tileJSON = tileJSON;
 
         if ([_infoDictionary[@"id"] hasPrefix:@"examples."])
-            RMLog(@"Using watermarked example map ID %@. Please go to http://mapbox.com and create your own map style.", _infoDictionary[@"id"]);
+            RMLog(@"Using watermarked example map ID %@. Please go to https://mapbox.com and create your own map style.", _infoDictionary[@"id"]);
 
         _uniqueTilecacheKey = [NSString stringWithFormat:@"Mapbox-%@%@", _infoDictionary[@"id"], (_infoDictionary[@"version"] ? [@"-" stringByAppendingString:_infoDictionary[@"version"]] : @"")];
 
@@ -173,12 +168,7 @@
 
 - (id)initWithMapID:(NSString *)mapID enablingDataOnMapView:(RMMapView *)mapView
 {
-    return [self initWithMapID:mapID enablingDataOnMapView:mapView enablingSSL:NO];
-}
-
-- (id)initWithMapID:(NSString *)mapID enablingDataOnMapView:(RMMapView *)mapView enablingSSL:(BOOL)enableSSL
-{
-    NSString *referenceURLString = [NSString stringWithFormat:@"http%@://api.tiles.mapbox.com/v3/%@.json%@", (enableSSL ? @"s" : @""), mapID, (enableSSL ? @"?secure" : @"")];
+    NSString *referenceURLString = [NSString stringWithFormat:@"https://api.tiles.mapbox.com/v3/%@.json", mapID];
 
     return [self initWithReferenceURL:[NSURL URLWithString:referenceURLString] enablingDataOnMapView:mapView];
 }
@@ -195,9 +185,7 @@
 
 - (NSURL *)tileJSONURL
 {
-    BOOL useSSL = [self.infoDictionary[@"tiles"][0] hasPrefix:@"https"];
-
-    return [NSURL URLWithString:[NSString stringWithFormat:@"http%@://api.tiles.mapbox.com/v3/%@.json%@", (useSSL ? @"s" : @""), self.infoDictionary[@"id"], (useSSL ? @"?secure" : @"")]];
+    return [NSURL URLWithString:[NSString stringWithFormat:@"https://api.tiles.mapbox.com/v3/%@.json", self.infoDictionary[@"id"]]];
 }
 
 - (NSURL *)URLForTile:(RMTile)tile

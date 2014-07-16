@@ -142,7 +142,7 @@
 {
     BOOL useRetina = ([[UIScreen mainScreen] scale] > 1.0);
     
-    NSURL *imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://api.tiles.mapbox.com/v3/marker/pin-%@%@%@%@.png",
+    NSURL *imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://api.tiles.mapbox.com/v3/marker/pin-%@%@%@%@.png",
                                                (sizeString ? [sizeString substringToIndex:1] : @"m"), 
                                                (symbolName ? [@"-" stringByAppendingString:symbolName] : @""),
                                                (colorHex   ? [@"+" stringByAppendingString:[colorHex stringByReplacingOccurrencesOfString:@"#" withString:@""]] : @"+ff0000"),
