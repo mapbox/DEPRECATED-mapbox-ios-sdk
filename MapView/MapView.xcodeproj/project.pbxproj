@@ -1018,6 +1018,7 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../Proj4\"",
 					"\"$(SRCROOT)/Map/GRMustache/include\"",
+					"\"$(SRCROOT)/Map/FMDB/src/fmdb\"",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1043,6 +1044,7 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../Proj4\"",
 					"\"$(SRCROOT)/Map/GRMustache/include\"",
+					"\"$(SRCROOT)/Map/FMDB/src/fmdb\"",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
