@@ -122,7 +122,7 @@
 
         [results next];
 
-        NSData *data = [results dataForColumn:@"tile_data"];
+        NSData *data = ([[results columnNameToIndexMap] count] ? [results dataForColumn:@"tile_data"] : nil);
 
         if ( ! data)
             image = [RMTileImage errorTile];
