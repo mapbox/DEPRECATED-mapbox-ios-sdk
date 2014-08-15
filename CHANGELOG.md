@@ -4,7 +4,7 @@ Changelog
 ### 1.3.0
 #### August 14, 2014
 
-  - Added support for Mapbox `v4` API and access tokens in tile and metadata requests. 
+  - Added support for Mapbox `v4` API and [access tokens](https://www.mapbox.com/developers/api/#access-tokens) in tile and metadata requests. 
   - Now ensures that all Mapbox API requests are over HTTPS.   
   - Updated FMDB SQLite library under the hood for caching and MBTiles support. 
   - Updated some support for the forthcoming iOS 8. 
