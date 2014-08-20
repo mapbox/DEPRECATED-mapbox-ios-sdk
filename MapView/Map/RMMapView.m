@@ -169,6 +169,8 @@
     RMFractalTileProjection *_mercatorToTileProjection;
     RMTileSourcesContainer *_tileSourcesContainer;
 
+    NSMutableArray *_earlyTileSources;
+
     NSMutableSet *_annotations;
     NSMutableSet *_visibleAnnotations;
 
@@ -299,13 +301,33 @@
         [self setBackgroundView:nil];
     }
 
-    if (initialTileSourceMinZoomLevel < newTilesource.minZoom) initialTileSourceMinZoomLevel = newTilesource.minZoom;
-    if (initialTileSourceMaxZoomLevel > newTilesource.maxZoom) initialTileSourceMaxZoomLevel = newTilesource.maxZoom;
+    if ([_earlyTileSources count])
+    {
+        for (id<RMTileSource>earlyTileSource in _earlyTileSources)
+        {
+            if (initialTileSourceMinZoomLevel < earlyTileSource.minZoom) initialTileSourceMinZoomLevel = earlyTileSource.minZoom;
+            if (initialTileSourceMaxZoomLevel > earlyTileSource.maxZoom) initialTileSourceMaxZoomLevel = earlyTileSource.maxZoom;
+        }
+    }
+    else
+    {
+        if (initialTileSourceMinZoomLevel < newTilesource.minZoom) initialTileSourceMinZoomLevel = newTilesource.minZoom;
+        if (initialTileSourceMaxZoomLevel > newTilesource.maxZoom) initialTileSourceMaxZoomLevel = newTilesource.maxZoom;
+    }
     [self setTileSourcesMinZoom:initialTileSourceMinZoomLevel];
     [self setTileSourcesMaxZoom:initialTileSourceMaxZoomLevel];
     [self setTileSourcesZoom:initialTileSourceZoomLevel];
 
-    [self setTileSource:newTilesource];
+    if ([_earlyTileSources count])
+    {
+        [self setTileSources:_earlyTileSources];
+        [_earlyTileSources removeAllObjects];
+    }
+    else
+    {
+        [self setTileSource:newTilesource];
+    }
+
     [self setCenterCoordinate:initialCenterCoordinate animated:NO];
 
     [self setDecelerationMode:RMMapDecelerationFast];
@@ -378,12 +400,24 @@
     if (!newTilesource || !(self = [super initWithFrame:frame]))
         return nil;
 
+    _earlyTileSources = [NSMutableArray array];
+
     [self performInitializationWithTilesource:newTilesource
                              centerCoordinate:initialCenterCoordinate
                                     zoomLevel:initialZoomLevel
                                  maxZoomLevel:maxZoomLevel
                                  minZoomLevel:minZoomLevel
                               backgroundImage:backgroundImage];
+
+    return self;
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    if (![super initWithCoder:decoder])
+        return nil;
+
+    _earlyTileSources = [NSMutableArray array];
 
     return self;
 }
@@ -2111,6 +2145,16 @@
 
 - (void)setTileSources:(NSArray *)tileSources
 {
+    if ( ! _tileSourcesContainer)
+    {
+        // If we've reached this point, it's because our scroll view etc.
+        // aren't yet setup. So let's remember the tile source(s) set so that
+        // we can apply them later on once we're properly initialized.
+        //
+        [_earlyTileSources setArray:tileSources];
+        return;
+    }
+
     if ( ! [_tileSourcesContainer setTileSources:tileSources])
         return;
 
@@ -2139,6 +2183,16 @@
 
 - (void)addTileSource:(id<RMTileSource>)newTileSource atIndex:(NSUInteger)index
 {
+    if ( ! _tileSourcesContainer)
+    {
+        // If we've reached this point, it's because our scroll view etc.
+        // aren't yet setup. So let's remember the tile source(s) set so that
+        // we can apply them later on once we're properly initialized.
+        //
+        [_earlyTileSources insertObject:newTileSource atIndex:(index > [_earlyTileSources count] ? 0 : index)];
+        return;
+    }
+
     if ([_tileSourcesContainer.tileSources containsObject:newTileSource])
         return;
 
