@@ -11,3 +11,6 @@
 1. Create a tag with the version in `release` and push the tag. 
 1. Update the website docs in the `mb-pages` branch as appropriate. Be sure to update `version` in `_config.yml` and `_config.mb-pages.yml`. These docs might also reference the screenshot if it was updated above, so be sure to check context. 
 1. Release on CocoaPods via `pod trunk push`. 
+1. Switch to `packaging` and copy aside the `package.sh` script. 
+1. Switch back to `release`, copy in `package.sh`, and run it. 
+1. Zip up the product in `./dist` and upload to [S3](http://mapbox-ios-sdk.s3.amazonaws.com/index.html). 
