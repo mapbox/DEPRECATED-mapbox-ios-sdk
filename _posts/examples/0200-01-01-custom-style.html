@@ -16,6 +16,8 @@ tags:
 {
     [super viewDidLoad];
 
+    [[RMConfiguration configuration] setAccessToken:@"<access token>"];
+
     RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:@"examples.map-zmy97flj"];
 
     RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds andTilesource:tileSource];
