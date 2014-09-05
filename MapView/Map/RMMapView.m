@@ -224,6 +224,8 @@
 @synthesize quadTree = _quadTree;
 @synthesize clusteringEnabled = _clusteringEnabled;
 @synthesize positionClusterMarkersAtTheGravityCenter = _positionClusterMarkersAtTheGravityCenter;
+@synthesize orderMarkersByYPosition = _orderMarkersByYPosition;
+@synthesize orderClusterMarkersAboveOthers = _orderClusterMarkersAboveOthers;
 @synthesize clusterMarkerSize = _clusterMarkerSize, clusterAreaSize = _clusterAreaSize;
 @synthesize adjustTilesForRetinaDisplay = _adjustTilesForRetinaDisplay;
 @synthesize userLocation = _userLocation;
@@ -267,6 +269,9 @@
     _adjustTilesForRetinaDisplay = NO;
     _missingTilesDepth = 1;
     _debugTiles = NO;
+
+    _orderMarkersByYPosition = YES;
+    _orderClusterMarkersAboveOthers = YES;
 
     _annotations = [NSMutableSet new];
     _visibleAnnotations = [NSMutableSet new];
@@ -3113,7 +3118,7 @@
         //
         [sortedAnnotations sortUsingComparator:^(RMAnnotation *annotation1, RMAnnotation *annotation2)
         {
-            // Sort user location annotations above all.
+            // Sort user location annotations below all.
             //
             if (   annotation1.isUserLocationAnnotation && ! annotation2.isUserLocationAnnotation)
                 return NSOrderedAscending;
@@ -3142,13 +3147,18 @@
                     return NSOrderedAscending;
             }
 
-            // Sort clusters above non-clusters.
+            // Return early if we're not otherwise sorting annotations.
+            //
+            if ( ! _orderMarkersByYPosition)
+                return NSOrderedSame;
+
+            // Sort clusters above non-clusters (factoring in orderClusterMarkersAboveOthers).
             //
             if (   annotation1.isClusterAnnotation && ! annotation2.isClusterAnnotation)
-                return NSOrderedDescending;
+                return (_orderClusterMarkersAboveOthers ? NSOrderedDescending : NSOrderedAscending);
 
             if ( ! annotation1.isClusterAnnotation &&   annotation2.isClusterAnnotation)
-                return NSOrderedAscending;
+                return (_orderClusterMarkersAboveOthers ? NSOrderedAscending : NSOrderedDescending);
 
             // Sort markers above shapes.
             //
