@@ -5,7 +5,7 @@ Changelog
 #### September 4, 2014
 
   - Temporarily removed support for Mapbox `v4` API and [access tokens](https://www.mapbox.com/developers/api/#access-tokens) in tile and metadata requests. 
-  - Added a new `RMMapViewDelegate` callback allowing customization of annotation layer stacking order. 
+  - Added a new `-[RMMapViewDelegate annotationSortingComparatorForMapView:]` callback allowing customization of annotation layer stacking order. This deprecates `-[RMMapView orderMarkersByYPosition]` and `-[RMMapView orderClusterMarkersAboveOthers]`. 
   - Fixed a bug with tile source initialization in `-viewDidLoad` and/or from storyboards. 
   - Better enforce proper `RMGreatCircleAnnotation` initialization. 
   - Fixed a memory leak in `RMShape`. 
