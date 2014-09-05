@@ -66,9 +66,6 @@
 #define kDefaultMaximumZoomLevel 25.0
 #define kDefaultInitialZoomLevel 11.0
 
-#define kRMTrackingHaloAnnotationTypeName   @"RMTrackingHaloAnnotation"
-#define kRMAccuracyCircleAnnotationTypeName @"RMAccuracyCircleAnnotation"
-
 #pragma mark --- end constants ----
 
 @interface RMMapView (PrivateMethods) <UIScrollViewDelegate,
@@ -149,6 +146,7 @@
     BOOL _delegateHasShouldDragAnnotation;
     BOOL _delegateHasDidChangeDragState;
     BOOL _delegateHasLayerForAnnotation;
+    BOOL _delegateHasAnnotationSorting;
     BOOL _delegateHasWillHideLayerForAnnotation;
     BOOL _delegateHasDidHideLayerForAnnotation;
     BOOL _delegateHasDidSelectAnnotation;
@@ -168,6 +166,8 @@
     RMProjection *_projection;
     RMFractalTileProjection *_mercatorToTileProjection;
     RMTileSourcesContainer *_tileSourcesContainer;
+
+    NSMutableArray *_earlyTileSources;
 
     NSMutableSet *_annotations;
     NSMutableSet *_visibleAnnotations;
@@ -224,8 +224,6 @@
 @synthesize quadTree = _quadTree;
 @synthesize clusteringEnabled = _clusteringEnabled;
 @synthesize positionClusterMarkersAtTheGravityCenter = _positionClusterMarkersAtTheGravityCenter;
-@synthesize orderMarkersByYPosition = _orderMarkersByYPosition;
-@synthesize orderClusterMarkersAboveOthers = _orderClusterMarkersAboveOthers;
 @synthesize clusterMarkerSize = _clusterMarkerSize, clusterAreaSize = _clusterAreaSize;
 @synthesize adjustTilesForRetinaDisplay = _adjustTilesForRetinaDisplay;
 @synthesize userLocation = _userLocation;
@@ -270,9 +268,6 @@
     _missingTilesDepth = 1;
     _debugTiles = NO;
 
-    _orderMarkersByYPosition = YES;
-    _orderClusterMarkersAboveOthers = YES;
-
     _annotations = [NSMutableSet new];
     _visibleAnnotations = [NSMutableSet new];
     [self setQuadTree:[[RMQuadTree alloc] initWithMapView:self]];
@@ -299,13 +294,33 @@
         [self setBackgroundView:nil];
     }
 
-    if (initialTileSourceMinZoomLevel < newTilesource.minZoom) initialTileSourceMinZoomLevel = newTilesource.minZoom;
-    if (initialTileSourceMaxZoomLevel > newTilesource.maxZoom) initialTileSourceMaxZoomLevel = newTilesource.maxZoom;
+    if ([_earlyTileSources count])
+    {
+        for (id<RMTileSource>earlyTileSource in _earlyTileSources)
+        {
+            if (initialTileSourceMinZoomLevel < earlyTileSource.minZoom) initialTileSourceMinZoomLevel = earlyTileSource.minZoom;
+            if (initialTileSourceMaxZoomLevel > earlyTileSource.maxZoom) initialTileSourceMaxZoomLevel = earlyTileSource.maxZoom;
+        }
+    }
+    else
+    {
+        if (initialTileSourceMinZoomLevel < newTilesource.minZoom) initialTileSourceMinZoomLevel = newTilesource.minZoom;
+        if (initialTileSourceMaxZoomLevel > newTilesource.maxZoom) initialTileSourceMaxZoomLevel = newTilesource.maxZoom;
+    }
     [self setTileSourcesMinZoom:initialTileSourceMinZoomLevel];
     [self setTileSourcesMaxZoom:initialTileSourceMaxZoomLevel];
     [self setTileSourcesZoom:initialTileSourceZoomLevel];
 
-    [self setTileSource:newTilesource];
+    if ([_earlyTileSources count])
+    {
+        [self setTileSources:_earlyTileSources];
+        [_earlyTileSources removeAllObjects];
+    }
+    else
+    {
+        [self setTileSource:newTilesource];
+    }
+
     [self setCenterCoordinate:initialCenterCoordinate animated:NO];
 
     [self setDecelerationMode:RMMapDecelerationFast];
@@ -378,12 +393,24 @@
     if (!newTilesource || !(self = [super initWithFrame:frame]))
         return nil;
 
+    _earlyTileSources = [NSMutableArray array];
+
     [self performInitializationWithTilesource:newTilesource
                              centerCoordinate:initialCenterCoordinate
                                     zoomLevel:initialZoomLevel
                                  maxZoomLevel:maxZoomLevel
                                  minZoomLevel:minZoomLevel
                               backgroundImage:backgroundImage];
+
+    return self;
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    if (![super initWithCoder:decoder])
+        return nil;
+
+    _earlyTileSources = [NSMutableArray array];
 
     return self;
 }
@@ -675,6 +702,7 @@
     _delegateHasDidChangeDragState = [_delegate respondsToSelector:@selector(mapView:annotation:didChangeDragState:fromOldState:)];
 
     _delegateHasLayerForAnnotation = [_delegate respondsToSelector:@selector(mapView:layerForAnnotation:)];
+    _delegateHasAnnotationSorting = [_delegate respondsToSelector:@selector(annotationSortingComparatorForMapView:)];
     _delegateHasWillHideLayerForAnnotation = [_delegate respondsToSelector:@selector(mapView:willHideLayerForAnnotation:)];
     _delegateHasDidHideLayerForAnnotation = [_delegate respondsToSelector:@selector(mapView:didHideLayerForAnnotation:)];
 
@@ -2111,6 +2139,16 @@
 
 - (void)setTileSources:(NSArray *)tileSources
 {
+    if ( ! _tileSourcesContainer)
+    {
+        // If we've reached this point, it's because our scroll view etc.
+        // aren't yet setup. So let's remember the tile source(s) set so that
+        // we can apply them later on once we're properly initialized.
+        //
+        [_earlyTileSources setArray:tileSources];
+        return;
+    }
+
     if ( ! [_tileSourcesContainer setTileSources:tileSources])
         return;
 
@@ -2139,6 +2177,16 @@
 
 - (void)addTileSource:(id<RMTileSource>)newTileSource atIndex:(NSUInteger)index
 {
+    if ( ! _tileSourcesContainer)
+    {
+        // If we've reached this point, it's because our scroll view etc.
+        // aren't yet setup. So let's remember the tile source(s) set so that
+        // we can apply them later on once we're properly initialized.
+        //
+        [_earlyTileSources insertObject:newTileSource atIndex:(index > [_earlyTileSources count] ? 0 : index)];
+        return;
+    }
+
     if ([_tileSourcesContainer.tileSources containsObject:newTileSource])
         return;
 
@@ -2944,7 +2992,6 @@
             if ([annotation.layer isKindOfClass:[RMMarker class]])
                 annotation.layer.transform = _annotationTransform;
 
-            // Use the zPosition property to order the layer hierarchy
             if ( ! [_visibleAnnotations containsObject:annotation])
             {
                 [_overlayView addSublayer:annotation.layer];
@@ -3050,54 +3097,85 @@
 
 - (void)correctOrderingOfAllAnnotations
 {
-    if ( ! _orderMarkersByYPosition)
-        return;
-
-    // sort annotation layer z-indexes so that they overlap properly
-    //
     NSMutableArray *sortedAnnotations = [NSMutableArray arrayWithArray:[_visibleAnnotations allObjects]];
 
-    [sortedAnnotations filterUsingPredicate:[NSPredicate predicateWithFormat:@"isUserLocationAnnotation = NO"]];
+    NSComparator comparator;
 
-    [sortedAnnotations sortUsingComparator:^(id obj1, id obj2)
+    if (_delegateHasAnnotationSorting && (comparator = [_delegate annotationSortingComparatorForMapView:self]))
     {
-        RMAnnotation *annotation1 = (RMAnnotation *)obj1;
-        RMAnnotation *annotation2 = (RMAnnotation *)obj2;
-
-        // clusters above/below non-clusters (based on _orderClusterMarkersAboveOthers)
+        // Sort using the custom comparator.
         //
-        if (   annotation1.isClusterAnnotation && ! annotation2.isClusterAnnotation)
-            return (_orderClusterMarkersAboveOthers ? NSOrderedDescending : NSOrderedAscending);
-
-        if ( ! annotation1.isClusterAnnotation &&   annotation2.isClusterAnnotation)
-            return (_orderClusterMarkersAboveOthers ? NSOrderedAscending : NSOrderedDescending);
-
-        // markers above shapes
+        [sortedAnnotations sortUsingComparator:comparator];
+    }
+    else
+    {
+        // Sort using the default comparator.
         //
-        if (   [annotation1.layer isKindOfClass:[RMMarker class]] && ! [annotation2.layer isKindOfClass:[RMMarker class]])
-            return NSOrderedDescending;
+        [sortedAnnotations sortUsingComparator:^(RMAnnotation *annotation1, RMAnnotation *annotation2)
+        {
+            // Sort user location annotations above all.
+            //
+            if (   annotation1.isUserLocationAnnotation && ! annotation2.isUserLocationAnnotation)
+                return NSOrderedAscending;
 
-        if ( ! [annotation1.layer isKindOfClass:[RMMarker class]] &&   [annotation2.layer isKindOfClass:[RMMarker class]])
-            return NSOrderedAscending;
+            if ( ! annotation1.isUserLocationAnnotation &&   annotation2.isUserLocationAnnotation)
+                return NSOrderedDescending;
 
-        // the rest in increasing y-position
-        //
-        CGPoint obj1Point = [self convertPoint:annotation1.position fromView:_overlayView];
-        CGPoint obj2Point = [self convertPoint:annotation2.position fromView:_overlayView];
+            // Amongst user location annotations, sort properly.
+            //
+            if (annotation1.isUserLocationAnnotation && annotation2.isUserLocationAnnotation)
+            {
+                // User dot on top.
+                //
+                if ([annotation1 isKindOfClass:[RMUserLocation class]])
+                    return NSOrderedDescending;
 
-        if (obj1Point.y > obj2Point.y)
-            return NSOrderedDescending;
+                if ([annotation2 isKindOfClass:[RMUserLocation class]])
+                    return NSOrderedAscending;
 
-        if (obj1Point.y < obj2Point.y)
-            return NSOrderedAscending;
+                // Halo above accuracy circle.
+                //
+                if ([annotation1.annotationType isEqualToString:kRMTrackingHaloAnnotationTypeName])
+                    return NSOrderedDescending;
 
-        return NSOrderedSame;
-    }];
+                if ([annotation2.annotationType isEqualToString:kRMTrackingHaloAnnotationTypeName])
+                    return NSOrderedAscending;
+            }
 
+            // Sort clusters above non-clusters.
+            //
+            if (   annotation1.isClusterAnnotation && ! annotation2.isClusterAnnotation)
+                return NSOrderedDescending;
+
+            if ( ! annotation1.isClusterAnnotation &&   annotation2.isClusterAnnotation)
+                return NSOrderedAscending;
+
+            // Sort markers above shapes.
+            //
+            if (   [annotation1.layer isKindOfClass:[RMMarker class]] && ! [annotation2.layer isKindOfClass:[RMMarker class]])
+                return NSOrderedDescending;
+
+            if ( ! [annotation1.layer isKindOfClass:[RMMarker class]] &&   [annotation2.layer isKindOfClass:[RMMarker class]])
+                return NSOrderedAscending;
+
+            // Sort the rest in increasing y-position.
+            //
+            if (annotation1.absolutePosition.y > annotation2.absolutePosition.y)
+                return NSOrderedDescending;
+
+            if (annotation1.absolutePosition.y < annotation2.absolutePosition.y)
+                return NSOrderedAscending;
+
+            return NSOrderedSame;
+        }];
+    }
+
+    // Apply layering values based on sort order.
+    //
     for (CGFloat i = 0; i < [sortedAnnotations count]; i++)
         ((RMAnnotation *)[sortedAnnotations objectAtIndex:i]).layer.zPosition = (CGFloat)i;
 
-    // bring any active callout annotation to the front
+    // Bring any active callout annotation to the front.
     //
     if (_currentAnnotation)
         _currentAnnotation.layer.zPosition = _currentCallout.layer.zPosition = MAXFLOAT;
@@ -3488,7 +3566,6 @@
         _accuracyCircleAnnotation.clusteringEnabled = NO;
         _accuracyCircleAnnotation.enabled = NO;
         _accuracyCircleAnnotation.layer = [[RMCircle alloc] initWithView:self radiusInMeters:newLocation.horizontalAccuracy];
-        _accuracyCircleAnnotation.layer.zPosition = -MAXFLOAT;
         _accuracyCircleAnnotation.isUserLocationAnnotation = YES;
 
         ((RMCircle *)_accuracyCircleAnnotation.layer).lineColor = (RMPreVersion7 ? [UIColor colorWithRed:0.378 green:0.552 blue:0.827 alpha:0.7] : [UIColor clearColor]);
@@ -3539,7 +3616,6 @@
         // create image marker
         //
         _trackingHaloAnnotation.layer = [[RMMarker alloc] initWithUIImage:[self trackingDotHaloImage]];
-        _trackingHaloAnnotation.layer.zPosition = -MAXFLOAT + 1;
         _trackingHaloAnnotation.isUserLocationAnnotation = YES;
 
         [CATransaction begin];
