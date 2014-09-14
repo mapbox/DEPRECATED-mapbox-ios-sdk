@@ -131,6 +131,8 @@
          _memoryCache = nil;
          _tileCaches = nil;
     });
+    
+    dispatch_release(_tileCacheQueue);
 }
 
 - (void)addCache:(id <RMTileCache>)cache

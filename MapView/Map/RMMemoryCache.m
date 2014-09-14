@@ -64,6 +64,8 @@
         [_memoryCache removeAllObjects];
         _memoryCache = nil;
     });
+    
+    dispatch_release(_memoryCacheQueue);
 }
 
 - (void)didReceiveMemoryWarning
