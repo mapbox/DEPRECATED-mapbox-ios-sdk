@@ -65,7 +65,9 @@
         _memoryCache = nil;
     });
     
+#if ! OS_OBJECT_USE_OBJC
     dispatch_release(_memoryCacheQueue);
+#endif
 }
 
 - (void)didReceiveMemoryWarning
