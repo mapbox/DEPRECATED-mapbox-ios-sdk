@@ -331,7 +331,10 @@
                                                                                                 forTileSource:_activeTileSource
                                                                                                    usingCache:self];
 
-                __block RMTileCacheDownloadOperation *internalOperation = operation;
+                __weak __block RMTileCacheDownloadOperation *internalOperation = operation;
+                __weak __block NSOperationQueue *weakBackgroundFetchQueue = _backgroundFetchQueue;
+                __weak __block id<RMTileSource> weakActiveTileSource = _activeTileSource;
+                __weak RMTileCache *weakSelf = self;
 
                 [operation setCompletionBlock:^(void)
                 {
@@ -342,16 +345,18 @@
                             progTile++;
 
                             if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCache:didBackgroundCacheTile:withIndex:ofTotalTileCount:)])
-                                [_backgroundCacheDelegate tileCache:self didBackgroundCacheTile:RMTileMake(x, y, zoom) withIndex:progTile ofTotalTileCount:totalTiles];
+                                [_backgroundCacheDelegate tileCache:weakSelf
+                                             didBackgroundCacheTile:RMTileMake(x, y, zoom)
+                                                          withIndex:progTile
+                                                   ofTotalTileCount:totalTiles];
 
                             if (progTile == totalTiles)
                             {
-                                 _backgroundFetchQueue = nil;
-
-                                 _activeTileSource = nil;
+                                 weakBackgroundFetchQueue = nil;
+                                 weakActiveTileSource = nil;
 
                                 if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCacheDidFinishBackgroundCache:)])
-                                    [_backgroundCacheDelegate tileCacheDidFinishBackgroundCache:self];
+                                    [_backgroundCacheDelegate tileCacheDidFinishBackgroundCache:weakSelf];
                             }
                         }
 
@@ -362,35 +367,39 @@
                 [_backgroundFetchQueue addOperation:operation];
             }
         }
-    };
+    }
 }
 
 - (void)cancelBackgroundCache
 {
+    __weak RMTileCache *weakSelf = self;
+    __weak __block NSOperationQueue *weakBackgroundFetchQueue = _backgroundFetchQueue;
+    __weak __block id<RMTileSource> weakActiveTileSource = _activeTileSource;
+
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void)
     {
-        @synchronized (self)
+        @synchronized (weakSelf)
         {
             BOOL didCancel = NO;
 
-            if (_backgroundFetchQueue)
+            if (weakBackgroundFetchQueue)
             {
-                [_backgroundFetchQueue cancelAllOperations];
-                [_backgroundFetchQueue waitUntilAllOperationsAreFinished];
-                 _backgroundFetchQueue = nil;
+                [weakBackgroundFetchQueue cancelAllOperations];
+                [weakBackgroundFetchQueue waitUntilAllOperationsAreFinished];
+                weakBackgroundFetchQueue = nil;
 
                 didCancel = YES;
             }
 
-            if (_activeTileSource)
-                 _activeTileSource = nil;
+            if (weakActiveTileSource)
+                weakActiveTileSource = nil;
 
             if (didCancel)
             {
                 dispatch_sync(dispatch_get_main_queue(), ^(void)
                 {
                     if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCacheDidCancelBackgroundCache:)])
-                        [_backgroundCacheDelegate tileCacheDidCancelBackgroundCache:self];
+                        [_backgroundCacheDelegate tileCacheDidCancelBackgroundCache:weakSelf];
                 });
             }
         }
