@@ -111,6 +111,7 @@
                 for (NSUInteger try = 0; tileData == nil && try < self.retryCount; ++try)
                 {
                     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:currentURL];
+                    [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
                     [request setTimeoutInterval:(self.requestTimeoutSeconds / (CGFloat)self.retryCount)];
                     tileData = [NSURLConnection sendBrandedSynchronousRequest:request returningResponse:nil error:nil];
                 }
@@ -162,6 +163,7 @@
         {
             NSHTTPURLResponse *response = nil;
             NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[URLs objectAtIndex:0]];
+            [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
             [request setTimeoutInterval:(self.requestTimeoutSeconds / (CGFloat)self.retryCount)];
             image = [UIImage imageWithData:[NSURLConnection sendBrandedSynchronousRequest:request returningResponse:&response error:nil]];
 
