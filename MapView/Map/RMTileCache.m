@@ -256,6 +256,16 @@
     return (_activeTileSource || _backgroundFetchQueue);
 }
 
+- (BOOL)markCachingComplete
+{
+    BOOL incomplete = (_activeTileSource || _backgroundFetchQueue);
+
+    _activeTileSource = nil;
+    _backgroundFetchQueue = nil;
+
+    return incomplete;
+}
+
 - (NSUInteger)tileCountForSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast minZoom:(NSUInteger)minZoom maxZoom:(NSUInteger)maxZoom
 {
     NSUInteger minCacheZoom = minZoom;
@@ -331,9 +341,7 @@
                                                                                                 forTileSource:_activeTileSource
                                                                                                    usingCache:self];
 
-                __weak __block RMTileCacheDownloadOperation *internalOperation = operation;
-                __weak __block NSOperationQueue *weakBackgroundFetchQueue = _backgroundFetchQueue;
-                __weak __block id<RMTileSource> weakActiveTileSource = _activeTileSource;
+                __weak RMTileCacheDownloadOperation *internalOperation = operation;
                 __weak RMTileCache *weakSelf = self;
 
                 [operation setCompletionBlock:^(void)
@@ -345,22 +353,23 @@
                             progTile++;
 
                             if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCache:didBackgroundCacheTile:withIndex:ofTotalTileCount:)])
+                            {
                                 [_backgroundCacheDelegate tileCache:weakSelf
                                              didBackgroundCacheTile:RMTileMake(x, y, zoom)
                                                           withIndex:progTile
                                                    ofTotalTileCount:totalTiles];
+                            }
 
                             if (progTile == totalTiles)
                             {
-                                 weakBackgroundFetchQueue = nil;
-                                 weakActiveTileSource = nil;
+                                [weakSelf markCachingComplete];
 
                                 if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCacheDidFinishBackgroundCache:)])
+                                {
                                     [_backgroundCacheDelegate tileCacheDidFinishBackgroundCache:weakSelf];
+                                }
                             }
                         }
-
-                        internalOperation = nil;
                     });
                 }];
 
@@ -372,37 +381,24 @@
 
 - (void)cancelBackgroundCache
 {
+    __weak NSOperationQueue *weakBackgroundFetchQueue = _backgroundFetchQueue;
     __weak RMTileCache *weakSelf = self;
-    __weak __block NSOperationQueue *weakBackgroundFetchQueue = _backgroundFetchQueue;
-    __weak __block id<RMTileSource> weakActiveTileSource = _activeTileSource;
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void)
     {
-        @synchronized (weakSelf)
+        dispatch_sync(dispatch_get_main_queue(), ^(void)
         {
-            BOOL didCancel = NO;
+            [weakBackgroundFetchQueue cancelAllOperations];
+            [weakBackgroundFetchQueue waitUntilAllOperationsAreFinished];
 
-            if (weakBackgroundFetchQueue)
+            if ([weakSelf markCachingComplete])
             {
-                [weakBackgroundFetchQueue cancelAllOperations];
-                [weakBackgroundFetchQueue waitUntilAllOperationsAreFinished];
-                weakBackgroundFetchQueue = nil;
-
-                didCancel = YES;
-            }
-
-            if (weakActiveTileSource)
-                weakActiveTileSource = nil;
-
-            if (didCancel)
-            {
-                dispatch_sync(dispatch_get_main_queue(), ^(void)
+                if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCacheDidCancelBackgroundCache:)])
                 {
-                    if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCacheDidCancelBackgroundCache:)])
-                        [_backgroundCacheDelegate tileCacheDidCancelBackgroundCache:weakSelf];
-                });
+                    [_backgroundCacheDelegate tileCacheDidCancelBackgroundCache:weakSelf];
+                }
             }
-        }
+        });
     });
 }
 
