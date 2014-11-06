@@ -139,6 +139,9 @@ typedef enum : NSUInteger {
 *   Note that you may want to clear the tile cache after changing this value in order to provide a consistent experience. */
 @property (nonatomic, assign) RMMapboxSourceQuality imageQuality;
 
+/** An additional scale factor that is applied to map tiles. The value must be greater than zero. The default value is `1.0`, which translates to no modification to rendered tile size on screen. */
+@property (nonatomic, assign) CGFloat scaleFactor;
+
 + (BOOL)isUsingLargeTiles;
 
 #if OS_OBJECT_USE_OBJC

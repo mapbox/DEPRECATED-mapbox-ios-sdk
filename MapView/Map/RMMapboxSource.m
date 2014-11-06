@@ -49,7 +49,7 @@
 
 @implementation RMMapboxSource
 
-@synthesize infoDictionary=_infoDictionary, tileJSON=_tileJSON, imageQuality=_imageQuality, dataQueue=_dataQueue, uniqueTilecacheKey=_uniqueTilecacheKey;
+@synthesize infoDictionary=_infoDictionary, tileJSON=_tileJSON, imageQuality=_imageQuality, scaleFactor=_scaleFactor, dataQueue=_dataQueue, uniqueTilecacheKey=_uniqueTilecacheKey;
 
 - (id)init
 {
@@ -346,6 +346,20 @@
     return CLLocationCoordinate2DMake(0, 0);
 }
 
+- (void)setScaleFactor:(CGFloat)scaleFactor
+{
+    NSAssert(scaleFactor > 0, @"scale factor must be greater than zero");
+
+    _scaleFactor = scaleFactor;
+}
+
+- (CGFloat)scaleFactor
+{
+    if (_scaleFactor == 0) _scaleFactor = 1.0;
+
+    return _scaleFactor;
+}
+
 - (float)centerZoom
 {
     if (self.infoDictionary[@"center"])
@@ -368,7 +382,7 @@
 
 - (NSUInteger)tileSideLength
 {
-    return ([RMMapboxSource isUsingLargeTiles] ? 512 : kMapboxDefaultTileSize);
+    return (([RMMapboxSource isUsingLargeTiles] ? 512 : kMapboxDefaultTileSize) * self.scaleFactor);
 }
 
 - (NSString *)shortName
