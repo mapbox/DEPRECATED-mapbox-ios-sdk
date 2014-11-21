@@ -85,7 +85,9 @@ typedef enum : short {
 
 #pragma mark -
 
-/** The RMTileCacheBackgroundDelegate protocol is for receiving notifications about background tile cache download operations. */
+/** The RMTileCacheBackgroundDelegate protocol is for receiving notifications about background tile cache download operations. 
+*
+*   These callbacks are not guaranteed to be received on the main thread, so if you intend to do work in the user interface, you should properly enqueue such jobs on the main thread. */
 @protocol RMTileCacheBackgroundDelegate <NSObject>
 
 @optional
