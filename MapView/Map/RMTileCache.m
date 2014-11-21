@@ -346,7 +346,11 @@
     CLLocationDegrees maxCacheLon = northEast.longitude;
 
     if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCache:didBeginBackgroundCacheWithCount:forTileSource:)])
-        [_backgroundCacheDelegate tileCache:self didBeginBackgroundCacheWithCount:totalTiles forTileSource:_activeTileSource];
+    {
+        [_backgroundCacheDelegate tileCache:self
+           didBeginBackgroundCacheWithCount:totalTiles
+                              forTileSource:_activeTileSource];
+    }
 
     NSUInteger n, xMin, yMax, xMax, yMin;
 
@@ -382,7 +386,7 @@
                             if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCache:didBackgroundCacheTile:withIndex:ofTotalTileCount:)])
                             {
                                 [_backgroundCacheDelegate tileCache:weakSelf
-                                             didBackgroundCacheTile:RMTileMake(x, y, zoom)
+                                             didBackgroundCacheTile:RMTileMake((uint32_t)x, (uint32_t)y, zoom)
                                                           withIndex:progTile
                                                    ofTotalTileCount:totalTiles];
                             }
