@@ -246,9 +246,11 @@
 
 - (void)addImage:(UIImage *)image forTile:(RMTile)tile withCacheKey:(NSString *)aCacheKey
 {
-    // TODO: Converting the image here (again) is not so good...
-	NSData *data = UIImagePNGRepresentation(image);
+    [self addDiskCachedImageData:UIImagePNGRepresentation(image) forTile:tile withCacheKey:aCacheKey];
+}
 
+- (void)addDiskCachedImageData:(NSData *)data forTile:(RMTile)tile withCacheKey:(NSString *)aCacheKey
+{
     if (_capacity != 0)
     {
         NSUInteger tilesInDb = [self count];

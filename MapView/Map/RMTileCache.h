@@ -50,17 +50,30 @@ typedef enum : short {
 *   @return An image of the tile that can be used to draw a portion of the map. */
 - (UIImage *)cachedImage:(RMTile)tile withCacheKey:(NSString *)cacheKey;
 
+/** Returns an image from the cache if it exists.
+*   @param tile A desired RMTile.
+*   @param cacheKey The key representing a certain cache.
+*   @param shouldBypassMemoryCache Whether to only consult disk-based caches.
+*   @return An image of the tile that can be used to draw a portion of the map. */
+- (UIImage *)cachedImage:(RMTile)tile withCacheKey:(NSString *)cacheKey bypassingMemoryCache:(BOOL)shouldBypassMemoryCache;
+
 - (void)didReceiveMemoryWarning;
 
 @optional
 
 /** @name Adding to the Cache */
 
-/** Adds a tile image to specified cache.
+/** Adds a tile image to the specified cache.
 *   @param image A tile image to be cached.
 *   @param tile The RMTile describing the map location of the image.
 *   @param cacheKey The key representing a certain cache. */
 - (void)addImage:(UIImage *)image forTile:(RMTile)tile withCacheKey:(NSString *)cacheKey;
+
+/** Adds tile image data to the specified cache, bypassing the memory cache and only writing to disk. This is useful for instances where many tiles are downloaded directly to disk for later use offline.
+*   @param data The tile image data to be cached.
+*   @param tile The RMTile describing the map location of the image.
+*   @param cacheKey The key representing a certain cache. */
+- (void)addDiskCachedImageData:(NSData *)data forTile:(RMTile)tile withCacheKey:(NSString *)cacheKey;
 
 /** @name Clearing the Cache */
 

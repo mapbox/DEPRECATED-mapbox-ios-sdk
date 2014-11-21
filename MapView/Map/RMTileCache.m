@@ -164,10 +164,17 @@
 	return [NSNumber numberWithUnsignedLongLong:RMTileKey(tile)];
 }
 
-// Returns the cached image if it exists. nil otherwise.
 - (UIImage *)cachedImage:(RMTile)tile withCacheKey:(NSString *)aCacheKey
 {
-    __block UIImage *image = [_memoryCache cachedImage:tile withCacheKey:aCacheKey];
+    return [self cachedImage:tile withCacheKey:aCacheKey bypassingMemoryCache:NO];
+}
+
+- (UIImage *)cachedImage:(RMTile)tile withCacheKey:(NSString *)aCacheKey bypassingMemoryCache:(BOOL)shouldBypassMemoryCache
+{
+    __block UIImage *image = nil;
+
+    if (!shouldBypassMemoryCache)
+        image = [_memoryCache cachedImage:tile withCacheKey:aCacheKey];
 
     if (image)
         return image;
@@ -178,7 +185,7 @@
         {
             image = [cache cachedImage:tile withCacheKey:aCacheKey];
 
-            if (image != nil)
+            if (image != nil && !shouldBypassMemoryCache)
             {
                 [_memoryCache addImage:image forTile:tile withCacheKey:aCacheKey];
                 break;
@@ -187,7 +194,7 @@
 
     });
 
-	return image;
+    return image;
 }
 
 - (void)addImage:(UIImage *)image forTile:(RMTile)tile withCacheKey:(NSString *)aCacheKey
@@ -203,6 +210,22 @@
         {	
             if ([cache respondsToSelector:@selector(addImage:forTile:withCacheKey:)])
                 [cache addImage:image forTile:tile withCacheKey:aCacheKey];
+        }
+
+    });
+}
+
+- (void)addDiskCachedImageData:(NSData *)data forTile:(RMTile)tile withCacheKey:(NSString *)aCacheKey
+{
+    if (!data || !aCacheKey)
+        return;
+
+    dispatch_sync(_tileCacheQueue, ^{
+
+        for (id <RMTileCache> cache in _tileCaches)
+        {
+            if ([cache respondsToSelector:@selector(addDiskCachedImageData:forTile:withCacheKey:)])
+                [cache addDiskCachedImageData:data forTile:tile withCacheKey:aCacheKey];
         }
 
     });
