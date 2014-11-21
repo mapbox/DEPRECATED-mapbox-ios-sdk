@@ -305,7 +305,7 @@
 
     _activeTileSource = tileSource;
 
-    _backgroundFetchQueue = [[NSOperationQueue alloc] init];
+    _backgroundFetchQueue = [NSOperationQueue new];
     [_backgroundFetchQueue setMaxConcurrentOperationCount:6];
 
     NSUInteger totalTiles = [self tileCountForSouthWest:southWest northEast:northEast minZoom:minZoom maxZoom:maxZoom];
@@ -337,7 +337,7 @@
         {
             for (NSUInteger y = yMin; y <= yMax; y++)
             {
-                RMTileCacheDownloadOperation *operation = [[RMTileCacheDownloadOperation alloc] initWithTile:RMTileMake(x, y, zoom)
+                RMTileCacheDownloadOperation *operation = [[RMTileCacheDownloadOperation alloc] initWithTile:RMTileMake((uint32_t)x, (uint32_t)y, zoom)
                                                                                                 forTileSource:_activeTileSource
                                                                                                    usingCache:self];
 
