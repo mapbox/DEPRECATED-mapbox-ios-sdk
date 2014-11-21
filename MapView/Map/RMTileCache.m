@@ -34,6 +34,8 @@
 #import "RMConfiguration.h"
 #import "RMTileSource.h"
 
+#import "RMAbstractWebMapSource.h"
+
 #import "RMTileCacheDownloadOperation.h"
 
 @interface RMTileCache (Configuration)
@@ -325,6 +327,8 @@
 {
     if (self.isBackgroundCaching)
         return;
+
+    NSAssert([tileSource isKindOfClass:[RMAbstractWebMapSource class]], @"only web-based tile sources are supported for downloading");
 
     _activeTileSource = tileSource;
 
