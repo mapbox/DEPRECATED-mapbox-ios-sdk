@@ -105,6 +105,12 @@ typedef enum : short {
 *   @param totalTileCount The total number of of tiles required for coverage of the desired geographic area. */
 - (void)tileCache:(RMTileCache *)tileCache didBackgroundCacheTile:(RMTile)tile withIndex:(NSUInteger)tileIndex ofTotalTileCount:(NSUInteger)totalTileCount;
 
+/** Sent upon error when trying to cache a tile in a background cache operation. 
+*   @param tileCache The tile cache.
+*   @param error The error received.
+*   @param tile A structure representing the tile in question. */
+- (void)tileCache:(RMTileCache *)tileCache didReceiveError:(NSError *)error whenCachingTile:(RMTile)tile;
+
 /** Sent when all tiles have completed downloading and caching. 
 *   @param tileCache The tile cache. */
 - (void)tileCacheDidFinishBackgroundCache:(RMTileCache *)tileCache;

@@ -73,6 +73,17 @@
 
         if ( ! data || error != nil)
         {
+            if (error != nil)
+            {
+                self.error = error;
+            }
+            else
+            {
+                self.error = [NSError errorWithDomain:NSURLErrorDomain
+                                                 code:NSURLErrorUnknown
+                                             userInfo:nil];
+            }
+
             [self cancel];
         }
         else
