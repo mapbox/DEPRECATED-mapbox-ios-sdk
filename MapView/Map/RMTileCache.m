@@ -330,6 +330,10 @@
 
     _backgroundFetchQueue = [NSOperationQueue new];
     [_backgroundFetchQueue setMaxConcurrentOperationCount:6];
+    if ([_backgroundFetchQueue respondsToSelector:@selector(setQualityOfService:)])
+    {
+        [_backgroundFetchQueue setQualityOfService:NSQualityOfServiceUtility];
+    }
 
     NSUInteger totalTiles = [self tileCountForSouthWest:southWest northEast:northEast minZoom:minZoom maxZoom:maxZoom];
 
