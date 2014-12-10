@@ -83,8 +83,7 @@ navigation:
         <ol>
           <li>Obtain the map ID for your hosted map by clicking <strong>Publish</strong> and copying the <strong>Map ID</strong>.</li>
           <li>Download the latest SDK binary release from the <a href='http://mapbox-ios-sdk.s3.amazonaws.com/index.html'>downloads</a> and unzip it.</li>
-          <li>Drag <code>libMapbox.a</code> into your project’s <code>Frameworks</code> section, making sure to link it in your target.</li>
-          <li>Copy the headers in <code>Headers</code> into your project.</li>
+          <li>Drag the unzipped folder into your project's source list, optionally renaming the folder first. This will add <code>libMapbox.a</code> to your project's linked libraries, <code>Headers</code> to your header search path, and <code>Mapbox.bundle</code> to your project's copied resources.</li>
           <li>Add <code>-ObjC</code> to your app target’s <code>Other Linker Flags</code> build setting in order to ensure that the SDK’s static library has all symbols loaded, even for categories.</li>
           <li>
             Add the following libraries to your app target’s <code>Link Binary With Libraries</code> build phase:
@@ -95,8 +94,7 @@ navigation:
               <li><code>libz.dylib</code> (required for UTFGrid interactivity)</li>
             </ul>
           </li>
-          <li>Add <code>Mapbox.bundle</code> to your project’s file sources, either by dragging it into your project from Finder or via <code>File &gt; Add Files...</code>. Be sure that <code>Copy items into destination group's folder (if needed)</code> is unchecked and that <code>Add to targets</code> includes your app target. This way, the bundle will be copied at build time out and included as a resource in your app product.</li>
-          <li>At a minimum, <code>#import &lt;Mapbox/Mapbox.h&gt;</code> and instantiate an <code>RMMapView</code> in your code along with an <code>RMMapboxSource</code> using <code>-initWithMapID:</code> and an <code>NSString</code> made from your <strong>Map ID</strong> obtained above.</li>
+          <li>At a minimum, <code>#import "Mapbox.h"</code> and instantiate an <code>RMMapView</code> in your code along with an <code>RMMapboxSource</code> using <code>-initWithMapID:</code> and an <code>NSString</code> made from your <strong>Map ID</strong> obtained above.</li>
         </ol>
       </div>
     </div>
