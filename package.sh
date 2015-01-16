@@ -2,7 +2,7 @@
 
 PATH='/bin:/usr/bin:/usr/libexec'
 VERSION=`git tag | sort -r | sed -n '1p'`
-SDK='7.1'
+SDK=`xcodebuild -showsdks | grep iphoneos | awk '{ print $2 }'`
 TARGET='MapView'
 LIB_NAME='Mapbox'
 OUTPUT='dist'
