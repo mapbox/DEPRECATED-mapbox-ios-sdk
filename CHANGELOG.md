@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+### 1.4.1
+#### September 5, 2014
+
+  - Properly deprecated `-[RMMapView orderMarkersByYPosition]` and `-[RMMapView orderClusterMarkersAboveOthers]`. 
+
 ### 1.4.0
 #### September 4, 2014
 
