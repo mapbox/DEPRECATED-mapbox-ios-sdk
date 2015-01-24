@@ -68,7 +68,14 @@ navigation:
           <li>Ensure that your <code>Podfile</code> is targeting <code>:ios</code> and <code>"5.0"</code>.</li>
           <li>Add a line containing <code>pod "Mapbox-iOS-SDK"</code> to your <code>Podfile</code>.</li>
           <li>Run <code>pod install</code> in the Terminal.</li>
-          <li>At a minimum, <code>#import &lt;Mapbox-iOS-SDK/Mapbox.h&gt;</code> and instantiate an <code>RMMapView</code> in your code along with an <code>RMMapboxSource</code> using <code>-initWithMapID:</code> and an <code>NSString</code> made from your <strong>Map ID</strong> obtained above.</li>
+          <li>To create a basic map view:
+            <ul>
+              <li><code>#import &lt;Mapbox-iOS-SDK/Mapbox.h&gt;</code></li>
+              <li>Set an <code>[[RMConfiguration configuration] accessToken]</code></li>
+              <li>Create an <code>RMMapboxSource</code> using <code>-initWithMapID:</code> and an <code>NSString</code> made from your <strong>Map ID</strong> obtained above</li>
+              <li>Instantiate an <code>RMMapView</code> and <code>addTilesource:</code></li>
+            </ul>
+          </li>
         </ol>
       </div>
     </div>
@@ -94,7 +101,14 @@ navigation:
               <li><code>libz.dylib</code> (required for UTFGrid interactivity)</li>
             </ul>
           </li>
-          <li>At a minimum, <code>#import "Mapbox.h"</code> and instantiate an <code>RMMapView</code> in your code along with an <code>RMMapboxSource</code> using <code>-initWithMapID:</code> and an <code>NSString</code> made from your <strong>Map ID</strong> obtained above.</li>
+          <li>To create a basic map view:
+            <ul>
+              <li><code>#import &quot;Mapbox.h&quot;</code></li>
+              <li>Set an <code>[[RMConfiguration configuration] accessToken]</code></li>
+              <li>Create an <code>RMMapboxSource</code> using <code>-initWithMapID:</code> and an <code>NSString</code> made from your <strong>Map ID</strong> obtained above</li>
+              <li>Instantiate an <code>RMMapView</code> and <code>addTilesource:</code></li>
+            </ul>
+          </li>
         </ol>
       </div>
     </div>
@@ -124,7 +138,14 @@ navigation:
             </ul>
           </li>
           <li>Add the <code>Mapbox.bundle</code> product from the SDK to the <code>Copy Bundle Resources</code> build phase of your app target. This way, the bundle will be copied at build time out of the SDK build products folder and included as a resource in your app product.</li>
-          <li>At a minimum, <code>#import &quot;Mapbox.h&quot;</code> and instantiate an <code>RMMapView</code> in your code along with an <code>RMMapboxSource</code> using <code>-initWithMapID:</code> and an <code>NSString</code> made from your <strong>Map ID</strong> obtained above.</li>
+          <li>To create a basic map view:
+            <ul>
+              <li><code>#import &quot;Mapbox.h&quot;</code></li>
+              <li>Set an <code>[[RMConfiguration configuration] accessToken]</code></li>
+              <li>Create an <code>RMMapboxSource</code> using <code>-initWithMapID:</code> and an <code>NSString</code> made from your <strong>Map ID</strong> obtained above</li>
+              <li>Instantiate an <code>RMMapView</code> and <code>addTilesource:</code></li>
+            </ul>
+          </li>
         </ol>
       </div>
     </div>
