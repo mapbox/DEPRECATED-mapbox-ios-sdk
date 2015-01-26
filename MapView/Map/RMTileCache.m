@@ -78,7 +78,7 @@
     _activeTileSource = nil;
     _backgroundFetchQueue = nil;
 
-    id cacheCfg = [[RMConfiguration configuration] cacheConfiguration];
+    id cacheCfg = [[RMConfiguration sharedInstance] cacheConfiguration];
     if (!cacheCfg)
         cacheCfg = [NSArray arrayWithObjects:
                     [NSDictionary dictionaryWithObject: @"memory-cache" forKey: @"type"],

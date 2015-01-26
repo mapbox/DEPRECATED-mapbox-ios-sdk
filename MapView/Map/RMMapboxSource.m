@@ -184,8 +184,8 @@
 
 - (NSURL *)canonicalURLForMapID:(NSString *)mapID
 {
-    NSString *version     = ([[RMConfiguration configuration] accessToken] ? @"v4" : @"v3");
-    NSString *accessToken = ([[RMConfiguration configuration] accessToken] ? [@"&access_token=" stringByAppendingString:[[RMConfiguration configuration] accessToken]] : @"");
+    NSString *version     = ([[RMConfiguration sharedInstance] accessToken] ? @"v4" : @"v3");
+    NSString *accessToken = ([[RMConfiguration sharedInstance] accessToken] ? [@"&access_token=" stringByAppendingString:[[RMConfiguration sharedInstance] accessToken]] : @"");
 
     return [NSURL URLWithString:[NSString stringWithFormat:@"https://api.tiles.mapbox.com/%@/%@.json?secure%@", version, mapID, accessToken]];
 }
@@ -358,7 +358,7 @@
 
 + (BOOL)isUsingLargeTiles
 {
-    return ([[RMConfiguration configuration] accessToken] && [[UIScreen mainScreen] scale] > 1.0);
+    return ([[RMConfiguration sharedInstance] accessToken] && [[UIScreen mainScreen] scale] > 1.0);
 }
 
 - (NSString *)uniqueTilecacheKey

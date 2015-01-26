@@ -37,7 +37,7 @@ static RMConfiguration *RMConfigurationSharedInstance = nil;
                                                               cachePolicy:request.cachePolicy
                                                           timeoutInterval:request.timeoutInterval];
 
-    [newRequest setValue:[[RMConfiguration configuration] userAgent] forHTTPHeaderField:@"User-Agent"];
+    [newRequest setValue:[[RMConfiguration sharedInstance] userAgent] forHTTPHeaderField:@"User-Agent"];
 
     return [NSURLConnection sendSynchronousRequest:newRequest returningResponse:response error:error];
 }
@@ -52,7 +52,7 @@ static RMConfiguration *RMConfigurationSharedInstance = nil;
 {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aURL];
 
-    [request setValue:[[RMConfiguration configuration] userAgent] forHTTPHeaderField:@"User-Agent"];
+    [request setValue:[[RMConfiguration sharedInstance] userAgent] forHTTPHeaderField:@"User-Agent"];
 
     return [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
 }
@@ -67,7 +67,7 @@ static RMConfiguration *RMConfigurationSharedInstance = nil;
 {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
 
-    [request setValue:[[RMConfiguration configuration] userAgent] forHTTPHeaderField:@"User-Agent"];
+    [request setValue:[[RMConfiguration sharedInstance] userAgent] forHTTPHeaderField:@"User-Agent"];
 
     NSData *returnData = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:error];
 
@@ -89,7 +89,7 @@ static RMConfiguration *RMConfigurationSharedInstance = nil;
 @synthesize userAgent=_userAgent;
 @synthesize accessToken=_accessToken;
 
-+ (instancetype)configuration
++ (instancetype)sharedInstance
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -97,6 +97,11 @@ static RMConfiguration *RMConfigurationSharedInstance = nil;
     });
 
     return RMConfigurationSharedInstance;
+}
+
++ (instancetype)configuration
+{
+    return [[self class] sharedInstance];
 }
 
 - (RMConfiguration *)initWithPath:(NSString *)path

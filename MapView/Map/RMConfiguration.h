@@ -32,9 +32,13 @@
 
 /** @name Accessing the Configuration */
 
+/** Access the shared instance of the configuration.
+*   @return The shared configuration instance. */
++ (instancetype)sharedInstance;
+
 /** Access the shared instance of the configuration. 
 *   @return The shared configuration instance. */
-+ (instancetype)configuration;
++ (instancetype)configuration DEPRECATED_MSG_ATTRIBUTE("use +[RMConfiguration sharedInstance]");
 
 - (RMConfiguration *)initWithPath:(NSString *)path;
 
