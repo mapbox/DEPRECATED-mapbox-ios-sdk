@@ -13,7 +13,7 @@ echo
 
 appledoc \
     --output $OUTPUT \
-    --project-name "Mapbox $VERSION" \
+    --project-name "Mapbox iOS SDK $VERSION" \
     --project-company Mapbox \
     --create-html \
     --no-create-docset \
