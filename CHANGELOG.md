@@ -1,6 +1,13 @@
 Changelog
 ---------
 
+### 1.5.1
+#### January 28, 2015
+
+  - Deprecated `+[RMConfiguration configuration]` in favor of the Swift-friendly and better-looking `+[RMConfiguration sharedInstance]`. 
+  - Fixed a bug in the docs removal script. 
+  - Documentation improvements. 
+
 ### 1.5.0
 #### January 16, 2015
 
