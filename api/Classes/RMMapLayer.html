@@ -1,0 +1,774 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="html/html; charset=utf-8" />
+		<title>RMMapLayer Class Reference</title>
+		<meta id="xcode-display" name="xcode-display" content="render"/>
+		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
+		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
+		<meta name="generator" content="appledoc 2.2 (build 963)" />
+	</head>
+	<body>
+		<header id="top_header">
+			<div id="library" class="hideInXcode">
+				<h1><a id="libraryTitle" href="../index.html">Mapbox 1.5.1 </a></h1>
+				<a id="developerHome" href="../index.html">Mapbox</a>
+			</div>
+			
+			<div id="title" role="banner">
+				<h1 class="hideInXcode">RMMapLayer Class Reference</h1>
+			</div>
+			<ul id="headerButtons" role="toolbar">
+				<li id="toc_button">
+					<button aria-label="Show Table of Contents" role="checkbox" class="open" id="table_of_contents"><span class="disclosure"></span>Table of Contents</button>
+				</li>
+				<li id="jumpto_button" role="navigation">
+					<select id="jumpTo">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+	
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+	
+	
+	
+	<option value="properties">Properties</option>
+	
+	<option value="//api/name/annotation">&nbsp;&nbsp;&nbsp;&nbsp;annotation</option>
+	
+	<option value="//api/name/calloutOffset">&nbsp;&nbsp;&nbsp;&nbsp;calloutOffset</option>
+	
+	<option value="//api/name/canShowCallout">&nbsp;&nbsp;&nbsp;&nbsp;canShowCallout</option>
+	
+	<option value="//api/name/dragState">&nbsp;&nbsp;&nbsp;&nbsp;dragState</option>
+	
+	<option value="//api/name/leftCalloutAccessoryView">&nbsp;&nbsp;&nbsp;&nbsp;leftCalloutAccessoryView</option>
+	
+	<option value="//api/name/projectedLocation">&nbsp;&nbsp;&nbsp;&nbsp;projectedLocation</option>
+	
+	<option value="//api/name/rightCalloutAccessoryView">&nbsp;&nbsp;&nbsp;&nbsp;rightCalloutAccessoryView</option>
+	
+	<option value="//api/name/userInfo">&nbsp;&nbsp;&nbsp;&nbsp;userInfo</option>
+	
+	
+	
+	
+	
+	
+	<option value="instance_methods">Instance Methods</option>
+	
+	<option value="//api/name/setPosition:animated:">&nbsp;&nbsp;&nbsp;&nbsp;- setPosition:animated:</option>
+	
+	
+	
+</select>
+				</li>
+			</ul>
+		</header>
+		<nav id="tocContainer" class="isShowingTOC">
+			<ul id="toc" role="tree">
+				
+<li role="treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#overview">Overview</a></span></li>
+
+
+
+
+<li role="treeitem" id="task_treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#tasks">Tasks</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Configuring Map Layer Properties">Configuring Map Layer Properties</a></span></li>
+	
+</ul></li>
+
+
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#properties">Properties</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/annotation">annotation</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/calloutOffset">calloutOffset</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/canShowCallout">canShowCallout</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/dragState">dragState</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/leftCalloutAccessoryView">leftCalloutAccessoryView</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/projectedLocation">projectedLocation</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/rightCalloutAccessoryView">rightCalloutAccessoryView</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/userInfo">userInfo</a></span></li>
+	
+</ul></li>
+
+
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#instance_methods">Instance Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setPosition:animated:">setPosition:animated:</a></span></li>
+	
+</ul></li>
+
+
+			</ul>
+		</nav>
+		<article>
+			<div id="contents" class="isShowingTOC" role="main">
+				<a title="RMMapLayer Class Reference" name="top"></a>
+				<div class="main-navigation navigation-top">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="header">
+					<div class="section-header">
+						<h1 class="title title-header">RMMapLayer Class Reference</h1>
+					</div>		
+				</div>
+				<div id="container">	
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<td class="specification-title">Inherits from</td>
+	<td class="specification-value">CAScrollLayer</td>
+</tr><tr>
+	<td class="specification-title">Declared in</td>
+	<td class="specification-value">RMMapLayer.h</td>
+</tr>
+						</tbody></table></div>
+					
+                    
+                    
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p>RMMapLayer is a generic class for displaying scrollable vector layers on a map view. Generally, a more specialized subclass such as <a href="../Classes/RMMarker.html">RMMarker</a> will be used for a specific purpose, but RMMapLayer can also be used directly for special purposes.</p>
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						<h2 class="subtitle subtitle-tasks">Tasks</h2>
+						
+						
+						<a title="Configuring Map Layer Properties" name="task_Configuring Map Layer Properties"></a>
+						
+<h3 class="subsubtitle task-title">Configuring Map Layer Properties</h3>
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/annotation">&nbsp;&nbsp;annotation</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/projectedLocation">&nbsp;&nbsp;projectedLocation</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/dragState">&nbsp;&nbsp;dragState</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/userInfo">&nbsp;&nbsp;userInfo</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/canShowCallout">&nbsp;&nbsp;canShowCallout</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/calloutOffset">&nbsp;&nbsp;calloutOffset</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/leftCalloutAccessoryView">&nbsp;&nbsp;leftCalloutAccessoryView</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/rightCalloutAccessoryView">&nbsp;&nbsp;rightCalloutAccessoryView</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/setPosition:animated:">&ndash;&nbsp;setPosition:animated:</a></code>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Properties" name="properties"></a>
+						<h2 class="subtitle subtitle-methods">Properties</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/annotation" title="annotation"></a>
+	<h3 class="subsubtitle method-title">annotation</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The annotation associated with the layer. This can be useful to inspect the annotation&rsquo;s <a href="#//api/name/userInfo">userInfo</a> in order to customize the visual representation.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, weak) RMAnnotation *annotation</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The annotation associated with the layer. This can be useful to inspect the annotation&rsquo;s <a href="#//api/name/userInfo">userInfo</a> in order to customize the visual representation.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapLayer.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/calloutOffset" title="calloutOffset"></a>
+	<h3 class="subsubtitle method-title">calloutOffset</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The offset (in pixels) at which to place the callout bubble.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) CGPoint calloutOffset</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The offset (in pixels) at which to place the callout bubble.</p>
+
+<p>This property determines the additional distance by which to move the callout bubble. When this property is set to (0, 0), the anchor point of the callout bubble is placed on the top-center point of the <a href="#//api/name/annotation">annotation</a> view’s frame. Specifying positive offset values moves the callout bubble down and to the right, while specifying negative values moves it up and to the left.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapLayer.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/canShowCallout" title="canShowCallout"></a>
+	<h3 class="subsubtitle method-title">canShowCallout</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A Boolean value indicating whether the <a href="#//api/name/annotation">annotation</a> layer is able to display extra information in a callout bubble.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) BOOL canShowCallout</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>A Boolean value indicating whether the <a href="#//api/name/annotation">annotation</a> layer is able to display extra information in a callout bubble.</p>
+
+<p>If the value of this property is <code>YES</code>, a standard callout bubble is shown when the user taps the layer. The callout uses the title text from the associated <a href="#//api/name/annotation">annotation</a> object. If there is no title text, though, the <a href="#//api/name/annotation">annotation</a> is treated as if its enabled property is set to <code>NO</code>. The callout also displays any custom callout views stored in the <a href="#//api/name/leftCalloutAccessoryView">leftCalloutAccessoryView</a> and <a href="#//api/name/rightCalloutAccessoryView">rightCalloutAccessoryView</a> properties.</p>
+
+<p>If the value of this property is <code>NO</code>, the value of the title string is ignored and the <a href="#//api/name/annotation">annotation</a> remains enabled by default. You can still disable the <a href="#//api/name/annotation">annotation</a> explicitly using the enabled property.</p>
+
+<p>Note that callouts are not supported on non-marker or cluster <a href="#//api/name/annotation">annotation</a> layers. These annotations can be interacted with, but do not remain consistent visually during map pan and zoom events; thus, callout behavior would be inconsistent.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapLayer.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/dragState" title="dragState"></a>
+	<h3 class="subsubtitle method-title">dragState</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The current drag state of the <a href="#//api/name/annotation">annotation</a> layer.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) RMMapLayerDragState dragState</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The current drag state of the <a href="#//api/name/annotation">annotation</a> layer.</p>
+
+<p>To support drag operations, you must override the implementation of this property and update the drag state at the following times:</p>
+
+<p>When the drag state changes to <code>RMMapLayerDragStateStarting</code>, you should set the state to <code>RMMapLayerDragStateDragging</code>. If you perform an animation to indicate the beginning of a drag, you should perform that animation before changing the state. Changing the state to the new value lets the map know that your animations are done.</p>
+
+<p>When the state changes to either <code>RMMapLayerDragStateCanceling</code> or <code>RMMapLayerDragStateEnding</code>, set the state to <code>RMMapLayerDragStateNone</code>. If you perform an animation at the end of a drag, you should perform that animation before changing the state.</p>
+
+<p>Changing the state to the <code>RMMapLayerDragStateDragging</code> or <code>RMMapLayerDragStateNone</code> value is the way to signal to the map view that you are done with any animations you wanted to perform. For example, when a drag operation begins for a marker, the <a href="../Classes/RMMarker.html">RMMarker</a> class executes an animation to lift the marker off the map. Similarly, when the marker is dropped, the class performs a drop animation. Even if you do not perform any animations, you should still change the value of this property to reflect the correct state.</p>
+
+<p>You must not try to abort a new drag operation by changing the state from <code>RMMapLayerDragStateStarting</code> to <code>RMMapLayerDragStateNone</code>. If you do not want your <a href="#//api/name/annotation">annotation</a> layer to be draggable, return <code>NO</code> from the map view delegate&rsquo;s implementation of mapView:shouldDragAnnotation:.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapLayer.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/leftCalloutAccessoryView" title="leftCalloutAccessoryView"></a>
+	<h3 class="subsubtitle method-title">leftCalloutAccessoryView</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The view to display on the left side of the standard callout bubble.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) UIView *leftCalloutAccessoryView</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The view to display on the left side of the standard callout bubble.</p>
+
+<p>The default value of this property is <code>nil</code>. The left callout view is typically used to display information about the <a href="#//api/name/annotation">annotation</a> or to link to custom information provided by your application. The height of your view should be 32 pixels or less.</p>
+
+<p>If the view you specify is also a descendant of the UIControl class, you can use the map view’s delegate to receive notifications when your control is tapped. If it does not descend from UIControl, your view is responsible for handling any touch events within its bounds.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapLayer.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/projectedLocation" title="projectedLocation"></a>
+	<h3 class="subsubtitle method-title">projectedLocation</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The current projected location of the layer on the map.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) RMProjectedPoint projectedLocation</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The current projected location of the layer on the map.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapLayer.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/rightCalloutAccessoryView" title="rightCalloutAccessoryView"></a>
+	<h3 class="subsubtitle method-title">rightCalloutAccessoryView</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The view to display on the right side of the standard callout bubble.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) UIView *rightCalloutAccessoryView</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The view to display on the right side of the standard callout bubble.</p>
+
+<p>This property is set to <code>nil</code> by default. The right callout view is typically used to link to more detailed information about the <a href="#//api/name/annotation">annotation</a>. The height of your view should be 32 pixels or less. A common view to specify for this property is UIButton object whose type is set to UIButtonTypeDetailDisclosure.</p>
+
+<p>If the view you specify is also a descendant of the UIControl class, you can use the map view’s delegate to receive notifications when your control is tapped. If it does not descend from UIControl, your view is responsible for handling any touch events within its bounds.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapLayer.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/userInfo" title="userInfo"></a>
+	<h3 class="subsubtitle method-title">userInfo</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Storage for arbitrary data.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) id userInfo</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Storage for arbitrary data.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapLayer.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Instance Methods" name="instance_methods"></a>
+						<h2 class="subtitle subtitle-methods">Instance Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/setPosition:animated:" title="setPosition:animated:"></a>
+	<h3 class="subsubtitle method-title">setPosition:animated:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Set the screen position of the layer.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)setPosition:(CGPoint)<em>position</em> animated:(BOOL)<em>animated</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>position</em></dt>
+			<dd><p>The desired screen position.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>animated</em></dt>
+			<dd><p>If set to <code>YES</code>, any position change is animated.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Set the screen position of the layer.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapLayer.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+                    
+                    
+				</div>
+				<div class="main-navigation navigation-bottom">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="footer">
+					<hr />
+					<div class="footer-copyright">
+						<p><span class="copyright">&copy; 2015 Mapbox. All rights reserved. (Last updated: 2015-01-28)</span><br />
+						
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2 (build 963)</a>.</span></p>
+						
+					</div>
+				</div>
+			</div>
+		</article>
+		<script type="text/javascript">
+			function jumpToChange()
+			{
+				window.location.hash = this.options[this.selectedIndex].value;
+			}
+			
+			function toggleTOC()
+			{
+				var contents = document.getElementById('contents');
+				var tocContainer = document.getElementById('tocContainer');
+				
+				if (this.getAttribute('class') == 'open')
+				{
+					this.setAttribute('class', '');
+					contents.setAttribute('class', '');
+					tocContainer.setAttribute('class', '');
+					
+					window.name = "hideTOC";
+				}
+				else
+				{
+					this.setAttribute('class', 'open');
+					contents.setAttribute('class', 'isShowingTOC');
+					tocContainer.setAttribute('class', 'isShowingTOC');
+					
+					window.name = "";
+				}
+				return false;
+			}
+			
+			function toggleTOCEntryChildren(e)
+			{
+				e.stopPropagation();
+				var currentClass = this.getAttribute('class');
+				if (currentClass == 'children') {
+					this.setAttribute('class', 'children open');
+				}
+				else if (currentClass == 'children open') {
+					this.setAttribute('class', 'children');
+				}
+				return false;
+			}
+			
+			function tocEntryClick(e)
+			{
+				e.stopPropagation();
+				return true;
+			}
+			
+			function init()
+			{
+				var selectElement = document.getElementById('jumpTo');
+				selectElement.addEventListener('change', jumpToChange, false);
+				
+				var tocButton = document.getElementById('table_of_contents');
+				tocButton.addEventListener('click', toggleTOC, false);
+				
+				var taskTreeItem = document.getElementById('task_treeitem');
+				if (taskTreeItem.getElementsByTagName('li').length > 0)
+				{
+					taskTreeItem.setAttribute('class', 'children');
+					taskTreeItem.firstChild.setAttribute('class', 'disclosure');
+				}
+				
+				var tocList = document.getElementById('toc');
+				
+				var tocEntries = tocList.getElementsByTagName('li');
+				for (var i = 0; i < tocEntries.length; i++) {
+					tocEntries[i].addEventListener('click', toggleTOCEntryChildren, false);
+				}
+				
+				var tocLinks = tocList.getElementsByTagName('a');
+				for (var i = 0; i < tocLinks.length; i++) {
+					tocLinks[i].addEventListener('click', tocEntryClick, false);
+				}
+				
+				if (window.name == "hideTOC") {
+					toggleTOC.call(tocButton);
+				}
+			}
+			
+			window.onload = init;
+			
+			// If showing in Xcode, hide the TOC and Header
+			if (navigator.userAgent.match(/xcode/i)) {
+				document.getElementById("contents").className = "hideInXcode"
+				document.getElementById("tocContainer").className = "hideInXcode"
+				document.getElementById("top_header").className = "hideInXcode"
+			}
+			
+		</script>
+	</body>
+</html>

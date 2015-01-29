@@ -1,4 +1,248 @@
----
-layout: redirect
-redirect: /#api_overview
----
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Mapbox 1.5.1 Reference</title>
+		<link rel="stylesheet" type="text/css" href="css/styles.css" media="all" />
+		<link rel="stylesheet" type="text/css" media="print" href="css/stylesPrint.css" />
+		<meta name="generator" content="appledoc 2.2 (build 963)" />
+	</head>
+	<body>
+		<header id="top_header">
+			<div id="library" class="hideInXcode">
+				<h1><a id="libraryTitle" href="index.html">Mapbox 1.5.1 </a></h1>
+				<a id="developerHome" href="index.html">Mapbox</a>
+			</div>
+			
+			<div id="title" role="banner">
+				<h1 class="hideInXcode">Mapbox 1.5.1 Reference</h1>
+			</div>
+			<ul id="headerButtons" role="toolbar"></ul>
+		</header>
+		<article>
+			<div id="overview_contents" role="main">
+				<div class="main-navigation navigation-top">
+					<a href="hierarchy.html">Next</a>
+				</div>
+				<div id="header">
+					<div class="section-header">
+						<h1 class="title title-header">Mapbox 1.5.1 Reference</h1>
+					</div>		
+				</div>
+				<div id="container">
+					
+					<div class="section section-overview index-overview">
+						
+						
+						<h2>Mapbox iOS SDK</h2>
+
+<p>Based on the Route-Me iOS map library (Alpstein fork) with <a href="[http://mapbox.com](http://mapbox.com)">Mapbox</a> customizations.</p>
+
+<p>Requires iOS 5 or greater (includes iOS 7+ support at runtime), Xcode 5.0 or greater, and ARC.</p>
+
+<p><a href=""><img src="https://raw.github.com/mapbox/mapbox-ios-sdk/packaging/screenshot.png" alt="" /></a></p>
+
+<p>Major differences from <a href="https://github.com/Alpstein/route-me">Alpstein fork of Route-Me</a>:</p>
+
+<ul>
+<li>Requires iOS 5.0 and above.</li>
+<li>Supports Automatic Reference Counting (ARC).</li>
+<li><a href="http://mapbox.com">Mapbox</a> &amp; <a href="http://mbtiles.org">MBTiles</a> tile source integration code.</li>
+<li><a href="http://mapbox.com/blog/markers/">Mapbox Markers</a> support.</li>
+<li><a href="http://mapbox.com/mbtiles-spec/utfgrid/">UTFGrid interactivity</a>.</li>
+<li>Improved network tile loading performance.</li>
+<li>A bulk, background map tile downloader for cache pre-population and offline use.</li>
+<li>Annotation callouts that behave like MapKit.</li>
+<li>Annotation convenience subclasses for points and shapes.</li>
+<li>Prepackaged static library.</li>
+<li><a href="http://cocoapods.org">CocoaPods</a> support.</li>
+<li>Removal of two-finger double-tap gesture for zoom out (to speed up two-finger single-tap recognition like MapKit).</li>
+<li>Different default starting location for maps.</li>
+<li>Built-in attribution view controller with button on map views &amp; default OpenStreetMap attribution.</li>
+<li>Easy static map view support.</li>
+<li>Removal of included example projects in favor of separate examples on GitHub.</li>
+<li>A few added defaults for convenience.</li>
+<li>Improved documentation.</li>
+</ul>
+
+
+<p>Keep your eye also on <a href="https://www.mapbox.com/blog/mapbox-gl/">Mapbox GL</a>, the future of our rendering technology. We are aiming to have a clear upgrade path between existing toolsets and GL as it matures. Read more in the <a href="https://github.com/mapbox/mapbox-gl-cocoa/blob/master/FAQ.md">Mapbox GL Cocoa FAQ</a>.</p>
+
+<h2>Route-Me</h2>
+
+<p>Route-Me is an open source map library that runs natively on iOS.  It&rsquo;s designed to look and feel much like the built-in iOS map library, but it&rsquo;s entirely open, and works with any map source using a pluggable backend system.</p>
+
+<p>Supported map tile sources include <a href="[http://mapbox.com/developers/api/](http://mapbox.com/developers/api/)">Mapbox</a>/<a href="[https://github.com/mapbox/tilestream](https://github.com/mapbox/tilestream)">TileStream</a>, the offline-capable, database-backed format <a href="[http://mbtiles.org](http://mbtiles.org)">MBTiles</a>, <a href="[http://www.openstreetmap.org](http://www.openstreetmap.org)">OpenStreetMap</a>, and several others.</p>
+
+<p>Please note that you are responsible for getting permission to use the map data, and for ensuring your use adheres to the relevant terms of use.</p>
+
+<h2>Installation</h2>
+
+<p>There are three ways that you can install the SDK, depending upon your needs:</p>
+
+<ol>
+<li>Clone from GitHub and integrate as a dependent Xcode project.</li>
+<li>Use the <a href="http://mapbox-ios-sdk.s3.amazonaws.com/index.html">static library</a>. Link it in your project, add <code>#import &lt;Mapbox/Mapbox.h&gt;</code>, and additionally, include the <code>-ObjC</code> linker flag.</li>
+<li>Install via <a href="http://cocoapods.org">CocoaPods</a>.</li>
+</ol>
+
+
+<p>More detailed information on the installation options is available in the <a href="http://mapbox.com/mapbox-ios-sdk/">SDK guide</a>.</p>
+
+<p>The two main branches of the GitHub repository are pretty self-explanatory: <code>release</code> and <code>develop</code>. When we tag a <a href="https://github.com/mapbox/mapbox-ios-sdk/tags">release</a>, we also merge <code>develop</code> over to <code>release</code>, except in the case of minor point releases (e.g., <code>0.4.2</code>), where we might just bring over a fix or two from <code>develop</code>.</p>
+
+<p>Then, update the submodules:</p>
+
+<pre><code>  git submodule update --init
+</code></pre>
+
+<p>Some example apps showing usage of the SDK (with screenshots):</p>
+
+<ul>
+<li><a href="https://github.com/mapbox/mapbox-ios-example">Mapbox iOS Example</a> - online, offline, and interactive tile sources</li>
+<li><a href="https://github.com/mapbox/mapbox-me">Mapbox Me</a> - user location services and terrain toggling</li>
+<li><a href="https://github.com/mapbox/weekend-picks-template-ios">Weekend Picks</a> - markers and data</li>
+</ul>
+
+
+<p>More documentation is available:</p>
+
+<pre><code>  http://mapbox.com/mapbox-ios-sdk/
+</code></pre>
+
+<p>There are two subdirectories - MapView and Proj4. Proj4 is a support library used to do map projections. The MapView project contains only the Route-Me map library.</p>
+
+<p>See License.txt for license details. In any app that uses this SDK, include the following text on your &ldquo;preferences&rdquo; or &ldquo;about&rdquo; screen: &ldquo;Uses Mapbox iOS SDK, &copy; 2008-2014 Mapbox and Route-Me Contributors&rdquo;. Your data provider will have additional attribution requirements.</p>
+
+<h2>News, Support and Contributing</h2>
+
+<p>Complete API documentation is available <a href="http://mapbox.com/mapbox-ios-sdk/api/">online</a> or as an <a href="http://mapbox.com/mapbox-ios-sdk/Docs/publish/docset.atom">Xcode docset Atom feed</a>.</p>
+
+<p>The Mapbox iOS SDK has a <a href="http://support.mapbox.com/discussions/mapbox-ios-sdk">support resource</a> where you can open cases and browse other developers' discussions about use of the SDK.</p>
+
+<p>We have a <a href="http://mapbox.com/mapbox-ios-sdk/">basic technical overview</a> along with the installation instructions.</p>
+
+<p>Mapbox has an IRC channel on <code>irc.freenode.net</code> in <code>#mapbox</code>.</p>
+
+<p>To report bugs and help fix them, please use the <a href="https://github.com/mapbox/mapbox-ios-sdk/issues">issue tracker</a>.</p>
+
+<h2>Dependent Libraries</h2>
+
+<p>The Mapbox iOS SDK makes use of several sub-libraries, listed below. See License.txt for more detailed information about Route-Me and Proj4 and see the individual license files in the sub-libraries for more information on each.</p>
+
+<ul>
+<li><a href="https://github.com/ccgus/fmdb">FMDB</a> by Gus Mueller (SQLite for caching and MBTiles)</li>
+<li><a href="https://github.com/groue/GRMustache">GRMustache</a> by Gwendal Roué (Mustache templates)</li>
+<li><a href="https://github.com/nfarina/calloutview">SMCalloutView</a> by Nick Farina (annotation callouts)</li>
+</ul>
+
+						
+						
+					</div>
+					
+                        
+                    
+					
+					
+					<div class="index-column">
+						<h2 class="index-title">Class References</h2>
+						<ul>
+							
+							<li><a href="Classes/RMAbstractMercatorTileSource.html">RMAbstractMercatorTileSource</a></li>
+							
+							<li><a href="Classes/RMAbstractWebMapSource.html">RMAbstractWebMapSource</a></li>
+							
+							<li><a href="Classes/RMAnnotation.html">RMAnnotation</a></li>
+							
+							<li><a href="Classes/RMCacheObject.html">RMCacheObject</a></li>
+							
+							<li><a href="Classes/RMCircle.html">RMCircle</a></li>
+							
+							<li><a href="Classes/RMCircleAnnotation.html">RMCircleAnnotation</a></li>
+							
+							<li><a href="Classes/RMCompositeSource.html">RMCompositeSource</a></li>
+							
+							<li><a href="Classes/RMConfiguration.html">RMConfiguration</a></li>
+							
+							<li><a href="Classes/RMDatabaseCache.html">RMDatabaseCache</a></li>
+							
+							<li><a href="Classes/RMGreatCircleAnnotation.html">RMGreatCircleAnnotation</a></li>
+							
+							<li><a href="Classes/RMMBTilesSource.html">RMMBTilesSource</a></li>
+							
+							<li><a href="Classes/RMMapLayer.html">RMMapLayer</a></li>
+							
+							<li><a href="Classes/RMMapView.html">RMMapView</a></li>
+							
+							<li><a href="Classes/RMMapboxSource.html">RMMapboxSource</a></li>
+							
+							<li><a href="Classes/RMMarker.html">RMMarker</a></li>
+							
+							<li><a href="Classes/RMMemoryCache.html">RMMemoryCache</a></li>
+							
+							<li><a href="Classes/RMPointAnnotation.html">RMPointAnnotation</a></li>
+							
+							<li><a href="Classes/RMPolygonAnnotation.html">RMPolygonAnnotation</a></li>
+							
+							<li><a href="Classes/RMPolylineAnnotation.html">RMPolylineAnnotation</a></li>
+							
+							<li><a href="Classes/RMShape.html">RMShape</a></li>
+							
+							<li><a href="Classes/RMShapeAnnotation.html">RMShapeAnnotation</a></li>
+							
+							<li><a href="Classes/RMStaticMapView.html">RMStaticMapView</a></li>
+							
+							<li><a href="Classes/RMTileCache.html">RMTileCache</a></li>
+							
+							<li><a href="Classes/RMTileMillSource.html">RMTileMillSource</a></li>
+							
+							<li><a href="Classes/RMUserLocation.html">RMUserLocation</a></li>
+							
+							<li><a href="Classes/RMUserTrackingBarButtonItem.html">RMUserTrackingBarButtonItem</a></li>
+							
+						</ul>
+					</div>
+					
+					
+						
+					<div class="index-column">
+						
+						<h2 class="index-title">Protocol References</h2>
+						<ul>
+							
+							<li><a href="Protocols/RMInteractiveMapView.html">RMInteractiveMapView</a></li>
+							
+							<li><a href="Protocols/RMInteractiveSource.html">RMInteractiveSource</a></li>
+							
+							<li><a href="Protocols/RMMapViewDelegate.html">RMMapViewDelegate</a></li>
+							
+							<li><a href="Protocols/RMTileCache.html">RMTileCache</a></li>
+							
+							<li><a href="Protocols/RMTileCacheBackgroundDelegate.html">RMTileCacheBackgroundDelegate</a></li>
+							
+							<li><a href="Protocols/RMTileSource.html">RMTileSource</a></li>
+							
+						</ul>
+						
+                        
+						
+					</div>
+					
+				</div>
+				<div class="main-navigation navigation-bottom">
+					<a href="hierarchy.html">Next</a>
+				</div>
+				<div id="footer">
+					<hr />
+					<div class="footer-copyright">
+						<p><span class="copyright">&copy; 2015 Mapbox. All rights reserved. (Last updated: 2015-01-28)</span><br />
+						
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2 (build 963)</a>.</span></p>
+						
+	
+					</div>
+				</div>
+			</div>
+		</article>		
+	</body>
+</html>

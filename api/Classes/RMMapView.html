@@ -1,0 +1,4971 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="html/html; charset=utf-8" />
+		<title>RMMapView Class Reference</title>
+		<meta id="xcode-display" name="xcode-display" content="render"/>
+		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
+		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
+		<meta name="generator" content="appledoc 2.2 (build 963)" />
+	</head>
+	<body>
+		<header id="top_header">
+			<div id="library" class="hideInXcode">
+				<h1><a id="libraryTitle" href="../index.html">Mapbox 1.5.1 </a></h1>
+				<a id="developerHome" href="../index.html">Mapbox</a>
+			</div>
+			
+			<div id="title" role="banner">
+				<h1 class="hideInXcode">RMMapView Class Reference</h1>
+			</div>
+			<ul id="headerButtons" role="toolbar">
+				<li id="toc_button">
+					<button aria-label="Show Table of Contents" role="checkbox" class="open" id="table_of_contents"><span class="disclosure"></span>Table of Contents</button>
+				</li>
+				<li id="jumpto_button" role="navigation">
+					<select id="jumpTo">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+	
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+	
+	
+	
+	<option value="properties">Properties</option>
+	
+	<option value="//api/name/)">&nbsp;&nbsp;&nbsp;&nbsp;)</option>
+	
+	<option value="//api/name/adjustTilesForRetinaDisplay">&nbsp;&nbsp;&nbsp;&nbsp;adjustTilesForRetinaDisplay</option>
+	
+	<option value="//api/name/annotations">&nbsp;&nbsp;&nbsp;&nbsp;annotations</option>
+	
+	<option value="//api/name/backgroundView">&nbsp;&nbsp;&nbsp;&nbsp;backgroundView</option>
+	
+	<option value="//api/name/bouncingEnabled">&nbsp;&nbsp;&nbsp;&nbsp;bouncingEnabled</option>
+	
+	<option value="//api/name/centerCoordinate">&nbsp;&nbsp;&nbsp;&nbsp;centerCoordinate</option>
+	
+	<option value="//api/name/centerProjectedPoint">&nbsp;&nbsp;&nbsp;&nbsp;centerProjectedPoint</option>
+	
+	<option value="//api/name/clusteringEnabled">&nbsp;&nbsp;&nbsp;&nbsp;clusteringEnabled</option>
+	
+	<option value="//api/name/debugTiles">&nbsp;&nbsp;&nbsp;&nbsp;debugTiles</option>
+	
+	<option value="//api/name/decelerationMode">&nbsp;&nbsp;&nbsp;&nbsp;decelerationMode</option>
+	
+	<option value="//api/name/delegate">&nbsp;&nbsp;&nbsp;&nbsp;delegate</option>
+	
+	<option value="//api/name/displayHeadingCalibration">&nbsp;&nbsp;&nbsp;&nbsp;displayHeadingCalibration</option>
+	
+	<option value="//api/name/draggingEnabled">&nbsp;&nbsp;&nbsp;&nbsp;draggingEnabled</option>
+	
+	<option value="//api/name/hideAttribution">&nbsp;&nbsp;&nbsp;&nbsp;hideAttribution</option>
+	
+	<option value="//api/name/maxZoom">&nbsp;&nbsp;&nbsp;&nbsp;maxZoom</option>
+	
+	<option value="//api/name/minZoom">&nbsp;&nbsp;&nbsp;&nbsp;minZoom</option>
+	
+	<option value="//api/name/missingTilesDepth">&nbsp;&nbsp;&nbsp;&nbsp;missingTilesDepth</option>
+	
+	<option value="//api/name/positionClusterMarkersAtTheGravityCenter">&nbsp;&nbsp;&nbsp;&nbsp;positionClusterMarkersAtTheGravityCenter</option>
+	
+	<option value="//api/name/selectedAnnotation">&nbsp;&nbsp;&nbsp;&nbsp;selectedAnnotation</option>
+	
+	<option value="//api/name/showLogoBug">&nbsp;&nbsp;&nbsp;&nbsp;showLogoBug</option>
+	
+	<option value="//api/name/showsUserLocation">&nbsp;&nbsp;&nbsp;&nbsp;showsUserLocation</option>
+	
+	<option value="//api/name/tileCache">&nbsp;&nbsp;&nbsp;&nbsp;tileCache</option>
+	
+	<option value="//api/name/tileSource">&nbsp;&nbsp;&nbsp;&nbsp;tileSource</option>
+	
+	<option value="//api/name/tileSources">&nbsp;&nbsp;&nbsp;&nbsp;tileSources</option>
+	
+	<option value="//api/name/userLocation">&nbsp;&nbsp;&nbsp;&nbsp;userLocation</option>
+	
+	<option value="//api/name/userLocationVisible">&nbsp;&nbsp;&nbsp;&nbsp;userLocationVisible</option>
+	
+	<option value="//api/name/userTrackingMode">&nbsp;&nbsp;&nbsp;&nbsp;userTrackingMode</option>
+	
+	<option value="//api/name/visibleAnnotations">&nbsp;&nbsp;&nbsp;&nbsp;visibleAnnotations</option>
+	
+	<option value="//api/name/zoom">&nbsp;&nbsp;&nbsp;&nbsp;zoom</option>
+	
+	<option value="//api/name/zoomingInPivotsAroundCenter">&nbsp;&nbsp;&nbsp;&nbsp;zoomingInPivotsAroundCenter</option>
+	
+	
+	
+	
+	
+	
+	<option value="instance_methods">Instance Methods</option>
+	
+	<option value="//api/name/addAnnotation:">&nbsp;&nbsp;&nbsp;&nbsp;- addAnnotation:</option>
+	
+	<option value="//api/name/addAnnotations:">&nbsp;&nbsp;&nbsp;&nbsp;- addAnnotations:</option>
+	
+	<option value="//api/name/addTileSource:">&nbsp;&nbsp;&nbsp;&nbsp;- addTileSource:</option>
+	
+	<option value="//api/name/addTileSource:atIndex:">&nbsp;&nbsp;&nbsp;&nbsp;- addTileSource:atIndex:</option>
+	
+	<option value="//api/name/coordinateToPixel:">&nbsp;&nbsp;&nbsp;&nbsp;- coordinateToPixel:</option>
+	
+	<option value="//api/name/coordinateToProjectedPoint:">&nbsp;&nbsp;&nbsp;&nbsp;- coordinateToProjectedPoint:</option>
+	
+	<option value="//api/name/deselectAnnotation:animated:">&nbsp;&nbsp;&nbsp;&nbsp;- deselectAnnotation:animated:</option>
+	
+	<option value="//api/name/initWithFrame:">&nbsp;&nbsp;&nbsp;&nbsp;- initWithFrame:</option>
+	
+	<option value="//api/name/initWithFrame:andTilesource:">&nbsp;&nbsp;&nbsp;&nbsp;- initWithFrame:andTilesource:</option>
+	
+	<option value="//api/name/initWithFrame:andTilesource:centerCoordinate:zoomLevel:maxZoomLevel:minZoomLevel:backgroundImage:">&nbsp;&nbsp;&nbsp;&nbsp;- initWithFrame:andTilesource:centerCoordinate:zoomLevel:maxZoomLevel:minZoomLevel:backgroundImage:</option>
+	
+	<option value="//api/name/latitudeLongitudeBoundingBox">&nbsp;&nbsp;&nbsp;&nbsp;- latitudeLongitudeBoundingBox</option>
+	
+	<option value="//api/name/latitudeLongitudeBoundingBoxFor:">&nbsp;&nbsp;&nbsp;&nbsp;- latitudeLongitudeBoundingBoxFor:</option>
+	
+	<option value="//api/name/latitudeLongitudeBoundingBoxForTile:">&nbsp;&nbsp;&nbsp;&nbsp;- latitudeLongitudeBoundingBoxForTile:</option>
+	
+	<option value="//api/name/mapPositionForAnnotation:">&nbsp;&nbsp;&nbsp;&nbsp;- mapPositionForAnnotation:</option>
+	
+	<option value="//api/name/moveBy:">&nbsp;&nbsp;&nbsp;&nbsp;- moveBy:</option>
+	
+	<option value="//api/name/moveTileSourceAtIndex:toIndex:">&nbsp;&nbsp;&nbsp;&nbsp;- moveTileSourceAtIndex:toIndex:</option>
+	
+	<option value="//api/name/pixelToCoordinate:">&nbsp;&nbsp;&nbsp;&nbsp;- pixelToCoordinate:</option>
+	
+	<option value="//api/name/pixelToProjectedPoint:">&nbsp;&nbsp;&nbsp;&nbsp;- pixelToProjectedPoint:</option>
+	
+	<option value="//api/name/projectedPointToCoordinate:">&nbsp;&nbsp;&nbsp;&nbsp;- projectedPointToCoordinate:</option>
+	
+	<option value="//api/name/projectedPointToPixel:">&nbsp;&nbsp;&nbsp;&nbsp;- projectedPointToPixel:</option>
+	
+	<option value="//api/name/reloadTileSource:">&nbsp;&nbsp;&nbsp;&nbsp;- reloadTileSource:</option>
+	
+	<option value="//api/name/reloadTileSourceAtIndex:">&nbsp;&nbsp;&nbsp;&nbsp;- reloadTileSourceAtIndex:</option>
+	
+	<option value="//api/name/removeAllAnnotations">&nbsp;&nbsp;&nbsp;&nbsp;- removeAllAnnotations</option>
+	
+	<option value="//api/name/removeAllCachedImages">&nbsp;&nbsp;&nbsp;&nbsp;- removeAllCachedImages</option>
+	
+	<option value="//api/name/removeAnnotation:">&nbsp;&nbsp;&nbsp;&nbsp;- removeAnnotation:</option>
+	
+	<option value="//api/name/removeAnnotations:">&nbsp;&nbsp;&nbsp;&nbsp;- removeAnnotations:</option>
+	
+	<option value="//api/name/removeTileSource:">&nbsp;&nbsp;&nbsp;&nbsp;- removeTileSource:</option>
+	
+	<option value="//api/name/removeTileSourceAtIndex:">&nbsp;&nbsp;&nbsp;&nbsp;- removeTileSourceAtIndex:</option>
+	
+	<option value="//api/name/selectAnnotation:animated:">&nbsp;&nbsp;&nbsp;&nbsp;- selectAnnotation:animated:</option>
+	
+	<option value="//api/name/setAlpha:forTileSource:">&nbsp;&nbsp;&nbsp;&nbsp;- setAlpha:forTileSource:</option>
+	
+	<option value="//api/name/setAlpha:forTileSourceAtIndex:">&nbsp;&nbsp;&nbsp;&nbsp;- setAlpha:forTileSourceAtIndex:</option>
+	
+	<option value="//api/name/setBackgroundImage:">&nbsp;&nbsp;&nbsp;&nbsp;- setBackgroundImage:</option>
+	
+	<option value="//api/name/setCenterCoordinate:animated:">&nbsp;&nbsp;&nbsp;&nbsp;- setCenterCoordinate:animated:</option>
+	
+	<option value="//api/name/setCenterProjectedPoint:animated:">&nbsp;&nbsp;&nbsp;&nbsp;- setCenterProjectedPoint:animated:</option>
+	
+	<option value="//api/name/setConstraintsSouthWest:northEast:">&nbsp;&nbsp;&nbsp;&nbsp;- setConstraintsSouthWest:northEast:</option>
+	
+	<option value="//api/name/setHidden:forTileSource:">&nbsp;&nbsp;&nbsp;&nbsp;- setHidden:forTileSource:</option>
+	
+	<option value="//api/name/setHidden:forTileSourceAtIndex:">&nbsp;&nbsp;&nbsp;&nbsp;- setHidden:forTileSourceAtIndex:</option>
+	
+	<option value="//api/name/setUserTrackingMode:animated:">&nbsp;&nbsp;&nbsp;&nbsp;- setUserTrackingMode:animated:</option>
+	
+	<option value="//api/name/setZoom:animated:">&nbsp;&nbsp;&nbsp;&nbsp;- setZoom:animated:</option>
+	
+	<option value="//api/name/setZoom:atCoordinate:animated:">&nbsp;&nbsp;&nbsp;&nbsp;- setZoom:atCoordinate:animated:</option>
+	
+	<option value="//api/name/takeSnapshot">&nbsp;&nbsp;&nbsp;&nbsp;- takeSnapshot</option>
+	
+	<option value="//api/name/takeSnapshotAndIncludeOverlay:">&nbsp;&nbsp;&nbsp;&nbsp;- takeSnapshotAndIncludeOverlay:</option>
+	
+	<option value="//api/name/zoomByFactor:near:animated:">&nbsp;&nbsp;&nbsp;&nbsp;- zoomByFactor:near:animated:</option>
+	
+	<option value="//api/name/zoomInToNextNativeZoomAt:animated:">&nbsp;&nbsp;&nbsp;&nbsp;- zoomInToNextNativeZoomAt:animated:</option>
+	
+	<option value="//api/name/zoomOutToNextNativeZoomAt:animated:">&nbsp;&nbsp;&nbsp;&nbsp;- zoomOutToNextNativeZoomAt:animated:</option>
+	
+	<option value="//api/name/zoomWithLatitudeLongitudeBoundsSouthWest:northEast:animated:">&nbsp;&nbsp;&nbsp;&nbsp;- zoomWithLatitudeLongitudeBoundsSouthWest:northEast:animated:</option>
+	
+	
+	
+</select>
+				</li>
+			</ul>
+		</header>
+		<nav id="tocContainer" class="isShowingTOC">
+			<ul id="toc" role="tree">
+				
+<li role="treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#overview">Overview</a></span></li>
+
+
+
+
+<li role="treeitem" id="task_treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#tasks">Tasks</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Accessing the Delegate">Accessing the Delegate</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Configuring Map Behavior">Configuring Map Behavior</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Supporting Retina Displays">Supporting Retina Displays</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Attributing Map Data">Attributing Map Data</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Fine-Tuning the Map Appearance">Fine-Tuning the Map Appearance</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Initializing a Map View">Initializing a Map View</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Panning the Map">Panning the Map</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Zooming the Map">Zooming the Map</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Querying the Map Bounds">Querying the Map Bounds</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Constraining the Map">Constraining the Map</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Capturing Snapshots of the Map View">Capturing Snapshots of the Map View</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Annotating the Map">Annotating the Map</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Configuring Annotation Clustering">Configuring Annotation Clustering</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Managing Tile Sources">Managing Tile Sources</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Managing Tile Caching Behavior">Managing Tile Caching Behavior</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Converting Map Coordinates">Converting Map Coordinates</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Tracking the User Location">Tracking the User Location</a></span></li>
+	
+</ul></li>
+
+
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#properties">Properties</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/)">)</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/adjustTilesForRetinaDisplay">adjustTilesForRetinaDisplay</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/annotations">annotations</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/backgroundView">backgroundView</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/bouncingEnabled">bouncingEnabled</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/centerCoordinate">centerCoordinate</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/centerProjectedPoint">centerProjectedPoint</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/clusteringEnabled">clusteringEnabled</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/debugTiles">debugTiles</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/decelerationMode">decelerationMode</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/delegate">delegate</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/displayHeadingCalibration">displayHeadingCalibration</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/draggingEnabled">draggingEnabled</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/hideAttribution">hideAttribution</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/maxZoom">maxZoom</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/minZoom">minZoom</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/missingTilesDepth">missingTilesDepth</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/positionClusterMarkersAtTheGravityCenter">positionClusterMarkersAtTheGravityCenter</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/selectedAnnotation">selectedAnnotation</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/showLogoBug">showLogoBug</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/showsUserLocation">showsUserLocation</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/tileCache">tileCache</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/tileSource">tileSource</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/tileSources">tileSources</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/userLocation">userLocation</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/userLocationVisible">userLocationVisible</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/userTrackingMode">userTrackingMode</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/visibleAnnotations">visibleAnnotations</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/zoom">zoom</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/zoomingInPivotsAroundCenter">zoomingInPivotsAroundCenter</a></span></li>
+	
+</ul></li>
+
+
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#instance_methods">Instance Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/addAnnotation:">addAnnotation:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/addAnnotations:">addAnnotations:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/addTileSource:">addTileSource:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/addTileSource:atIndex:">addTileSource:atIndex:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/coordinateToPixel:">coordinateToPixel:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/coordinateToProjectedPoint:">coordinateToProjectedPoint:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/deselectAnnotation:animated:">deselectAnnotation:animated:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initWithFrame:">initWithFrame:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initWithFrame:andTilesource:">initWithFrame:andTilesource:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initWithFrame:andTilesource:centerCoordinate:zoomLevel:maxZoomLevel:minZoomLevel:backgroundImage:">initWithFrame:andTilesource:centerCoordinate:zoomLevel:maxZoomLevel:minZoomLevel:backgroundImage:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/latitudeLongitudeBoundingBox">latitudeLongitudeBoundingBox</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/latitudeLongitudeBoundingBoxFor:">latitudeLongitudeBoundingBoxFor:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/latitudeLongitudeBoundingBoxForTile:">latitudeLongitudeBoundingBoxForTile:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/mapPositionForAnnotation:">mapPositionForAnnotation:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/moveBy:">moveBy:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/moveTileSourceAtIndex:toIndex:">moveTileSourceAtIndex:toIndex:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/pixelToCoordinate:">pixelToCoordinate:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/pixelToProjectedPoint:">pixelToProjectedPoint:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/projectedPointToCoordinate:">projectedPointToCoordinate:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/projectedPointToPixel:">projectedPointToPixel:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/reloadTileSource:">reloadTileSource:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/reloadTileSourceAtIndex:">reloadTileSourceAtIndex:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/removeAllAnnotations">removeAllAnnotations</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/removeAllCachedImages">removeAllCachedImages</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/removeAnnotation:">removeAnnotation:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/removeAnnotations:">removeAnnotations:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/removeTileSource:">removeTileSource:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/removeTileSourceAtIndex:">removeTileSourceAtIndex:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/selectAnnotation:animated:">selectAnnotation:animated:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setAlpha:forTileSource:">setAlpha:forTileSource:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setAlpha:forTileSourceAtIndex:">setAlpha:forTileSourceAtIndex:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setBackgroundImage:">setBackgroundImage:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setCenterCoordinate:animated:">setCenterCoordinate:animated:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setCenterProjectedPoint:animated:">setCenterProjectedPoint:animated:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setConstraintsSouthWest:northEast:">setConstraintsSouthWest:northEast:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setHidden:forTileSource:">setHidden:forTileSource:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setHidden:forTileSourceAtIndex:">setHidden:forTileSourceAtIndex:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setUserTrackingMode:animated:">setUserTrackingMode:animated:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setZoom:animated:">setZoom:animated:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setZoom:atCoordinate:animated:">setZoom:atCoordinate:animated:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/takeSnapshot">takeSnapshot</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/takeSnapshotAndIncludeOverlay:">takeSnapshotAndIncludeOverlay:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/zoomByFactor:near:animated:">zoomByFactor:near:animated:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/zoomInToNextNativeZoomAt:animated:">zoomInToNextNativeZoomAt:animated:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/zoomOutToNextNativeZoomAt:animated:">zoomOutToNextNativeZoomAt:animated:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/zoomWithLatitudeLongitudeBoundsSouthWest:northEast:animated:">zoomWithLatitudeLongitudeBoundsSouthWest:northEast:animated:</a></span></li>
+	
+</ul></li>
+
+
+			</ul>
+		</nav>
+		<article>
+			<div id="contents" class="isShowingTOC" role="main">
+				<a title="RMMapView Class Reference" name="top"></a>
+				<div class="main-navigation navigation-top">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="header">
+					<div class="section-header">
+						<h1 class="title title-header">RMMapView Class Reference</h1>
+					</div>		
+				</div>
+				<div id="container">	
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<td class="specification-title">Inherits from</td>
+	<td class="specification-value">UIView</td>
+</tr><tr>
+	<td class="specification-title">Declared in</td>
+	<td class="specification-value">RMMapView.h</td>
+</tr>
+						</tbody></table></div>
+					
+                    
+                    
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p>An RMMapView object provides an embeddable map interface, similar to the one provided by Apple&rsquo;s MapKit. You use this class to display map information and to manipulate the map contents from your application. You can center the map on a given coordinate, specify the size of the area you want to display, and annotate the map with custom information.</p><div class="warning"><p><strong>Warning:</strong> Please note that you are responsible for getting permission to use the map data, and for ensuring your use adheres to the relevant terms of use.</p></div>
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						<h2 class="subtitle subtitle-tasks">Tasks</h2>
+						
+						
+						<a title="Accessing the Delegate" name="task_Accessing the Delegate"></a>
+						<h3 class="subsubtitle task-title">Accessing the Delegate</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/delegate">&nbsp;&nbsp;delegate</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li>
+						</ul>
+						
+						
+						<a title="Configuring Map Behavior" name="task_Configuring Map Behavior"></a>
+						<h3 class="subsubtitle task-title">Configuring Map Behavior</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/draggingEnabled">&nbsp;&nbsp;draggingEnabled</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/bouncingEnabled">&nbsp;&nbsp;bouncingEnabled</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/zoomingInPivotsAroundCenter">&nbsp;&nbsp;zoomingInPivotsAroundCenter</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/decelerationMode">&nbsp;&nbsp;decelerationMode</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li>
+						</ul>
+						
+						
+						<a title="Supporting Retina Displays" name="task_Supporting Retina Displays"></a>
+						<h3 class="subsubtitle task-title">Supporting Retina Displays</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/adjustTilesForRetinaDisplay">&nbsp;&nbsp;adjustTilesForRetinaDisplay</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li>
+						</ul>
+						
+						
+						<a title="Attributing Map Data" name="task_Attributing Map Data"></a>
+						<h3 class="subsubtitle task-title">Attributing Map Data</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/hideAttribution">&nbsp;&nbsp;hideAttribution</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li>
+						</ul>
+						
+						
+						<a title="Fine-Tuning the Map Appearance" name="task_Fine-Tuning the Map Appearance"></a>
+						<h3 class="subsubtitle task-title">Fine-Tuning the Map Appearance</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/missingTilesDepth">&nbsp;&nbsp;missingTilesDepth</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/backgroundView">&nbsp;&nbsp;backgroundView</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/setBackgroundImage:">&ndash;&nbsp;setBackgroundImage:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/debugTiles">&nbsp;&nbsp;debugTiles</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/showLogoBug">&nbsp;&nbsp;showLogoBug</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li>
+						</ul>
+						
+						
+						<a title="Initializing a Map View" name="task_Initializing a Map View"></a>
+						<h3 class="subsubtitle task-title">Initializing a Map View</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/initWithFrame:">&ndash;&nbsp;initWithFrame:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/initWithFrame:andTilesource:">&ndash;&nbsp;initWithFrame:andTilesource:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/initWithFrame:andTilesource:centerCoordinate:zoomLevel:maxZoomLevel:minZoomLevel:backgroundImage:">&ndash;&nbsp;initWithFrame:andTilesource:centerCoordinate:zoomLevel:maxZoomLevel:minZoomLevel:backgroundImage:</a></code>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Panning the Map" name="task_Panning the Map"></a>
+						<h3 class="subsubtitle task-title">Panning the Map</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/centerCoordinate">&nbsp;&nbsp;centerCoordinate</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/centerProjectedPoint">&nbsp;&nbsp;centerProjectedPoint</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/setCenterCoordinate:animated:">&ndash;&nbsp;setCenterCoordinate:animated:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/setCenterProjectedPoint:animated:">&ndash;&nbsp;setCenterProjectedPoint:animated:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/moveBy:">&ndash;&nbsp;moveBy:</a></code>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Zooming the Map" name="task_Zooming the Map"></a>
+						<h3 class="subsubtitle task-title">Zooming the Map</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/zoom">&nbsp;&nbsp;zoom</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/minZoom">&nbsp;&nbsp;minZoom</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/maxZoom">&nbsp;&nbsp;maxZoom</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/setZoom:animated:">&ndash;&nbsp;setZoom:animated:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/setZoom:atCoordinate:animated:">&ndash;&nbsp;setZoom:atCoordinate:animated:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/zoomByFactor:near:animated:">&ndash;&nbsp;zoomByFactor:near:animated:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/zoomInToNextNativeZoomAt:animated:">&ndash;&nbsp;zoomInToNextNativeZoomAt:animated:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/zoomOutToNextNativeZoomAt:animated:">&ndash;&nbsp;zoomOutToNextNativeZoomAt:animated:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/zoomWithLatitudeLongitudeBoundsSouthWest:northEast:animated:">&ndash;&nbsp;zoomWithLatitudeLongitudeBoundsSouthWest:northEast:animated:</a></code>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Querying the Map Bounds" name="task_Querying the Map Bounds"></a>
+						<h3 class="subsubtitle task-title">Querying the Map Bounds</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/latitudeLongitudeBoundingBox">&ndash;&nbsp;latitudeLongitudeBoundingBox</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/latitudeLongitudeBoundingBoxFor:">&ndash;&nbsp;latitudeLongitudeBoundingBoxFor:</a></code>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Constraining the Map" name="task_Constraining the Map"></a>
+						<h3 class="subsubtitle task-title">Constraining the Map</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/setConstraintsSouthWest:northEast:">&ndash;&nbsp;setConstraintsSouthWest:northEast:</a></code>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Capturing Snapshots of the Map View" name="task_Capturing Snapshots of the Map View"></a>
+						<h3 class="subsubtitle task-title">Capturing Snapshots of the Map View</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/takeSnapshot">&ndash;&nbsp;takeSnapshot</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/takeSnapshotAndIncludeOverlay:">&ndash;&nbsp;takeSnapshotAndIncludeOverlay:</a></code>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Annotating the Map" name="task_Annotating the Map"></a>
+						<h3 class="subsubtitle task-title">Annotating the Map</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/annotations">&nbsp;&nbsp;annotations</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/visibleAnnotations">&nbsp;&nbsp;visibleAnnotations</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/addAnnotation:">&ndash;&nbsp;addAnnotation:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/addAnnotations:">&ndash;&nbsp;addAnnotations:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/removeAnnotation:">&ndash;&nbsp;removeAnnotation:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/removeAnnotations:">&ndash;&nbsp;removeAnnotations:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/removeAllAnnotations">&ndash;&nbsp;removeAllAnnotations</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/mapPositionForAnnotation:">&ndash;&nbsp;mapPositionForAnnotation:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/selectAnnotation:animated:">&ndash;&nbsp;selectAnnotation:animated:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/deselectAnnotation:animated:">&ndash;&nbsp;deselectAnnotation:animated:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/selectedAnnotation">&nbsp;&nbsp;selectedAnnotation</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li>
+						</ul>
+						
+						
+						<a title="Configuring Annotation Clustering" name="task_Configuring Annotation Clustering"></a>
+						<h3 class="subsubtitle task-title">Configuring Annotation Clustering</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/clusteringEnabled">&nbsp;&nbsp;clusteringEnabled</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/)">&nbsp;&nbsp;)</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/positionClusterMarkersAtTheGravityCenter">&nbsp;&nbsp;positionClusterMarkersAtTheGravityCenter</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li>
+						</ul>
+						
+						
+						<a title="Managing Tile Sources" name="task_Managing Tile Sources"></a>
+						<h3 class="subsubtitle task-title">Managing Tile Sources</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/tileSource">&nbsp;&nbsp;tileSource</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/tileSources">&nbsp;&nbsp;tileSources</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/addTileSource:">&ndash;&nbsp;addTileSource:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/addTileSource:atIndex:">&ndash;&nbsp;addTileSource:atIndex:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/removeTileSource:">&ndash;&nbsp;removeTileSource:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/removeTileSourceAtIndex:">&ndash;&nbsp;removeTileSourceAtIndex:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/moveTileSourceAtIndex:toIndex:">&ndash;&nbsp;moveTileSourceAtIndex:toIndex:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/setHidden:forTileSource:">&ndash;&nbsp;setHidden:forTileSource:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/setHidden:forTileSourceAtIndex:">&ndash;&nbsp;setHidden:forTileSourceAtIndex:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/setAlpha:forTileSource:">&ndash;&nbsp;setAlpha:forTileSource:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/setAlpha:forTileSourceAtIndex:">&ndash;&nbsp;setAlpha:forTileSourceAtIndex:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/reloadTileSource:">&ndash;&nbsp;reloadTileSource:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/reloadTileSourceAtIndex:">&ndash;&nbsp;reloadTileSourceAtIndex:</a></code>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Managing Tile Caching Behavior" name="task_Managing Tile Caching Behavior"></a>
+						<h3 class="subsubtitle task-title">Managing Tile Caching Behavior</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/tileCache">&nbsp;&nbsp;tileCache</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/removeAllCachedImages">&ndash;&nbsp;removeAllCachedImages</a></code>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Converting Map Coordinates" name="task_Converting Map Coordinates"></a>
+						<h3 class="subsubtitle task-title">Converting Map Coordinates</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/projectedPointToPixel:">&ndash;&nbsp;projectedPointToPixel:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/coordinateToPixel:">&ndash;&nbsp;coordinateToPixel:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/pixelToProjectedPoint:">&ndash;&nbsp;pixelToProjectedPoint:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/pixelToCoordinate:">&ndash;&nbsp;pixelToCoordinate:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/coordinateToProjectedPoint:">&ndash;&nbsp;coordinateToProjectedPoint:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/projectedPointToCoordinate:">&ndash;&nbsp;projectedPointToCoordinate:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/latitudeLongitudeBoundingBoxForTile:">&ndash;&nbsp;latitudeLongitudeBoundingBoxForTile:</a></code>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Tracking the User Location" name="task_Tracking the User Location"></a>
+						<h3 class="subsubtitle task-title">Tracking the User Location</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/showsUserLocation">&nbsp;&nbsp;showsUserLocation</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/userLocation">&nbsp;&nbsp;userLocation</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/userLocationVisible">&nbsp;&nbsp;userLocationVisible</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/userTrackingMode">&nbsp;&nbsp;userTrackingMode</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/displayHeadingCalibration">&nbsp;&nbsp;displayHeadingCalibration</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/setUserTrackingMode:animated:">&ndash;&nbsp;setUserTrackingMode:animated:</a></code>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Properties" name="properties"></a>
+						<h2 class="subtitle subtitle-methods">Properties</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/)" title=")"></a>
+	<h3 class="subsubtitle method-title">)</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Whether to order markers on the z-axis according to increasing y-position. Defaults to <code>YES</code>.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) BOOL orderMarkersByYPosition DEPRECATED_MSG_ATTRIBUTE ( &quot;use -[RMMapViewDelegate annotationSortingComparatorForMapView:] for annotation sorting&quot; )</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Whether to order markers on the z-axis according to increasing y-position. Defaults to <code>YES</code>.</p><div class="warning"><p><strong>Warning:</strong> This property has been deprecated in favor of <a href="../Protocols/RMMapViewDelegate.html#//api/name/annotationSortingComparatorForMapView:">[RMMapViewDelegate annotationSortingComparatorForMapView:]</a>.</p></div>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/adjustTilesForRetinaDisplay" title="adjustTilesForRetinaDisplay"></a>
+	<h3 class="subsubtitle method-title">adjustTilesForRetinaDisplay</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A Boolean value that adjusts the display of map tile images for retina-capable screens.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) BOOL adjustTilesForRetinaDisplay</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>A Boolean value that adjusts the display of map tile images for retina-capable screens.</p>
+
+<p>If set to <code>YES</code>, the map tiles are drawn at double size, typically 512 pixels square instead of 256 pixels, in order to compensate for smaller features and to make them more legible. If tiles designed for retina devices are used, this value should be set to <code>NO</code> in order to display these tiles at the proper size. The default value is <code>NO</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/annotations" title="annotations"></a>
+	<h3 class="subsubtitle method-title">annotations</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The annotations currently added to the map. Includes user location annotations, if any.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, weak, readonly) NSArray *annotations</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The annotations currently added to the map. Includes user location annotations, if any.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/backgroundView" title="backgroundView"></a>
+	<h3 class="subsubtitle method-title">backgroundView</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A custom, static view to use behind the map tiles. The default behavior is to use grid imagery that moves with map panning like MapKit.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) UIView *backgroundView</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>A custom, static view to use behind the map tiles. The default behavior is to use grid imagery that moves with map panning like MapKit.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/bouncingEnabled" title="bouncingEnabled"></a>
+	<h3 class="subsubtitle method-title">bouncingEnabled</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A Boolean value that determines whether the map view bounces past the edge of content and back again and whether it animates the content scaling when the scaling exceeds the maximum or minimum limits.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) BOOL bouncingEnabled</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>A Boolean value that determines whether the map view bounces past the edge of content and back again and whether it animates the content scaling when the scaling exceeds the maximum or minimum limits.</p>
+
+<p>If the value of this property is <code>YES</code>, the map view bounces when it encounters a boundary of the content or when zooming exceeds either the maximum or minimum limits for scaling. Bouncing visually indicates that scrolling or zooming has reached an edge of the content. If the value is <code>NO</code>, scrolling and zooming stop immediately at the content boundary without bouncing.</p>
+
+<p>The default value is <code>NO</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/centerCoordinate" title="centerCoordinate"></a>
+	<h3 class="subsubtitle method-title">centerCoordinate</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The center coordinate of the map view.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) CLLocationCoordinate2D centerCoordinate</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The center coordinate of the map view.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/centerProjectedPoint" title="centerProjectedPoint"></a>
+	<h3 class="subsubtitle method-title">centerProjectedPoint</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The center point of the map represented as a projected point.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) RMProjectedPoint centerProjectedPoint</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The center point of the map represented as a projected point.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/clusteringEnabled" title="clusteringEnabled"></a>
+	<h3 class="subsubtitle method-title">clusteringEnabled</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Whether to enable clustering of map point <a href="#//api/name/annotations">annotations</a>. Defaults to <code>NO</code>.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) BOOL clusteringEnabled</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Whether to enable clustering of map point <a href="#//api/name/annotations">annotations</a>. Defaults to <code>NO</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/debugTiles" title="debugTiles"></a>
+	<h3 class="subsubtitle method-title">debugTiles</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A Boolean value indicating whether to draw tile borders and z/x/y numbers on tile images for debugging purposes. Defaults to <code>NO</code>.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) BOOL debugTiles</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>A Boolean value indicating whether to draw tile borders and z/x/y numbers on tile images for debugging purposes. Defaults to <code>NO</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/decelerationMode" title="decelerationMode"></a>
+	<h3 class="subsubtitle method-title">decelerationMode</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A custom deceleration mode for the map view for drag operations. Set to <code>RMMapDecelerationOff</code> to disable map drag deceleration. The default value is <code>RMMapDecelerationFast</code>.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) RMMapDecelerationMode decelerationMode</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>A custom deceleration mode for the map view for drag operations. Set to <code>RMMapDecelerationOff</code> to disable map drag deceleration. The default value is <code>RMMapDecelerationFast</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/delegate" title="delegate"></a>
+	<h3 class="subsubtitle method-title">delegate</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The receiver&rsquo;s delegate.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, weak) IBOutlet id&lt;RMMapViewDelegate&gt; delegate</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The receiver&rsquo;s delegate.</p>
+
+<p>A map view sends messages to its delegate regarding the loading of map data and changes in the portion of the map being displayed. The delegate also manages the annotation layers used to highlight points of interest on the map.</p>
+
+<p>The delegate should implement the methods of the <a href="../Protocols/RMMapViewDelegate.html">RMMapViewDelegate</a> protocol.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/displayHeadingCalibration" title="displayHeadingCalibration"></a>
+	<h3 class="subsubtitle method-title">displayHeadingCalibration</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Whether the map view should display a heading calibration alert when necessary. The default value is <code>YES</code>.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) BOOL displayHeadingCalibration</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Whether the map view should display a heading calibration alert when necessary. The default value is <code>YES</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/draggingEnabled" title="draggingEnabled"></a>
+	<h3 class="subsubtitle method-title">draggingEnabled</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A Boolean value that determines whether the user may scroll around the map.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) BOOL draggingEnabled</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>A Boolean value that determines whether the user may scroll around the map.</p>
+
+<p>This property controls only user interactions with the map. If you set the value of this property to <code>NO</code>, you may still change the map location programmatically.</p>
+
+<p>The default value of this property is <code>YES</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/hideAttribution" title="hideAttribution"></a>
+	<h3 class="subsubtitle method-title">hideAttribution</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Whether to hide map data attribution for the map view.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) BOOL hideAttribution</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Whether to hide map data attribution for the map view.</p>
+
+<p>If this is set to NO, a small disclosure button will be added to the lower-right of the map view, allowing the user to tap it to display a modal view showing map data attribution info. The modal presentation uses a page curl animation to reveal the attribution info under the map view.</p>
+
+<p>The default value is NO, meaning that attribution info will be shown. Please ensure that the terms &amp; conditions of any map data used in your application are satisfied before setting this value to YES.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/maxZoom" title="maxZoom"></a>
+	<h3 class="subsubtitle method-title">maxZoom</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The maximum <a href="#//api/name/zoom">zoom</a> level of the map, clamped to the range supported by the tile source(s).</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) float maxZoom</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The maximum <a href="#//api/name/zoom">zoom</a> level of the map, clamped to the range supported by the tile source(s).</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/minZoom" title="minZoom"></a>
+	<h3 class="subsubtitle method-title">minZoom</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The minimum <a href="#//api/name/zoom">zoom</a> level of the map, clamped to the range supported by the tile source(s).</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) float minZoom</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The minimum <a href="#//api/name/zoom">zoom</a> level of the map, clamped to the range supported by the tile source(s).</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/missingTilesDepth" title="missingTilesDepth"></a>
+	<h3 class="subsubtitle method-title">missingTilesDepth</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Take missing tiles from lower-numbered <a href="#//api/name/zoom">zoom</a> levels, up to a given number of <a href="#//api/name/zoom">zoom</a> levels. This can be used in order to increase perceived tile load performance or to allow zooming in beyond levels supported natively by a given tile source. Defaults to 1.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) NSUInteger missingTilesDepth</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Take missing tiles from lower-numbered <a href="#//api/name/zoom">zoom</a> levels, up to a given number of <a href="#//api/name/zoom">zoom</a> levels. This can be used in order to increase perceived tile load performance or to allow zooming in beyond levels supported natively by a given tile source. Defaults to 1.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/positionClusterMarkersAtTheGravityCenter" title="positionClusterMarkersAtTheGravityCenter"></a>
+	<h3 class="subsubtitle method-title">positionClusterMarkersAtTheGravityCenter</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Whether to position cluster markers at the weighted center of the points they represent. If <code>YES</code>, position clusters in weighted fashion. If <code>NO</code>, position them on a rectangular grid. Defaults to <code>YES</code>.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) BOOL positionClusterMarkersAtTheGravityCenter</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Whether to position cluster markers at the weighted center of the points they represent. If <code>YES</code>, position clusters in weighted fashion. If <code>NO</code>, position them on a rectangular grid. Defaults to <code>YES</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/selectedAnnotation" title="selectedAnnotation"></a>
+	<h3 class="subsubtitle method-title">selectedAnnotation</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The annotation that is currently selected.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) RMAnnotation *selectedAnnotation</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The annotation that is currently selected.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/showLogoBug" title="showLogoBug"></a>
+	<h3 class="subsubtitle method-title">showLogoBug</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A Boolean value indicating whether to show a small logo in the corner of the map view. Defaults to <code>YES</code>.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) BOOL showLogoBug</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>A Boolean value indicating whether to show a small logo in the corner of the map view. Defaults to <code>YES</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/showsUserLocation" title="showsUserLocation"></a>
+	<h3 class="subsubtitle method-title">showsUserLocation</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A Boolean value indicating whether the map may display the user location.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) BOOL showsUserLocation</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>A Boolean value indicating whether the map may display the user location.</p>
+
+<p>This property does not indicate whether the user’s position is actually visible on the map, only whether the map view is allowed to display it. To determine whether the user’s position is visible, use the <a href="#//api/name/userLocationVisible">userLocationVisible</a> property. The default value of this property is <code>NO</code>.</p>
+
+<p>Setting this property to <code>YES</code> causes the map view to use the Core Location framework to find the current location. As long as this property is <code>YES</code>, the map view continues to track the user’s location and update it periodically.</p>
+
+<p>On iOS 8 and above, your app must specify a value for <code>NSLocationWhenInUseUsageDescription</code> in its <code>Info.plist</code> to satisfy the requirements of the underlying Core Location framework when enabling this property.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/tileCache" title="tileCache"></a>
+	<h3 class="subsubtitle method-title">tileCache</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The tile cache for the map view, typically composed of both an in-memory <a href="../Classes/RMMemoryCache.html">RMMemoryCache</a> and a disk-based <a href="../Classes/RMDatabaseCache.html">RMDatabaseCache</a>.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) RMTileCache *tileCache</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The tile cache for the map view, typically composed of both an in-memory <a href="../Classes/RMMemoryCache.html">RMMemoryCache</a> and a disk-based <a href="../Classes/RMDatabaseCache.html">RMDatabaseCache</a>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/tileSource" title="tileSource"></a>
+	<h3 class="subsubtitle method-title">tileSource</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The first tile source of a map view, ordered from bottom to top.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) id&lt;RMTileSource&gt; tileSource</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The first tile source of a map view, ordered from bottom to top.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/tileSources" title="tileSources"></a>
+	<h3 class="subsubtitle method-title">tileSources</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>All of the tile sources for a map view, ordered bottom to top.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) NSArray *tileSources</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>All of the tile sources for a map view, ordered bottom to top.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/userLocation" title="userLocation"></a>
+	<h3 class="subsubtitle method-title">userLocation</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The annotation object representing the user’s current location. (read-only)</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, readonly) RMUserLocation *userLocation</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The annotation object representing the user’s current location. (read-only)</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/userLocationVisible" title="userLocationVisible"></a>
+	<h3 class="subsubtitle method-title">userLocationVisible</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A Boolean value indicating whether the device’s current location is visible in the map view. (read-only)</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, readonly, getter=isUserLocationVisible) BOOL userLocationVisible</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>A Boolean value indicating whether the device’s current location is visible in the map view. (read-only)</p>
+
+<p>This property uses the horizontal accuracy of the current location to determine whether the user’s location is visible. Thus, this property is <code>YES</code> if the specific coordinate is offscreen but the rectangle surrounding that coordinate (and defined by the horizontal accuracy value) is partially onscreen.</p>
+
+<p>If the user’s location cannot be determined, this property contains the value <code>NO</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/userTrackingMode" title="userTrackingMode"></a>
+	<h3 class="subsubtitle method-title">userTrackingMode</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The mode used to track the user location.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) RMUserTrackingMode userTrackingMode</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The mode used to track the user location.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/visibleAnnotations" title="visibleAnnotations"></a>
+	<h3 class="subsubtitle method-title">visibleAnnotations</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The <a href="#//api/name/annotations">annotations</a> currently visible on the map. May include <a href="#//api/name/annotations">annotations</a> currently shown in clusters.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, weak, readonly) NSArray *visibleAnnotations</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The <a href="#//api/name/annotations">annotations</a> currently visible on the map. May include <a href="#//api/name/annotations">annotations</a> currently shown in clusters.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/zoom" title="zoom"></a>
+	<h3 class="subsubtitle method-title">zoom</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The current zoom level of the map.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) float zoom</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The current zoom level of the map.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/zoomingInPivotsAroundCenter" title="zoomingInPivotsAroundCenter"></a>
+	<h3 class="subsubtitle method-title">zoomingInPivotsAroundCenter</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A Boolean value that determines whether double-tap zooms of the map always <a href="#//api/name/zoom">zoom</a> on the center of the map, or whether they <a href="#//api/name/zoom">zoom</a> on the center of the double-tap gesture. The default value is <code>NO</code>, which zooms on the gesture.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) BOOL zoomingInPivotsAroundCenter</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>A Boolean value that determines whether double-tap zooms of the map always <a href="#//api/name/zoom">zoom</a> on the center of the map, or whether they <a href="#//api/name/zoom">zoom</a> on the center of the double-tap gesture. The default value is <code>NO</code>, which zooms on the gesture.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Instance Methods" name="instance_methods"></a>
+						<h2 class="subtitle subtitle-methods">Instance Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/addAnnotation:" title="addAnnotation:"></a>
+	<h3 class="subsubtitle method-title">addAnnotation:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Add an annotation to the map.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)addAnnotation:(RMAnnotation *)<em>annotation</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>annotation</em></dt>
+			<dd><p>The annotation to add.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Add an annotation to the map.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/addAnnotations:" title="addAnnotations:"></a>
+	<h3 class="subsubtitle method-title">addAnnotations:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Add one or more <a href="#//api/name/annotations">annotations</a> to the map.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)addAnnotations:(NSArray *)<em>annotations</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>annotations</em></dt>
+			<dd><p>An array containing the <a href="#//api/name/annotations">annotations</a> to add to the map.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Add one or more <a href="#//api/name/annotations">annotations</a> to the map.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/addTileSource:" title="addTileSource:"></a>
+	<h3 class="subsubtitle method-title">addTileSource:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Add a tile source to a map view above the current tile sources.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)addTileSource:(id&lt;RMTileSource&gt;)<em>tileSource</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>tileSource</em></dt>
+			<dd><p>The tile source to add.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Add a tile source to a map view above the current tile sources.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/addTileSource:atIndex:" title="addTileSource:atIndex:"></a>
+	<h3 class="subsubtitle method-title">addTileSource:atIndex:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Add a tile source to a map view at a given index.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)addTileSource:(id&lt;RMTileSource&gt;)<em>tileSource</em> atIndex:(NSUInteger)<em>index</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>tileSource</em></dt>
+			<dd><p>The tile source to add.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>index</em></dt>
+			<dd><p>The index at which to add the tile source. A value of zero adds the tile source below all other tile sources.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Add a tile source to a map view at a given index.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/coordinateToPixel:" title="coordinateToPixel:"></a>
+	<h3 class="subsubtitle method-title">coordinateToPixel:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Convert a coordinate to a screen location.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (CGPoint)coordinateToPixel:(CLLocationCoordinate2D)<em>coordinate</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>coordinate</em></dt>
+			<dd><p>The coordinate to convert.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The equivalent screen location.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Convert a coordinate to a screen location.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/coordinateToProjectedPoint:" title="coordinateToProjectedPoint:"></a>
+	<h3 class="subsubtitle method-title">coordinateToProjectedPoint:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Convert a coordiante to a projected point.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (RMProjectedPoint)coordinateToProjectedPoint:(CLLocationCoordinate2D)<em>coordinate</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>coordinate</em></dt>
+			<dd><p>A coordinate to convert.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The equivalent projected point.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Convert a coordiante to a projected point.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/deselectAnnotation:animated:" title="deselectAnnotation:animated:"></a>
+	<h3 class="subsubtitle method-title">deselectAnnotation:animated:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Deselects the specified annotation and hides its callout view.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)deselectAnnotation:(RMAnnotation *)<em>annotation</em> animated:(BOOL)<em>animated</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>annotation</em></dt>
+			<dd><p>The annotation object to deselect.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>animated</em></dt>
+			<dd><p>If <code>YES</code>, the callout view is animated offscreen.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Deselects the specified annotation and hides its callout view.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/initWithFrame:" title="initWithFrame:"></a>
+	<h3 class="subsubtitle method-title">initWithFrame:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Initialize a map view with a given frame. A default watermarked Mapbox map tile source will be used.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (id)initWithFrame:(CGRect)<em>frame</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>frame</em></dt>
+			<dd><p>The frame with which to initialize the map view.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An initialized map view, or <code>nil</code> if the map view was unable to be initialized.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Initialize a map view with a given frame. A default watermarked Mapbox map tile source will be used.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/initWithFrame:andTilesource:" title="initWithFrame:andTilesource:"></a>
+	<h3 class="subsubtitle method-title">initWithFrame:andTilesource:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Initialize a map view with a given frame and tile source.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (id)initWithFrame:(CGRect)<em>frame</em> andTilesource:(id&lt;RMTileSource&gt;)<em>newTilesource</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>frame</em></dt>
+			<dd><p>The frame with which to initialize the map view.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>newTilesource</em></dt>
+			<dd><p>The tile source to use for the map tiles.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An initialized map view, or <code>nil</code> if the map view was unable to be initialized.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Initialize a map view with a given frame and tile source.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/initWithFrame:andTilesource:centerCoordinate:zoomLevel:maxZoomLevel:minZoomLevel:backgroundImage:" title="initWithFrame:andTilesource:centerCoordinate:zoomLevel:maxZoomLevel:minZoomLevel:backgroundImage:"></a>
+	<h3 class="subsubtitle method-title">initWithFrame:andTilesource:centerCoordinate:zoomLevel:maxZoomLevel:minZoomLevel:backgroundImage:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Designated initializer. Initialize a map view.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (id)initWithFrame:(CGRect)<em>frame</em> andTilesource:(id&lt;RMTileSource&gt;)<em>newTilesource</em> centerCoordinate:(CLLocationCoordinate2D)<em>initialCenterCoordinate</em> zoomLevel:(float)<em>initialTileSourceZoomLevel</em> maxZoomLevel:(float)<em>initialTileSourceMaxZoomLevel</em> minZoomLevel:(float)<em>initialTileSourceMinZoomLevel</em> backgroundImage:(UIImage *)<em>backgroundImage</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>frame</em></dt>
+			<dd><p>The map view&rsquo;s frame.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>newTilesource</em></dt>
+			<dd><p>A tile source to use for the map tiles.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>initialCenterCoordinate</em></dt>
+			<dd><p>The starting map center coordinate.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>initialTileSourceZoomLevel</em></dt>
+			<dd><p>The starting map <a href="#//api/name/zoom">zoom</a> level, clamped to the <a href="#//api/name/zoom">zoom</a> levels supported by the tile source(s).</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>initialTileSourceMaxZoomLevel</em></dt>
+			<dd><p>The maximum <a href="#//api/name/zoom">zoom</a> level allowed by the map view, clamped to the <a href="#//api/name/zoom">zoom</a> levels supported by the tile source(s).</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>initialTileSourceMinZoomLevel</em></dt>
+			<dd><p>The minimum <a href="#//api/name/zoom">zoom</a> level allowed by the map view, clamped to the <a href="#//api/name/zoom">zoom</a> levels supported by the tile source(s).</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>backgroundImage</em></dt>
+			<dd><p>A custom background image to use behind the map instead of the default gridded tile background that moves with the map.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An initialized map view, or <code>nil</code> if a map view was unable to be initialized.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Designated initializer. Initialize a map view.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/latitudeLongitudeBoundingBox" title="latitudeLongitudeBoundingBox"></a>
+	<h3 class="subsubtitle method-title">latitudeLongitudeBoundingBox</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The smallest bounding box containing the entire map view.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (RMSphericalTrapezium)latitudeLongitudeBoundingBox</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The smallest bounding box containing the entire map view.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/latitudeLongitudeBoundingBoxFor:" title="latitudeLongitudeBoundingBoxFor:"></a>
+	<h3 class="subsubtitle method-title">latitudeLongitudeBoundingBoxFor:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The smallest bounding box containing a rectangular region of the map view.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (RMSphericalTrapezium)latitudeLongitudeBoundingBoxFor:(CGRect)<em>rect</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>rect</em></dt>
+			<dd><p>A rectangular region.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The smallest bounding box containing a rectangular region of the map view.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/latitudeLongitudeBoundingBoxForTile:" title="latitudeLongitudeBoundingBoxForTile:"></a>
+	<h3 class="subsubtitle method-title">latitudeLongitudeBoundingBoxForTile:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Return the bounding box for a given map tile.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (RMSphericalTrapezium)latitudeLongitudeBoundingBoxForTile:(RMTile)<em>aTile</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>aTile</em></dt>
+			<dd><p>A map tile.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The bounding box for the tile in the current projection.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Return the bounding box for a given map tile.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/mapPositionForAnnotation:" title="mapPositionForAnnotation:"></a>
+	<h3 class="subsubtitle method-title">mapPositionForAnnotation:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The relative map position for a given annotation.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (CGPoint)mapPositionForAnnotation:(RMAnnotation *)<em>annotation</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>annotation</em></dt>
+			<dd><p>The annotation for which to return the current position.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The screen position of the annotation.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The relative map position for a given annotation.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/moveBy:" title="moveBy:"></a>
+	<h3 class="subsubtitle method-title">moveBy:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Move the map center by a given delta.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)moveBy:(CGSize)<em>delta</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>delta</em></dt>
+			<dd><p>A <code>CGSize</code> by which to move the map center.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Move the map center by a given delta.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/moveTileSourceAtIndex:toIndex:" title="moveTileSourceAtIndex:toIndex:"></a>
+	<h3 class="subsubtitle method-title">moveTileSourceAtIndex:toIndex:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Move the tile source at one index to another index.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)moveTileSourceAtIndex:(NSUInteger)<em>fromIndex</em> toIndex:(NSUInteger)<em>toIndex</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>fromIndex</em></dt>
+			<dd><p>The index of the tile source to move.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>toIndex</em></dt>
+			<dd><p>The destination index for the tile source.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Move the tile source at one index to another index.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/pixelToCoordinate:" title="pixelToCoordinate:"></a>
+	<h3 class="subsubtitle method-title">pixelToCoordinate:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Convert a screen location to a coordinate.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (CLLocationCoordinate2D)pixelToCoordinate:(CGPoint)<em>pixelCoordinate</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>pixelCoordinate</em></dt>
+			<dd><p>A screen location to convert.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The equivalent coordinate.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Convert a screen location to a coordinate.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/pixelToProjectedPoint:" title="pixelToProjectedPoint:"></a>
+	<h3 class="subsubtitle method-title">pixelToProjectedPoint:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Convert a screen location to a projected point.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (RMProjectedPoint)pixelToProjectedPoint:(CGPoint)<em>pixelCoordinate</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>pixelCoordinate</em></dt>
+			<dd><p>A screen location to convert.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The equivalent projected point.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Convert a screen location to a projected point.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/projectedPointToCoordinate:" title="projectedPointToCoordinate:"></a>
+	<h3 class="subsubtitle method-title">projectedPointToCoordinate:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Convert a projected point to a coordinate.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (CLLocationCoordinate2D)projectedPointToCoordinate:(RMProjectedPoint)<em>projectedPoint</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>projectedPoint</em></dt>
+			<dd><p>A projected point to convert.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The equivalent coordinate.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Convert a projected point to a coordinate.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/projectedPointToPixel:" title="projectedPointToPixel:"></a>
+	<h3 class="subsubtitle method-title">projectedPointToPixel:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Convert a projected point to a screen location.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (CGPoint)projectedPointToPixel:(RMProjectedPoint)<em>projectedPoint</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>projectedPoint</em></dt>
+			<dd><p>The projected point to convert.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The equivalent screen location.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Convert a projected point to a screen location.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/reloadTileSource:" title="reloadTileSource:"></a>
+	<h3 class="subsubtitle method-title">reloadTileSource:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Reload the tiles for a given tile source.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)reloadTileSource:(id&lt;RMTileSource&gt;)<em>tileSource</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>tileSource</em></dt>
+			<dd><p>The tile source to reload.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Reload the tiles for a given tile source.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/reloadTileSourceAtIndex:" title="reloadTileSourceAtIndex:"></a>
+	<h3 class="subsubtitle method-title">reloadTileSourceAtIndex:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Reload the tiles for a tile source at a given index.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)reloadTileSourceAtIndex:(NSUInteger)<em>index</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>index</em></dt>
+			<dd><p>The index of the tile source to reload.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Reload the tiles for a tile source at a given index.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/removeAllAnnotations" title="removeAllAnnotations"></a>
+	<h3 class="subsubtitle method-title">removeAllAnnotations</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Remove all <a href="#//api/name/annotations">annotations</a> from the map. This does not remove user location <a href="#//api/name/annotations">annotations</a>, if any.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)removeAllAnnotations</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Remove all <a href="#//api/name/annotations">annotations</a> from the map. This does not remove user location <a href="#//api/name/annotations">annotations</a>, if any.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/removeAllCachedImages" title="removeAllCachedImages"></a>
+	<h3 class="subsubtitle method-title">removeAllCachedImages</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Clear all tile images from the caching system.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)removeAllCachedImages</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Clear all tile images from the caching system.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/removeAnnotation:" title="removeAnnotation:"></a>
+	<h3 class="subsubtitle method-title">removeAnnotation:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Remove an annotation from the map.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)removeAnnotation:(RMAnnotation *)<em>annotation</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>annotation</em></dt>
+			<dd><p>The annotation to remove.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Remove an annotation from the map.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/removeAnnotations:" title="removeAnnotations:"></a>
+	<h3 class="subsubtitle method-title">removeAnnotations:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Remove one or more <a href="#//api/name/annotations">annotations</a> from the map.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)removeAnnotations:(NSArray *)<em>annotations</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>annotations</em></dt>
+			<dd><p>An array containing the <a href="#//api/name/annotations">annotations</a> to remove from the map.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Remove one or more <a href="#//api/name/annotations">annotations</a> from the map.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/removeTileSource:" title="removeTileSource:"></a>
+	<h3 class="subsubtitle method-title">removeTileSource:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Remove a tile source from the map view.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)removeTileSource:(id&lt;RMTileSource&gt;)<em>tileSource</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>tileSource</em></dt>
+			<dd><p>The tile source to remove.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Remove a tile source from the map view.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/removeTileSourceAtIndex:" title="removeTileSourceAtIndex:"></a>
+	<h3 class="subsubtitle method-title">removeTileSourceAtIndex:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Remove the tile source at a given index from the map view.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)removeTileSourceAtIndex:(NSUInteger)<em>index</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>index</em></dt>
+			<dd><p>The index of the tile source to remove.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Remove the tile source at a given index from the map view.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/selectAnnotation:animated:" title="selectAnnotation:animated:"></a>
+	<h3 class="subsubtitle method-title">selectAnnotation:animated:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Selects the specified annotation and displays a callout view for it.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)selectAnnotation:(RMAnnotation *)<em>annotation</em> animated:(BOOL)<em>animated</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>annotation</em></dt>
+			<dd><p>The annotation object to select.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>animated</em></dt>
+			<dd><p>If <code>YES</code>, the callout view is animated into position.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Selects the specified annotation and displays a callout view for it.</p>
+
+<p>If the specified annotation is not onscreen, and therefore does not have an associated annotation layer, this method has no effect.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/setAlpha:forTileSource:" title="setAlpha:forTileSource:"></a>
+	<h3 class="subsubtitle method-title">setAlpha:forTileSource:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Change a tile source&rsquo;s alpha value.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)setAlpha:(CGFloat)<em>alpha</em> forTileSource:(id&lt;RMTileSource&gt;)<em>tileSource</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>alpha</em></dt>
+			<dd><p>The desired alpha value.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>tileSource</em></dt>
+			<dd><p>The tile source to change.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Change a tile source&rsquo;s alpha value.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/setAlpha:forTileSourceAtIndex:" title="setAlpha:forTileSourceAtIndex:"></a>
+	<h3 class="subsubtitle method-title">setAlpha:forTileSourceAtIndex:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Change the alpha value of a tile source at a given index.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)setAlpha:(CGFloat)<em>alpha</em> forTileSourceAtIndex:(NSUInteger)<em>index</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>alpha</em></dt>
+			<dd><p>The desired alpha value.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>index</em></dt>
+			<dd><p>The index of the tile source to change.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Change the alpha value of a tile source at a given index.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/setBackgroundImage:" title="setBackgroundImage:"></a>
+	<h3 class="subsubtitle method-title">setBackgroundImage:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A custom image to use behind the map tiles. The default behavior is to show the default <a href="#//api/name/backgroundView"><code>backgroundView</code></a> and not a static image.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)setBackgroundImage:(UIImage *)<em>backgroundImage</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>backgroundImage</em></dt>
+			<dd><p>The image to use.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>A custom image to use behind the map tiles. The default behavior is to show the default <a href="#//api/name/backgroundView"><code>backgroundView</code></a> and not a static image.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/setCenterCoordinate:animated:" title="setCenterCoordinate:animated:"></a>
+	<h3 class="subsubtitle method-title">setCenterCoordinate:animated:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Set the map center to a given coordinate.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)setCenterCoordinate:(CLLocationCoordinate2D)<em>coordinate</em> animated:(BOOL)<em>animated</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>coordinate</em></dt>
+			<dd><p>A coordinate to set as the map center.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>animated</em></dt>
+			<dd><p>Whether to animate the change to the map center.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Set the map center to a given coordinate.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/setCenterProjectedPoint:animated:" title="setCenterProjectedPoint:animated:"></a>
+	<h3 class="subsubtitle method-title">setCenterProjectedPoint:animated:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Set the map center to a given projected point.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)setCenterProjectedPoint:(RMProjectedPoint)<em>aPoint</em> animated:(BOOL)<em>animated</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>aPoint</em></dt>
+			<dd><p>A projected point to set as the map center.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>animated</em></dt>
+			<dd><p>Whether to animate the change to the map center.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Set the map center to a given projected point.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/setConstraintsSouthWest:northEast:" title="setConstraintsSouthWest:northEast:"></a>
+	<h3 class="subsubtitle method-title">setConstraintsSouthWest:northEast:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Contrain zooming and panning of the map view to a given coordinate boundary.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)setConstraintsSouthWest:(CLLocationCoordinate2D)<em>southWest</em> northEast:(CLLocationCoordinate2D)<em>northEast</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>southWest</em></dt>
+			<dd><p>The southwest point to constrain to.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>northEast</em></dt>
+			<dd><p>The northeast point to constrain to.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Contrain zooming and panning of the map view to a given coordinate boundary.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/setHidden:forTileSource:" title="setHidden:forTileSource:"></a>
+	<h3 class="subsubtitle method-title">setHidden:forTileSource:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Hide or show a tile source.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)setHidden:(BOOL)<em>isHidden</em> forTileSource:(id&lt;RMTileSource&gt;)<em>tileSource</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>isHidden</em></dt>
+			<dd><p>A Boolean indicating whether to hide the tile source or not.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>tileSource</em></dt>
+			<dd><p>The tile source to hide or show.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Hide or show a tile source.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/setHidden:forTileSourceAtIndex:" title="setHidden:forTileSourceAtIndex:"></a>
+	<h3 class="subsubtitle method-title">setHidden:forTileSourceAtIndex:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Hide or show a tile source at a given index.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)setHidden:(BOOL)<em>isHidden</em> forTileSourceAtIndex:(NSUInteger)<em>index</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>isHidden</em></dt>
+			<dd><p>A Boolean indicating whether to hide the tile source or not.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>index</em></dt>
+			<dd><p>The index of the tile source to hide or show.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Hide or show a tile source at a given index.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/setUserTrackingMode:animated:" title="setUserTrackingMode:animated:"></a>
+	<h3 class="subsubtitle method-title">setUserTrackingMode:animated:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Set the mode used to track the user location.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)setUserTrackingMode:(RMUserTrackingMode)<em>mode</em> animated:(BOOL)<em>animated</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>mode</em></dt>
+			<dd><p>The mode used to track the user location.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>animated</em></dt>
+			<dd><p>Whether changes to the map center or rotation should be animated when the mode is changed.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Set the mode used to track the user location.</p>
+
+<p>Setting the tracking mode to <code>RMUserTrackingModeFollow</code> or <code>RMUserTrackingModeFollowWithHeading</code> causes the map view to center the map on that location and begin tracking the user’s location. If the map is zoomed out, the map view automatically zooms in on the user’s location, effectively changing the current visible region.</p>
+
+<p>On iOS 8 and above, your app must specify a value for <code>NSLocationWhenInUseUsageDescription</code> in its <code>Info.plist</code> to satisfy the requirements of the underlying Core Location framework when tracking the user location.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/setZoom:animated:" title="setZoom:animated:"></a>
+	<h3 class="subsubtitle method-title">setZoom:animated:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Set <a href="#//api/name/zoom">zoom</a> level, optionally with an animation.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)setZoom:(float)<em>newZoom</em> animated:(BOOL)<em>animated</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>newZoom</em></dt>
+			<dd><p>The desired <a href="#//api/name/zoom">zoom</a> level.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>animated</em></dt>
+			<dd><p>Whether to animate the map change.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Set <a href="#//api/name/zoom">zoom</a> level, optionally with an animation.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/setZoom:atCoordinate:animated:" title="setZoom:atCoordinate:animated:"></a>
+	<h3 class="subsubtitle method-title">setZoom:atCoordinate:animated:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Set both <a href="#//api/name/zoom">zoom</a> level and center coordinate at the same time, optionally with an animation.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)setZoom:(float)<em>newZoom</em> atCoordinate:(CLLocationCoordinate2D)<em>newCenter</em> animated:(BOOL)<em>animated</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>newZoom</em></dt>
+			<dd><p>The desired <a href="#//api/name/zoom">zoom</a> level.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>newCenter</em></dt>
+			<dd><p>The desired center coordinate.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>animated</em></dt>
+			<dd><p>Whether to animate the map change.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Set both <a href="#//api/name/zoom">zoom</a> level and center coordinate at the same time, optionally with an animation.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/takeSnapshot" title="takeSnapshot"></a>
+	<h3 class="subsubtitle method-title">takeSnapshot</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Take a snapshot of the map view.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (UIImage *)takeSnapshot</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An image depicting the map view.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Take a snapshot of the map view.</p>
+
+<p>By default, the overlay containing any visible <a href="#//api/name/annotations">annotations</a> is also captured.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/takeSnapshotAndIncludeOverlay:" title="takeSnapshotAndIncludeOverlay:"></a>
+	<h3 class="subsubtitle method-title">takeSnapshotAndIncludeOverlay:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Take a snapshot of the map view.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (UIImage *)takeSnapshotAndIncludeOverlay:(BOOL)<em>includeOverlay</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>includeOverlay</em></dt>
+			<dd><p>Whether to include the overlay containing any visible <a href="#//api/name/annotations">annotations</a>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An image depicting the map view.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Take a snapshot of the map view.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/zoomByFactor:near:animated:" title="zoomByFactor:near:animated:"></a>
+	<h3 class="subsubtitle method-title">zoomByFactor:near:animated:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Zoom the map by a given factor near a certain point.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)zoomByFactor:(float)<em>zoomFactor</em> near:(CGPoint)<em>center</em> animated:(BOOL)<em>animated</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>zoomFactor</em></dt>
+			<dd><p>The factor by which to <a href="#//api/name/zoom">zoom</a> the map.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>center</em></dt>
+			<dd><p>The point at which to <a href="#//api/name/zoom">zoom</a> the map.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>animated</em></dt>
+			<dd><p>Whether to animate the <a href="#//api/name/zoom">zoom</a>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Zoom the map by a given factor near a certain point.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/zoomInToNextNativeZoomAt:animated:" title="zoomInToNextNativeZoomAt:animated:"></a>
+	<h3 class="subsubtitle method-title">zoomInToNextNativeZoomAt:animated:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Zoom the map in at the next integral <a href="#//api/name/zoom">zoom</a> level near a certain point.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)zoomInToNextNativeZoomAt:(CGPoint)<em>pivot</em> animated:(BOOL)<em>animated</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>pivot</em></dt>
+			<dd><p>The point at which to <a href="#//api/name/zoom">zoom</a> the map.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>animated</em></dt>
+			<dd><p>Whether to animate the <a href="#//api/name/zoom">zoom</a>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Zoom the map in at the next integral <a href="#//api/name/zoom">zoom</a> level near a certain point.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/zoomOutToNextNativeZoomAt:animated:" title="zoomOutToNextNativeZoomAt:animated:"></a>
+	<h3 class="subsubtitle method-title">zoomOutToNextNativeZoomAt:animated:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Zoom the map out at the next integral <a href="#//api/name/zoom">zoom</a> level near a certain point.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)zoomOutToNextNativeZoomAt:(CGPoint)<em>pivot</em> animated:(BOOL)<em>animated</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>pivot</em></dt>
+			<dd><p>The point at which to <a href="#//api/name/zoom">zoom</a> the map.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>animated</em></dt>
+			<dd><p>Whether to animate the <a href="#//api/name/zoom">zoom</a>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Zoom the map out at the next integral <a href="#//api/name/zoom">zoom</a> level near a certain point.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/zoomWithLatitudeLongitudeBoundsSouthWest:northEast:animated:" title="zoomWithLatitudeLongitudeBoundsSouthWest:northEast:animated:"></a>
+	<h3 class="subsubtitle method-title">zoomWithLatitudeLongitudeBoundsSouthWest:northEast:animated:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Zoom the map to a given latitude and longitude bounds.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)zoomWithLatitudeLongitudeBoundsSouthWest:(CLLocationCoordinate2D)<em>southWest</em> northEast:(CLLocationCoordinate2D)<em>northEast</em> animated:(BOOL)<em>animated</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>southWest</em></dt>
+			<dd><p>The southwest point to <a href="#//api/name/zoom">zoom</a> to.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>northEast</em></dt>
+			<dd><p>The northeast point to <a href="#//api/name/zoom">zoom</a> to.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>animated</em></dt>
+			<dd><p>Whether to animate the <a href="#//api/name/zoom">zoom</a>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Zoom the map to a given latitude and longitude bounds.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapView.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+                    
+                    
+				</div>
+				<div class="main-navigation navigation-bottom">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="footer">
+					<hr />
+					<div class="footer-copyright">
+						<p><span class="copyright">&copy; 2015 Mapbox. All rights reserved. (Last updated: 2015-01-28)</span><br />
+						
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2 (build 963)</a>.</span></p>
+						
+					</div>
+				</div>
+			</div>
+		</article>
+		<script type="text/javascript">
+			function jumpToChange()
+			{
+				window.location.hash = this.options[this.selectedIndex].value;
+			}
+			
+			function toggleTOC()
+			{
+				var contents = document.getElementById('contents');
+				var tocContainer = document.getElementById('tocContainer');
+				
+				if (this.getAttribute('class') == 'open')
+				{
+					this.setAttribute('class', '');
+					contents.setAttribute('class', '');
+					tocContainer.setAttribute('class', '');
+					
+					window.name = "hideTOC";
+				}
+				else
+				{
+					this.setAttribute('class', 'open');
+					contents.setAttribute('class', 'isShowingTOC');
+					tocContainer.setAttribute('class', 'isShowingTOC');
+					
+					window.name = "";
+				}
+				return false;
+			}
+			
+			function toggleTOCEntryChildren(e)
+			{
+				e.stopPropagation();
+				var currentClass = this.getAttribute('class');
+				if (currentClass == 'children') {
+					this.setAttribute('class', 'children open');
+				}
+				else if (currentClass == 'children open') {
+					this.setAttribute('class', 'children');
+				}
+				return false;
+			}
+			
+			function tocEntryClick(e)
+			{
+				e.stopPropagation();
+				return true;
+			}
+			
+			function init()
+			{
+				var selectElement = document.getElementById('jumpTo');
+				selectElement.addEventListener('change', jumpToChange, false);
+				
+				var tocButton = document.getElementById('table_of_contents');
+				tocButton.addEventListener('click', toggleTOC, false);
+				
+				var taskTreeItem = document.getElementById('task_treeitem');
+				if (taskTreeItem.getElementsByTagName('li').length > 0)
+				{
+					taskTreeItem.setAttribute('class', 'children');
+					taskTreeItem.firstChild.setAttribute('class', 'disclosure');
+				}
+				
+				var tocList = document.getElementById('toc');
+				
+				var tocEntries = tocList.getElementsByTagName('li');
+				for (var i = 0; i < tocEntries.length; i++) {
+					tocEntries[i].addEventListener('click', toggleTOCEntryChildren, false);
+				}
+				
+				var tocLinks = tocList.getElementsByTagName('a');
+				for (var i = 0; i < tocLinks.length; i++) {
+					tocLinks[i].addEventListener('click', tocEntryClick, false);
+				}
+				
+				if (window.name == "hideTOC") {
+					toggleTOC.call(tocButton);
+				}
+			}
+			
+			window.onload = init;
+			
+			// If showing in Xcode, hide the TOC and Header
+			if (navigator.userAgent.match(/xcode/i)) {
+				document.getElementById("contents").className = "hideInXcode"
+				document.getElementById("tocContainer").className = "hideInXcode"
+				document.getElementById("top_header").className = "hideInXcode"
+			}
+			
+		</script>
+	</body>
+</html>

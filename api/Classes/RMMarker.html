@@ -1,0 +1,1552 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="html/html; charset=utf-8" />
+		<title>RMMarker Class Reference</title>
+		<meta id="xcode-display" name="xcode-display" content="render"/>
+		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
+		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
+		<meta name="generator" content="appledoc 2.2 (build 963)" />
+	</head>
+	<body>
+		<header id="top_header">
+			<div id="library" class="hideInXcode">
+				<h1><a id="libraryTitle" href="../index.html">Mapbox 1.5.1 </a></h1>
+				<a id="developerHome" href="../index.html">Mapbox</a>
+			</div>
+			
+			<div id="title" role="banner">
+				<h1 class="hideInXcode">RMMarker Class Reference</h1>
+			</div>
+			<ul id="headerButtons" role="toolbar">
+				<li id="toc_button">
+					<button aria-label="Show Table of Contents" role="checkbox" class="open" id="table_of_contents"><span class="disclosure"></span>Table of Contents</button>
+				</li>
+				<li id="jumpto_button" role="navigation">
+					<select id="jumpTo">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+	
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+	
+	
+	
+	<option value="properties">Properties</option>
+	
+	<option value="//api/name/label">&nbsp;&nbsp;&nbsp;&nbsp;label</option>
+	
+	<option value="//api/name/textBackgroundColor">&nbsp;&nbsp;&nbsp;&nbsp;textBackgroundColor</option>
+	
+	<option value="//api/name/textForegroundColor">&nbsp;&nbsp;&nbsp;&nbsp;textForegroundColor</option>
+	
+	
+	
+	
+	<option value="class_methods">Class Methods</option>
+	
+	<option value="//api/name/clearCachedMapboxMarkers">&nbsp;&nbsp;&nbsp;&nbsp;+ clearCachedMapboxMarkers</option>
+	
+	<option value="//api/name/defaultFont">&nbsp;&nbsp;&nbsp;&nbsp;+ defaultFont</option>
+	
+	
+	
+	
+	<option value="instance_methods">Instance Methods</option>
+	
+	<option value="//api/name/changeLabelUsingText:">&nbsp;&nbsp;&nbsp;&nbsp;- changeLabelUsingText:</option>
+	
+	<option value="//api/name/changeLabelUsingText:font:foregroundColor:backgroundColor:">&nbsp;&nbsp;&nbsp;&nbsp;- changeLabelUsingText:font:foregroundColor:backgroundColor:</option>
+	
+	<option value="//api/name/hideLabel">&nbsp;&nbsp;&nbsp;&nbsp;- hideLabel</option>
+	
+	<option value="//api/name/initWithMapboxMarkerImage">&nbsp;&nbsp;&nbsp;&nbsp;- initWithMapboxMarkerImage</option>
+	
+	<option value="//api/name/initWithMapboxMarkerImage:">&nbsp;&nbsp;&nbsp;&nbsp;- initWithMapboxMarkerImage:</option>
+	
+	<option value="//api/name/initWithMapboxMarkerImage:tintColor:">&nbsp;&nbsp;&nbsp;&nbsp;- initWithMapboxMarkerImage:tintColor:</option>
+	
+	<option value="//api/name/initWithMapboxMarkerImage:tintColor:size:">&nbsp;&nbsp;&nbsp;&nbsp;- initWithMapboxMarkerImage:tintColor:size:</option>
+	
+	<option value="//api/name/initWithMapboxMarkerImage:tintColorHex:">&nbsp;&nbsp;&nbsp;&nbsp;- initWithMapboxMarkerImage:tintColorHex:</option>
+	
+	<option value="//api/name/initWithMapboxMarkerImage:tintColorHex:sizeString:">&nbsp;&nbsp;&nbsp;&nbsp;- initWithMapboxMarkerImage:tintColorHex:sizeString:</option>
+	
+	<option value="//api/name/initWithUIImage:">&nbsp;&nbsp;&nbsp;&nbsp;- initWithUIImage:</option>
+	
+	<option value="//api/name/initWithUIImage:anchorPoint:">&nbsp;&nbsp;&nbsp;&nbsp;- initWithUIImage:anchorPoint:</option>
+	
+	<option value="//api/name/replaceUIImage:">&nbsp;&nbsp;&nbsp;&nbsp;- replaceUIImage:</option>
+	
+	<option value="//api/name/replaceUIImage:anchorPoint:">&nbsp;&nbsp;&nbsp;&nbsp;- replaceUIImage:anchorPoint:</option>
+	
+	<option value="//api/name/showLabel">&nbsp;&nbsp;&nbsp;&nbsp;- showLabel</option>
+	
+	<option value="//api/name/toggleLabel">&nbsp;&nbsp;&nbsp;&nbsp;- toggleLabel</option>
+	
+	
+	
+</select>
+				</li>
+			</ul>
+		</header>
+		<nav id="tocContainer" class="isShowingTOC">
+			<ul id="toc" role="tree">
+				
+<li role="treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#overview">Overview</a></span></li>
+
+
+
+
+<li role="treeitem" id="task_treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#tasks">Tasks</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Setting Label Properties">Setting Label Properties</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Creating Markers With Images">Creating Markers With Images</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Creating Markers Using Mapbox Images">Creating Markers Using Mapbox Images</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Altering Labels">Altering Labels</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Showing and Hiding Labels">Showing and Hiding Labels</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Altering Images">Altering Images</a></span></li>
+	
+</ul></li>
+
+
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#properties">Properties</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/label">label</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/textBackgroundColor">textBackgroundColor</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/textForegroundColor">textForegroundColor</a></span></li>
+	
+</ul></li>
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#class_methods">Class Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/clearCachedMapboxMarkers">clearCachedMapboxMarkers</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/defaultFont">defaultFont</a></span></li>
+	
+</ul></li>
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#instance_methods">Instance Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/changeLabelUsingText:">changeLabelUsingText:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/changeLabelUsingText:font:foregroundColor:backgroundColor:">changeLabelUsingText:font:foregroundColor:backgroundColor:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/hideLabel">hideLabel</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initWithMapboxMarkerImage">initWithMapboxMarkerImage</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initWithMapboxMarkerImage:">initWithMapboxMarkerImage:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initWithMapboxMarkerImage:tintColor:">initWithMapboxMarkerImage:tintColor:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initWithMapboxMarkerImage:tintColor:size:">initWithMapboxMarkerImage:tintColor:size:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initWithMapboxMarkerImage:tintColorHex:">initWithMapboxMarkerImage:tintColorHex:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initWithMapboxMarkerImage:tintColorHex:sizeString:">initWithMapboxMarkerImage:tintColorHex:sizeString:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initWithUIImage:">initWithUIImage:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initWithUIImage:anchorPoint:">initWithUIImage:anchorPoint:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/replaceUIImage:">replaceUIImage:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/replaceUIImage:anchorPoint:">replaceUIImage:anchorPoint:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/showLabel">showLabel</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/toggleLabel">toggleLabel</a></span></li>
+	
+</ul></li>
+
+
+			</ul>
+		</nav>
+		<article>
+			<div id="contents" class="isShowingTOC" role="main">
+				<a title="RMMarker Class Reference" name="top"></a>
+				<div class="main-navigation navigation-top">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="header">
+					<div class="section-header">
+						<h1 class="title title-header">RMMarker Class Reference</h1>
+					</div>		
+				</div>
+				<div id="container">	
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<td class="specification-title">Inherits from</td>
+	<td class="specification-value"><a href="../Classes/RMMapLayer.html">RMMapLayer</a> : CAScrollLayer</td>
+</tr><tr>
+	<td class="specification-title">Declared in</td>
+	<td class="specification-value">RMMarker.h</td>
+</tr>
+						</tbody></table></div>
+					
+                    
+                    
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p>An RMMarker object is used for simple point annotations on a map view, represented as a single image. RMMarker objects do not change in size when the map view zooms in or out, but instead stay the same size to consistently represent a point on the map view.</p>
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						<h2 class="subtitle subtitle-tasks">Tasks</h2>
+						
+						
+						<a title="Setting Label Properties" name="task_Setting Label Properties"></a>
+						<h3 class="subsubtitle task-title">Setting Label Properties</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/label">&nbsp;&nbsp;label</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/textForegroundColor">&nbsp;&nbsp;textForegroundColor</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/textBackgroundColor">&nbsp;&nbsp;textBackgroundColor</a></code>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/defaultFont">+&nbsp;defaultFont</a></code>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Creating Markers With Images" name="task_Creating Markers With Images"></a>
+						<h3 class="subsubtitle task-title">Creating Markers With Images</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/initWithUIImage:">&ndash;&nbsp;initWithUIImage:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/initWithUIImage:anchorPoint:">&ndash;&nbsp;initWithUIImage:anchorPoint:</a></code>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Creating Markers Using Mapbox Images" name="task_Creating Markers Using Mapbox Images"></a>
+						<h3 class="subsubtitle task-title">Creating Markers Using Mapbox Images</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/initWithMapboxMarkerImage">&ndash;&nbsp;initWithMapboxMarkerImage</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/initWithMapboxMarkerImage:">&ndash;&nbsp;initWithMapboxMarkerImage:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/initWithMapboxMarkerImage:tintColor:">&ndash;&nbsp;initWithMapboxMarkerImage:tintColor:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/initWithMapboxMarkerImage:tintColor:size:">&ndash;&nbsp;initWithMapboxMarkerImage:tintColor:size:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/initWithMapboxMarkerImage:tintColorHex:">&ndash;&nbsp;initWithMapboxMarkerImage:tintColorHex:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/initWithMapboxMarkerImage:tintColorHex:sizeString:">&ndash;&nbsp;initWithMapboxMarkerImage:tintColorHex:sizeString:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/clearCachedMapboxMarkers">+&nbsp;clearCachedMapboxMarkers</a></code>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Altering Labels" name="task_Altering Labels"></a>
+						<h3 class="subsubtitle task-title">Altering Labels</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/changeLabelUsingText:">&ndash;&nbsp;changeLabelUsingText:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/changeLabelUsingText:font:foregroundColor:backgroundColor:">&ndash;&nbsp;changeLabelUsingText:font:foregroundColor:backgroundColor:</a></code>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Showing and Hiding Labels" name="task_Showing and Hiding Labels"></a>
+						<h3 class="subsubtitle task-title">Showing and Hiding Labels</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/toggleLabel">&ndash;&nbsp;toggleLabel</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/showLabel">&ndash;&nbsp;showLabel</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/hideLabel">&ndash;&nbsp;hideLabel</a></code>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Altering Images" name="task_Altering Images"></a>
+						<h3 class="subsubtitle task-title">Altering Images</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/replaceUIImage:">&ndash;&nbsp;replaceUIImage:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/replaceUIImage:anchorPoint:">&ndash;&nbsp;replaceUIImage:anchorPoint:</a></code>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Properties" name="properties"></a>
+						<h2 class="subtitle subtitle-methods">Properties</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/label" title="label"></a>
+	<h3 class="subsubtitle method-title">label</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A custom label for the marker. The label is shown when first set.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) UIView *label</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>A custom label for the marker. The label is shown when first set.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMarker.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/textBackgroundColor" title="textBackgroundColor"></a>
+	<h3 class="subsubtitle method-title">textBackgroundColor</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The marker object&rsquo;s <a href="#//api/name/label">label</a> text background color. Defaults to clear.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) UIColor *textBackgroundColor</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The marker object&rsquo;s <a href="#//api/name/label">label</a> text background color. Defaults to clear.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMarker.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/textForegroundColor" title="textForegroundColor"></a>
+	<h3 class="subsubtitle method-title">textForegroundColor</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The marker object&rsquo;s <a href="#//api/name/label">label</a> text foreground color. Defaults to black.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) UIColor *textForegroundColor</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The marker object&rsquo;s <a href="#//api/name/label">label</a> text foreground color. Defaults to black.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMarker.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Class Methods" name="class_methods"></a>
+						<h2 class="subtitle subtitle-methods">Class Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/clearCachedMapboxMarkers" title="clearCachedMapboxMarkers"></a>
+	<h3 class="subsubtitle method-title">clearCachedMapboxMarkers</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Clears the local cache of Mapbox Marker images. Images are cached locally upon first use so that if the application goes offline, markers can still be used.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (void)clearCachedMapboxMarkers</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Clears the local cache of Mapbox Marker images. Images are cached locally upon first use so that if the application goes offline, markers can still be used.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMarker.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/defaultFont" title="defaultFont"></a>
+	<h3 class="subsubtitle method-title">defaultFont</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The font used for labels when another font is not explicitly requested. The default is the system font with size <code>15</code>.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (UIFont *)defaultFont</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The font used for labels when another font is not explicitly requested. The default is the system font with size <code>15</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMarker.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Instance Methods" name="instance_methods"></a>
+						<h2 class="subtitle subtitle-methods">Instance Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/changeLabelUsingText:" title="changeLabelUsingText:"></a>
+	<h3 class="subsubtitle method-title">changeLabelUsingText:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Changes the <a href="#//api/name/label">label</a> to a UILabel with the supplied text and default marker font and using the existing text foreground and background colors.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)changeLabelUsingText:(NSString *)<em>text</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>text</em></dt>
+			<dd><p>The text for the <a href="#//api/name/label">label</a>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Changes the <a href="#//api/name/label">label</a> to a UILabel with the supplied text and default marker font and using the existing text foreground and background colors.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMarker.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/changeLabelUsingText:font:foregroundColor:backgroundColor:" title="changeLabelUsingText:font:foregroundColor:backgroundColor:"></a>
+	<h3 class="subsubtitle method-title">changeLabelUsingText:font:foregroundColor:backgroundColor:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Changes the <a href="#//api/name/label">label</a> to a UILabel with the supplied text and font and using the given text foreground and background colors.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)changeLabelUsingText:(NSString *)<em>text</em> font:(UIFont *)<em>font</em> foregroundColor:(UIColor *)<em>textColor</em> backgroundColor:(UIColor *)<em>backgroundColor</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>text</em></dt>
+			<dd><p>The text for the <a href="#//api/name/label">label</a>.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>font</em></dt>
+			<dd><p>A font to use for the <a href="#//api/name/label">label</a> text.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>textColor</em></dt>
+			<dd><p>The color for the <a href="#//api/name/label">label</a> text.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>backgroundColor</em></dt>
+			<dd><p>The color for the <a href="#//api/name/label">label</a> background.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Changes the <a href="#//api/name/label">label</a> to a UILabel with the supplied text and font and using the given text foreground and background colors.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMarker.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/hideLabel" title="hideLabel"></a>
+	<h3 class="subsubtitle method-title">hideLabel</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Hide the marker&rsquo;s <a href="#//api/name/label">label</a>, if any.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)hideLabel</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Hide the marker&rsquo;s <a href="#//api/name/label">label</a>, if any.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMarker.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/initWithMapboxMarkerImage" title="initWithMapboxMarkerImage"></a>
+	<h3 class="subsubtitle method-title">initWithMapboxMarkerImage</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Initializes and returns a newly allocated marker object using a red, medium-sized star pin image.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (id)initWithMapboxMarkerImage</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Initializes and returns a newly allocated marker object using a red, medium-sized star pin image.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMarker.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/initWithMapboxMarkerImage:" title="initWithMapboxMarkerImage:"></a>
+	<h3 class="subsubtitle method-title">initWithMapboxMarkerImage:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Initializes and returns a newly allocated marker object using a red, medium-sized pin image and a given symbol name, e.g., <code>bus</code>.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (id)initWithMapboxMarkerImage:(NSString *)<em>symbolName</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>symbolName</em></dt>
+			<dd><p>A symbol name from the <a href="https://mapbox.com/maki/">Maki</a> icon set.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An initialized RMMarker layer.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Initializes and returns a newly allocated marker object using a red, medium-sized pin image and a given symbol name, e.g., <code>bus</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMarker.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/initWithMapboxMarkerImage:tintColor:" title="initWithMapboxMarkerImage:tintColor:"></a>
+	<h3 class="subsubtitle method-title">initWithMapboxMarkerImage:tintColor:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Initializes and returns a newly allocated marker object using a medium-sized pin image, a given symbol name, e.g., <code>bus</code>, and a given color.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (id)initWithMapboxMarkerImage:(NSString *)<em>symbolName</em> tintColor:(UIColor *)<em>color</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>symbolName</em></dt>
+			<dd><p>A symbol name from the <a href="https://mapbox.com/maki/">Maki</a> icon set.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>color</em></dt>
+			<dd><p>A color for the marker.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An initialized RMMarker layer.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Initializes and returns a newly allocated marker object using a medium-sized pin image, a given symbol name, e.g., <code>bus</code>, and a given color.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMarker.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/initWithMapboxMarkerImage:tintColor:size:" title="initWithMapboxMarkerImage:tintColor:size:"></a>
+	<h3 class="subsubtitle method-title">initWithMapboxMarkerImage:tintColor:size:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Initializes and returns a newly allocated marker object using a pin image, a given symbol name, e.g., <code>bus</code>, a given color, and a given size.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (id)initWithMapboxMarkerImage:(NSString *)<em>symbolName</em> tintColor:(UIColor *)<em>color</em> size:(RMMarkerMapboxImageSize)<em>size</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>symbolName</em></dt>
+			<dd><p>A symbol name from the <a href="https://mapbox.com/maki/">Maki</a> icon set.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>color</em></dt>
+			<dd><p>A color for the marker.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>size</em></dt>
+			<dd><p>A size for the marker.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An initialized RMMarker layer.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Initializes and returns a newly allocated marker object using a pin image, a given symbol name, e.g., <code>bus</code>, a given color, and a given size.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMarker.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/initWithMapboxMarkerImage:tintColorHex:" title="initWithMapboxMarkerImage:tintColorHex:"></a>
+	<h3 class="subsubtitle method-title">initWithMapboxMarkerImage:tintColorHex:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Initializes and returns a newly allocated marker object using a medium-sized pin image, a given symbol name, e.g., <code>bus</code>, and a given HTML hex color, e.g., <code>ff0000</code>.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (id)initWithMapboxMarkerImage:(NSString *)<em>symbolName</em> tintColorHex:(NSString *)<em>colorHex</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>symbolName</em></dt>
+			<dd><p>A symbol name from the <a href="https://mapbox.com/maki/">Maki</a> icon set.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>colorHex</em></dt>
+			<dd><p>A color for the marker specified as an HTML hex code.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An initialized RMMarker layer.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Initializes and returns a newly allocated marker object using a medium-sized pin image, a given symbol name, e.g., <code>bus</code>, and a given HTML hex color, e.g., <code>ff0000</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMarker.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/initWithMapboxMarkerImage:tintColorHex:sizeString:" title="initWithMapboxMarkerImage:tintColorHex:sizeString:"></a>
+	<h3 class="subsubtitle method-title">initWithMapboxMarkerImage:tintColorHex:sizeString:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Initializes and returns a newly allocated marker object using a pin image, a given symbol name, e.g., <code>bus</code>, a given HTML hex color, e.g., <code>ff0000</code>, and a given size, e.g., <code>large</code>.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (id)initWithMapboxMarkerImage:(NSString *)<em>symbolName</em> tintColorHex:(NSString *)<em>colorHex</em> sizeString:(NSString *)<em>sizeString</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>symbolName</em></dt>
+			<dd><p>A symbol name from the <a href="https://mapbox.com/maki/">Maki</a> icon set.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>colorHex</em></dt>
+			<dd><p>A color for the marker specified as an HTML hex code.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>sizeString</em></dt>
+			<dd><p>A size such as <code>small</code>, <code>medium</code>, or <code>large</code>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An initialized RMMarker layer.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Initializes and returns a newly allocated marker object using a pin image, a given symbol name, e.g., <code>bus</code>, a given HTML hex color, e.g., <code>ff0000</code>, and a given size, e.g., <code>large</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMarker.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/initWithUIImage:" title="initWithUIImage:"></a>
+	<h3 class="subsubtitle method-title">initWithUIImage:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Initializes and returns a newly allocated marker object using the specified image.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (id)initWithUIImage:(UIImage *)<em>image</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>image</em></dt>
+			<dd><p>An image to use for the marker.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Initializes and returns a newly allocated marker object using the specified image.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMarker.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/initWithUIImage:anchorPoint:" title="initWithUIImage:anchorPoint:"></a>
+	<h3 class="subsubtitle method-title">initWithUIImage:anchorPoint:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Initializes and returns a newly allocated marker object using the specified image and anchor point.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (id)initWithUIImage:(UIImage *)<em>image</em> anchorPoint:(CGPoint)<em>anchorPoint</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>image</em></dt>
+			<dd><p>An image to use for the marker.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>anchorPoint</em></dt>
+			<dd><p>A point representing a range from <code>0</code> to <code>1</code> in each of the height and width coordinate space, normalized to the size of the image, at which to place the image.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An initialized marker object.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Initializes and returns a newly allocated marker object using the specified image and anchor point.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMarker.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/replaceUIImage:" title="replaceUIImage:"></a>
+	<h3 class="subsubtitle method-title">replaceUIImage:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Replace the image for a marker.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)replaceUIImage:(UIImage *)<em>image</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>image</em></dt>
+			<dd><p>An image to use for the marker.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Replace the image for a marker.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMarker.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/replaceUIImage:anchorPoint:" title="replaceUIImage:anchorPoint:"></a>
+	<h3 class="subsubtitle method-title">replaceUIImage:anchorPoint:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Replace the image for a marker using a custom anchor point.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)replaceUIImage:(UIImage *)<em>image</em> anchorPoint:(CGPoint)<em>anchorPoint</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>image</em></dt>
+			<dd><p>An image to use for the marker.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>anchorPoint</em></dt>
+			<dd><p>A point representing a range from <code>0</code> to <code>1</code> in each of the height and width coordinate space, normalized to the size of the image, at which to place the image.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Replace the image for a marker using a custom anchor point.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMarker.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/showLabel" title="showLabel"></a>
+	<h3 class="subsubtitle method-title">showLabel</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Show the marker&rsquo;s <a href="#//api/name/label">label</a>, if any.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)showLabel</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Show the marker&rsquo;s <a href="#//api/name/label">label</a>, if any.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMarker.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/toggleLabel" title="toggleLabel"></a>
+	<h3 class="subsubtitle method-title">toggleLabel</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Toggle the display of the marker&rsquo;s <a href="#//api/name/label">label</a>, if any. If hidden, show and if shown, hide.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)toggleLabel</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Toggle the display of the marker&rsquo;s <a href="#//api/name/label">label</a>, if any. If hidden, show and if shown, hide.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMarker.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+                    
+                    
+				</div>
+				<div class="main-navigation navigation-bottom">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="footer">
+					<hr />
+					<div class="footer-copyright">
+						<p><span class="copyright">&copy; 2015 Mapbox. All rights reserved. (Last updated: 2015-01-28)</span><br />
+						
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2 (build 963)</a>.</span></p>
+						
+					</div>
+				</div>
+			</div>
+		</article>
+		<script type="text/javascript">
+			function jumpToChange()
+			{
+				window.location.hash = this.options[this.selectedIndex].value;
+			}
+			
+			function toggleTOC()
+			{
+				var contents = document.getElementById('contents');
+				var tocContainer = document.getElementById('tocContainer');
+				
+				if (this.getAttribute('class') == 'open')
+				{
+					this.setAttribute('class', '');
+					contents.setAttribute('class', '');
+					tocContainer.setAttribute('class', '');
+					
+					window.name = "hideTOC";
+				}
+				else
+				{
+					this.setAttribute('class', 'open');
+					contents.setAttribute('class', 'isShowingTOC');
+					tocContainer.setAttribute('class', 'isShowingTOC');
+					
+					window.name = "";
+				}
+				return false;
+			}
+			
+			function toggleTOCEntryChildren(e)
+			{
+				e.stopPropagation();
+				var currentClass = this.getAttribute('class');
+				if (currentClass == 'children') {
+					this.setAttribute('class', 'children open');
+				}
+				else if (currentClass == 'children open') {
+					this.setAttribute('class', 'children');
+				}
+				return false;
+			}
+			
+			function tocEntryClick(e)
+			{
+				e.stopPropagation();
+				return true;
+			}
+			
+			function init()
+			{
+				var selectElement = document.getElementById('jumpTo');
+				selectElement.addEventListener('change', jumpToChange, false);
+				
+				var tocButton = document.getElementById('table_of_contents');
+				tocButton.addEventListener('click', toggleTOC, false);
+				
+				var taskTreeItem = document.getElementById('task_treeitem');
+				if (taskTreeItem.getElementsByTagName('li').length > 0)
+				{
+					taskTreeItem.setAttribute('class', 'children');
+					taskTreeItem.firstChild.setAttribute('class', 'disclosure');
+				}
+				
+				var tocList = document.getElementById('toc');
+				
+				var tocEntries = tocList.getElementsByTagName('li');
+				for (var i = 0; i < tocEntries.length; i++) {
+					tocEntries[i].addEventListener('click', toggleTOCEntryChildren, false);
+				}
+				
+				var tocLinks = tocList.getElementsByTagName('a');
+				for (var i = 0; i < tocLinks.length; i++) {
+					tocLinks[i].addEventListener('click', tocEntryClick, false);
+				}
+				
+				if (window.name == "hideTOC") {
+					toggleTOC.call(tocButton);
+				}
+			}
+			
+			window.onload = init;
+			
+			// If showing in Xcode, hide the TOC and Header
+			if (navigator.userAgent.match(/xcode/i)) {
+				document.getElementById("contents").className = "hideInXcode"
+				document.getElementById("tocContainer").className = "hideInXcode"
+				document.getElementById("top_header").className = "hideInXcode"
+			}
+			
+		</script>
+	</body>
+</html>

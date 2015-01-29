@@ -1,0 +1,2220 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="html/html; charset=utf-8" />
+		<title>RMMapViewDelegate Protocol Reference</title>
+		<meta id="xcode-display" name="xcode-display" content="render"/>
+		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
+		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
+		<meta name="generator" content="appledoc 2.2 (build 963)" />
+	</head>
+	<body>
+		<header id="top_header">
+			<div id="library" class="hideInXcode">
+				<h1><a id="libraryTitle" href="../index.html">Mapbox 1.5.1 </a></h1>
+				<a id="developerHome" href="../index.html">Mapbox</a>
+			</div>
+			
+			<div id="title" role="banner">
+				<h1 class="hideInXcode">RMMapViewDelegate Protocol Reference</h1>
+			</div>
+			<ul id="headerButtons" role="toolbar">
+				<li id="toc_button">
+					<button aria-label="Show Table of Contents" role="checkbox" class="open" id="table_of_contents"><span class="disclosure"></span>Table of Contents</button>
+				</li>
+				<li id="jumpto_button" role="navigation">
+					<select id="jumpTo">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+	
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<option value="instance_methods">Instance Methods</option>
+	
+	<option value="//api/name/afterMapMove:byUser:">&nbsp;&nbsp;&nbsp;&nbsp;- afterMapMove:byUser:</option>
+	
+	<option value="//api/name/afterMapZoom:byUser:">&nbsp;&nbsp;&nbsp;&nbsp;- afterMapZoom:byUser:</option>
+	
+	<option value="//api/name/annotationSortingComparatorForMapView:">&nbsp;&nbsp;&nbsp;&nbsp;- annotationSortingComparatorForMapView:</option>
+	
+	<option value="//api/name/beforeMapMove:byUser:">&nbsp;&nbsp;&nbsp;&nbsp;- beforeMapMove:byUser:</option>
+	
+	<option value="//api/name/beforeMapZoom:byUser:">&nbsp;&nbsp;&nbsp;&nbsp;- beforeMapZoom:byUser:</option>
+	
+	<option value="//api/name/doubleTapOnAnnotation:onMap:">&nbsp;&nbsp;&nbsp;&nbsp;- doubleTapOnAnnotation:onMap:</option>
+	
+	<option value="//api/name/doubleTapOnLabelForAnnotation:onMap:">&nbsp;&nbsp;&nbsp;&nbsp;- doubleTapOnLabelForAnnotation:onMap:</option>
+	
+	<option value="//api/name/doubleTapOnMap:at:">&nbsp;&nbsp;&nbsp;&nbsp;- doubleTapOnMap:at:</option>
+	
+	<option value="//api/name/longPressOnAnnotation:onMap:">&nbsp;&nbsp;&nbsp;&nbsp;- longPressOnAnnotation:onMap:</option>
+	
+	<option value="//api/name/longPressOnMap:at:">&nbsp;&nbsp;&nbsp;&nbsp;- longPressOnMap:at:</option>
+	
+	<option value="//api/name/mapView:annotation:didChangeDragState:fromOldState:">&nbsp;&nbsp;&nbsp;&nbsp;- mapView:annotation:didChangeDragState:fromOldState:</option>
+	
+	<option value="//api/name/mapView:didChangeUserTrackingMode:animated:">&nbsp;&nbsp;&nbsp;&nbsp;- mapView:didChangeUserTrackingMode:animated:</option>
+	
+	<option value="//api/name/mapView:didDeselectAnnotation:">&nbsp;&nbsp;&nbsp;&nbsp;- mapView:didDeselectAnnotation:</option>
+	
+	<option value="//api/name/mapView:didFailToLocateUserWithError:">&nbsp;&nbsp;&nbsp;&nbsp;- mapView:didFailToLocateUserWithError:</option>
+	
+	<option value="//api/name/mapView:didHideLayerForAnnotation:">&nbsp;&nbsp;&nbsp;&nbsp;- mapView:didHideLayerForAnnotation:</option>
+	
+	<option value="//api/name/mapView:didSelectAnnotation:">&nbsp;&nbsp;&nbsp;&nbsp;- mapView:didSelectAnnotation:</option>
+	
+	<option value="//api/name/mapView:didUpdateUserLocation:">&nbsp;&nbsp;&nbsp;&nbsp;- mapView:didUpdateUserLocation:</option>
+	
+	<option value="//api/name/mapView:layerForAnnotation:">&nbsp;&nbsp;&nbsp;&nbsp;- mapView:layerForAnnotation:</option>
+	
+	<option value="//api/name/mapView:shouldDragAnnotation:">&nbsp;&nbsp;&nbsp;&nbsp;- mapView:shouldDragAnnotation:</option>
+	
+	<option value="//api/name/mapView:willHideLayerForAnnotation:">&nbsp;&nbsp;&nbsp;&nbsp;- mapView:willHideLayerForAnnotation:</option>
+	
+	<option value="//api/name/mapViewDidStopLocatingUser:">&nbsp;&nbsp;&nbsp;&nbsp;- mapViewDidStopLocatingUser:</option>
+	
+	<option value="//api/name/mapViewRegionDidChange:">&nbsp;&nbsp;&nbsp;&nbsp;- mapViewRegionDidChange:</option>
+	
+	<option value="//api/name/mapViewWillStartLocatingUser:">&nbsp;&nbsp;&nbsp;&nbsp;- mapViewWillStartLocatingUser:</option>
+	
+	<option value="//api/name/singleTapOnMap:at:">&nbsp;&nbsp;&nbsp;&nbsp;- singleTapOnMap:at:</option>
+	
+	<option value="//api/name/singleTapTwoFingersOnMap:at:">&nbsp;&nbsp;&nbsp;&nbsp;- singleTapTwoFingersOnMap:at:</option>
+	
+	<option value="//api/name/tapOnAnnotation:onMap:">&nbsp;&nbsp;&nbsp;&nbsp;- tapOnAnnotation:onMap:</option>
+	
+	<option value="//api/name/tapOnCalloutAccessoryControl:forAnnotation:onMap:">&nbsp;&nbsp;&nbsp;&nbsp;- tapOnCalloutAccessoryControl:forAnnotation:onMap:</option>
+	
+	<option value="//api/name/tapOnLabelForAnnotation:onMap:">&nbsp;&nbsp;&nbsp;&nbsp;- tapOnLabelForAnnotation:onMap:</option>
+	
+	
+	
+</select>
+				</li>
+			</ul>
+		</header>
+		<nav id="tocContainer" class="isShowingTOC">
+			<ul id="toc" role="tree">
+				
+<li role="treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#overview">Overview</a></span></li>
+
+
+
+
+<li role="treeitem" id="task_treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#tasks">Tasks</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Working With Annotation Layers">Working With Annotation Layers</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Responding to Map Position Changes">Responding to Map Position Changes</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Responding to Map Gestures">Responding to Map Gestures</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Responding to User Annotation Gestures">Responding to User Annotation Gestures</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Tracking the User Location">Tracking the User Location</a></span></li>
+	
+</ul></li>
+
+
+
+
+
+
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#instance_methods">Instance Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/afterMapMove:byUser:">afterMapMove:byUser:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/afterMapZoom:byUser:">afterMapZoom:byUser:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/annotationSortingComparatorForMapView:">annotationSortingComparatorForMapView:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/beforeMapMove:byUser:">beforeMapMove:byUser:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/beforeMapZoom:byUser:">beforeMapZoom:byUser:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/doubleTapOnAnnotation:onMap:">doubleTapOnAnnotation:onMap:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/doubleTapOnLabelForAnnotation:onMap:">doubleTapOnLabelForAnnotation:onMap:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/doubleTapOnMap:at:">doubleTapOnMap:at:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/longPressOnAnnotation:onMap:">longPressOnAnnotation:onMap:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/longPressOnMap:at:">longPressOnMap:at:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/mapView:annotation:didChangeDragState:fromOldState:">mapView:annotation:didChangeDragState:fromOldState:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/mapView:didChangeUserTrackingMode:animated:">mapView:didChangeUserTrackingMode:animated:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/mapView:didDeselectAnnotation:">mapView:didDeselectAnnotation:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/mapView:didFailToLocateUserWithError:">mapView:didFailToLocateUserWithError:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/mapView:didHideLayerForAnnotation:">mapView:didHideLayerForAnnotation:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/mapView:didSelectAnnotation:">mapView:didSelectAnnotation:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/mapView:didUpdateUserLocation:">mapView:didUpdateUserLocation:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/mapView:layerForAnnotation:">mapView:layerForAnnotation:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/mapView:shouldDragAnnotation:">mapView:shouldDragAnnotation:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/mapView:willHideLayerForAnnotation:">mapView:willHideLayerForAnnotation:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/mapViewDidStopLocatingUser:">mapViewDidStopLocatingUser:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/mapViewRegionDidChange:">mapViewRegionDidChange:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/mapViewWillStartLocatingUser:">mapViewWillStartLocatingUser:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/singleTapOnMap:at:">singleTapOnMap:at:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/singleTapTwoFingersOnMap:at:">singleTapTwoFingersOnMap:at:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/tapOnAnnotation:onMap:">tapOnAnnotation:onMap:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/tapOnCalloutAccessoryControl:forAnnotation:onMap:">tapOnCalloutAccessoryControl:forAnnotation:onMap:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/tapOnLabelForAnnotation:onMap:">tapOnLabelForAnnotation:onMap:</a></span></li>
+	
+</ul></li>
+
+
+			</ul>
+		</nav>
+		<article>
+			<div id="contents" class="isShowingTOC" role="main">
+				<a title="RMMapViewDelegate Protocol Reference" name="top"></a>
+				<div class="main-navigation navigation-top">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="header">
+					<div class="section-header">
+						<h1 class="title title-header">RMMapViewDelegate Protocol Reference</h1>
+					</div>		
+				</div>
+				<div id="container">	
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<td class="specification-title">Conforms to</td>
+	<td class="specification-value">NSObject</td>
+</tr><tr>
+	<td class="specification-title">Declared in</td>
+	<td class="specification-value">RMMapViewDelegate.h</td>
+</tr>
+						</tbody></table></div>
+					
+                    
+                    
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p>The RMMapViewDelegate protocol defines a set of optional methods that you can use to receive map-related update messages. Because many map operations require the <a href="../Classes/RMMapView.html">RMMapView</a> class to load data asynchronously, the map view calls these methods to notify your application when specific operations complete. The map view also uses these methods to request annotation layers and to manage interactions with those layers.</p>
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						<h2 class="subtitle subtitle-tasks">Tasks</h2>
+						
+						
+						<a title="Working With Annotation Layers" name="task_Working With Annotation Layers"></a>
+						<h3 class="subsubtitle task-title">Working With Annotation Layers</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/mapView:layerForAnnotation:">&ndash;&nbsp;mapView:layerForAnnotation:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/annotationSortingComparatorForMapView:">&ndash;&nbsp;annotationSortingComparatorForMapView:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/mapView:willHideLayerForAnnotation:">&ndash;&nbsp;mapView:willHideLayerForAnnotation:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/mapView:didHideLayerForAnnotation:">&ndash;&nbsp;mapView:didHideLayerForAnnotation:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/mapView:didSelectAnnotation:">&ndash;&nbsp;mapView:didSelectAnnotation:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/mapView:didDeselectAnnotation:">&ndash;&nbsp;mapView:didDeselectAnnotation:</a></code>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Responding to Map Position Changes" name="task_Responding to Map Position Changes"></a>
+						<h3 class="subsubtitle task-title">Responding to Map Position Changes</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/beforeMapMove:byUser:">&ndash;&nbsp;beforeMapMove:byUser:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/afterMapMove:byUser:">&ndash;&nbsp;afterMapMove:byUser:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/beforeMapZoom:byUser:">&ndash;&nbsp;beforeMapZoom:byUser:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/afterMapZoom:byUser:">&ndash;&nbsp;afterMapZoom:byUser:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/mapViewRegionDidChange:">&ndash;&nbsp;mapViewRegionDidChange:</a></code>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Responding to Map Gestures" name="task_Responding to Map Gestures"></a>
+						<h3 class="subsubtitle task-title">Responding to Map Gestures</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/doubleTapOnMap:at:">&ndash;&nbsp;doubleTapOnMap:at:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/singleTapOnMap:at:">&ndash;&nbsp;singleTapOnMap:at:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/singleTapTwoFingersOnMap:at:">&ndash;&nbsp;singleTapTwoFingersOnMap:at:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/longPressOnMap:at:">&ndash;&nbsp;longPressOnMap:at:</a></code>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Responding to User Annotation Gestures" name="task_Responding to User Annotation Gestures"></a>
+						<h3 class="subsubtitle task-title">Responding to User Annotation Gestures</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/tapOnAnnotation:onMap:">&ndash;&nbsp;tapOnAnnotation:onMap:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/doubleTapOnAnnotation:onMap:">&ndash;&nbsp;doubleTapOnAnnotation:onMap:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/longPressOnAnnotation:onMap:">&ndash;&nbsp;longPressOnAnnotation:onMap:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/tapOnLabelForAnnotation:onMap:">&ndash;&nbsp;tapOnLabelForAnnotation:onMap:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/doubleTapOnLabelForAnnotation:onMap:">&ndash;&nbsp;doubleTapOnLabelForAnnotation:onMap:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/tapOnCalloutAccessoryControl:forAnnotation:onMap:">&ndash;&nbsp;tapOnCalloutAccessoryControl:forAnnotation:onMap:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/mapView:shouldDragAnnotation:">&ndash;&nbsp;mapView:shouldDragAnnotation:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/mapView:annotation:didChangeDragState:fromOldState:">&ndash;&nbsp;mapView:annotation:didChangeDragState:fromOldState:</a></code>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Tracking the User Location" name="task_Tracking the User Location"></a>
+						<h3 class="subsubtitle task-title">Tracking the User Location</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/mapViewWillStartLocatingUser:">&ndash;&nbsp;mapViewWillStartLocatingUser:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/mapViewDidStopLocatingUser:">&ndash;&nbsp;mapViewDidStopLocatingUser:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/mapView:didUpdateUserLocation:">&ndash;&nbsp;mapView:didUpdateUserLocation:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/mapView:didFailToLocateUserWithError:">&ndash;&nbsp;mapView:didFailToLocateUserWithError:</a></code>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/mapView:didChangeUserTrackingMode:animated:">&ndash;&nbsp;mapView:didChangeUserTrackingMode:animated:</a></code>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+					</div>
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Instance Methods" name="instance_methods"></a>
+						<h2 class="subtitle subtitle-methods">Instance Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/afterMapMove:byUser:" title="afterMapMove:byUser:"></a>
+	<h3 class="subsubtitle method-title">afterMapMove:byUser:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate when a map has finished moving.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)afterMapMove:(RMMapView *)<em>map</em> byUser:(BOOL)<em>wasUserAction</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>map</em></dt>
+			<dd><p>The map view that has finished moving.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>wasUserAction</em></dt>
+			<dd><p>A Boolean indicating whether the map move was in response to a user action or not.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate when a map has finished moving.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/afterMapZoom:byUser:" title="afterMapZoom:byUser:"></a>
+	<h3 class="subsubtitle method-title">afterMapZoom:byUser:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate when a map has finished zooming.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)afterMapZoom:(RMMapView *)<em>map</em> byUser:(BOOL)<em>wasUserAction</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>map</em></dt>
+			<dd><p>The map view that has finished zooming.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>wasUserAction</em></dt>
+			<dd><p>A Boolean indicating whether the map zoom was in response to a user action or not.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate when a map has finished zooming.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/annotationSortingComparatorForMapView:" title="annotationSortingComparatorForMapView:"></a>
+	<h3 class="subsubtitle method-title">annotationSortingComparatorForMapView:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Returns a block used for determining the display sort order of annotation layers. The block will be called repeatedly during map change events to ensure annotation layers stay sorted in the desired order.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (NSComparator)annotationSortingComparatorForMapView:(RMMapView *)<em>mapView</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>mapView</em></dt>
+			<dd><p>The map view whose annotations need sorting.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>A comparison block to use in order to sort the annotations.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Returns a block used for determining the display sort order of annotation layers. The block will be called repeatedly during map change events to ensure annotation layers stay sorted in the desired order.</p>
+
+<p>If you do not implement this method, a default sort order will be used as follows:</p>
+
+<ol>
+<li><p>User location annotations are below all others. These can be distinguished by <code>annotation.isUserLocationAnnotation = YES</code>.</p></li>
+<li><p>Amongst user location annotations, the accuracy circle is below the tracking halo, which is below the user location. These can be distinguished by <code>annotation.annotationType = kRMTrackingHaloAnnotationTypeName</code>, <code>annotation.annotationType = kRMAccuracyCircleAnnotationTypeName</code>, and checking annotation object type against <a href="../Classes/RMUserLocation.html">RMUserLocation</a>.</p></li>
+<li><p>Cluster annotations are above non-cluster annotations. These can be distinguished by <code>annotation.isClusterAnnotation = YES</code>.</p></li>
+<li><p>Markers are above shapes. These can be distinguished by checking annotation object type against <a href="../Classes/RMMarker.html">RMMarker</a>.</p></li>
+<li><p>The remaining annotations are sorted with those closer to the bottom of the view above those closer to the top of the view. This includes during user tracking mode map rotation events, when markers always remain upright and their relative layer positions change.</p></li>
+</ol>
+
+
+<p>In all cases, any currently selected annotation (and its callout, if visible) are shown above all other annotations. When deselected, the desired sort order is reapplied.</p>
+
+<p>Your implementation of this method should be as lightweight as possible to avoid affecting map renderering performance.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p><a href="../Classes/RMAnnotation.html#//api/name/isUserLocationAnnotation">[RMAnnotation isUserLocationAnnotation]</a></p></code></li>
+			
+			<li><code><p><a href="../Classes/RMAnnotation.html#//api/name/annotationType">[RMAnnotation annotationType]</a></p></code></li>
+			
+			<li><code><p><a href="../Classes/RMAnnotation.html#//api/name/isClusterAnnotation">[RMAnnotation isClusterAnnotation]</a></p></code></li>
+			
+			<li><code><p><a href="../Classes/RMMapView.html#//api/name/coordinateToPixel:">[RMMapView coordinateToPixel:]</a></p></code></li>
+			
+		</ul>
+	</div>
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/beforeMapMove:byUser:" title="beforeMapMove:byUser:"></a>
+	<h3 class="subsubtitle method-title">beforeMapMove:byUser:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate when a map is about to move.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)beforeMapMove:(RMMapView *)<em>map</em> byUser:(BOOL)<em>wasUserAction</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>map</em></dt>
+			<dd><p>The map view that is about to move.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>wasUserAction</em></dt>
+			<dd><p>A Boolean indicating whether the map move is in response to a user action or not.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate when a map is about to move.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/beforeMapZoom:byUser:" title="beforeMapZoom:byUser:"></a>
+	<h3 class="subsubtitle method-title">beforeMapZoom:byUser:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate when a map is about to zoom.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)beforeMapZoom:(RMMapView *)<em>map</em> byUser:(BOOL)<em>wasUserAction</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>map</em></dt>
+			<dd><p>The map view that is about to zoom.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>wasUserAction</em></dt>
+			<dd><p>A Boolean indicating whether the map zoom is in response to a user action or not.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate when a map is about to zoom.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/doubleTapOnAnnotation:onMap:" title="doubleTapOnAnnotation:onMap:"></a>
+	<h3 class="subsubtitle method-title">doubleTapOnAnnotation:onMap:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate when the user double-taps the layer for an annotation.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)doubleTapOnAnnotation:(RMAnnotation *)<em>annotation</em> onMap:(RMMapView *)<em>map</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>annotation</em></dt>
+			<dd><p>The annotation that was double-tapped.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>map</em></dt>
+			<dd><p>The map view.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate when the user double-taps the layer for an annotation.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/doubleTapOnLabelForAnnotation:onMap:" title="doubleTapOnLabelForAnnotation:onMap:"></a>
+	<h3 class="subsubtitle method-title">doubleTapOnLabelForAnnotation:onMap:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate when the user double-taps the label for an annotation.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)doubleTapOnLabelForAnnotation:(RMAnnotation *)<em>annotation</em> onMap:(RMMapView *)<em>map</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>annotation</em></dt>
+			<dd><p>The annotation whose label was was double-tapped.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>map</em></dt>
+			<dd><p>The map view.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate when the user double-taps the label for an annotation.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/doubleTapOnMap:at:" title="doubleTapOnMap:at:"></a>
+	<h3 class="subsubtitle method-title">doubleTapOnMap:at:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate when the user double-taps a map view.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)doubleTapOnMap:(RMMapView *)<em>map</em> at:(CGPoint)<em>point</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>map</em></dt>
+			<dd><p>The map that was double-tapped.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>point</em></dt>
+			<dd><p>The point at which the map was double-tapped.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate when the user double-taps a map view.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/longPressOnAnnotation:onMap:" title="longPressOnAnnotation:onMap:"></a>
+	<h3 class="subsubtitle method-title">longPressOnAnnotation:onMap:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate when the user long-presses the layer for an annotation.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)longPressOnAnnotation:(RMAnnotation *)<em>annotation</em> onMap:(RMMapView *)<em>map</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>annotation</em></dt>
+			<dd><p>The annotation that was long-pressed.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>map</em></dt>
+			<dd><p>The map view.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate when the user long-presses the layer for an annotation.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/longPressOnMap:at:" title="longPressOnMap:at:"></a>
+	<h3 class="subsubtitle method-title">longPressOnMap:at:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate when the user long-presses a map view.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)longPressOnMap:(RMMapView *)<em>map</em> at:(CGPoint)<em>point</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>map</em></dt>
+			<dd><p>The map that was long-pressed.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>point</em></dt>
+			<dd><p>The point at which the map was long-pressed.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate when the user long-presses a map view.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/mapView:annotation:didChangeDragState:fromOldState:" title="mapView:annotation:didChangeDragState:fromOldState:"></a>
+	<h3 class="subsubtitle method-title">mapView:annotation:didChangeDragState:fromOldState:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate that the drag state of one of its annotations changed.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)mapView:(RMMapView *)<em>mapView</em> annotation:(RMAnnotation *)<em>annotation</em> didChangeDragState:(RMMapLayerDragState)<em>newState</em> fromOldState:(RMMapLayerDragState)<em>oldState</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>mapView</em></dt>
+			<dd><p>The map view containing the annotation layer.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>annotation</em></dt>
+			<dd><p>The annotation whose drag state changed.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>newState</em></dt>
+			<dd><p>The new drag state of the annotation layer.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>oldState</em></dt>
+			<dd><p>The previous drag state of the annotation layer.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate that the drag state of one of its annotations changed.</p>
+
+<p>The drag state typically changes in response to user interactions with the annotation layer. However, the annotation layer itself is responsible for changing that state as well.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/mapView:didChangeUserTrackingMode:animated:" title="mapView:didChangeUserTrackingMode:animated:"></a>
+	<h3 class="subsubtitle method-title">mapView:didChangeUserTrackingMode:animated:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate that the user tracking mode changed.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)mapView:(RMMapView *)<em>mapView</em> didChangeUserTrackingMode:(RMUserTrackingMode)<em>mode</em> animated:(BOOL)<em>animated</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>mapView</em></dt>
+			<dd><p>The map view whose user tracking mode changed.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>mode</em></dt>
+			<dd><p>The mode used to track the user’s location.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>animated</em></dt>
+			<dd><p>If YES, the change from the current mode to the new mode is animated; otherwise, it is not. This parameter affects only tracking mode changes. Changes to the user location or heading are always animated.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate that the user tracking mode changed.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/mapView:didDeselectAnnotation:" title="mapView:didDeselectAnnotation:"></a>
+	<h3 class="subsubtitle method-title">mapView:didDeselectAnnotation:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate that one of its annotations was deselected.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)mapView:(RMMapView *)<em>mapView</em> didDeselectAnnotation:(RMAnnotation *)<em>annotation</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>mapView</em></dt>
+			<dd><p>The map view containing the annotation.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>annotation</em></dt>
+			<dd><p>The annotation that was deselected.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate that one of its annotations was deselected.</p>
+
+<p>You can use this method to track changes in the selection state of annotations.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/mapView:didFailToLocateUserWithError:" title="mapView:didFailToLocateUserWithError:"></a>
+	<h3 class="subsubtitle method-title">mapView:didFailToLocateUserWithError:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate that an attempt to locate the user’s position failed.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)mapView:(RMMapView *)<em>mapView</em> didFailToLocateUserWithError:(NSError *)<em>error</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>mapView</em></dt>
+			<dd><p>The map view that is tracking the user’s location.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>error</em></dt>
+			<dd><p>An error object containing the reason why location tracking failed.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate that an attempt to locate the user’s position failed.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/mapView:didHideLayerForAnnotation:" title="mapView:didHideLayerForAnnotation:"></a>
+	<h3 class="subsubtitle method-title">mapView:didHideLayerForAnnotation:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate that the visible layer for an annotation has been hidden from view due to scrolling or zooming the map.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)mapView:(RMMapView *)<em>mapView</em> didHideLayerForAnnotation:(RMAnnotation *)<em>annotation</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>mapView</em></dt>
+			<dd><p>The map view whose annotation layer was hidden.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>annotation</em></dt>
+			<dd><p>The annotation whose layer was hidden.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate that the visible layer for an annotation has been hidden from view due to scrolling or zooming the map.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/mapView:didSelectAnnotation:" title="mapView:didSelectAnnotation:"></a>
+	<h3 class="subsubtitle method-title">mapView:didSelectAnnotation:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate that one of its annotations was selected.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)mapView:(RMMapView *)<em>mapView</em> didSelectAnnotation:(RMAnnotation *)<em>annotation</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>mapView</em></dt>
+			<dd><p>The map view containing the annotation.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>annotation</em></dt>
+			<dd><p>The annotation that was selected.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate that one of its annotations was selected.</p>
+
+<p>You can use this method to track changes in the selection state of annotations.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/mapView:didUpdateUserLocation:" title="mapView:didUpdateUserLocation:"></a>
+	<h3 class="subsubtitle method-title">mapView:didUpdateUserLocation:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate that the location of the user was updated.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)mapView:(RMMapView *)<em>mapView</em> didUpdateUserLocation:(RMUserLocation *)<em>userLocation</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>mapView</em></dt>
+			<dd><p>The map view that is tracking the user’s location.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>userLocation</em></dt>
+			<dd><p>The location object representing the user’s latest location.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate that the location of the user was updated.</p>
+
+<p>While the showsUserLocation property is set to YES, this method is called whenever a new location update is received by the map view. This method is also called if the map view’s user tracking mode is set to RMUserTrackingModeFollowWithHeading and the heading changes.</p>
+
+<p>This method is not called if the application is currently running in the background. If you want to receive location updates while running in the background, you must use the Core Location framework.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/mapView:layerForAnnotation:" title="mapView:layerForAnnotation:"></a>
+	<h3 class="subsubtitle method-title">mapView:layerForAnnotation:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Returns (after creating or reusing) the layer associated with the specified annotation object.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (RMMapLayer *)mapView:(RMMapView *)<em>mapView</em> layerForAnnotation:(RMAnnotation *)<em>annotation</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>mapView</em></dt>
+			<dd><p>The map view that requested the annotation layer.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>annotation</em></dt>
+			<dd><p>The object representing the annotation that is about to be displayed. In addition to your custom annotations, this object could be an <a href="../Classes/RMUserLocation.html">RMUserLocation</a> object representing the user’s current location.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The annotation layer to display for the specified annotation or <code>nil</code> if you do not want to display a layer.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Returns (after creating or reusing) the layer associated with the specified annotation object.</p>
+
+<p>An annotation layer can be created using <a href="../Classes/RMMapLayer.html">RMMapLayer</a> and its subclasses, such as <a href="../Classes/RMMarker.html">RMMarker</a> for points and <a href="../Classes/RMShape.html">RMShape</a> for shapes such as lines and polygons.</p>
+
+<p>If the object in the annotation parameter is an instance of the <a href="../Classes/RMUserLocation.html">RMUserLocation</a> class, you can provide a custom layer to denote the user’s location. To display the user’s location using the default system layer, return <code>nil</code>.</p>
+
+<p>If you do not implement this method, or if you return <code>nil</code> from your implementation for annotations other than the user location annotation, the map view does not display a layer for the annotation.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/mapView:shouldDragAnnotation:" title="mapView:shouldDragAnnotation:"></a>
+	<h3 class="subsubtitle method-title">mapView:shouldDragAnnotation:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Asks the delegate whether the user should be allowed to drag the layer for an annotation.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (BOOL)mapView:(RMMapView *)<em>mapView</em> shouldDragAnnotation:(RMAnnotation *)<em>annotation</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>mapView</em></dt>
+			<dd><p>The map view.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>annotation</em></dt>
+			<dd><p>The annotation the user is attempting to drag.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>A Boolean value indicating whether the user should be allowed to drag the annotation&rsquo;s layer.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Asks the delegate whether the user should be allowed to drag the layer for an annotation.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/mapView:willHideLayerForAnnotation:" title="mapView:willHideLayerForAnnotation:"></a>
+	<h3 class="subsubtitle method-title">mapView:willHideLayerForAnnotation:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate that the visible layer for an annotation is about to be hidden from view due to scrolling or zooming the map.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)mapView:(RMMapView *)<em>mapView</em> willHideLayerForAnnotation:(RMAnnotation *)<em>annotation</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>mapView</em></dt>
+			<dd><p>The map view whose annotation alyer will be hidden.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>annotation</em></dt>
+			<dd><p>The annotation whose layer will be hidden.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate that the visible layer for an annotation is about to be hidden from view due to scrolling or zooming the map.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/mapViewDidStopLocatingUser:" title="mapViewDidStopLocatingUser:"></a>
+	<h3 class="subsubtitle method-title">mapViewDidStopLocatingUser:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate that the map view stopped tracking the user’s location.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)mapViewDidStopLocatingUser:(RMMapView *)<em>mapView</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>mapView</em></dt>
+			<dd><p>The map view that stopped tracking the user’s location.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate that the map view stopped tracking the user’s location.</p>
+
+<p>This method is called when the value of the showsUserLocation property changes to NO.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/mapViewRegionDidChange:" title="mapViewRegionDidChange:"></a>
+	<h3 class="subsubtitle method-title">mapViewRegionDidChange:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate that the region displayed by the map view just changed.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)mapViewRegionDidChange:(RMMapView *)<em>mapView</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>mapView</em></dt>
+			<dd><p>The map view whose visible region changed.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate that the region displayed by the map view just changed.</p>
+
+<p>This method is called whenever the currently displayed map region changes. During scrolling, this method may be called many times to report updates to the map position. Therefore, your implementation of this method should be as lightweight as possible to avoid affecting scrolling performance.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/mapViewWillStartLocatingUser:" title="mapViewWillStartLocatingUser:"></a>
+	<h3 class="subsubtitle method-title">mapViewWillStartLocatingUser:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate that the map view will start tracking the user’s position.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)mapViewWillStartLocatingUser:(RMMapView *)<em>mapView</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>mapView</em></dt>
+			<dd><p>The map view that is tracking the user’s location.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate that the map view will start tracking the user’s position.</p>
+
+<p>This method is called when the value of the showsUserLocation property changes to YES.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/singleTapOnMap:at:" title="singleTapOnMap:at:"></a>
+	<h3 class="subsubtitle method-title">singleTapOnMap:at:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate when the user taps a map view.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)singleTapOnMap:(RMMapView *)<em>map</em> at:(CGPoint)<em>point</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>map</em></dt>
+			<dd><p>The map that was tapped.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>point</em></dt>
+			<dd><p>The point at which the map was tapped.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate when the user taps a map view.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/singleTapTwoFingersOnMap:at:" title="singleTapTwoFingersOnMap:at:"></a>
+	<h3 class="subsubtitle method-title">singleTapTwoFingersOnMap:at:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate when the user taps a map view with two fingers.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)singleTapTwoFingersOnMap:(RMMapView *)<em>map</em> at:(CGPoint)<em>point</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>map</em></dt>
+			<dd><p>The map that was tapped.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>point</em></dt>
+			<dd><p>The center point at which the map was tapped.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate when the user taps a map view with two fingers.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/tapOnAnnotation:onMap:" title="tapOnAnnotation:onMap:"></a>
+	<h3 class="subsubtitle method-title">tapOnAnnotation:onMap:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate when the user taps the layer for an annotation.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)tapOnAnnotation:(RMAnnotation *)<em>annotation</em> onMap:(RMMapView *)<em>map</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>annotation</em></dt>
+			<dd><p>The annotation that was tapped.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>map</em></dt>
+			<dd><p>The map view.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate when the user taps the layer for an annotation.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/tapOnCalloutAccessoryControl:forAnnotation:onMap:" title="tapOnCalloutAccessoryControl:forAnnotation:onMap:"></a>
+	<h3 class="subsubtitle method-title">tapOnCalloutAccessoryControl:forAnnotation:onMap:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate that the user tapped one of the annotation layer&rsquo;s accessory buttons.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)tapOnCalloutAccessoryControl:(UIControl *)<em>control</em> forAnnotation:(RMAnnotation *)<em>annotation</em> onMap:(RMMapView *)<em>map</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>control</em></dt>
+			<dd><p>The control that was tapped.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>annotation</em></dt>
+			<dd><p>The annotation whose callout control was tapped.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>map</em></dt>
+			<dd><p>The map view containing the specified annotation.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate that the user tapped one of the annotation layer&rsquo;s accessory buttons.</p>
+
+<p>Accessory views contain custom content and are positioned on either side of the annotation title text. If a view you specify is a descendant of the UIControl class, the map view calls this method as a convenience whenever the user taps your view. You can use this method to respond to taps and perform any actions associated with that control. For example, if your control displayed additional information about the annotation, you could use this method to present a modal panel with that information.</p>
+
+<p>If your custom accessory views are not descendants of the UIControl class, the map view does not call this method.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/tapOnLabelForAnnotation:onMap:" title="tapOnLabelForAnnotation:onMap:"></a>
+	<h3 class="subsubtitle method-title">tapOnLabelForAnnotation:onMap:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Tells the delegate when the user taps the label for an annotation.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)tapOnLabelForAnnotation:(RMAnnotation *)<em>annotation</em> onMap:(RMMapView *)<em>map</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>annotation</em></dt>
+			<dd><p>The annotation whose label was was tapped.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>map</em></dt>
+			<dd><p>The map view.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tells the delegate when the user taps the label for an annotation.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">RMMapViewDelegate.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+                    
+                    
+				</div>
+				<div class="main-navigation navigation-bottom">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="footer">
+					<hr />
+					<div class="footer-copyright">
+						<p><span class="copyright">&copy; 2015 Mapbox. All rights reserved. (Last updated: 2015-01-28)</span><br />
+						
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2 (build 963)</a>.</span></p>
+						
+					</div>
+				</div>
+			</div>
+		</article>
+		<script type="text/javascript">
+			function jumpToChange()
+			{
+				window.location.hash = this.options[this.selectedIndex].value;
+			}
+			
+			function toggleTOC()
+			{
+				var contents = document.getElementById('contents');
+				var tocContainer = document.getElementById('tocContainer');
+				
+				if (this.getAttribute('class') == 'open')
+				{
+					this.setAttribute('class', '');
+					contents.setAttribute('class', '');
+					tocContainer.setAttribute('class', '');
+					
+					window.name = "hideTOC";
+				}
+				else
+				{
+					this.setAttribute('class', 'open');
+					contents.setAttribute('class', 'isShowingTOC');
+					tocContainer.setAttribute('class', 'isShowingTOC');
+					
+					window.name = "";
+				}
+				return false;
+			}
+			
+			function toggleTOCEntryChildren(e)
+			{
+				e.stopPropagation();
+				var currentClass = this.getAttribute('class');
+				if (currentClass == 'children') {
+					this.setAttribute('class', 'children open');
+				}
+				else if (currentClass == 'children open') {
+					this.setAttribute('class', 'children');
+				}
+				return false;
+			}
+			
+			function tocEntryClick(e)
+			{
+				e.stopPropagation();
+				return true;
+			}
+			
+			function init()
+			{
+				var selectElement = document.getElementById('jumpTo');
+				selectElement.addEventListener('change', jumpToChange, false);
+				
+				var tocButton = document.getElementById('table_of_contents');
+				tocButton.addEventListener('click', toggleTOC, false);
+				
+				var taskTreeItem = document.getElementById('task_treeitem');
+				if (taskTreeItem.getElementsByTagName('li').length > 0)
+				{
+					taskTreeItem.setAttribute('class', 'children');
+					taskTreeItem.firstChild.setAttribute('class', 'disclosure');
+				}
+				
+				var tocList = document.getElementById('toc');
+				
+				var tocEntries = tocList.getElementsByTagName('li');
+				for (var i = 0; i < tocEntries.length; i++) {
+					tocEntries[i].addEventListener('click', toggleTOCEntryChildren, false);
+				}
+				
+				var tocLinks = tocList.getElementsByTagName('a');
+				for (var i = 0; i < tocLinks.length; i++) {
+					tocLinks[i].addEventListener('click', tocEntryClick, false);
+				}
+				
+				if (window.name == "hideTOC") {
+					toggleTOC.call(tocButton);
+				}
+			}
+			
+			window.onload = init;
+			
+			// If showing in Xcode, hide the TOC and Header
+			if (navigator.userAgent.match(/xcode/i)) {
+				document.getElementById("contents").className = "hideInXcode"
+				document.getElementById("tocContainer").className = "hideInXcode"
+				document.getElementById("top_header").className = "hideInXcode"
+			}
+			
+		</script>
+	</body>
+</html>
