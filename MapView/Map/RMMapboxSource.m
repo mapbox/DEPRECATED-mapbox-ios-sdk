@@ -156,13 +156,21 @@
     id dataObject = nil;
     
     if ([[referenceURL pathExtension] isEqualToString:@"jsonp"])
-        referenceURL = [NSURL URLWithString:[[referenceURL absoluteString] stringByReplacingOccurrencesOfString:@".jsonp" 
+    {
+        referenceURL = [NSURL URLWithString:[[referenceURL absoluteString] stringByReplacingOccurrencesOfString:@".jsonp"
                                                                                                      withString:@".json"
                                                                                                         options:NSAnchoredSearch & NSBackwardsSearch
                                                                                                           range:NSMakeRange(0, [[referenceURL absoluteString] length])]];
+    }
     
     if ([[referenceURL pathExtension] isEqualToString:@"json"] && (dataObject = [NSString brandedStringWithContentsOfURL:referenceURL encoding:NSUTF8StringEncoding error:nil]) && dataObject)
+    {
         return [self initWithTileJSON:dataObject enablingDataOnMapView:mapView];
+    }
+    else if ( ! [[RMConfiguration sharedInstance] accessToken])
+    {
+        RMLog(@"Unable to create Mapbox tile source and no access token is set! Please go to https://mapbox.com/account/apps/ for a token.");
+    }
 
     return nil;
 }
