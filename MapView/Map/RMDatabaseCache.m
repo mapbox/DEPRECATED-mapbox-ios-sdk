@@ -111,8 +111,6 @@
     [_writeQueue setMaxConcurrentOperationCount:1];
     _writeQueueLock = [NSRecursiveLock new];
 
-	RMLog(@"Opening database at %@", path);
-
     _queue = [FMDatabaseQueue databaseQueueWithPath:path];
 
 	if (!_queue)
