@@ -135,6 +135,13 @@ static RMConfiguration *RMConfigurationSharedInstance = nil;
     return self;
 }
 
+- (NSString *)accessToken
+{
+    NSAssert(_accessToken, @"An access token is required in order to use the Mapbox API. Obtain a token on your Mapbox account page at https://www.mapbox.com/account/apps/.");
+
+    return _accessToken;
+}
+
 - (NSDictionary *)cacheConfiguration
 {
     if (_propertyList == nil)

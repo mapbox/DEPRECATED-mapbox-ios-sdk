@@ -93,7 +93,6 @@
 		DD1985C2165C5F6400DF667F /* RMTileMillSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD1985C0165C5F6400DF667F /* RMTileMillSource.m */; };
 		DD1E3C6E161F954F004FC649 /* SMCalloutView.h in Headers */ = {isa = PBXBuildFile; fileRef = DD1E3C6C161F954F004FC649 /* SMCalloutView.h */; };
 		DD1E3C6F161F954F004FC649 /* SMCalloutView.m in Sources */ = {isa = PBXBuildFile; fileRef = DD1E3C6D161F954F004FC649 /* SMCalloutView.m */; };
-		DD280D1416EFDDD30014B549 /* examples.map-z2effxa8.json in Resources */ = {isa = PBXBuildFile; fileRef = DD280D1216EFDDD30014B549 /* examples.map-z2effxa8.json */; };
 		DD2B375514CF8197008DE8CB /* RMMBTilesSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DD2B375314CF8197008DE8CB /* RMMBTilesSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD2B375614CF8197008DE8CB /* RMMBTilesSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD2B375414CF8197008DE8CB /* RMMBTilesSource.m */; };
 		DD36766B17D94F980001F27B /* mapbox-logo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DD36766A17D94F980001F27B /* mapbox-logo@2x.png */; };
@@ -277,7 +276,6 @@
 		DD1985C0165C5F6400DF667F /* RMTileMillSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMTileMillSource.m; sourceTree = "<group>"; };
 		DD1E3C6C161F954F004FC649 /* SMCalloutView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMCalloutView.h; path = SMCalloutView/SMCalloutView.h; sourceTree = "<group>"; };
 		DD1E3C6D161F954F004FC649 /* SMCalloutView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SMCalloutView.m; path = SMCalloutView/SMCalloutView.m; sourceTree = "<group>"; };
-		DD280D1216EFDDD30014B549 /* examples.map-z2effxa8.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = "examples.map-z2effxa8.json"; path = "Map/Resources/examples.map-z2effxa8.json"; sourceTree = "<group>"; };
 		DD2B375314CF8197008DE8CB /* RMMBTilesSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMBTilesSource.h; sourceTree = "<group>"; };
 		DD2B375414CF8197008DE8CB /* RMMBTilesSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMBTilesSource.m; sourceTree = "<group>"; };
 		DD36766A17D94F980001F27B /* mapbox-logo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "mapbox-logo@2x.png"; path = "Map/Resources/mapbox-logo@2x.png"; sourceTree = "<group>"; };
@@ -652,7 +650,6 @@
 		DD932BC1165C287600D69D49 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				DD280D1216EFDDD30014B549 /* examples.map-z2effxa8.json */,
 				DD932BA5165C287000D69D49 /* mapbox.png */,
 				DD932BA6165C287000D69D49 /* mapbox@2x.png */,
 				DDE68E5917D94C0500F1E869 /* mapbox-logo.png */,
@@ -911,7 +908,6 @@
 				DD07A23D17F3AF9800E420B2 /* HeadingAngleMaskLarge@2x.png in Resources */,
 				DD94D46C16C2E064003D5739 /* HeadingAngleMedium.png in Resources */,
 				DD94D46D16C2E064003D5739 /* HeadingAngleMedium@2x.png in Resources */,
-				DD280D1416EFDDD30014B549 /* examples.map-z2effxa8.json in Resources */,
 				DD07A23B17F3AF9800E420B2 /* HeadingAngleMaskSmall@2x.png in Resources */,
 				DD36766B17D94F980001F27B /* mapbox-logo@2x.png in Resources */,
 				DDA257021798A95600BBB325 /* TrackingLocationOffMask@2x.png in Resources */,

@@ -53,7 +53,7 @@
 
 - (id)init
 {
-    return [self initWithReferenceURL:[NSURL fileURLWithPath:[RMMapView pathForBundleResourceNamed:kMapboxPlaceholderMapID ofType:@"json"]]];
+    return [self initWithMapID:kMapboxPlaceholderMapID];
 }
 
 - (id)initWithMapID:(NSString *)mapID
@@ -167,10 +167,6 @@
     {
         return [self initWithTileJSON:dataObject enablingDataOnMapView:mapView];
     }
-    else if ( ! [[RMConfiguration sharedInstance] accessToken])
-    {
-        RMLog(@"Unable to create Mapbox tile source and no access token is set! Please go to https://mapbox.com/account/apps/ for a token.");
-    }
 
     return nil;
 }
@@ -192,10 +188,8 @@
 
 - (NSURL *)canonicalURLForMapID:(NSString *)mapID
 {
-    NSString *version     = ([[RMConfiguration sharedInstance] accessToken] ? @"v4" : @"v3");
-    NSString *accessToken = ([[RMConfiguration sharedInstance] accessToken] ? [@"&access_token=" stringByAppendingString:[[RMConfiguration sharedInstance] accessToken]] : @"");
-
-    return [NSURL URLWithString:[NSString stringWithFormat:@"https://api.tiles.mapbox.com/%@/%@.json?secure%@", version, mapID, accessToken]];
+    return [NSURL URLWithString:[NSString stringWithFormat:@"https://api.tiles.mapbox.com/v4/%@.json?secure%@", mapID,
+                [@"&access_token=" stringByAppendingString:[[RMConfiguration sharedInstance] accessToken]]]];
 }
 
 - (NSURL *)tileJSONURL
