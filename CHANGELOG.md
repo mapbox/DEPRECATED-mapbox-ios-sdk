@@ -1,6 +1,16 @@
 Changelog
 ---------
 
+### 1.6.0
+#### February 4, 2015
+
+  - Removed support for Mapbox `v3` API and require [access tokens](https://www.mapbox.com/developers/api/#access-tokens). 
+  - Fixed a small bug with database caching which was also causing an error in the console log. 
+  - Reduced console log verbosity. 
+  - Deprecated the `-[RMMapboxSource init]` convenience initializer since tokens are now required. 
+  - Updated the included GRMustache from 6.8.3 to 7.3.0. 
+  - Documentation improvements. 
+
 ### 1.5.1
 #### January 28, 2015
 
