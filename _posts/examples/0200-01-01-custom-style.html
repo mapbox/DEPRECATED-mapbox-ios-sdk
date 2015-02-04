@@ -17,7 +17,7 @@ tags:
 {
     [super viewDidLoad];
 
-    [[RMConfiguration configuration] setAccessToken:@"<access token>"];
+    [[RMConfiguration sharedInstance] setAccessToken:@"<access token>"];
 
     RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:@"examples.map-zmy97flj"];
 

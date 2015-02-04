@@ -12,7 +12,7 @@ permalink: /examples
 {
     [super viewDidLoad];
 
-    [[RMConfiguration configuration] setAccessToken:@"<access token>"];
+    [[RMConfiguration sharedInstance] setAccessToken:@"<access token>"];
 
     RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:@"examples.map-z2effxa8"];
 
