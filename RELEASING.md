@@ -7,7 +7,7 @@
 1. Switch to `release` at a point where the release code is ready to go. 
 1. Update `CHANGELOG.md` with change notes for the version. 
 1. Update `README.markdown` as appropriate. Note that it references the screenshot mentioned above. 
-1. Update `Mapbox.podspec` with the version and any other necessary changes. 
+1. Update `Mapbox-iOS-SDK.podspec` with the version and any other necessary changes. 
     - The local spec should reference the version above, not a branch. 
     - Be sure to lint the spec with `pod spec lint`. 
 1. Create a tag with `x.y.z` in `release` and push the tag. 
