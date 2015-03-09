@@ -162,9 +162,18 @@
                                                                                                         options:NSAnchoredSearch & NSBackwardsSearch
                                                                                                           range:NSMakeRange(0, [[referenceURL absoluteString] length])]];
     }
-    
-    if ([[referenceURL pathExtension] isEqualToString:@"json"] && (dataObject = [NSString brandedStringWithContentsOfURL:referenceURL encoding:NSUTF8StringEncoding error:nil]) && dataObject)
+
+    NSError *error = nil;
+
+    if ([[referenceURL pathExtension] isEqualToString:@"json"] && (dataObject = [NSString brandedStringWithContentsOfURL:referenceURL encoding:NSUTF8StringEncoding error:&error]) && dataObject)
     {
+        if (error && [error.domain isEqual:NSURLErrorDomain] && error.code == -1012)
+        {
+#ifdef DEBUG
+            NSAssert(![[dataObject lowercaseString] hasSuffix:@"invalid token\"}"], @"invalid token in use");
+#endif
+        }
+
         return [self initWithTileJSON:dataObject enablingDataOnMapView:mapView];
     }
 
