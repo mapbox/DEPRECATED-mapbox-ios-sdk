@@ -369,7 +369,7 @@
 
 + (BOOL)isUsingLargeTiles
 {
-    return ([[RMConfiguration sharedInstance] accessToken] && [[UIScreen mainScreen] scale] > 1.0);
+    return ([[UIScreen mainScreen] scale] > 1.0);
 }
 
 - (NSString *)uniqueTilecacheKey
