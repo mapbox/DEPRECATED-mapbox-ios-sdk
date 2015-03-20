@@ -3,7 +3,8 @@ date: 0200-01-14
 category: examples
 layout: examples
 title: Converting points
-description: Converting points between screen- and map-based coordinates. 
+rotation: vertical
+description: Converting points between screen- and map-based coordinates.
 tags:
   - shape
   - polyline
@@ -22,9 +23,10 @@ tags:
 
     [[RMConfiguration sharedInstance] setAccessToken:@"<access token>"];
 
-    RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:@"examples.map-z2effxa8"];
+    RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:@"mapbox.streets"];
 
-    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds andTilesource:tileSource];
+    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds
+                                            andTilesource:tileSource];
 
     mapView.delegate = self;
 
@@ -44,20 +46,24 @@ tags:
 
     RMShape *line = [[RMShape alloc] initWithView:mapView];
 
-    line.lineWidth = 5.0;
+    line.lineWidth = 7.0;
 
-    line.lineColor = [UIColor greenColor];
+    line.lineColor = [UIColor colorWithRed:.5 green:.466 blue:.733 alpha:1];
 
     [line moveToCoordinate:mapView.centerCoordinate];
 
     CGPoint centerScreenPoint = [mapView coordinateToPixel:mapView.centerCoordinate];
 
-    [line addLineToCoordinate:[mapView pixelToCoordinate:CGPointMake(centerScreenPoint.x + 100, centerScreenPoint.y + 100)]];
+    [line addLineToCoordinate:[mapView pixelToCoordinate:
+                               CGPointMake(centerScreenPoint.x + 150,
+                                           centerScreenPoint.y + 100)]];
 
     return line;
 }
 
 - (void)singleTapOnMap:(RMMapView *)map at:(CGPoint)point
 {
-    NSLog(@"You tapped at %f, %f", [map pixelToCoordinate:point].latitude, [map pixelToCoordinate:point].longitude);
+    NSLog(@"You tapped at %f, %f",
+          [map pixelToCoordinate:point].latitude,
+          [map pixelToCoordinate:point].longitude);
 }
