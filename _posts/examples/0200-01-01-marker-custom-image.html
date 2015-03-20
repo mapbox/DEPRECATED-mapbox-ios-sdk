@@ -3,7 +3,7 @@ date: 0200-01-08
 category: examples
 layout: examples
 title: Custom image marker
-description: Creating a marker with a completely custom image. 
+description: Creating a marker with a completely custom image.
 tags:
   - marker
   - point
@@ -22,7 +22,7 @@ tags:
 
     [[RMConfiguration sharedInstance] setAccessToken:@"<access token>"];
 
-    RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:@"examples.map-z2effxa8"];
+    RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:@"mapbox.emerald"];
 
     RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds andTilesource:tileSource];
 
@@ -30,21 +30,38 @@ tags:
 
     [self.view addSubview:mapView];
 
-    RMAnnotation *annotation1 = [[RMAnnotation alloc] initWithMapView:mapView
-                                                           coordinate:CLLocationCoordinate2DMake(38.913175, -77.032453)
-                                                             andTitle:@"Small Factory"];
+    RMAnnotation *annotation1 = [[RMAnnotation alloc]
+                                 initWithMapView:mapView
+                                 coordinate:CLLocationCoordinate2DMake(38.913175, -77.032453)
+                                 andTitle:@"Astronaut training"];
 
-    annotation1.userInfo = @"small";
+    annotation1.userInfo = @"training";
 
     [mapView addAnnotation:annotation1];
 
-    RMAnnotation *annotation2 = [[RMAnnotation alloc] initWithMapView:mapView
-                                                           coordinate:CLLocationCoordinate2DMake(38.911031, -77.030098)
-                                                             andTitle:@"Big Factory"];
+    RMAnnotation *annotation2 = [[RMAnnotation alloc]
+                                 initWithMapView:mapView
+                                 coordinate:CLLocationCoordinate2DMake(38.911031, -77.030098)
+                                 andTitle:@"Astronaut supplies"];
 
-    annotation2.userInfo = @"big";
+    annotation2.userInfo = @"supplies";
 
     [mapView addAnnotation:annotation2];
+
+
+    // set coordinates
+    CLLocationCoordinate2D center = CLLocationCoordinate2DMake(38.91235, -77.03128);
+
+    // set zoom
+    mapView.zoom = 15;
+
+    // center the map to the coordinates
+    mapView.centerCoordinate = center;
+
+    // allows rotation
+    mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight |
+    UIViewAutoresizingFlexibleWidth;
+
 }
 
 - (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
@@ -54,13 +71,13 @@ tags:
 
     RMMarker *marker;
 
-    if ([annotation.userInfo isEqualToString:@"small"])
+    if ([annotation.userInfo isEqualToString:@"training"])
     {
-        marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"factory_small.png"]];
+        marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"astronaut2.png"]];
     }
-    else if ([annotation.userInfo isEqualToString:@"big"])
+    else if ([annotation.userInfo isEqualToString:@"supplies"])
     {
-        marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"factory_big.png"]];
+        marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"astronaut1.png"]];
     }
 
     marker.canShowCallout = YES;
