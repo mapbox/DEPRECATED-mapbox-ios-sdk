@@ -19,11 +19,13 @@ rotation: vertical
 
     RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds 
     										andTilesource:tileSource];
-
+    // set zoom
     mapView.zoom = 1;
 
+    // set coordinates
     CLLocationCoordinate2D center = CLLocationCoordinate2DMake(38.910003,-77.015533);
 
+    // center the map to the coordinates
     mapView.centerCoordinate = center;
 
     [self.view addSubview:mapView];

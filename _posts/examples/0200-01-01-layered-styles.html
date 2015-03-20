@@ -28,20 +28,21 @@ tags:
     RMMapboxSource *tileSource = [[RMMapboxSource alloc]
                                   initWithMapID:@"mapbox.light"];
     
+    // set coordinates
     CLLocationCoordinate2D center = CLLocationCoordinate2DMake(38.910003,
                                                                -77.015533);
     
     self.mapView = [[RMMapView alloc] initWithFrame:self.view.bounds
                                       andTilesource:tileSource];
     
-    [self.view addSubview:self.mapView];
-    
+    // make map expand to fill screen when rotated
     self.mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight |
     UIViewAutoresizingFlexibleWidth;
     
-    [self.view addSubview:self.mapView];
-    
+    // set zoom
     self.mapView.zoom = 3;
+
+    // center the map to the coordinates
     self.mapView.centerCoordinate = center;
     
     [self.mapView addTileSource:[[RMMapboxSource alloc] 

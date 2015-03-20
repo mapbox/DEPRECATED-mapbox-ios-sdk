@@ -22,7 +22,9 @@ permalink: /handling-rotation
     
     RMMapboxSource *tileSource = [[RMMapboxSource alloc]
                                   initWithMapID:@"mapbox.run-bike-hike"];
+   
     
+	// set coordinates
     CLLocationCoordinate2D center = CLLocationCoordinate2DMake(38.910003,-77.015533);
     
     self.mapView = [[RMMapView alloc] initWithFrame:self.view.bounds
@@ -30,12 +32,16 @@ permalink: /handling-rotation
     
     [self.view addSubview:self.mapView];
     
+    // make map expand to fill screen when rotated
     self.mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight |
     UIViewAutoresizingFlexibleWidth;
     
     [self.view addSubview:self.mapView];
     
+    // set zoom
     self.mapView.zoom = 10;
+
+    // center the map to the coordinates
     self.mapView.centerCoordinate = center;
     
     // Prevent panning outside the bounds of DC
