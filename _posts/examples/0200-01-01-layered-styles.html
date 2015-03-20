@@ -12,6 +12,11 @@ tags:
   - studio
   - composite
 ---
+
+@interface ViewController ()
+@property (nonatomic, strong) RMMapView *mapView;
+@end
+
 @implementation MyViewController
 
 - (void)viewDidLoad
@@ -20,11 +25,28 @@ tags:
 
     [[RMConfiguration sharedInstance] setAccessToken:@"<access token>"];
 
-    RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:@"examples.map-y7l23tes"];
-
-    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds andTilesource:tileSource];
-
-    [mapView addTileSource:[[RMMapboxSource alloc] initWithMapID:@"examples.location-formatter"]];
-
-    [self.view addSubview:mapView];
-}
+        
+    RMMapboxSource *tileSource = [[RMMapboxSource alloc]
+                                  initWithMapID:@"mapbox.light"];
+    
+    CLLocationCoordinate2D center = CLLocationCoordinate2DMake(38.910003,
+                                                               -77.015533);
+    
+    self.mapView = [[RMMapView alloc] initWithFrame:self.view.bounds
+                                      andTilesource:tileSource];
+    
+    [self.view addSubview:self.mapView];
+    
+    self.mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight |
+    UIViewAutoresizingFlexibleWidth;
+    
+    [self.view addSubview:self.mapView];
+    
+    self.mapView.zoom = 3;
+    self.mapView.centerCoordinate = center;
+    
+    [self.mapView addTileSource:[[RMMapboxSource alloc] 
+                                  initWithMapID:@"examples.location-formatter"]];
+    
+    [self.view addSubview:self.mapView];
+  
