@@ -33,6 +33,7 @@
   border-left: 25px solid #374f59;
   border-top: 70px solid #374f59;
   border-bottom: 70px solid #374f59;
+  max-width: 300px;
 }
 .device.device-phone-v.device-white {
   border-radius: 30px;
