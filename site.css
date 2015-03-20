@@ -91,3 +91,123 @@
 .highlight .vg { color: #f08040 } /* Name.Variable.Global */
 .highlight .vi { color: #a0a0f0 } /* Name.Variable.Instance */
 .highlight .il { color: #6060f0;  } /* Literal.Number.Integer.Long */
+
+
+
+/* phone */
+.device.device-phone-v {
+  border-radius: 30px;
+  border-right: 25px solid #374f59;
+  border-left: 25px solid #374f59;
+  border-top: 70px solid #374f59;
+  border-bottom: 70px solid #374f59;
+}
+.device.device-phone-v.device-white {
+  border-radius: 30px;
+  border-right: 25px solid #ffffff;
+  border-left: 25px solid #ffffff;
+  border-top: 70px solid #ffffff;
+  border-bottom: 70px solid #ffffff;
+}
+
+.device.device-phone-v .device-content {
+  max-height: 400px;
+}
+
+.device.device-phone-v:before,
+.device.device-phone-v:after {
+  content: '';
+  z-index: 10;
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
+  top: -35px;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background-color: rgba(0,0,0,.25);
+}
+
+.device.device-phone-v.device-white:before,
+.device.device-phone-v.device-white:after {
+  content: '';
+  z-index: 10;
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
+  top: -35px;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background-color: rgba(0,0,0,.05);
+}
+
+.device.device-phone-v:after, .device.device-phone-v.device-white:after  {
+  top: auto;
+  bottom: -50px;
+  height: 30px;
+  width: 30px;
+}
+
+.device.device-phone-h {
+   border-radius: 30px;
+  border-right: 70px solid #374f59;
+  border-left: 70px solid #374f59;
+  border-top: 25px solid #374f59;
+  border-bottom: 25px solid #374f59;
+}
+
+.device.device-phone-h.device-white {
+   border-radius: 30px;
+  border-right: 70px solid #ffffff;
+  border-left: 70px solid #ffffff;
+  border-top: 25px solid #ffffff;
+  border-bottom: 25px solid #ffffff;
+}
+
+.device.device-phone-h .device-content {
+  max-height: none;
+}
+
+.device.device-phone-h:before,
+.device.device-phone-h:after {
+  content: '';
+  z-index: 10;
+  display: block;
+  position: absolute;
+  margin: auto;
+  left: none;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background-color: rgba(0,0,0,.25);
+}
+.device.device-phone-h.device-white:before,
+.device.device-phone-h.device-white:after {
+  content: '';
+  z-index: 10;
+  display: block;
+  position: absolute;
+  margin: auto;
+  left: none;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background-color: rgba(0,0,0,.05);
+}
+
+.device.device-phone-h:after, .device.device-phone-h.device-white:after {
+  top: 50%;
+  left: -50px;
+  height: 30px;
+  width: 30px;
+}
+
+.device.device-phone-h:before, .device.device-phone-h.device-white:before {
+  top: 50%;
+  right: -35px;
+}
