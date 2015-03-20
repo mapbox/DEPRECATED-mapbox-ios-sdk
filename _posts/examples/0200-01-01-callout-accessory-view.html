@@ -2,8 +2,9 @@
 date: 0200-01-10
 category: examples
 layout: examples
+rotation: vertical
 title: Custom accessory view in a marker callout
-description: Adding an accessory view to a marker callout. 
+description: Adding an accessory view to a marker callout.
 tags:
   - marker
   - point
@@ -16,15 +17,18 @@ tags:
 ---
 @implementation MyViewController
 
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 
     [[RMConfiguration sharedInstance] setAccessToken:@"<access token>"];
 
-    RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:@"examples.map-z2effxa8"];
+    RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:@"mapbox.emerald"];
 
-    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds andTilesource:tileSource];
+    RMMapView *mapView = [[RMMapView alloc]
+                          initWithFrame:self.view.bounds
+                          andTilesource:tileSource];
 
     mapView.delegate = self;
 
@@ -32,7 +36,7 @@ tags:
 
     RMAnnotation *annotation = [[RMAnnotation alloc] initWithMapView:mapView
                                                           coordinate:mapView.centerCoordinate
-                                                            andTitle:@"Train Depot"];
+                                                            andTitle:@"Astronaut training"];
 
     [mapView addAnnotation:annotation];
 }
@@ -42,18 +46,28 @@ tags:
     if (annotation.isUserLocationAnnotation)
         return nil;
 
-    RMMarker *marker = [[RMMarker alloc] initWithMapboxMarkerImage:@"rail" tintColor:[UIColor magentaColor]];
+    RMMarker *marker = [[RMMarker alloc]
+                        initWithMapboxMarkerImage:@"rocket"
+                        tintColor:[UIColor
+                                   colorWithRed:128/255.0f
+                                   green:105/255.0f
+                                   blue:165/255.0f
+                                   alpha:1]];
 
     marker.canShowCallout = YES;
 
-    marker.leftCalloutAccessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"depot.jpg"]];
+    marker.leftCalloutAccessoryView = [[UIImageView alloc]
+                                       initWithImage:
+                                       [UIImage imageNamed:@"astro-training.png"]];
 
-    marker.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+    marker.rightCalloutAccessoryView = [UIButton
+                                        buttonWithType:UIButtonTypeDetailDisclosure];
 
     return marker;
 }
 
-- (void)tapOnCalloutAccessoryControl:(UIControl *)control forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map
+- (void)tapOnCalloutAccessoryControl:(UIControl *)control
+                       forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map
 {
     NSLog(@"You tapped the callout button!");
 }
