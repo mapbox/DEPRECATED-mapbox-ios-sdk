@@ -19,7 +19,6 @@ permalink: /handling-rotation
     [super viewDidLoad];
 
     [[RMConfiguration sharedInstance] setAccessToken:@"<access token>"];
-
     
     RMMapboxSource *tileSource = [[RMMapboxSource alloc]
                                   initWithMapID:@"mapbox.run-bike-hike"];
@@ -44,6 +43,4 @@ permalink: /handling-rotation
     CLLocationCoordinate2D northEast = CLLocationCoordinate2DMake(39.357147,-76.793182);
     
     [self.mapView setConstraintsSouthWest:southWest northEast:northEast];
-    
-
 }
