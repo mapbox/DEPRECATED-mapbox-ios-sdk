@@ -4,4 +4,3 @@ tileApi: https://api-maps-staging.tilestream.net
 permalink: /:categories/:title
 baseurl: /mapbox-ios-sdk
 version: v1.6.0
-pygments: true
