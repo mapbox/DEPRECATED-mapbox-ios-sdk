@@ -22,13 +22,15 @@ tags:
 
     RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:@"mapbox.emerald"];
 
-    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds andTilesource:tileSource];
+    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds
+                                            andTilesource:tileSource];
 
     [self.view addSubview:mapView];
 
-    RMPointAnnotation *annotation = [[RMPointAnnotation alloc] initWithMapView:mapView
-                                                                    coordinate:mapView.centerCoordinate
-                                                                      andTitle:@"Hello, world!"];
+    RMPointAnnotation *annotation = [[RMPointAnnotation alloc]
+                                     initWithMapView:mapView
+                                     coordinate:mapView.centerCoordinate
+                                     andTitle:@"Hello, world!"];
 
     [mapView addAnnotation:annotation];
 }
