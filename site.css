@@ -110,6 +110,12 @@
   border-bottom: 70px solid #ffffff;
 }
 
+.device.device-phone-v, .device.device-phone-v.device-white {
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .device.device-phone-v .device-content {
   max-height: 400px;
 }
