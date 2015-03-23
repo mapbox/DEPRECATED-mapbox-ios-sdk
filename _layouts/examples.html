@@ -18,7 +18,9 @@ category: examples
 
 <div id='code' class='fill-white'>
 {% if page.notes %}
-  {{notes}}
+  <div class="prose pad2 keyline-bottom keyline-top fill-notes dark">
+  {{page.notes}}
+  </div>
 {% endif %}
 
 {% highlight objc %}

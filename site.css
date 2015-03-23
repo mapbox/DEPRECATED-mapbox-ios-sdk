@@ -26,6 +26,10 @@
 
 .fill-white pre { background-color:transparent; }
 
+.fill-notes {
+  background-color: #374f59;
+}
+
 /* phone */
 .device.device-phone-v {
   border-radius: 30px;
