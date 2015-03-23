@@ -17,6 +17,10 @@ category: examples
 </div>
 
 <div id='code' class='fill-white'>
+{% if page.notes %}
+  {{notes}}
+{% endif %}
+
 {% highlight objc %}
 #import "Mapbox.h"
 
