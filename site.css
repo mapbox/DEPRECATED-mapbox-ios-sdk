@@ -161,3 +161,21 @@
     margin-top: -10px;
   }
 }
+
+@media (max-width: 400px) {
+  .device.device.device-phone-h {
+    border-width: 15px 40px;
+  }
+  .device.device-phone-h:after, .device.device-phone-h.device-white:after {
+    width: 20px;
+    height: 20px;
+    left: -30px;
+    margin-top: -10px;
+  }
+
+  .device.device-phone-h:before, .device.device-phone-h.device-white:before {
+    top: 50%;
+    right: -25px;
+    margin-top: -5px;
+  }
+}
