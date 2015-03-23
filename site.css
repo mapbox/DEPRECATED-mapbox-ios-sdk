@@ -31,23 +31,22 @@
 }
 
 /* phone */
-.device.device-phone-v {
+
+.device {
   border-radius: 30px;
-  border-right: 25px solid #374f59;
-  border-left: 25px solid #374f59;
-  border-top: 70px solid #374f59;
-  border-bottom: 70px solid #374f59;
-  max-width: 300px;
-}
-.device.device-phone-v.device-white {
-  border-radius: 30px;
-  border-right: 25px solid #ffffff;
-  border-left: 25px solid #ffffff;
-  border-top: 70px solid #ffffff;
-  border-bottom: 70px solid #ffffff;
+  border-style: solid;
+  border-color: #374f59;
 }
 
-.device.device-phone-v, .device.device-phone-v.device-white {
+.device.device-phone-v {
+  max-width: 300px;
+}
+.device.device-phone-v.device-white,
+.device.device-phone-h.device-white {
+  border-color: #fff;
+}
+
+.device.device-phone-v, .device.device-phone-v.device-white, {
   max-width: 300px;
   margin-left: auto;
   margin-right: auto;
@@ -96,20 +95,14 @@
   width: 30px;
 }
 
-.device.device-phone-h {
-   border-radius: 30px;
-  border-right: 70px solid #374f59;
-  border-left: 70px solid #374f59;
-  border-top: 25px solid #374f59;
-  border-bottom: 25px solid #374f59;
+@media (max-width: 350px ){
+  .device.device-phone-v {
+    border-width: 60px 15px;
+  }
 }
 
-.device.device-phone-h.device-white {
-   border-radius: 30px;
-  border-right: 70px solid #ffffff;
-  border-left: 70px solid #ffffff;
-  border-top: 25px solid #ffffff;
-  border-bottom: 25px solid #ffffff;
+.device.device-phone-h {
+  border-width: 25px 70px;
 }
 
 .device.device-phone-h .device-content {
@@ -148,9 +141,41 @@
   left: -50px;
   height: 30px;
   width: 30px;
+  margin-top: -15px;
 }
 
 .device.device-phone-h:before, .device.device-phone-h.device-white:before {
   top: 50%;
   right: -35px;
+  margin-top: -5px;
+}
+
+@media (max-width: 500px) {
+  .device.device.device-phone-h {
+    border-width: 15px 55px;
+  }
+  .device.device-phone-h:after, .device.device-phone-h.device-white:after {
+    width: 20px;
+    height: 20px;
+    left: -40px;
+    margin-top: -10px;
+  }
+}
+
+@media (max-width: 400px) {
+  .device.device.device-phone-h {
+    border-width: 15px 40px;
+  }
+  .device.device-phone-h:after, .device.device-phone-h.device-white:after {
+    width: 20px;
+    height: 20px;
+    left: -30px;
+    margin-top: -10px;
+  }
+
+  .device.device-phone-h:before, .device.device-phone-h.device-white:before {
+    top: 50%;
+    right: -25px;
+    margin-top: -5px;
+  }
 }
