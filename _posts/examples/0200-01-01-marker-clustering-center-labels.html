@@ -111,7 +111,8 @@ notes: You will have to add an image called 'circle.png' to your project.
         // Get the layer's size
         CGSize layerSize = layer.frame.size;
         
-        // Calculate its position
+        // Calculate the position of the label
+        // In the example, we add 4 to the label's size to position it accurately
         CGPoint position = CGPointMake((layerSize.width - (labelSize.size.width + 4)) / 2, 
                                        (layerSize.height - (labelSize.size.height + 4)) / 2);
         
