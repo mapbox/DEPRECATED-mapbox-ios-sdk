@@ -2,8 +2,8 @@
 date: 0200-01-09
 category: examples
 layout: examples
-title: Clustering points
-description: Clustering nearby markers to indicate data density. 
+title: Clustering points and centering labels
+description: Clustering nearby markers to indicate data density and center the labels. 
 tags:
   - marker
   - point
@@ -62,8 +62,8 @@ notes: You will have to add an image called 'circle.png' to your project.
                     CLLocationCoordinate2DMake(50.847573, -81.298828) andTitle:nil]];
     
     mapView.clusteringEnabled = YES;
-}
 
+}
 
 
 - (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
@@ -75,6 +75,7 @@ notes: You will have to add an image called 'circle.png' to your project.
     
     if (annotation.isClusterAnnotation)
     {
+        // Setting the circle image for cluster
         layer = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"circle.png"]];
         
         layer.opacity = 0.75;
@@ -86,21 +87,44 @@ notes: You will have to add an image called 'circle.png' to your project.
         if ([annotation.clusteredAnnotations count] > 2) {
             layer.bounds = CGRectMake(0, 0, 70, 70);
         } else if ([annotation.clusteredAnnotations count] > 3) {
-            layer.bounds = CGRectMake(0, 0, 100, 100);
+           layer.bounds = CGRectMake(0, 0, 100, 100);
         } else if ([annotation.clusteredAnnotations count] > 5) {
             layer.bounds = CGRectMake(0, 0, 120, 120);
         }
         
+         // Define label content
+        NSString *clusterLabelContent = [NSString stringWithFormat:@"%lu", 
+                        (unsigned long)[annotation.clusteredAnnotations count]];
+        
+        // Calculate its size
+        CGRect labelSize = [clusterLabelContent boundingRectWithSize:
+                                        ((RMMarker *)layer).label.frame.size 
+                                        options:NSStringDrawingUsesLineFragmentOrigin attributes:@{ 
+                                        NSFontAttributeName:[UIFont systemFontOfSize:15] } 
+                                        context:nil];
+        
+        
+        UIFont *labelFont = [UIFont systemFontOfSize:15];
         
         [(RMMarker *)layer setTextForegroundColor:[UIColor whiteColor]];
         
-        [(RMMarker *)layer changeLabelUsingText:[NSString stringWithFormat:@"%lu", 
-                            (unsigned long)[annotation.clusteredAnnotations count]]];
+        // Get the layer's size
+        CGSize layerSize = layer.frame.size;
+        
+        // Calculate its position
+        CGPoint position = CGPointMake((layerSize.width - (labelSize.size.width + 4)) / 2, 
+                                       (layerSize.height - (labelSize.size.height + 4)) / 2);
+        
+        // Set it all at once
+        [(RMMarker *)layer changeLabelUsingText:clusterLabelContent position:position 
+                    font:labelFont foregroundColor:[UIColor whiteColor] 
+                    backgroundColor:[UIColor clearColor]];
+ 
     }
     else
     {
         layer = [[RMMarker alloc] initWithMapboxMarkerImage:@"rocket" tintColor:
-                 [UIColor colorWithRed:0.224 green:0.671 blue:0.780 alpha:1.000]];
+                            [UIColor colorWithRed:0.224 green:0.671 blue:0.780 alpha:1.000]];
     }
     
     return layer;
