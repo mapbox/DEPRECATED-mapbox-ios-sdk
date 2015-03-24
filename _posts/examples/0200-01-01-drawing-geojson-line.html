@@ -1,41 +1,38 @@
 ---
-date: 0200-01-11
+date: 0200-01-13
 category: examples
 layout: examples
-title: Drawing a shape
-description: Drawing a vector polyline or polygon on the map. 
+title: Drawing a GeoJSON-based line
+description: Drawing a line based on parsed GeoJSON data. 
 tags:
   - shape
-  - polyline
   - polygon
   - draw
+  - json
+  - geojson
 ---
+@interface MyViewController ()
+
+@property (nonatomic, strong) NSMutableArray *points;
+
+@end
+
 @implementation MyViewController
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 
-    [[RMConfiguration sharedInstance] setAccessToken:@"<access token>"];    
-    
-    RMMapboxSource *tileSource = [[RMMapboxSource alloc] 
-                                    initWithMapID:@"mapbox.streets-basic];
-    
-    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds 
-                                            andTilesource:tileSource];
-    
-    // make map expand to fill screen when rotated
-    mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight |
-    UIViewAutoresizingFlexibleWidth;
-    
+    [[RMConfiguration sharedInstance] setAccessToken:@"<access token>"];
+
+    RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:@"examples.map-z2effxa8"];
+
+    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds andTilesource:tileSource];
+
     mapView.delegate = self;
 
-    mapView.zoom = 11;
-    
-    mapView.centerCoordinate = CLLocationCoordinate2DMake(45.50743305349084, -122.6986848423766);
-
     [self.view addSubview:mapView];
-    
+
     NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"shape" ofType:@"geojson"];
 
     NSDictionary *json = [NSJSONSerialization JSONObjectWithData:[[NSData alloc] initWithContentsOfFile:jsonPath]
@@ -64,17 +61,16 @@ tags:
 
 - (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
 {
-     if (annotation.isUserLocationAnnotation)
+    if (annotation.isUserLocationAnnotation)
         return nil;
-    
-    RMShape *shape = [[RMShape alloc] initWithView:mapView];
-    
-    shape.lineColor = [UIColor colorWithRed:0.224 green:0.671 blue:0.780 alpha:1.000];
-    shape.lineWidth = 8.0;
-    
-    for (CLLocation *location in (NSArray *)annotation.userInfo)
-        [shape addLineToCoordinate:location.coordinate];
-    
-    return shape;
 
+    RMShape *shape = [[RMShape alloc] initWithView:mapView];
+
+    shape.lineColor = [UIColor purpleColor];
+    shape.lineWidth = 5.0;
+
+    for (CLLocation *point in self.points)
+        [shape addLineToCoordinate:point.coordinate];
+
+    return shape;
 }
