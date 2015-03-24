@@ -2,15 +2,15 @@
 date: 0200-01-13
 category: examples
 layout: examples
-title: Drawing a GeoJSON-based shape
-description: Drawing a shape based on parsed GeoJSON data. 
+title: Drawing a GeoJSON shape
+description: Drawing a shape from GeoJSON data.
 tags:
   - shape
   - polygon
   - draw
   - json
   - geojson
-notes: Download the <a href="../../files/boat.geojson">boat.geosjon</a> file and add it to your project.
+notes: Download <a href="../../files/boat.geojson">boat.geojson</a> and add it to your project.
 ---
 @interface MyViewController ()
 
@@ -25,57 +25,57 @@ notes: Download the <a href="../../files/boat.geojson">boat.geosjon</a> file and
     [super viewDidLoad];
 
     [[RMConfiguration sharedInstance] setAccessToken:@"<access token>"];
-    
+
     RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:@"mapbox.streets-basic"];
-    
-    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds 
+
+    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds
                                                   andTilesource:tileSource];
-    
+
     // make map expand to fill screen when rotated
     mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight |
     UIViewAutoresizingFlexibleWidth;
-    
+
     // You will need to add a <RMMapViewDelegate> to the ViewController.h file
     mapView.delegate = self;
 
     mapView.zoom = 15;
-    
+
     // Setting our center point to one of the coordinates in the geoJSON file
-    mapView.centerCoordinate = CLLocationCoordinate2DMake(38.88402624576415, 
+    mapView.centerCoordinate = CLLocationCoordinate2DMake(38.88402624576415,
                                                           -77.03889012336731);
 
     [self.view addSubview:mapView];
-    
+
 
     // Converting our geoJSON file to a NSDIctionary
     NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"boat" ofType:@"geojson"];
-    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:[[NSData alloc] 
+    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:[[NSData alloc]
                                                         initWithContentsOfFile:jsonPath]
                                                         options:0
                                                         error:nil];
-    
+
     NSArray *features = json[@"features"];
-    
+
     // Create an empty array
     NSMutableArray *shapes = [[NSMutableArray alloc] init];
     self.shapes = shapes;
-    
+
     // Set the current shape
     for (NSUInteger i = 0; i < [features count]; i++) {
         // Add an empty array to the shapes array to hold the coordinates
         [self.shapes addObject:[[NSMutableArray alloc] init]];
-        
+
         // Get the current shape out of the feature array
         NSDictionary *currentNode = (NSDictionary *)features[i];
-        
+
         // The coordinates array seems to be an array within an array so get the first and last one
         NSArray *coordinates = currentNode[@"geometry"][@"coordinates"][0];
-        
+
         // Loop over the coordinates in the coordinate array
         for (NSArray *coordinate in coordinates) {
-  
+
         // Convert the coordinates to location coordinates
-        CLLocation *loc = [[CLLocation alloc] 
+        CLLocation *loc = [[CLLocation alloc]
                                               initWithLatitude:[[coordinate lastObject] doubleValue]
                                               longitude:[[coordinate firstObject] doubleValue]];
 
@@ -83,13 +83,13 @@ notes: Download the <a href="../../files/boat.geojson">boat.geosjon</a> file and
         [[self.shapes lastObject] addObject:loc];
         }
     }
-    
+
     NSLog(@"Shapes: %@", self.shapes);
-    
+
         RMAnnotation *annotation = [[RMAnnotation alloc] initWithMapView:mapView
                                                      coordinate:mapView.centerCoordinate
                                                      andTitle:@"My Path"];
-    
+
         // Calling this method will actually add the shapes to our mapView
         [mapView addAnnotation:annotation];
         [annotation setBoundingBoxFromLocations:[self.shapes objectAtIndex:0]];
@@ -98,30 +98,30 @@ notes: Download the <a href="../../files/boat.geojson">boat.geosjon</a> file and
 - (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation {
     if (annotation.isUserLocationAnnotation)
         return nil;
-    
+
     RMShape *shape = [[RMShape alloc] initWithView:mapView];
     shape.lineColor = [UIColor whiteColor];
     shape.lineWidth = 3.0;
     shape.fillColor = [UIColor colorWithRed:0.216 green:0.518 blue:0.729 alpha:1.000];
-    
+
     for (NSArray *coordinates in self.shapes){
         for(int lc = 0; lc < [coordinates count]; lc++){
             CLLocation *loc = (CLLocation *)[coordinates objectAtIndex:lc];
-            
+
             if (lc == 0) {
-                // If this is the first coordinate we'll 
+                // If this is the first coordinate we'll
                 // move to the first point instead of drawing a line
                 [shape moveToCoordinate:loc.coordinate];
             } else {
                 // If not we draw a line to the point
                 [shape addLineToCoordinate:loc.coordinate];
             }
-            
+
             // If this is the last point, we need to close the current path
             if (lc == [coordinates count])
                 [shape closePath];
         }
     }
-    
+
     return shape;
 }
