@@ -27,6 +27,7 @@ notes: Download <a href="../../files/astronaut1.png">astronaut1.png</a> and <a h
 
     RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds andTilesource:tileSource];
 
+    // you will need to add a <RMMapViewDelegate> to the ViewController.h file
     mapView.delegate = self;
 
     [self.view addSubview:mapView];

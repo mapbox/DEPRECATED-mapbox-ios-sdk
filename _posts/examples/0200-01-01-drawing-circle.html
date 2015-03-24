@@ -22,7 +22,8 @@ tags:
 
     RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds
                                             andTilesource:tileSource];
-
+                                            
+    // you will need to add a <RMMapViewDelegate> to the ViewController.h file
     mapView.delegate = self;
 
     [self.view addSubview:mapView];
