@@ -44,7 +44,7 @@ notes: Download <a href="../../files/m.geojson">m.geojson</a> and add it to your
 
     [self.view addSubview:mapView];
 
-    // convert `boat.geojson` to an NSDIctionary
+    // convert `m.geojson` to an NSDIctionary
     NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"m" ofType:@"geojson"];
 
     NSDictionary *json = [NSJSONSerialization JSONObjectWithData:[[NSData alloc]
@@ -55,6 +55,7 @@ notes: Download <a href="../../files/m.geojson">m.geojson</a> and add it to your
     self.points = [[[[json objectForKey:@"features"] objectAtIndex:0]
                                 valueForKeyPath:@"geometry.coordinates"] mutableCopy];
 
+    // set the shape
     for (NSUInteger i = 0; i < [self.points count]; i++)
         [self.points replaceObjectAtIndex:i
                withObject:[[CLLocation alloc]
