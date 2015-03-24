@@ -2,19 +2,18 @@
 date: 0200-01-13
 category: examples
 layout: examples
-title: Drawing a GeoJSON-based shape
-description: Drawing a shape based on parsed GeoJSON data. 
+title: Drawing a GeoJSON shape
+description: Drawing a shape from GeoJSON data.
 tags:
   - shape
   - polygon
   - draw
   - json
   - geojson
+notes: Download <a href="../../files/boat.geojson">boat.geojson</a> and add it to your project.
 ---
 @interface MyViewController ()
-
-@property (nonatomic, strong) NSMutableArray *points;
-
+@property (nonatomic, strong) NSMutableArray *shapes;
 @end
 
 @implementation MyViewController
@@ -25,52 +24,104 @@ tags:
 
     [[RMConfiguration sharedInstance] setAccessToken:@"<access token>"];
 
-    RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:@"examples.map-z2effxa8"];
+    RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:@"mapbox.streets-basic"];
 
-    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds andTilesource:tileSource];
+    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds
+                                                  andTilesource:tileSource];
 
+    // make map expand to fill screen when rotated
+    mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight |
+    UIViewAutoresizingFlexibleWidth;
+
+    // you will need to add a <RMMapViewDelegate> to the ViewController.h file
     mapView.delegate = self;
+
+    // set zoom
+    mapView.zoom = 15;
+
+    // set the center point to one of the coordinates in the GeoJSON file
+    mapView.centerCoordinate = CLLocationCoordinate2DMake(38.88402624576415,
+                                                          -77.03889012336731);
 
     [self.view addSubview:mapView];
 
-    NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"shape" ofType:@"geojson"];
 
-    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:[[NSData alloc] initWithContentsOfFile:jsonPath]
-                                                         options:0
-                                                           error:nil];
+    // convert `boat.geojson` to an NSDIctionary
+    NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"boat" ofType:@"geojson"];
+    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:[[NSData alloc]
+                                                        initWithContentsOfFile:jsonPath]
+                                                        options:0
+                                                        error:nil];
 
-    self.points = [[[[json objectForKey:@"features"] objectAtIndex:0] valueForKeyPath:@"geometry.coordinates"] mutableCopy];
+    NSArray *features = json[@"features"];
 
-    for (NSUInteger i = 0; i < [self.points count]; i++)
-        [self.points replaceObjectAtIndex:i
-                               withObject:[[CLLocation alloc] initWithLatitude:[[[self.points objectAtIndex:i] objectAtIndex:1] doubleValue]
-                                                                     longitude:[[[self.points objectAtIndex:i] objectAtIndex:0] doubleValue]]];
+    // create an empty array
+    NSMutableArray *shapes = [[NSMutableArray alloc] init];
+    self.shapes = shapes;
 
-    RMAnnotation *annotation = [[RMAnnotation alloc] initWithMapView:mapView
-                                                          coordinate:mapView.centerCoordinate
-                                                            andTitle:@"My Path"];
+    // set the current shape
+    for (NSUInteger i = 0; i < [features count]; i++) {
 
-    [mapView addAnnotation:annotation];
+        // add an empty array to the shapes array to hold the coordinates
+        [self.shapes addObject:[[NSMutableArray alloc] init]];
 
-    [annotation setBoundingBoxFromLocations:self.points];
+        // get the current shape out of the feature array
+        NSDictionary *currentNode = (NSDictionary *)features[i];
 
-    mapView.centerCoordinate = CLLocationCoordinate2DMake(45.526795, -122.682953);
+        NSArray *coordinates = currentNode[@"geometry"][@"coordinates"][0];
 
-    mapView.zoom = 12;
+        // loop over the coordinates in the coordinate array
+        for (NSArray *coordinate in coordinates) {
+
+        // convert the coordinates to location coordinates
+        CLLocation *loc = [[CLLocation alloc]
+                                              initWithLatitude:[[coordinate lastObject] doubleValue]
+                                              longitude:[[coordinate firstObject] doubleValue]];
+
+        // add the location object (with both coordinates) to the array
+        [[self.shapes lastObject] addObject:loc];
+        }
+    }
+
+    NSLog(@"Shapes: %@", self.shapes);
+
+        RMAnnotation *annotation = [[RMAnnotation alloc] initWithMapView:mapView
+                                                     coordinate:mapView.centerCoordinate
+                                                     andTitle:@"My Path"];
+
+        // add the shapes to the mapView
+        [mapView addAnnotation:annotation];
+        [annotation setBoundingBoxFromLocations:[self.shapes objectAtIndex:0]];
 }
 
-- (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
-{
+- (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation {
     if (annotation.isUserLocationAnnotation)
         return nil;
 
+    // style the shape
     RMShape *shape = [[RMShape alloc] initWithView:mapView];
+    shape.lineColor = [UIColor whiteColor];
+    shape.lineWidth = 3.0;
+    shape.fillColor = [UIColor colorWithRed:0.216 green:0.518 blue:0.729 alpha:1.000];
 
-    shape.lineColor = [UIColor purpleColor];
-    shape.lineWidth = 5.0;
+    for (NSArray *coordinates in self.shapes){
+        for(int lc = 0; lc < [coordinates count]; lc++){
+            CLLocation *loc = (CLLocation *)[coordinates objectAtIndex:lc];
 
-    for (CLLocation *point in self.points)
-        [shape addLineToCoordinate:point.coordinate];
+            if (lc == 0) {
+                // if this is the first coordinate
+                // move to the first point instead of drawing a line
+                [shape moveToCoordinate:loc.coordinate];
+            } else {
+                // if not, draw a line to the point
+                [shape addLineToCoordinate:loc.coordinate];
+            }
+
+            // if this is the last point, close the current path
+            if (lc == [coordinates count])
+                [shape closePath];
+        }
+    }
 
     return shape;
 }

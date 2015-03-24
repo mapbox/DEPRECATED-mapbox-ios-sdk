@@ -1,21 +1,16 @@
 ---
-date: 0200-01-04
+date: 0200-01-02
 category: examples
 layout: examples
-title: Layered styles
-description: Composite multiple styles client-side. 
-tags:
-  - custom
-  - style
-  - color
-  - tilemill
-  - studio
-  - composite
+title: Handling rotation
+description: Handle rotation and set panning boundaries. 
+permalink: /handling-rotation
 ---
 
 @interface ViewController ()
 @property (nonatomic, strong) RMMapView *mapView;
 @end
+
 
 @implementation MyViewController
 
@@ -24,29 +19,34 @@ tags:
     [super viewDidLoad];
 
     [[RMConfiguration sharedInstance] setAccessToken:@"<access token>"];
-   
-    RMMapboxSource *tileSource = [[RMMapboxSource alloc]
-                                  initWithMapID:@"mapbox.light"];
     
-    // set coordinates
-    CLLocationCoordinate2D center = CLLocationCoordinate2DMake(38.910003,
-                                                               -77.015533);
+    RMMapboxSource *tileSource = [[RMMapboxSource alloc]
+                                  initWithMapID:@"mapbox.run-bike-hike"];
+   
+    
+	// set coordinates
+    CLLocationCoordinate2D center = CLLocationCoordinate2DMake(38.910003,-77.015533);
     
     self.mapView = [[RMMapView alloc] initWithFrame:self.view.bounds
                                       andTilesource:tileSource];
+    
+    [self.view addSubview:self.mapView];
     
     // make map expand to fill screen when rotated
     self.mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight |
     UIViewAutoresizingFlexibleWidth;
     
+    [self.view addSubview:self.mapView];
+    
     // set zoom
-    self.mapView.zoom = 3;
+    self.mapView.zoom = 10;
 
     // center the map to the coordinates
     self.mapView.centerCoordinate = center;
     
-    [self.mapView addTileSource:[[RMMapboxSource alloc] 
-                                  initWithMapID:@"examples.location-formatter"]];
+    // Prevent panning outside the bounds of DC
+    CLLocationCoordinate2D southWest = CLLocationCoordinate2DMake(38.560314,-77.370506);
+    CLLocationCoordinate2D northEast = CLLocationCoordinate2DMake(39.357147,-76.793182);
     
-    [self.view addSubview:self.mapView];
+    [self.mapView setConstraintsSouthWest:southWest northEast:northEast];
 }

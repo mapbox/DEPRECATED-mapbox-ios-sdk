@@ -3,7 +3,7 @@ date: 0200-01-11
 category: examples
 layout: examples
 title: Drawing a shape
-description: Drawing a vector polyline or polygon on the map. 
+description: Drawing a vector polyline or polygon on the map.
 tags:
   - shape
   - polyline
@@ -18,75 +18,90 @@ tags:
 
     [[RMConfiguration sharedInstance] setAccessToken:@"<access token>"];
 
-    RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:@"examples.map-z2effxa8"];
+    RMMapboxSource *tileSource = [[RMMapboxSource alloc]
+                                    initWithMapID:@"mapbox.pencil"];
 
-    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds andTilesource:tileSource];
+    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds
+                                            andTilesource:tileSource];
 
+    // make map expand to fill screen when rotated
+    mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight |
+    UIViewAutoresizingFlexibleWidth;
+
+    // you will need to add a <RMMapViewDelegate> to the ViewController.h file
     mapView.delegate = self;
+
+    // set zoom
+    mapView.zoom = 11;
+
+    // center the map to the coordinates
+    mapView.centerCoordinate = CLLocationCoordinate2DMake(45.50743305349084, -122.6986848423766);
 
     [self.view addSubview:mapView];
 
-    NSArray *locations = [NSArray arrayWithObjects:[[CLLocation alloc] initWithLatitude:45.55176915965956 longitude:-122.6787566208549],
-                                                   [[CLLocation alloc] initWithLatitude:45.55086534792735 longitude:-122.682166554306],
-                                                   [[CLLocation alloc] initWithLatitude:45.55063895998595 longitude:-122.6831251385732],
-                                                   [[CLLocation alloc] initWithLatitude:45.55048843546379 longitude:-122.683657708181],
-                                                   [[CLLocation alloc] initWithLatitude:45.55026542006489 longitude:-122.6842985145206],
-                                                   [[CLLocation alloc] initWithLatitude:45.54997314928001 longitude:-122.6849426522292],
-                                                   [[CLLocation alloc] initWithLatitude:45.54965315760354 longitude:-122.6858400020936],
-                                                   [[CLLocation alloc] initWithLatitude:45.54945739027904 longitude:-122.6861852031795],
-                                                   [[CLLocation alloc] initWithLatitude:45.54893405275601 longitude:-122.6875783045424],
-                                                   [[CLLocation alloc] initWithLatitude:45.54848440699661 longitude:-122.6882207253296],
-                                                   [[CLLocation alloc] initWithLatitude:45.5481096863862  longitude:-122.6888631838056],
-                                                   [[CLLocation alloc] initWithLatitude:45.54728895333376 longitude:-122.6902593379112],
-                                                   [[CLLocation alloc] initWithLatitude:45.54676782787588 longitude:-122.690691880025],
-                                                   [[CLLocation alloc] initWithLatitude:45.54632148608331 longitude:-122.6912318302709],
-                                                   [[CLLocation alloc] initWithLatitude:45.54557156334257 longitude:-122.6921960522312],
-                                                   [[CLLocation alloc] initWithLatitude:45.5447457844447  longitude:-122.6929454183781],
-                                                   [[CLLocation alloc] initWithLatitude:45.54150536194989 longitude:-122.696238683455],
-                                                   [[CLLocation alloc] initWithLatitude:45.53902638779868 longitude:-122.6981533483241],
-                                                   [[CLLocation alloc] initWithLatitude:45.53789824682082 longitude:-122.6991055148221],
-                                                   [[CLLocation alloc] initWithLatitude:45.53564495227973 longitude:-122.7007988274377],
-                                                   [[CLLocation alloc] initWithLatitude:45.53466897388987 longitude:-122.7013240004432],
-                                                   [[CLLocation alloc] initWithLatitude:45.53226598869944 longitude:-122.7032128929042],
-                                                   [[CLLocation alloc] initWithLatitude:45.53008200877969 longitude:-122.7051309619926],
-                                                   [[CLLocation alloc] initWithLatitude:45.52918304588545 longitude:-122.7057344921277],
-                                                   [[CLLocation alloc] initWithLatitude:45.52798395243587 longitude:-122.7066032152355],
-                                                   [[CLLocation alloc] initWithLatitude:45.5261906366918  longitude:-122.7079918683664],
-                                                   [[CLLocation alloc] initWithLatitude:45.52559925993501 longitude:-122.7085851345931],
-                                                   [[CLLocation alloc] initWithLatitude:45.52441554967962 longitude:-122.7095942439649],
-                                                   [[CLLocation alloc] initWithLatitude:45.52419289999359 longitude:-122.7098239556796],
-                                                   [[CLLocation alloc] initWithLatitude:45.52374632029976 longitude:-122.7099903491023],
-                                                   [[CLLocation alloc] initWithLatitude:45.52329992206768 longitude:-122.7102285147452],
-                                                   [[CLLocation alloc] initWithLatitude:45.52285557756306 longitude:-122.7105226154515],
-                                                   [[CLLocation alloc] initWithLatitude:45.52154199994761 longitude:-122.7112986056792],
-                                                   [[CLLocation alloc] initWithLatitude:45.52065960835942 longitude:-122.7117971761021],
-                                                   [[CLLocation alloc] initWithLatitude:45.51947424898779 longitude:-122.7126840307158],
-                                                   [[CLLocation alloc] initWithLatitude:45.51858234683459 longitude:-122.7131497810028],
-                                                   [[CLLocation alloc] initWithLatitude:45.51791872448323 longitude:-122.7133526996875],
-                                                   [[CLLocation alloc] initWithLatitude:45.51682577090285 longitude:-122.713374611498],
-                                                   [[CLLocation alloc] initWithLatitude:45.51602773754686 longitude:-122.7133082662082],
-                                                   [[CLLocation alloc] initWithLatitude:45.51552116294043 longitude:-122.7132650214732],
-                                                   [[CLLocation alloc] initWithLatitude:45.51442994074135 longitude:-122.713212145442],
-                                                   [[CLLocation alloc] initWithLatitude:45.51330793405461 longitude:-122.7127677810208],
-                                                   [[CLLocation alloc] initWithLatitude:45.51227869901748 longitude:-122.7120300285035],
-                                                   [[CLLocation alloc] initWithLatitude:45.51167182131875 longitude:-122.7115670515517],
-                                                   [[CLLocation alloc] initWithLatitude:45.51090804190034 longitude:-122.710601006296],
-                                                   [[CLLocation alloc] initWithLatitude:45.51005985817833 longitude:-122.7096528384686],
-                                                   [[CLLocation alloc] initWithLatitude:45.50898967921476 longitude:-122.7074196271657],
-                                                   [[CLLocation alloc] initWithLatitude:45.50841928461968 longitude:-122.7054989490888],
-                                                   [[CLLocation alloc] initWithLatitude:45.50821621715173 longitude:-122.7045116123016],
-                                                   [[CLLocation alloc] initWithLatitude:45.50800471129917 longitude:-122.7035455786322],
-                                                   [[CLLocation alloc] initWithLatitude:45.50757840215857 longitude:-122.7014150416887],
-                                                   [[CLLocation alloc] initWithLatitude:45.50743305349084 longitude:-122.6986848423766],
-                                                   [[CLLocation alloc] initWithLatitude:45.50741719296194 longitude:-122.6976642747348],
-                                                   [[CLLocation alloc] initWithLatitude:45.50732913599806 longitude:-122.6946428514954],
-                                                   [[CLLocation alloc] initWithLatitude:45.50737518920626 longitude:-122.6933193739336],
-                                                   [[CLLocation alloc] initWithLatitude:45.50735271698139 longitude:-122.6924054079813],
-                                                   [[CLLocation alloc] initWithLatitude:45.50770283703968 longitude:-122.6902193063934],
-                                                   nil];
+    // set shape coordinates
+    NSArray *locations = [NSArray arrayWithObjects:
+      [[CLLocation alloc] initWithLatitude:45.55176915965956 longitude:-122.6787566208549],
+      [[CLLocation alloc] initWithLatitude:45.55086534792735 longitude:-122.682166554306],
+      [[CLLocation alloc] initWithLatitude:45.55063895998595 longitude:-122.6831251385732],
+      [[CLLocation alloc] initWithLatitude:45.55048843546379 longitude:-122.683657708181],
+      [[CLLocation alloc] initWithLatitude:45.55026542006489 longitude:-122.6842985145206],
+      [[CLLocation alloc] initWithLatitude:45.54997314928001 longitude:-122.6849426522292],
+      [[CLLocation alloc] initWithLatitude:45.54965315760354 longitude:-122.6858400020936],
+      [[CLLocation alloc] initWithLatitude:45.54945739027904 longitude:-122.6861852031795],
+      [[CLLocation alloc] initWithLatitude:45.54893405275601 longitude:-122.6875783045424],
+      [[CLLocation alloc] initWithLatitude:45.54848440699661 longitude:-122.6882207253296],
+      [[CLLocation alloc] initWithLatitude:45.5481096863862  longitude:-122.6888631838056],
+      [[CLLocation alloc] initWithLatitude:45.54728895333376 longitude:-122.6902593379112],
+      [[CLLocation alloc] initWithLatitude:45.54676782787588 longitude:-122.690691880025],
+      [[CLLocation alloc] initWithLatitude:45.54632148608331 longitude:-122.6912318302709],
+      [[CLLocation alloc] initWithLatitude:45.54557156334257 longitude:-122.6921960522312],
+      [[CLLocation alloc] initWithLatitude:45.5447457844447  longitude:-122.6929454183781],
+      [[CLLocation alloc] initWithLatitude:45.54150536194989 longitude:-122.696238683455],
+      [[CLLocation alloc] initWithLatitude:45.53902638779868 longitude:-122.6981533483241],
+      [[CLLocation alloc] initWithLatitude:45.53789824682082 longitude:-122.6991055148221],
+      [[CLLocation alloc] initWithLatitude:45.53564495227973 longitude:-122.7007988274377],
+      [[CLLocation alloc] initWithLatitude:45.53466897388987 longitude:-122.7013240004432],
+      [[CLLocation alloc] initWithLatitude:45.53226598869944 longitude:-122.7032128929042],
+      [[CLLocation alloc] initWithLatitude:45.53008200877969 longitude:-122.7051309619926],
+      [[CLLocation alloc] initWithLatitude:45.52918304588545 longitude:-122.7057344921277],
+      [[CLLocation alloc] initWithLatitude:45.52798395243587 longitude:-122.7066032152355],
+      [[CLLocation alloc] initWithLatitude:45.5261906366918  longitude:-122.7079918683664],
+      [[CLLocation alloc] initWithLatitude:45.52559925993501 longitude:-122.7085851345931],
+      [[CLLocation alloc] initWithLatitude:45.52441554967962 longitude:-122.7095942439649],
+      [[CLLocation alloc] initWithLatitude:45.52419289999359 longitude:-122.7098239556796],
+      [[CLLocation alloc] initWithLatitude:45.52374632029976 longitude:-122.7099903491023],
+      [[CLLocation alloc] initWithLatitude:45.52329992206768 longitude:-122.7102285147452],
+      [[CLLocation alloc] initWithLatitude:45.52285557756306 longitude:-122.7105226154515],
+      [[CLLocation alloc] initWithLatitude:45.52154199994761 longitude:-122.7112986056792],
+      [[CLLocation alloc] initWithLatitude:45.52065960835942 longitude:-122.7117971761021],
+      [[CLLocation alloc] initWithLatitude:45.51947424898779 longitude:-122.7126840307158],
+      [[CLLocation alloc] initWithLatitude:45.51858234683459 longitude:-122.7131497810028],
+      [[CLLocation alloc] initWithLatitude:45.51791872448323 longitude:-122.7133526996875],
+      [[CLLocation alloc] initWithLatitude:45.51682577090285 longitude:-122.713374611498],
+      [[CLLocation alloc] initWithLatitude:45.51602773754686 longitude:-122.7133082662082],
+      [[CLLocation alloc] initWithLatitude:45.51552116294043 longitude:-122.7132650214732],
+      [[CLLocation alloc] initWithLatitude:45.51442994074135 longitude:-122.713212145442],
+      [[CLLocation alloc] initWithLatitude:45.51330793405461 longitude:-122.7127677810208],
+      [[CLLocation alloc] initWithLatitude:45.51227869901748 longitude:-122.7120300285035],
+      [[CLLocation alloc] initWithLatitude:45.51167182131875 longitude:-122.7115670515517],
+      [[CLLocation alloc] initWithLatitude:45.51090804190034 longitude:-122.710601006296],
+      [[CLLocation alloc] initWithLatitude:45.51005985817833 longitude:-122.7096528384686],
+      [[CLLocation alloc] initWithLatitude:45.50898967921476 longitude:-122.7074196271657],
+      [[CLLocation alloc] initWithLatitude:45.50841928461968 longitude:-122.7054989490888],
+      [[CLLocation alloc] initWithLatitude:45.50821621715173 longitude:-122.7045116123016],
+      [[CLLocation alloc] initWithLatitude:45.50800471129917 longitude:-122.7035455786322],
+      [[CLLocation alloc] initWithLatitude:45.50757840215857 longitude:-122.7014150416887],
+      [[CLLocation alloc] initWithLatitude:45.50743305349084 longitude:-122.6986848423766],
+      [[CLLocation alloc] initWithLatitude:45.50741719296194 longitude:-122.6976642747348],
+      [[CLLocation alloc] initWithLatitude:45.50732913599806 longitude:-122.6946428514954],
+      [[CLLocation alloc] initWithLatitude:45.50737518920626 longitude:-122.6933193739336],
+      [[CLLocation alloc] initWithLatitude:45.50735271698139 longitude:-122.6924054079813],
+      [[CLLocation alloc] initWithLatitude:45.50770283703968 longitude:-122.6902193063934],
+      nil];
 
     RMAnnotation *annotation = [[RMAnnotation alloc] initWithMapView:mapView
-                                                          coordinate:((CLLocation *)[locations objectAtIndex:0]).coordinate
+                        coordinate:((CLLocation *)[locations objectAtIndex:0]).coordinate
                                                             andTitle:@"Home"];
 
     annotation.userInfo = locations;
@@ -94,24 +109,22 @@ tags:
     [annotation setBoundingBoxFromLocations:locations];
 
     [mapView addAnnotation:annotation];
-
-    mapView.centerCoordinate = CLLocationCoordinate2DMake(45.526795, -122.682953);
-
-    mapView.zoom = 12;
 }
 
 - (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
 {
-    if (annotation.isUserLocationAnnotation)
+     if (annotation.isUserLocationAnnotation)
         return nil;
 
     RMShape *shape = [[RMShape alloc] initWithView:mapView];
 
-    shape.lineColor = [UIColor orangeColor];
-    shape.lineWidth = 5.0;
+    // set line color and width
+    shape.lineColor = [UIColor colorWithRed:0.224 green:0.671 blue:0.780 alpha:1.000];
+    shape.lineWidth = 8.0;
 
     for (CLLocation *location in (NSArray *)annotation.userInfo)
         [shape addLineToCoordinate:location.coordinate];
 
     return shape;
+
 }

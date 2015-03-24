@@ -9,21 +9,21 @@ category: examples
   <p>{{page.description}}</p>
 </div>
 
-<div class='pad4 fill-light clearfix'>
-  <div class='wireframe example clip mobile col11 margin0 row7 fill-white'>
-    <div class='center col2 keyline-right row7 hide-mobile pad4y'>
-      <span class='dot fill-darken1'></span>
-    </div>
-    <div class='body col8 row7' style='background:url("{{site.baseurl}}/images{{page.url | replace:'examples/',''}}.png") no-repeat left bottom; background-size:cover;'>
-    </div>
-    <div class='center col2 keyline-left row7 hide-mobile pad4y'>
-      <span class='dot menu fill-darken0'></span>
-    </div>
-  </div>
+<div class='pad4 fill-light clearfix center'>
+  <div class='device contain{% if page.device == 'white' %} device-white{% endif %}{% if page.rotation == 'vertical' %} device-phone-v{% else %} device-phone-h{% endif %}'>
+      <img src="{{site.baseurl}}/images{{page.url | replace:'examples/',''}}.png" />
+     <div class='device-details'></div>
+   </div>
 </div>
 
 <div id='code' class='fill-white'>
-{% highlight objective-c %}
+{% if page.notes %}
+  <div class="prose pad2 keyline-bottom keyline-top fill-notes dark">
+  {{page.notes}}
+  </div>
+{% endif %}
+
+{% highlight objc %}
 #import "Mapbox.h"
 
 {{content}}

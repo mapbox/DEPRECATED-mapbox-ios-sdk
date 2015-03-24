@@ -4,4 +4,3 @@ tileApi: https://api.tiles.mapbox.com
 permalink: /:categories/:title
 baseurl: /mapbox-ios-sdk
 version: v1.6.0
-pygments: true

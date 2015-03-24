@@ -5,6 +5,7 @@ layout: examples
 title: A simple map view
 description: Show a map in a view controller. 
 permalink: /examples
+rotation: vertical
 ---
 @implementation MyViewController
 
@@ -14,9 +15,18 @@ permalink: /examples
 
     [[RMConfiguration sharedInstance] setAccessToken:@"<access token>"];
 
-    RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:@"examples.map-z2effxa8"];
+    RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:@"mapbox.run-bike-hike"];
 
-    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds andTilesource:tileSource];
+    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds 
+    										andTilesource:tileSource];
+    // set zoom
+    mapView.zoom = 1;
+
+    // set coordinates
+    CLLocationCoordinate2D center = CLLocationCoordinate2DMake(38.910003,-77.015533);
+
+    // center the map to the coordinates
+    mapView.centerCoordinate = center;
 
     [self.view addSubview:mapView];
 }

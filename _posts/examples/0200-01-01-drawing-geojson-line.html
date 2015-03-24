@@ -1,0 +1,87 @@
+---
+date: 0200-01-13
+category: examples
+layout: examples
+title: Drawing a GeoJSON line
+description: Drawing a line from GeoJSON data.
+tags:
+  - shape
+  - polygon
+  - draw
+  - json
+  - geojson
+notes: Download <a href="../../files/m.geojson">m.geojson</a> and add it to your project.
+---
+@interface MyViewController ()
+@property (nonatomic, strong) NSMutableArray *points;
+@end
+
+@implementation MyViewController
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+
+    [[RMConfiguration sharedInstance] setAccessToken:@"<access token>"];
+
+    RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:@"mapbox.pirates"];
+
+    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds
+                                                                andTilesource:tileSource];
+
+    // make map expand to fill screen when rotated
+    mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight |
+    UIViewAutoresizingFlexibleWidth;
+
+    // you will need to add a <RMMapViewDelegate> to the ViewController.h file
+    mapView.delegate = self;
+
+    // set zoom
+    mapView.zoom = 2;
+
+    // set the center point to one of the coordinates in the GeoJSON
+    mapView.centerCoordinate = CLLocationCoordinate2DMake( 20.96143961409685,-46.40625);
+
+    [self.view addSubview:mapView];
+
+    // convert `m.geojson` to an NSDIctionary
+    NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"m" ofType:@"geojson"];
+
+    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:[[NSData alloc]
+                                                initWithContentsOfFile:jsonPath]
+                                                options:0
+                                                error:nil];
+
+    self.points = [[[[json objectForKey:@"features"] objectAtIndex:0]
+                                valueForKeyPath:@"geometry.coordinates"] mutableCopy];
+
+    // set the shape
+    for (NSUInteger i = 0; i < [self.points count]; i++)
+        [self.points replaceObjectAtIndex:i
+               withObject:[[CLLocation alloc]
+               initWithLatitude:[[[self.points objectAtIndex:i] objectAtIndex:1] doubleValue]
+               longitude:[[[self.points objectAtIndex:i] objectAtIndex:0] doubleValue]]];
+
+    RMAnnotation *annotation = [[RMAnnotation alloc] initWithMapView:mapView
+                                                     coordinate:mapView.centerCoordinate
+                                                     andTitle:@"My Path"];
+    [mapView addAnnotation:annotation];
+    [annotation setBoundingBoxFromLocations:self.points];
+}
+
+- (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
+{
+    if (annotation.isUserLocationAnnotation)
+        return nil;
+
+    RMShape *shape = [[RMShape alloc] initWithView:mapView];
+
+    // style the line's color and width
+    shape.lineColor = [UIColor colorWithRed:0.078 green:0.153 blue:0.212 alpha:0.650];
+    shape.lineWidth = 10.0;
+
+    for (CLLocation *point in self.points)
+        [shape addLineToCoordinate:point.coordinate];
+
+    return shape;
+}

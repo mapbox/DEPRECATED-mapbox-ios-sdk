@@ -3,7 +3,7 @@ date: 0200-01-12
 category: examples
 layout: examples
 title: Drawing a circle
-description: Drawing a perfect vector circle on the map. 
+description: Drawing a vector circle on the map.
 tags:
   - shape
   - polygon
@@ -18,19 +18,35 @@ tags:
 
     [[RMConfiguration sharedInstance] setAccessToken:@"<access token>"];
 
-    RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:@"examples.map-z2effxa8"];
+    RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:@"mapbox.outdoors"];
 
-    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds andTilesource:tileSource];
-
+    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds
+                                            andTilesource:tileSource];
+                                            
+    // you will need to add a <RMMapViewDelegate> to the ViewController.h file
     mapView.delegate = self;
 
     [self.view addSubview:mapView];
 
+    // add callout title
     RMAnnotation *annotation = [[RMAnnotation alloc] initWithMapView:mapView
                                                           coordinate:mapView.centerCoordinate
                                                             andTitle:@"Coverage Area"];
 
     [mapView addAnnotation:annotation];
+
+    // set coordinates
+    CLLocationCoordinate2D center = CLLocationCoordinate2DMake(38.910003, -77.015533);
+
+    // set zoom
+    mapView.zoom = 10;
+
+    // center the map to the coordinates
+    mapView.centerCoordinate = center;
+
+    // allow rotation
+    mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight |
+    UIViewAutoresizingFlexibleWidth;
 }
 
 - (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
@@ -40,8 +56,9 @@ tags:
 
     RMCircle *circle = [[RMCircle alloc] initWithView:mapView radiusInMeters:10000];
 
-    circle.lineColor = [UIColor colorWithRed:1.0 green:0 blue:0 alpha:0.5];
-    circle.fillColor = [UIColor colorWithRed:1.0 green:0 blue:0 alpha:0.2];
+    // style circle's line and fill color, and width.
+    circle.lineColor = [UIColor colorWithRed:.5 green:.466 blue:.733 alpha:.75];
+    circle.fillColor = [UIColor colorWithRed:.5 green:.466 blue:.733 alpha:.25];
     circle.lineWidthInPixels = 5.0;
 
     return circle;
