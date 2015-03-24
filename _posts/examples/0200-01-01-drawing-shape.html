@@ -3,7 +3,7 @@ date: 0200-01-11
 category: examples
 layout: examples
 title: Drawing a shape
-description: Drawing a vector polyline or polygon on the map. 
+description: Drawing a vector polyline or polygon on the map.
 tags:
   - shape
   - polyline
@@ -16,26 +16,29 @@ tags:
 {
     [super viewDidLoad];
 
-    [[RMConfiguration sharedInstance] setAccessToken:@"<access token>"];    
-    
-    RMMapboxSource *tileSource = [[RMMapboxSource alloc] 
+    [[RMConfiguration sharedInstance] setAccessToken:@"<access token>"];
+
+    RMMapboxSource *tileSource = [[RMMapboxSource alloc]
                                     initWithMapID:@"mapbox.pencil"];
-    
-    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds 
+
+    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds
                                             andTilesource:tileSource];
-    
+
     // make map expand to fill screen when rotated
     mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight |
     UIViewAutoresizingFlexibleWidth;
-    
+
     mapView.delegate = self;
 
+    // set zoom
     mapView.zoom = 11;
-    
+
+    // center the map to the coordinates
     mapView.centerCoordinate = CLLocationCoordinate2DMake(45.50743305349084, -122.6986848423766);
 
     [self.view addSubview:mapView];
-    
+
+    // set shape coordinates
     NSArray *locations = [NSArray arrayWithObjects:
       [[CLLocation alloc] initWithLatitude:45.55176915965956 longitude:-122.6787566208549],
       [[CLLocation alloc] initWithLatitude:45.55086534792735 longitude:-122.682166554306],
@@ -95,15 +98,15 @@ tags:
       [[CLLocation alloc] initWithLatitude:45.50735271698139 longitude:-122.6924054079813],
       [[CLLocation alloc] initWithLatitude:45.50770283703968 longitude:-122.6902193063934],
       nil];
-    
+
     RMAnnotation *annotation = [[RMAnnotation alloc] initWithMapView:mapView
                         coordinate:((CLLocation *)[locations objectAtIndex:0]).coordinate
                                                             andTitle:@"Home"];
-    
+
     annotation.userInfo = locations;
-    
+
     [annotation setBoundingBoxFromLocations:locations];
-    
+
     [mapView addAnnotation:annotation];
 }
 
@@ -111,15 +114,16 @@ tags:
 {
      if (annotation.isUserLocationAnnotation)
         return nil;
-    
+
     RMShape *shape = [[RMShape alloc] initWithView:mapView];
-    
+
+    // set line color and width
     shape.lineColor = [UIColor colorWithRed:0.224 green:0.671 blue:0.780 alpha:1.000];
     shape.lineWidth = 8.0;
-    
+
     for (CLLocation *location in (NSArray *)annotation.userInfo)
         [shape addLineToCoordinate:location.coordinate];
-    
+
     return shape;
 
 }

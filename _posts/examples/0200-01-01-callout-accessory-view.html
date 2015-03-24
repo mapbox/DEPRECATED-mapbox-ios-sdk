@@ -31,10 +31,12 @@ notes: Download <a href="../../files/astro-training.png">astro-training.png</a> 
                           initWithFrame:self.view.bounds
                           andTilesource:tileSource];
 
+    // you will need to add a <RMMapViewDelegate> to the ViewController.h file
     mapView.delegate = self;
 
     [self.view addSubview:mapView];
 
+    // add marker title
     RMAnnotation *annotation = [[RMAnnotation alloc] initWithMapView:mapView
                                                           coordinate:mapView.centerCoordinate
                                                             andTitle:@"Astronaut training"];
@@ -47,12 +49,14 @@ notes: Download <a href="../../files/astro-training.png">astro-training.png</a> 
     if (annotation.isUserLocationAnnotation)
         return nil;
 
+    // add Maki icon and color the marker
     RMMarker *marker = [[RMMarker alloc]
                             initWithMapboxMarkerImage:@"rocket"
                             tintColor:[UIColor colorWithRed:.5 green:.466 blue:.733 alpha:1]];
 
     marker.canShowCallout = YES;
 
+    // add callout image
     marker.leftCalloutAccessoryView = [[UIImageView alloc]
                                        initWithImage:
                                        [UIImage imageNamed:@"astro-training.png"]];
@@ -63,6 +67,7 @@ notes: Download <a href="../../files/astro-training.png">astro-training.png</a> 
     return marker;
 }
 
+// add event when callout is tapped
 - (void)tapOnCalloutAccessoryControl:(UIControl *)control
                        forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map
 {

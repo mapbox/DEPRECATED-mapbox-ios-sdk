@@ -13,9 +13,7 @@ tags:
 notes: Download <a href="../../files/boat.geojson">boat.geojson</a> and add it to your project.
 ---
 @interface MyViewController ()
-
 @property (nonatomic, strong) NSMutableArray *points;
-
 @end
 
 @implementation MyViewController
@@ -35,19 +33,20 @@ notes: Download <a href="../../files/boat.geojson">boat.geojson</a> and add it t
     mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight |
     UIViewAutoresizingFlexibleWidth;
 
-    // You will need to add a <RMMapViewDelegate> to the ViewController.h file
+    // you will need to add a <RMMapViewDelegate> to the ViewController.h file
     mapView.delegate = self;
 
+    // set zoom
     mapView.zoom = 15;
 
-    // Setting our center point to one of the coordinates in the geoJSON file
+    // set the center point to one of the coordinates in the GeoJSON file
     mapView.centerCoordinate = CLLocationCoordinate2DMake(38.88402624576415,
                                                           -77.03889012336731);
 
     [self.view addSubview:mapView];
 
 
-    // Converting our geoJSON file to a NSDIctionary
+    // convert `boat.geojson` to an NSDIctionary
     NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"boat" ofType:@"geojson"];
     NSDictionary *json = [NSJSONSerialization JSONObjectWithData:[[NSData alloc]
                                                         initWithContentsOfFile:jsonPath]
@@ -56,30 +55,30 @@ notes: Download <a href="../../files/boat.geojson">boat.geojson</a> and add it t
 
     NSArray *features = json[@"features"];
 
-    // Create an empty array
+    // create an empty array
     NSMutableArray *shapes = [[NSMutableArray alloc] init];
     self.shapes = shapes;
 
-    // Set the current shape
+    // set the current shape
     for (NSUInteger i = 0; i < [features count]; i++) {
-        // Add an empty array to the shapes array to hold the coordinates
+
+        // add an empty array to the shapes array to hold the coordinates
         [self.shapes addObject:[[NSMutableArray alloc] init]];
 
-        // Get the current shape out of the feature array
+        // get the current shape out of the feature array
         NSDictionary *currentNode = (NSDictionary *)features[i];
 
-        // The coordinates array seems to be an array within an array so get the first and last one
         NSArray *coordinates = currentNode[@"geometry"][@"coordinates"][0];
 
-        // Loop over the coordinates in the coordinate array
+        // loop over the coordinates in the coordinate array
         for (NSArray *coordinate in coordinates) {
 
-        // Convert the coordinates to location coordinates
+        // convert the coordinates to location coordinates
         CLLocation *loc = [[CLLocation alloc]
                                               initWithLatitude:[[coordinate lastObject] doubleValue]
                                               longitude:[[coordinate firstObject] doubleValue]];
 
-        // Adding the location object (with both coordinates) to our array
+        // add the location object (with both coordinates) to the array
         [[self.shapes lastObject] addObject:loc];
         }
     }
@@ -90,7 +89,7 @@ notes: Download <a href="../../files/boat.geojson">boat.geojson</a> and add it t
                                                      coordinate:mapView.centerCoordinate
                                                      andTitle:@"My Path"];
 
-        // Calling this method will actually add the shapes to our mapView
+        // add the shapes to the mapView
         [mapView addAnnotation:annotation];
         [annotation setBoundingBoxFromLocations:[self.shapes objectAtIndex:0]];
 }
@@ -99,6 +98,7 @@ notes: Download <a href="../../files/boat.geojson">boat.geojson</a> and add it t
     if (annotation.isUserLocationAnnotation)
         return nil;
 
+    // style the shape
     RMShape *shape = [[RMShape alloc] initWithView:mapView];
     shape.lineColor = [UIColor whiteColor];
     shape.lineWidth = 3.0;
@@ -109,15 +109,15 @@ notes: Download <a href="../../files/boat.geojson">boat.geojson</a> and add it t
             CLLocation *loc = (CLLocation *)[coordinates objectAtIndex:lc];
 
             if (lc == 0) {
-                // If this is the first coordinate we'll
+                // if this is the first coordinate
                 // move to the first point instead of drawing a line
                 [shape moveToCoordinate:loc.coordinate];
             } else {
-                // If not we draw a line to the point
+                // if not, draw a line to the point
                 [shape addLineToCoordinate:loc.coordinate];
             }
 
-            // If this is the last point, we need to close the current path
+            // if this is the last point, close the current path
             if (lc == [coordinates count])
                 [shape closePath];
         }

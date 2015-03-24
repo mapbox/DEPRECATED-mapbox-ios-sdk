@@ -3,7 +3,7 @@ date: 0200-01-09
 category: examples
 layout: examples
 title: Clustering points
-description: Clustering nearby markers to indicate data density. 
+description: Clustering nearby markers to indicate data density.
 tags:
   - marker
   - point
@@ -23,29 +23,29 @@ notes: Download the <a href="../../files/circle.png">circle.png</a> file and add
     [[RMConfiguration sharedInstance] setAccessToken:@"<access token>"];
 
     RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:@"mapbox.run-bike-hike"];
-    
-    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds 
+
+    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds
                                                 andTilesource:tileSource];
-    
+
     // set zoom
     mapView.zoom = 3;
-    
+
     // set coordinates
     CLLocationCoordinate2D center = CLLocationCoordinate2DMake(38.910003,-77.015533);
-    
+
     // center the map to the coordinates
     mapView.centerCoordinate = center;
-    
+
     // make map expand to fill screen when rotated
     mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight |
     UIViewAutoresizingFlexibleWidth;
-    
-    // You will need to add a <RMMapViewDelegate> to the ViewController.h file
+
+    // you will need to add a <RMMapViewDelegate> to the ViewController.h file
     mapView.delegate = self;
-    
+
     [self.view addSubview:mapView];
-    
-    // Adding Markers
+
+    // add markers
     [mapView addAnnotation:[RMAnnotation annotationWithMapView:mapView coordinate:
                     CLLocationCoordinate2DMake(43.325178, -85.166016) andTitle:nil]];
     [mapView addAnnotation:[RMAnnotation annotationWithMapView:mapView coordinate:
@@ -60,7 +60,7 @@ notes: Download the <a href="../../files/circle.png">circle.png</a> file and add
                     CLLocationCoordinate2DMake(50.847573, -69.960937) andTitle:nil]];
     [mapView addAnnotation:[RMAnnotation annotationWithMapView:mapView coordinate:
                     CLLocationCoordinate2DMake(50.847573, -81.298828) andTitle:nil]];
-    
+
     mapView.clusteringEnabled = YES;
 }
 
@@ -70,19 +70,19 @@ notes: Download the <a href="../../files/circle.png">circle.png</a> file and add
 {
     if (annotation.isUserLocationAnnotation)
         return nil;
-    
+
     RMMapLayer *layer = nil;
-    
+
     if (annotation.isClusterAnnotation)
     {
         layer = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"circle.png"]];
-        
+
         layer.opacity = 0.75;
-        
-        // Setting the size of the circle
+
+        // set the size of the circle
         layer.bounds = CGRectMake(0, 0, 50, 50);
-        
-        // Changing the size of the circle depending on how big the marker cluster is
+
+        // change the size of the circle depending on the cluster's size
         if ([annotation.clusteredAnnotations count] > 2) {
             layer.bounds = CGRectMake(0, 0, 70, 70);
         } else if ([annotation.clusteredAnnotations count] > 3) {
@@ -90,11 +90,10 @@ notes: Download the <a href="../../files/circle.png">circle.png</a> file and add
         } else if ([annotation.clusteredAnnotations count] > 5) {
             layer.bounds = CGRectMake(0, 0, 120, 120);
         }
-        
-        
+
         [(RMMarker *)layer setTextForegroundColor:[UIColor whiteColor]];
-        
-        [(RMMarker *)layer changeLabelUsingText:[NSString stringWithFormat:@"%lu", 
+
+        [(RMMarker *)layer changeLabelUsingText:[NSString stringWithFormat:@"%lu",
                             (unsigned long)[annotation.clusteredAnnotations count]]];
     }
     else
@@ -102,7 +101,6 @@ notes: Download the <a href="../../files/circle.png">circle.png</a> file and add
         layer = [[RMMarker alloc] initWithMapboxMarkerImage:@"rocket" tintColor:
                  [UIColor colorWithRed:0.224 green:0.671 blue:0.780 alpha:1.000]];
     }
-    
+
     return layer;
 }
-

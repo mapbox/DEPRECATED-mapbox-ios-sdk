@@ -13,9 +13,7 @@ tags:
 notes: Download <a href="../../files/m.geojson">m.geojson</a> and add it to your project.
 ---
 @interface MyViewController ()
-
 @property (nonatomic, strong) NSMutableArray *points;
-
 @end
 
 @implementation MyViewController
@@ -35,18 +33,19 @@ notes: Download <a href="../../files/m.geojson">m.geojson</a> and add it to your
     mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight |
     UIViewAutoresizingFlexibleWidth;
 
-    // You will need to add a <RMMapViewDelegate> to the ViewController.h file
+    // you will need to add a <RMMapViewDelegate> to the ViewController.h file
     mapView.delegate = self;
 
+    // set zoom
     mapView.zoom = 2;
 
-    // Setting our center point to one of the coordinates in the geoJSON file
+    // set the center point to one of the coordinates in the GeoJSON
     mapView.centerCoordinate = CLLocationCoordinate2DMake( 20.96143961409685,-46.40625);
 
     [self.view addSubview:mapView];
 
-
-    NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"fish" ofType:@"geojson"];
+    // convert `boat.geojson` to an NSDIctionary
+    NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"m" ofType:@"geojson"];
 
     NSDictionary *json = [NSJSONSerialization JSONObjectWithData:[[NSData alloc]
                                                 initWithContentsOfFile:jsonPath]
@@ -69,7 +68,6 @@ notes: Download <a href="../../files/m.geojson">m.geojson</a> and add it to your
     [annotation setBoundingBoxFromLocations:self.points];
 }
 
-
 - (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
 {
     if (annotation.isUserLocationAnnotation)
@@ -77,6 +75,7 @@ notes: Download <a href="../../files/m.geojson">m.geojson</a> and add it to your
 
     RMShape *shape = [[RMShape alloc] initWithView:mapView];
 
+    // style the line's color and width
     shape.lineColor = [UIColor colorWithRed:0.078 green:0.153 blue:0.212 alpha:0.650];
     shape.lineWidth = 10.0;
 

@@ -27,6 +27,7 @@ tags:
 
     [self.view addSubview:mapView];
 
+    // add callout title
     RMAnnotation *annotation = [[RMAnnotation alloc] initWithMapView:mapView
                                                           coordinate:mapView.centerCoordinate
                                                             andTitle:@"Coverage Area"];
@@ -42,7 +43,7 @@ tags:
     // center the map to the coordinates
     mapView.centerCoordinate = center;
 
-    // allows rotation
+    // allow rotation
     mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight |
     UIViewAutoresizingFlexibleWidth;
 }
@@ -54,6 +55,7 @@ tags:
 
     RMCircle *circle = [[RMCircle alloc] initWithView:mapView radiusInMeters:10000];
 
+    // style circle's line and fill color, and width.
     circle.lineColor = [UIColor colorWithRed:.5 green:.466 blue:.733 alpha:.75];
     circle.fillColor = [UIColor colorWithRed:.5 green:.466 blue:.733 alpha:.25];
     circle.lineWidthInPixels = 5.0;

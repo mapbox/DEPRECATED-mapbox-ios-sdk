@@ -33,6 +33,7 @@ tags:
 
     [self.view addSubview:mapView];
 
+    // add callout title
     RMAnnotation *annotation = [[RMAnnotation alloc] initWithMapView:mapView
                                                           coordinate:mapView.centerCoordinate
                                                             andTitle:@"Mapbox Garage"];
@@ -45,6 +46,7 @@ tags:
     if (annotation.isUserLocationAnnotation)
         return nil;
 
+    // add Maki icon and color the marker
     RMMarker *marker = [[RMMarker alloc] initWithMapboxMarkerImage:@"rocket" tintColor:
                        [UIColor colorWithRed:0.224 green:0.671 blue:0.780 alpha:1.000]];
 
