@@ -16,7 +16,7 @@ Pod::Spec.new do |m|
   m.platform              = :ios
   m.ios.deployment_target = '5.0'
 
-  m.source_files = 'Proj4/*.h', 'MapView/Map/*.{h,c,m}'
+  m.source_files = 'Proj4/proj_api.h', 'MapView/Map/*.{h,c,m}'
 
   m.requires_arc = true
 
