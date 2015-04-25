@@ -1,6 +1,15 @@
 Changelog
 ---------
 
+### 1.6.1
+#### April 25, 2015
+
+  - Allow requirement for iOS 8 location services to be satisified both "always" and "when in use" modes. 
+  - Fixed a bug when checking the types of tile sources that can be taken offline. 
+  - Better developer warnings around when a Mapbox access token is required. 
+  - Fixed a visual glitch with the user location dot. 
+  - Improvements and fixes to CocoaPods installation method. 
+
 ### 1.6.0
 #### February 4, 2015
 

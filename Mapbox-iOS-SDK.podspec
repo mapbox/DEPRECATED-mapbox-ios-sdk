@@ -1,7 +1,7 @@
 Pod::Spec.new do |m|
 
   m.name    = 'Mapbox-iOS-SDK'
-  m.version = '1.6.0'
+  m.version = '1.6.1'
 
   m.summary          = 'An open source toolset for building mapping applications for iOS devices.'
   m.description      = 'An open source toolset for building mapping applications for iOS devices with great flexibility for visual styling, offline use, and customizability.'
@@ -11,18 +11,53 @@ Pod::Spec.new do |m|
   m.screenshot       = 'https://raw.github.com/mapbox/mapbox-ios-sdk/packaging/screenshot.png'
   m.social_media_url = 'https://twitter.com/Mapbox'
 
-  m.source = { :git => 'https://github.com/mapbox/mapbox-ios-sdk.git', :tag => m.version.to_s }
+  m.source = {
+    :git => 'https://github.com/mapbox/mapbox-ios-sdk.git',
+    :tag => m.version.to_s
+  }
 
   m.platform              = :ios
   m.ios.deployment_target = '5.0'
+  m.requires_arc          = true
 
-  m.source_files = 'Proj4/*.h', 'MapView/Map/*.{h,c,m}'
+  m.module_name = 'Mapbox_iOS_SDK'
 
-  m.requires_arc = true
+  m.source_files = 'Proj4/proj_api.h', 'MapView/Map/*.{h,c,m}'
 
   m.prefix_header_file = 'MapView/MapView_Prefix.pch'
 
-  m.resource_bundle = { 'Mapbox' => 'MapView/Map/Resources/*' }
+  m.public_header_files = [
+    'Mapbox.h',
+    'RMAnnotation.h',
+    'RMCacheObject.h',
+    'RMCircle.h',
+    'RMCircleAnnotation.h',
+    'RMCompositeSource.h',
+    'RMConfiguration.h',
+    'RMCoordinateGridSource.h',
+    'RMDatabaseCache.h',
+    'RMGreatCircleAnnotation.h',
+    'RMInteractiveSource.h',
+    'RMMBTilesSource.h',
+    'RMMapboxSource.h',
+    'RMMapView.h',
+    'RMMapViewDelegate.h',
+    'RMMarker.h',
+    'RMMemoryCache.h',
+    'RMPointAnnotation.h',
+    'RMPolygonAnnotation.h',
+    'RMPolylineAnnotation.h',
+    'RMShape.h',
+    'RMStaticMapView.h',
+    'RMTileCache.h',
+    'RMTileMillSource.h',
+    'RMUserLocation.h',
+    'RMUserTrackingBarButtonItem.h'
+  ]
+
+  m.resource_bundle = {
+    'Mapbox' => 'MapView/Map/Resources/*'
+  }
 
   m.documentation_url = 'https://www.mapbox.com/mapbox-ios-sdk'
 
@@ -30,7 +65,10 @@ Pod::Spec.new do |m|
 
   m.libraries = 'Proj4', 'sqlite3', 'z'
 
-  m.xcconfig = { 'OTHER_LDFLAGS' => '-ObjC', 'LIBRARY_SEARCH_PATHS' => '"${PODS_ROOT}/Mapbox-iOS-SDK/Proj4"' }
+  m.xcconfig = {
+    'OTHER_LDFLAGS'        => '-ObjC',
+    'LIBRARY_SEARCH_PATHS' => '"${PODS_ROOT}/Mapbox-iOS-SDK/Proj4"'
+  }
 
   m.preserve_paths = 'MapView/MapView.xcodeproj', 'MapView/Map/Resources'
 
