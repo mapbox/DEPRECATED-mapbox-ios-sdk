@@ -20,6 +20,8 @@ Pod::Spec.new do |m|
   m.ios.deployment_target = '5.0'
   m.requires_arc          = true
 
+  m.module_name = 'Mapbox_iOS_SDK'
+
   m.source_files = 'Proj4/proj_api.h', 'MapView/Map/*.{h,c,m}'
 
   m.prefix_header_file = 'MapView/MapView_Prefix.pch'
