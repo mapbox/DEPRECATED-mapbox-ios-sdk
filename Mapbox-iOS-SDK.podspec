@@ -26,6 +26,35 @@ Pod::Spec.new do |m|
 
   m.prefix_header_file = 'MapView/MapView_Prefix.pch'
 
+  m.public_header_files = [
+    'Mapbox.h',
+    'RMAnnotation.h',
+    'RMCacheObject.h',
+    'RMCircle.h',
+    'RMCircleAnnotation.h',
+    'RMCompositeSource.h',
+    'RMConfiguration.h',
+    'RMCoordinateGridSource.h',
+    'RMDatabaseCache.h',
+    'RMGreatCircleAnnotation.h',
+    'RMInteractiveSource.h',
+    'RMMBTilesSource.h',
+    'RMMapboxSource.h',
+    'RMMapView.h',
+    'RMMapViewDelegate.h',
+    'RMMarker.h',
+    'RMMemoryCache.h',
+    'RMPointAnnotation.h',
+    'RMPolygonAnnotation.h',
+    'RMPolylineAnnotation.h',
+    'RMShape.h',
+    'RMStaticMapView.h',
+    'RMTileCache.h',
+    'RMTileMillSource.h',
+    'RMUserLocation.h',
+    'RMUserTrackingBarButtonItem.h'
+  ]
+
   m.resource_bundle = {
     'Mapbox' => 'MapView/Map/Resources/*'
   }
