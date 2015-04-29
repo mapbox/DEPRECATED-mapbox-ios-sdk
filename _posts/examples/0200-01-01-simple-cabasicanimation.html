@@ -1,0 +1,99 @@
+---
+date: 0200-01-15
+category: examples
+layout: examples
+title: Simple CABasicAnimation
+rotation: horizontal
+description: Animating a custom marker.
+type: gif
+tags:
+  - marker
+  - point
+  - pin
+  - callout
+  - popup
+  - animation
+  - CABasicAnimation
+notes: Download <a href="../../files/astronaut.png">astronaut.png</a> and add them to your project.
+---
+@implementation MyViewController
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+
+    [[RMConfiguration sharedInstance] setAccessToken:@"<access token>"];
+
+    RMMapboxSource *tileSource = [[RMMapboxSource alloc] 
+                                      initWithMapID:@"mapbox.run-bike-hike"];
+    
+    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds 
+                                                  andTilesource:tileSource];
+    
+    // you will need to add a <RMMapViewDelegate> to the ViewController.h file
+    mapView.delegate = self;
+    
+    [self.view addSubview:mapView];
+    
+    // build first marker and title
+    RMAnnotation *annotation1 = [[RMAnnotation alloc]
+                                 initWithMapView:mapView
+                                 coordinate:CLLocationCoordinate2DMake(38.894368, 
+                                                                      -77.036487)
+                                 andTitle:@"Astronaut training"];
+
+    annotation1.userInfo = @"training";
+    [mapView addAnnotation:annotation1];
+
+    
+    // you will need to add a <RMMapViewDelegate> to the ViewController.h file
+    mapView.delegate = self;
+    
+    // set coordinates
+    CLLocationCoordinate2D center = CLLocationCoordinate2DMake(38.894368, 
+                                                              -77.036487);
+    
+    // set zoom
+    mapView.zoom = 17;
+    
+    // center the map to the coordinates
+    mapView.centerCoordinate = center;
+    
+    // allows rotation
+    mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight |
+    UIViewAutoresizingFlexibleWidth;
+
+}
+
+
+- (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
+{
+    if (annotation.isUserLocationAnnotation)
+        return nil;
+    
+    RMMarker *marker;
+    marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"astronaut.png"]];
+
+    marker.canShowCallout = YES;
+    marker.bounds = CGRectMake(0, 0, 100, 143);
+    
+    // move marker up and down:
+    CABasicAnimation *hover = [CABasicAnimation animationWithKeyPath:@"position"];
+    // fromValue and toValue will be relative instead of absolute values
+    hover.additive = YES; 
+    hover.fromValue = [NSValue valueWithCGPoint:CGPointZero];
+    // y increases downwards on iOS
+    hover.toValue = [NSValue valueWithCGPoint:CGPointMake(0.0, -15.0)]; 
+    // Animate back to normal afterwards
+    hover.autoreverses = YES;
+    // The duration for one part of the animation (1 up and 1 down)
+    hover.duration = 1; 
+    // The number of times the animation should repeat
+    hover.repeatCount = INFINITY; 
+    // adding easing to our animation
+    hover.timingFunction = [CAMediaTimingFunction functionWithName:
+                                            kCAMediaTimingFunctionEaseInEaseOut]; 
+    [marker addAnimation:hover forKey:@"myHoverAnimation"];
+    
+    return marker;
+}

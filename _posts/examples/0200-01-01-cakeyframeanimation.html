@@ -1,0 +1,142 @@
+---
+date: 0200-01-16
+category: examples
+layout: examples
+title: Key frame animation on a marker
+rotation: horizontal
+description: Animating a custom marker with a key frame animation.
+type: gif
+tags:
+  - marker
+  - point
+  - pin
+  - callout
+  - popup
+  - animation
+  - CAKeyframeAnimation
+notes: You will have to make a png sequence for this project.
+---
+@implementation MyViewController
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+
+    [[RMConfiguration sharedInstance] setAccessToken:@"<access token>"];
+
+    RMMapboxSource *tileSource = [[RMMapboxSource alloc] 
+                                      initWithMapID:@"mapbox.run-bike-hike"];
+    
+    RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds 
+                                                  andTilesource:tileSource];
+    
+    // you will need to add a <RMMapViewDelegate> to the ViewController.h file
+    mapView.delegate = self;
+    
+    [self.view addSubview:mapView];
+    
+    // build first marker and title
+    RMAnnotation *annotation1 = [[RMAnnotation alloc]
+                                 initWithMapView:mapView
+                                 coordinate:CLLocationCoordinate2DMake(38.894368, 
+                                                                      -77.036487)
+                                 andTitle:@"Astronaut training"];
+
+    annotation1.userInfo = @"training";
+    [mapView addAnnotation:annotation1];
+
+    
+    // you will need to add a <RMMapViewDelegate> to the ViewController.h file
+    mapView.delegate = self;
+    
+    // set coordinates
+    CLLocationCoordinate2D center = CLLocationCoordinate2DMake(38.894368, 
+                                                              -77.036487);
+    
+    // set zoom
+    mapView.zoom = 17;
+    
+    // center the map to the coordinates
+    mapView.centerCoordinate = center;
+    
+    // allows rotation
+    mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight |
+    UIViewAutoresizingFlexibleWidth;
+
+}
+
+
+- (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
+{
+    if (annotation.isUserLocationAnnotation)
+        return nil;
+    
+    RMMarker *marker;
+    
+    marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"astronaut.png"]];
+
+    marker.canShowCallout = YES;
+    marker.bounds = CGRectMake(0, 0, 100, 143);
+    
+    CAKeyframeAnimation *animation = [CAKeyframeAnimation animationWithKeyPath:@"contents"];
+    
+    // Each keyframe value is used in turn, no interpolated values are calculated.
+    [animation setCalculationMode:kCAAnimationDiscrete];
+
+    // animation will take 2 seconds
+    [animation setDuration:2.0f];
+    
+    //Setting this property to HUGE_VALF will cause the animation to repeat forever.
+    [animation setRepeatCount:HUGE_VALF];
+    
+    [animation setValues:[NSArray arrayWithObjects:
+                          (id)[UIImage imageNamed:@"astronaut_00000.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00001.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00002.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00003.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00004.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00005.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00006.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00007.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00008.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00009.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00010.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00011.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00012.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00013.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00014.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00015.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00016.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00017.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00018.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00019.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00020.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00021.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00022.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00023.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00024.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00025.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00026.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00027.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00028.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00029.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00030.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00031.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00032.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00033.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00034.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00035.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00036.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00037.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00038.png"].CGImage,
+                          (id)[UIImage imageNamed:@"astronaut_00039.png"].CGImage,
+                          nil]];
+    
+    //Add the animation to the layer
+    [marker addAnimation:animation forKey:@"contents"];
+    
+    [marker setFrame:CGRectMake(0, 0, 150, 150)];
+    
+    return marker;
+}
+
