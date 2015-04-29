@@ -16,6 +16,10 @@ tags:
   - CAKeyframeAnimation
 notes: You will have to make a png sequence for this project.
 ---
+@interface MyViewController () <RMMapViewDelegate>
+
+@end
+
 @implementation MyViewController
 
 - (void)viewDidLoad
@@ -30,7 +34,6 @@ notes: You will have to make a png sequence for this project.
     RMMapView *mapView = [[RMMapView alloc] initWithFrame:self.view.bounds 
                                                   andTilesource:tileSource];
     
-    // you will need to add a <RMMapViewDelegate> to the ViewController.h file
     mapView.delegate = self;
     
     [self.view addSubview:mapView];
@@ -64,7 +67,6 @@ notes: You will have to make a png sequence for this project.
     UIViewAutoresizingFlexibleWidth;
 
 }
-
 
 - (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
 {
