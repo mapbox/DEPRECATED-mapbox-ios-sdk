@@ -90,29 +90,21 @@ notes: You will have to make a png sequence for this project.
     [animation setRepeatCount:HUGE_VALF];
     
     // Creating a mutable array for our png sequence
-    NSMutableArray *myArray = [NSMutableArray arrayWithCapacity:39]; // needs to be mutable
-    NSString *imageName;
+    NSMutableArray *frameValues = [NSMutableArray array];
     
-    for (int i=0; i<=39;i++)
+    for (NSUInteger i = 0; i < 40; i++)
     {
-        //everytime i increments:
-
-        // if i is smaller than 10, our image name will need 4 times 0: astronaut_00000.png, 
+        // if i is smaller than 10, our image name will need 4 times 0: astronaut_00000.png,
         // astronaut_00000.png, astronaut_00002.png,...
-        if (i < 10) {
-           imageName = [NSString stringWithFormat:@"astronaut_0000%d.png", i];
-        }
-        // if i is bigger or equal to 10, our image name will need 3 times 0: astronaut_00010.png, 
+        // if i is bigger or equal to 10, our image name will need 3 times 0: astronaut_00010.png,
         // astronaut_00011.png, astronaut_00012.png,...
-        else {
-            imageName = [NSString stringWithFormat:@"astronaut_000%d.png", i];
-        }
-        
-        // Creating an image and adding it to our array
-        [myArray addObject:(id)[UIImage imageNamed:imageName].CGImage];
+        NSString *frameName = [NSString stringWithFormat:@"astronaut_000%@%lu.png",
+                                           (i < 10 ? @"0" : @""), (unsigned long)i];
+                                           
+        [frameValues addObject:(id)[[UIImage imageNamed:frameName] CGImage]];
     }
-
-    [animation setValues:myArray];
+    
+    [animation setValues:frameValues];
     
     //Add the animation to the layer
     [marker addAnimation:animation forKey:@"contents"];
