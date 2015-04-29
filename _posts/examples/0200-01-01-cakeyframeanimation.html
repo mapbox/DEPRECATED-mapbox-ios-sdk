@@ -89,48 +89,30 @@ notes: You will have to make a png sequence for this project.
     //Setting this property to HUGE_VALF will cause the animation to repeat forever.
     [animation setRepeatCount:HUGE_VALF];
     
-    [animation setValues:[NSArray arrayWithObjects:
-                          (id)[UIImage imageNamed:@"astronaut_00000.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00001.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00002.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00003.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00004.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00005.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00006.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00007.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00008.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00009.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00010.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00011.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00012.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00013.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00014.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00015.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00016.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00017.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00018.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00019.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00020.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00021.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00022.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00023.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00024.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00025.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00026.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00027.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00028.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00029.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00030.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00031.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00032.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00033.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00034.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00035.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00036.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00037.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00038.png"].CGImage,
-                          (id)[UIImage imageNamed:@"astronaut_00039.png"].CGImage,
-                          nil]];
+    // Creating a mutable array for our png sequence
+    NSMutableArray *myArray = [NSMutableArray arrayWithCapacity:39]; // needs to be mutable
+    NSString *imageName;
+    
+    for (int i=0; i<=39;i++)
+    {
+        //everytime i increments:
+
+        // if i is smaller than 10, our image name will need 4 times 0: astronaut_00000.png, 
+        // astronaut_00000.png, astronaut_00002.png,...
+        if (i < 10) {
+           imageName = [NSString stringWithFormat:@"astronaut_0000%d.png", i];
+        }
+        // if i is bigger or equal to 10, our image name will need 3 times 0: astronaut_00010.png, 
+        // astronaut_00011.png, astronaut_00012.png,...
+        else {
+            imageName = [NSString stringWithFormat:@"astronaut_000%d.png", i];
+        }
+        
+        // Creating an image and adding it to our array
+        [myArray addObject:(id)[UIImage imageNamed:imageName].CGImage];
+    }
+
+    [animation setValues:myArray];
     
     //Add the animation to the layer
     [marker addAnimation:animation forKey:@"contents"];
