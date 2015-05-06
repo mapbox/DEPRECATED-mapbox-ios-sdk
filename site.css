@@ -36,6 +36,9 @@
   border-radius: 30px;
   border-style: solid;
   border-color: #374f59;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .device.device-phone-v {
