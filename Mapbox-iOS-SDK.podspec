@@ -26,6 +26,8 @@ Pod::Spec.new do |m|
 
   m.prefix_header_file = 'MapView/MapView_Prefix.pch'
 
+  m.header_dir = 'MapView/Map'
+
   m.public_header_files = [
     'MapView/Map/Mapbox.h',
     'MapView/Map/RMAnnotation.h',
