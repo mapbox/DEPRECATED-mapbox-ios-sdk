@@ -30,11 +30,6 @@ Major differences from [Alpstein fork of Route-Me](https://github.com/Alpstein/r
  * A few added defaults for convenience. 
  * Improved documentation. 
 
-Mapbox GL
----------
-
-You should consider using [Mapbox GL](https://www.mapbox.com/mapbox-gl-ios/), the vector-based future of our rendering technology that will replace the Mapbox iOS SDK. We are working to provide a clear upgrade path between existing toolsets and GL as it matures. Read more in the [Mapbox GL iOS FAQ](https://github.com/mapbox/mapbox-gl-native/blob/master/ios/FAQ.md).
-
 
 Route-Me
 --------
