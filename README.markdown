@@ -1,6 +1,8 @@
 Mapbox iOS SDK
 --------------
 
+**This tree of the Mapbox iOS SDK is deprecated in favor of http://github.com/mapbox/mapbox-ios-sdk version 2.0.0 and above. The future of Mapbox maps is vector rendering, and 2.0.0 is a rewrite based on OpenGL ES and vector rendering.**
+
 Based on the Route-Me iOS map library (Alpstein fork) with [Mapbox](http://mapbox.com) customizations. 
 
 Requires iOS 5 or greater (includes iOS 7+ support at runtime), Xcode 5.0 or greater, and ARC.
