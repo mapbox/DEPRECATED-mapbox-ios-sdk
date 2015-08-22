@@ -5,14 +5,14 @@ Pod::Spec.new do |m|
 
   m.summary          = 'An open source toolset for building mapping applications for iOS devices.'
   m.description      = 'An open source toolset for building mapping applications for iOS devices with great flexibility for visual styling, offline use, and customizability.'
-  m.homepage         = 'https://mapbox.com/mapbox-ios-sdk'
+  m.homepage         = 'https://mapbox.com/mapbox-ios-sdk-legacy'
   m.license          = 'BSD'
   m.author           = { 'Mapbox' => 'mobile@mapbox.com' }
-  m.screenshot       = 'https://raw.github.com/mapbox/mapbox-ios-sdk/packaging/screenshot.png'
+  m.screenshot       = 'https://raw.github.com/mapbox/mapbox-ios-sdk-legacy/packaging/screenshot.png'
   m.social_media_url = 'https://twitter.com/Mapbox'
 
   m.source = {
-    :git => 'https://github.com/mapbox/mapbox-ios-sdk.git',
+    :git => 'https://github.com/mapbox/mapbox-ios-sdk-legacy.git',
     :tag => m.version.to_s
   }
 
@@ -59,7 +59,7 @@ Pod::Spec.new do |m|
     'Mapbox' => 'MapView/Map/Resources/*'
   }
 
-  m.documentation_url = 'https://www.mapbox.com/mapbox-ios-sdk'
+  m.documentation_url = 'https://www.mapbox.com/mapbox-ios-sdk-legacy'
 
   m.frameworks = 'CoreGraphics', 'CoreLocation', 'Foundation', 'QuartzCore', 'UIKit'
 
