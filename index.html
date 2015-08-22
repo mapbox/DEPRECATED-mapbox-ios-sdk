@@ -43,7 +43,7 @@ navigation:
 </div>
 <div class='space-bottom2 pad2 quiet keyline-all fill-white prose round-bottom center clearfix'>
   <div class='col10 margin1'>
-    <p>An <a href='https://github.com/mapbox/mapbox-ios-sdk/'>open source</a> toolset for building mapping applications for iPhone and iPad devices with great flexibility for visual styling, offline use, and customizability.</p>
+    <p>An <a href='https://github.com/mapbox/mapbox-ios-sdk-legacy/'>open source</a> toolset for building mapping applications for iPhone and iPad devices with great flexibility for visual styling, offline use, and customizability.</p>
   </div>
 </div>
 
@@ -51,7 +51,7 @@ navigation:
   <div class='pad1y pad2x keyline-bottom strong small clearfix'>
     <div class='fr'><!--
       --><span class='fill-darken1 round-left pad1x dark inline'>Mapbox iOS SDK</span><!--
-      --><a class='pad1x inline round-right keyline-left quiet dark fill-darken2' href='https://github.com/mapbox/mapbox-ios-sdk/releases'>{{site.version}}</a>
+      --><a class='pad1x inline round-right keyline-left quiet dark fill-darken2' href='https://github.com/mapbox/mapbox-ios-sdk-legacy/releases'>{{site.version}}</a>
     </div>
     Installation <em class='quiet'>Supports iOS versions 5.0+</em>
   </div>
@@ -122,7 +122,7 @@ navigation:
         <p>Follow these steps in order to use the Mapbox iOS SDK within your own Xcode project while retaining the ability to edit the SDK source as you go. This is the most flexible installation method if you want to be able to modify the source code of the SDK.</p>
         <ol>
           <li>Obtain the map ID for your hosted map by clicking <strong>Publish</strong> and copying the <strong>Map ID</strong>.</li>
-          <li>Download the SDK source code from the <a href='https://github.com/mapbox/mapbox-ios-sdk'>repository</a> using the cloning instructions in the <code>README.markdown</code> and put it someplace in your project’s folder. We assume below that this is a top-level folder called <code>Mapbox-iOS-SDK</code>.</li>
+          <li>Download the SDK source code from the <a href='https://github.com/mapbox/mapbox-ios-sdk-legacy'>repository</a> using the cloning instructions in the <code>README.markdown</code> and put it someplace in your project’s folder. We assume below that this is a top-level folder called <code>Mapbox-iOS-SDK</code>.</li>
           <li>Add <code>MapView.xcodeproj</code> to your project’s file sources, either by dragging it into your project from Finder or via <code>File &gt; Add Files...</code>, in order to make the library available to your project.</li>
           <li>Add <code>-ObjC</code> to your app target’s <code>Other Linker Flags</code> build setting in order to ensure that the SDK’s static library has all symbols loaded, even for categories.</li>
           <li>Add <code>&quot;$(SRCROOT)/Mapbox-iOS-SDK&quot;</code> (including the quotes and per your folder naming scheme) to the <code>Header Search Paths</code> build setting for your app target in order to gain access to the headers. Be sure to check the <code>Recursive</code> option.</li>
